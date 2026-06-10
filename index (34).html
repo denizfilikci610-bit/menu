@@ -1,0 +1,2458 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lusidio – lav menukort online til café & restaurant</title>
+<meta name="description" content="Lav et flot, professionelt menukort på få minutter – uden grafiker. Lusidio er et nemt menukort-værktøj til caféer og restauranter: vælg en stil, skriv dine retter, og hent en færdig PDF klar til print.">
+<meta name="keywords" content="menukort, lav menukort, menukort online, menukort generator, menukort skabelon, menukort til café, menukort til restaurant, spisekort, lav spisekort, menukort uden grafiker, menukort PDF, drikkekort, vinkort, bryllupsmenu">
+<meta name="robots" content="index, follow">
+<meta name="author" content="Lusidio">
+<link rel="canonical" href="https://lusidio.com/">
+
+<!-- Deling på Facebook, LinkedIn m.m. -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Lusidio">
+<meta property="og:url" content="https://lusidio.com/">
+<meta property="og:title" content="Lusidio – lav menukort online til café & restaurant">
+<meta property="og:description" content="Lav et flot, professionelt menukort på få minutter – uden grafiker. Vælg en stil, skriv dine retter, og hent en færdig PDF klar til print.">
+<meta property="og:image" content="https://lusidio.com/og-image.png">
+<meta property="og:locale" content="da_DK">
+
+<!-- Deling på X/Twitter -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Lusidio – lav menukort online til café & restaurant">
+<meta name="twitter:description" content="Lav et flot, professionelt menukort på få minutter – uden grafiker. Klar til print som PDF.">
+<meta name="twitter:image" content="https://lusidio.com/og-image.png">
+
+<!-- Fortæller Google hvad siden er -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "Lusidio",
+  "url": "https://lusidio.com/",
+  "applicationCategory": "DesignApplication",
+  "operatingSystem": "Web",
+  "description": "Lusidio er et nemt online værktøj til at lave flotte, professionelle menukort til caféer og restauranter. Vælg en stil, skriv dine retter, og hent en færdig PDF klar til print.",
+  "inLanguage": ["da","en","tr","uk"],
+  "offers": {
+    "@type": "Offer",
+    "price": "99",
+    "priceCurrency": "DKK",
+    "description": "Pris pr. færdigt menukort (PDF eller billede)"
+  }
+}
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,700;1,9..144,600;1,9..144,700&family=Jost:wght@400;500;600&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,500&family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=Caveat:wght@500;700&family=Lora:ital,wght@0,400;0,600;1,400&family=Archivo:wght@400;600;700;800&family=Nunito:wght@400;600;700;800&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,600&family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;0,6..96,600;0,6..96,700;1,6..96,600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+  :root{
+    --bg:#ece3d2; --panel:#fbf7ef; --panel-2:#f4ecdc; --ink:#2c2620; --muted:#8c8275;
+    --line:#e2d8c6; --accent:#b5542a; --accent-d:#963f1f; --field:#fffdf8;
+    --shadow:0 22px 60px rgba(60,40,22,.18);
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    font-family:'Jost',sans-serif; color:var(--ink);
+    background:
+      radial-gradient(1100px 520px at 100% -8%, #f7f0e2, transparent 60%),
+      radial-gradient(900px 500px at -10% 110%, #efe7d6, transparent 60%),
+      var(--bg);
+    min-height:100vh; line-height:1.5; -webkit-font-smoothing:antialiased;
+  }
+
+  /* ---------- Front page ---------- */
+  .frontpage{
+    position:fixed; inset:0; z-index:1000; overflow-y:auto;
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    padding:48px 24px;
+    background:
+      radial-gradient(900px 600px at 88% -10%, #f7ecd9, transparent 60%),
+      radial-gradient(820px 560px at -8% 110%, #efe4cf, transparent 60%),
+      var(--bg);
+  }
+  body.app-started .frontpage{ display:none; }
+  .fp-langbar{ position:absolute; top:22px; right:24px; display:flex; gap:4px; }
+  .fp-lang{
+    border:1px solid var(--line); background:var(--field); color:var(--muted);
+    font-family:inherit; font-size:.78rem; font-weight:600; letter-spacing:.03em;
+    padding:6px 10px; border-radius:8px; cursor:pointer; transition:all .15s;
+  }
+  .fp-lang:hover{ color:var(--ink); border-color:var(--accent); }
+  .fp-lang.active{ background:var(--accent); color:#fff; border-color:var(--accent); }
+  .fp-inner{ max-width:620px; width:100%; text-align:center; }
+  .fp-brand{ display:inline-flex; align-items:center; gap:9px; margin-bottom:30px; }
+  .fp-logo{ font-family:'Fraunces',serif; font-weight:600; font-style:italic; font-size:1.7rem; color:var(--ink); }
+  .fp-dot{ width:9px; height:9px; border-radius:50%; background:var(--accent); }
+  .fp-title{
+    font-family:'Fraunces',serif; font-weight:600; font-size:2.7rem; line-height:1.12;
+    color:var(--ink); margin:0 0 18px;
+  }
+  .fp-lead{ font-size:1.12rem; line-height:1.55; color:var(--muted); margin:0 auto 28px; max-width:540px; }
+  .fp-features{ list-style:none; margin:0 auto 34px; padding:0; max-width:430px; text-align:left; display:grid; gap:11px; }
+  .fp-features li{ position:relative; padding-left:30px; color:var(--ink); font-size:1rem; line-height:1.4; }
+  .fp-features li::before{
+    content:'✓'; position:absolute; left:0; top:-1px;
+    color:var(--accent); font-weight:700; font-size:1.05rem;
+  }
+  .fp-cta{
+    border:none; cursor:pointer; font-family:inherit; font-weight:600; font-size:1.08rem;
+    color:#fff; background:var(--accent); padding:16px 40px; border-radius:13px;
+    box-shadow:0 12px 30px rgba(181,84,42,.28); transition:all .18s;
+  }
+  .fp-cta:hover{ background:var(--accent-d); transform:translateY(-2px); box-shadow:0 16px 36px rgba(181,84,42,.34); }
+  .fp-sub{ margin:16px 0 0; font-size:.9rem; color:var(--muted); }
+  @media (max-width:600px){
+    .fp-title{ font-size:2.1rem; }
+    .fp-lead{ font-size:1.02rem; }
+    .fp-cta{ width:100%; padding:16px; }
+  }
+
+  /* ---------- Header ---------- */
+  .topbar{ max-width:1300px; margin:0 auto; padding:30px 30px 6px; display:flex; align-items:flex-start; justify-content:space-between; gap:16px; }
+  .back-btn{
+    flex:none; width:42px; height:42px; margin-top:2px;
+    border:1px solid var(--line); border-radius:11px; background:var(--field);
+    color:var(--ink); font-size:1.15rem; line-height:1; cursor:pointer;
+    transition:all .15s;
+  }
+  .back-btn:hover{ border-color:var(--accent); color:var(--accent); }
+  .brand{ display:flex; align-items:baseline; gap:14px; flex-wrap:wrap; }
+  .brand h1{ font-family:'Fraunces',serif; font-weight:600; font-style:italic; font-size:2.05rem; margin:0; color:var(--ink); }
+  .brand .dot{ width:9px; height:9px; border-radius:50%; background:var(--accent); display:inline-block; margin-bottom:5px; }
+  .brand p{ margin:0; color:var(--muted); font-size:.95rem; }
+  .lang-sel{ flex:none; margin-top:4px; padding:7px 30px 7px 11px; border:1px solid var(--line); border-radius:8px; background:var(--field); color:var(--ink); font-size:.9rem; font-family:inherit; cursor:pointer; -webkit-appearance:none; appearance:none; background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23998f7d' stroke-width='2.5'><path d='M6 9l6 6 6-6'/></svg>"); background-repeat:no-repeat; background-position:right 10px center; }
+  .lang-sel:hover{ border-color:var(--accent); }
+
+  /* ---------- Layout ---------- */
+  .app{ max-width:1300px; margin:0 auto; padding:18px 30px 60px; display:grid; grid-template-columns:minmax(340px,400px) 1fr; gap:30px; align-items:start; }
+
+  /* ---------- Editor panel ---------- */
+  .editor{ background:var(--panel); border:1px solid var(--line); border-radius:16px; padding:22px; box-shadow:0 10px 30px rgba(60,40,22,.07); }
+  .block{ margin-bottom:22px; }
+  .block:last-child{ margin-bottom:0; }
+  .label{ font-size:.72rem; font-weight:600; letter-spacing:.16em; text-transform:uppercase; color:var(--accent-d); margin:0 0 10px; }
+  .field{ width:100%; font-family:inherit; font-size:.95rem; color:var(--ink); background:var(--field); border:1px solid var(--line); border-radius:9px; padding:10px 12px; transition:border-color .15s, box-shadow .15s; outline:none; }
+  .field::placeholder{ color:#b3a896; }
+  .field:focus{ border-color:var(--accent); box-shadow:0 0 0 3px rgba(181,84,42,.13); }
+  textarea.field{ resize:vertical; font-family:inherit; }
+  .mini-label{ display:block; font-size:.72rem; color:var(--muted); margin:0 0 5px; }
+
+  /* ---------- Style presets ---------- */
+  .styles{ display:grid; grid-template-columns:1fr 1fr; gap:9px; }
+  .style-card{ border:1.5px solid var(--line); background:var(--field); border-radius:11px; padding:11px 12px; cursor:pointer; text-align:left; transition:.15s; font-family:inherit; }
+  .style-card:hover{ border-color:#d8b59f; transform:translateY(-1px); }
+  .style-card.active{ border-color:var(--accent); box-shadow:0 0 0 3px rgba(181,84,42,.12); background:#fff8f1; }
+  .style-card .sc-name{ font-weight:600; font-size:.92rem; display:block; }
+  .style-card .sc-prev{ font-size:1.35rem; line-height:1; margin-top:3px; color:var(--ink); }
+  .sc-elegant .sc-prev{ font-family:'Cormorant Garamond',serif; font-weight:600; font-style:italic; }
+  .sc-rustik .sc-prev{ font-family:'Caveat',cursive; font-weight:700; font-size:1.7rem; color:#7a4a2b; }
+  .sc-moderne .sc-prev{ font-family:'Archivo',sans-serif; font-weight:800; text-transform:uppercase; font-size:1.05rem; }
+  .sc-cafe .sc-prev{ font-family:'Fraunces',serif; font-weight:700; font-style:italic; color:#b5542a; }
+  .preset-note{ font-size:.76rem; color:var(--muted); margin:9px 0 0; line-height:1.4; }
+
+  /* ---------- Advanced design panel ---------- */
+  .adv{ border:1px solid var(--line); border-radius:13px; background:var(--panel-2); padding:0 14px; }
+  .adv summary{ list-style:none; cursor:pointer; padding:13px 0; font-size:.72rem; font-weight:600; letter-spacing:.16em; text-transform:uppercase; color:var(--accent-d); display:flex; justify-content:space-between; align-items:center; }
+  .adv summary::-webkit-details-marker{ display:none; }
+  .adv .chev{ transition:.2s transform; }
+  .adv[open] .chev{ transform:rotate(180deg); }
+  .adv-body{ padding:2px 0 16px; }
+  .ctl-row3{ display:grid; grid-template-columns:1fr 1fr 1fr; gap:9px; margin-bottom:14px; }
+  .ctl{ display:flex; flex-direction:column; gap:5px; align-items:stretch; font-size:.72rem; color:var(--muted); text-align:center; }
+  .ctl input[type=color]{ width:100%; height:38px; border:1px solid var(--line); border-radius:8px; background:#fff; cursor:pointer; padding:3px; }
+  .ctl2{ display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:12px; }
+  .seg{ display:flex; border:1px solid var(--line); border-radius:8px; overflow:hidden; background:var(--field); }
+  .seg-btn{ flex:1; border:none; background:transparent; padding:8px 4px; font-family:inherit; font-size:.8rem; cursor:pointer; color:var(--muted); transition:.12s; border-right:1px solid var(--line); }
+  .seg-btn:last-child{ border-right:none; }
+  .seg-btn.active{ background:var(--accent); color:#fff; font-weight:600; }
+  .mini-hint{ font-size:.74rem; color:var(--muted); margin:5px 2px 11px; line-height:1.4; }
+  .range{ -webkit-appearance:none; appearance:none; width:100%; height:5px; border-radius:3px; background:var(--line); outline:none; margin-top:3px; }
+  .range::-webkit-slider-thumb{ -webkit-appearance:none; width:18px; height:18px; border-radius:50%; background:var(--accent); cursor:pointer; border:2px solid #fff; box-shadow:0 1px 4px rgba(0,0,0,.25); }
+  .range::-moz-range-thumb{ width:18px; height:18px; border:2px solid #fff; border-radius:50%; background:var(--accent); cursor:pointer; }
+
+  /* ---------- Logo input ---------- */
+  .file-in{ width:100%; font-size:.82rem; color:var(--muted); }
+  .file-in::file-selector-button{ font-family:inherit; border:1px solid var(--line); background:#fff; color:var(--accent-d); border-radius:7px; padding:6px 10px; cursor:pointer; margin-right:8px; font-size:.82rem; }
+
+  /* ---------- Sections / dishes editor ---------- */
+  .sec-card{ border:1px solid var(--line); border-radius:13px; background:var(--panel-2); padding:13px; margin-bottom:13px; }
+  .sec-head{ display:flex; gap:8px; align-items:center; margin-bottom:11px; }
+  .sec-name-input{ flex:1; font-family:'Fraunces',serif; font-weight:600; font-size:1rem; color:var(--ink); background:transparent; border:none; border-bottom:1.5px solid var(--line); padding:4px 2px; outline:none; }
+  .sec-name-input:focus{ border-color:var(--accent); }
+  .sec-subtext-input{ width:100%; margin:0 0 9px; font-family:'Fraunces',serif; font-style:italic; font-size:.85rem; color:var(--muted); background:transparent; border:none; border-bottom:1px dashed var(--line); padding:4px 2px; outline:none; }
+  .sec-subtext-input:focus{ border-color:var(--accent); border-bottom-style:solid; }
+  .hd-ctrls{ display:flex; flex-wrap:wrap; gap:10px 14px; margin:0 2px 10px; }
+  .hd-ctrl{ flex:1; min-width:130px; }
+  .hd-ctrl .mini-label{ display:block; margin:0 0 4px; }
+  .seg-mini .seg-btn{ padding:5px 4px; font-size:.74rem; }
+  .matchall-btn{ width:100%; margin:0 0 4px; font-size:.76rem; color:var(--muted); }
+  .matchall-btn:hover{ color:var(--accent); border-color:var(--accent); }
+  .sub-row .matchall-btn{ display:none; }
+  .code-row{ display:flex; gap:8px; align-items:center; margin:10px 0 4px; }
+  .code-input{ flex:1; }
+  #useCodeBtn{ flex:none; white-space:nowrap; }
+  .sub-row-top{ display:flex; gap:8px; align-items:center; }
+  .ctrls{ display:flex; gap:4px; }
+  .mini-btn{ width:28px; height:30px; border:1px solid var(--line); background:#fff; border-radius:6px; cursor:pointer; color:var(--muted); font-size:.7rem; display:flex; align-items:center; justify-content:center; transition:.15s; padding:0; }
+  .mini-btn:hover{ border-color:var(--accent); color:var(--accent); }
+  .mini-btn.danger:hover{ background:#c0573e; color:#fff; border-color:#c0573e; }
+  .mini-btn.num-btn{ font-weight:700; }
+  .mini-btn.num-btn.active{ background:var(--accent); color:#fff; border-color:var(--accent); }
+  .dish-row{ background:var(--field); border:1px solid var(--line); border-radius:10px; padding:9px; margin-bottom:8px; }
+  /* Prices always sit on their own row under the name — consistent and tidy */
+  .dish-row-top{ display:grid; grid-template-columns:1fr auto; row-gap:8px; column-gap:7px; align-items:center; margin-bottom:7px; }
+  .dish-row-top.has-num{ grid-template-columns:46px 1fr auto; }
+  .dish-row-top .dish-name-input{ grid-row:1; }
+  .dish-row-top .ctrls{ grid-row:1; }
+  .dish-row-top .dish-prices{ grid-row:2; grid-column:1 / -1; }
+  .dish-row-top.has-num .dish-num-input{ grid-row:1; grid-column:1; }
+  .dish-row-top.has-num .dish-name-input{ grid-row:1; grid-column:2; }
+  .dish-row-top.has-num .ctrls{ grid-row:1; grid-column:3; }
+  .dish-prices{ display:flex; gap:6px; align-items:center; flex-wrap:wrap; }
+  .dish-prices .dish-price-input{ width:64px; }
+  .sec-card.collapsed .sec-body{ display:none; }
+  .collapse-btn{ color:var(--muted); }
+  .col-select{ font-family:inherit; font-size:.8rem; color:var(--ink); background:#fff; border:1px solid var(--line); border-radius:7px; padding:6px 8px; cursor:pointer; width:100%; }
+  .price-add, .price-del{ font-weight:700; }
+  .price-add{ color:var(--accent); }
+  .dish-num-input{ width:100%; text-align:center; font-variant-numeric:tabular-nums; padding:9px 4px; border:1px solid var(--line); border-radius:8px; background:var(--field); color:var(--ink); font-family:inherit; font-size:.9rem; }
+  .dish-num-input:focus{ outline:none; border-color:var(--accent); }
+  .dish-name-input, .dish-price-input, .dish-desc-input{ font-family:inherit; font-size:.9rem; color:var(--ink); background:#fff; border:1px solid var(--line); border-radius:7px; padding:7px 9px; outline:none; width:100%; }
+  .dish-desc-input{ font-size:.85rem; color:#6b6258; }
+  .dish-name-input:focus,.dish-price-input:focus,.dish-desc-input:focus{ border-color:var(--accent); box-shadow:0 0 0 2px rgba(181,84,42,.1); }
+  .dish-price-input{ text-align:center; }
+  .add-dish-btn{ flex:1; border:1px dashed #cdbfa9; background:transparent; color:var(--accent-d); border-radius:9px; padding:8px; cursor:pointer; font-family:inherit; font-size:.85rem; font-weight:600; transition:.15s; margin-top:2px; }
+  .add-dish-btn:hover{ background:#fff6ef; border-color:var(--accent); }
+  .add-row{ display:flex; gap:7px; }
+  .add-sub-btn{ flex:1; border:1px dashed #cdbfa9; background:transparent; color:var(--muted); border-radius:9px; padding:8px; cursor:pointer; font-family:inherit; font-size:.85rem; font-weight:600; transition:.15s; margin-top:2px; }
+  .add-sub-btn:hover{ background:#fff6ef; border-color:var(--accent); color:var(--accent-d); }
+  .sub-row{ display:block; background:transparent; border-left:3px solid var(--accent); border-radius:0 8px 8px 0; padding:6px 9px; margin:2px 0 8px; }
+  .sub-row .hd-ctrls{ margin:7px 0 0; }
+  .sub-name-input{ flex:1; font-family:'Fraunces',serif; font-weight:600; font-size:.82rem; letter-spacing:.06em; text-transform:uppercase; color:var(--accent-d); background:transparent; border:none; border-bottom:1px solid var(--line); padding:5px 2px; outline:none; }
+  .sub-name-input:focus{ border-color:var(--accent); }
+  .add-sec-btn{ width:100%; border:1.5px dashed var(--accent); background:#fff7f1; color:var(--accent-d); border-radius:11px; padding:11px; cursor:pointer; font-family:inherit; font-size:.92rem; font-weight:600; transition:.15s; margin-top:4px; }
+  .add-sec-btn:hover{ background:var(--accent); color:#fff; }
+
+  /* ---------- Actions ---------- */
+  .actions{ margin-top:22px; display:flex; flex-direction:column; gap:10px; }
+  .btn{ font-family:inherit; font-size:.95rem; font-weight:600; border-radius:11px; padding:13px; cursor:pointer; transition:.15s; border:1.5px solid transparent; width:100%; }
+  .btn-primary{ background:var(--accent); color:#fff; box-shadow:0 6px 16px rgba(181,84,42,.28); }
+  .btn-primary:hover{ background:var(--accent-d); transform:translateY(-1px); }
+  .btn-outline{ background:transparent; color:var(--accent-d); border-color:var(--accent); }
+  .btn-outline:hover{ background:#fff6ef; }
+  .btn-ghost{ background:transparent; color:var(--muted); border:none; font-size:.85rem; padding:4px; cursor:pointer; font-family:inherit; }
+  .btn-ghost:hover{ color:var(--accent); }
+  .hint{ font-size:.78rem; color:var(--muted); text-align:center; margin:2px 0 0; line-height:1.4; }
+
+  /* ---------- Save / library ---------- */
+  .save-actions{ display:flex; gap:7px; flex-wrap:wrap; }
+  .btn-mini{ flex:1; min-width:84px; font-family:inherit; font-size:.8rem; font-weight:600; color:var(--accent-d); background:var(--field); border:1px solid var(--line); border-radius:9px; padding:9px 8px; cursor:pointer; transition:.15s; }
+  .btn-mini:hover{ border-color:var(--accent); background:#fff6ef; }
+  .tag{ font-size:.6rem; color:#cabfae; vertical-align:middle; margin-left:4px; }
+  .tag.on{ color:#6fa86b; }
+  .library{ margin-top:11px; display:flex; flex-direction:column; gap:7px; }
+  .lib-empty{ font-size:.8rem; color:var(--muted); margin:6px 2px; line-height:1.4; }
+  .lib-item{ display:flex; align-items:center; gap:8px; background:var(--field); border:1px solid var(--line); border-radius:10px; padding:8px 10px; }
+  .lib-info{ flex:1; min-width:0; display:flex; flex-direction:column; }
+  .lib-name{ font-weight:600; font-size:.88rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .lib-date{ font-size:.7rem; color:var(--muted); }
+  .lib-btns{ display:flex; gap:5px; }
+  .lib-btns .mini-btn{ width:auto; padding:0 10px; height:28px; font-size:.78rem; }
+
+  /* ---------- Preview stage ---------- */
+  .stage{ position:sticky; top:16px; background:linear-gradient(160deg,#ddd0ba,#cab896); border-radius:16px; padding:24px 22px; box-shadow:inset 0 2px 14px rgba(80,55,30,.18); display:flex; flex-direction:column; align-items:center; gap:13px; min-height:260px; }
+  .paper-scale{ position:relative; margin:0 auto; }
+  .stage-hint{ max-width:92%; font-size:.82rem; line-height:1.42; text-align:center; color:#7a4a2b; background:rgba(255,255,255,.72); border:1px solid rgba(122,74,43,.28); border-radius:10px; padding:9px 13px; }
+
+  /* ================= MENU PAPER (token-driven) ================= */
+  #paper{
+    position:relative; overflow:hidden;
+    -webkit-print-color-adjust:exact; print-color-adjust:exact;
+    background:var(--m-paper,#fffdf8); color:var(--m-ink,#241f1b);
+    font-family:var(--m-body-font, serif); font-size:calc(16px * var(--m-scale,1));
+    width:794px; height:1123px; padding:54px 60px; margin:0 auto; box-shadow:var(--shadow); border-radius:3px;
+    transition:background .25s, color .25s;
+  }
+  #paperInner{ display:flex; flex-direction:column; height:100%; min-height:100%; }
+  .m-accent-bar{ display:none; }
+  .has-bar .m-accent-bar{ display:block; height:6px; background:var(--m-accent); border-radius:3px; margin:-18px 0 30px; }
+  .menu-head{ text-align:center; margin-bottom:2em; }
+  .align-left .menu-head, .align-left .m-foot{ text-align:left; }
+  .m-logo{ display:block; max-height:74px; max-width:62%; margin:0 auto 16px; object-fit:contain; }
+  .align-left .m-logo{ margin-left:0; }
+  .menu-title{ font-family:var(--m-title-font); color:var(--m-title-color,var(--m-ink)); margin:0; font-size:var(--m-title-size,2.7em); line-height:1.05; }
+  .title-italic .menu-title{ font-style:italic; }
+  .menu-sub{ margin:.5em 0 0; opacity:.68; letter-spacing:.05em; font-size:1em; }
+  .menu-rule{ display:flex; align-items:center; gap:.8em; margin:1em auto 0; max-width:240px; color:var(--m-accent); }
+  .align-left .menu-rule{ margin-left:0; }
+  .menu-rule .line{ flex:1; height:1px; background:currentColor; opacity:.4; }
+  .menu-rule .rule-dot{ opacity:.85; font-size:.95em; }
+  /* Ved siden af hinanden: sektioner fordeles i spalter med toppen på linje */
+  .layout-grid .m-body{ display:block; }
+  .m-colgrid{ display:grid; grid-template-columns:repeat(var(--m-cols,1), minmax(0,1fr)); column-gap:34px; align-items:start; }
+  .m-col{ min-width:0; }
+  .m-col .m-sec{ break-inside:avoid; }
+  .m-col .m-sec + .m-sec{ margin-top:calc(1.9em * var(--m-gap,1)); }
+  .m-sec.has-bg{ padding:1.1em 1.2em 1.2em; }
+  .m-sec.has-bg .m-titleblock{ margin-top:0; }
+  .sec-bg-row{ display:flex; gap:6px; align-items:center; }
+  .sec-bg-color{ width:34px; height:30px; padding:0; border:1px solid var(--line); border-radius:7px; background:#fff; cursor:pointer; flex:none; }
+  .btn-tiny{ font-family:inherit; font-size:.76rem; font-weight:600; color:var(--accent-d); background:var(--field); border:1px solid var(--line); border-radius:8px; padding:6px 10px; cursor:pointer; transition:.15s; }
+  .btn-tiny:hover{ border-color:var(--accent); color:var(--accent); }
+  /* Under hinanden: retterne fordeles jævnt i spalter (samme opbygning i PDF) */
+  .layout-fill .m-body{ display:block; }
+  .m-fillgrid{ display:grid; grid-template-columns:repeat(var(--m-cols,1), minmax(0,1fr)); column-gap:34px; align-items:start; }
+  .m-fillcol{ min-width:0; }
+  .m-fillcol > :first-child{ margin-top:0; }
+  .m-titleblock{ margin:0 0 .9em; }
+  .m-fillcol .m-titleblock{ margin-top:calc(1.5em * var(--m-gap,1)); }
+  .m-sec-title{ font-family:var(--m-title-font); color:var(--m-accent); margin:0; }
+  .sec-caps .m-sec-title{ text-transform:uppercase; letter-spacing:.2em; font-size:calc(1.05em * var(--ts,1)); font-weight:600; }
+  :not(.sec-caps) .m-sec-title{ letter-spacing:.005em; font-size:calc(1.35em * var(--ts,1)); font-weight:700; }
+  .m-sec-subtext{ font-family:var(--m-body-font); font-style:italic; font-weight:400; text-transform:none; letter-spacing:normal; font-size:.85em; opacity:.62; margin:calc(.3em * var(--sg,1)) 0 0; }
+  .m-subhead{ font-family:var(--m-title-font); color:var(--m-accent); font-size:calc(.92em * var(--ss,1)); font-weight:600; letter-spacing:.12em; text-transform:uppercase; margin:calc(1.3em * var(--m-gap,1)) 0 calc(.7em * var(--m-gap,1)); opacity:.85; }
+  .m-subhead:first-child{ margin-top:0; }
+  .d-item{ margin-bottom:calc(1.05em * var(--m-gap,1)); }
+  .d-item:last-child{ margin-bottom:0; }
+  .d-line{ display:flex; align-items:baseline; gap:.5em; }
+  .d-namewrap{ display:inline-flex; align-items:baseline; gap:.4em; min-width:0; }
+  .d-num{ color:var(--m-accent); font-weight:600; font-variant-numeric:tabular-nums; flex:none; }
+  .no-leaders .d-line{ justify-content:space-between; }
+  .d-name{ font-weight:600; }
+  .d-leader{ flex:1; border-bottom:1.5px dotted currentColor; opacity:.3; transform:translateY(-.25em); min-width:1em; }
+  .no-leaders .d-leader{ display:none; }
+  .d-price{ white-space:nowrap; font-variant-numeric:tabular-nums; color:var(--m-ink); display:inline-flex; gap:.7em; align-items:baseline; }
+  .m-price-label{ font-family:var(--m-body-font); font-size:.72em; letter-spacing:.08em; text-transform:uppercase; opacity:.55; margin:.35em 0 0; text-align:right; }
+  .d-desc{ margin:.3em 0 0; font-size:.9em; opacity:.6; line-height:1.42; max-width:92%; }
+  .m-foot{ margin-top:auto; padding-top:1.2em; border-top:1px solid var(--m-accent-35, rgba(150,120,80,.35)); opacity:.72; font-size:.85em; text-align:center; line-height:1.45; }
+  .empty-note{ text-align:center; color:#b3a896; font-style:italic; padding:30px 0; }
+
+  /* ---------- Click-to-edit ---------- */
+  .editable{ cursor:pointer; border-radius:5px; transition:background .12s, box-shadow .12s; }
+  .editable:hover{ background:var(--m-accent-13, rgba(150,120,80,.13)); box-shadow:0 0 0 4px var(--m-accent-07, rgba(150,120,80,.07)); }
+  [contenteditable="true"]{ outline:2px solid var(--m-accent); outline-offset:3px; background:rgba(255,255,255,.55) !important; box-shadow:none !important; cursor:text; }
+
+  .ctx-pop{ position:absolute; z-index:1000; background:#fff; border:1px solid var(--line); border-radius:12px; box-shadow:0 14px 38px rgba(60,40,22,.24); padding:6px; display:none; flex-direction:column; gap:1px; min-width:184px; font-family:'Jost',sans-serif; }
+  .ctx-pop.show{ display:flex; }
+  .ctx-pop .pop-head{ font-size:.66rem; letter-spacing:.13em; text-transform:uppercase; color:var(--muted); padding:6px 11px 4px; }
+  .ctx-pop button{ display:flex; align-items:center; gap:10px; width:100%; text-align:left; border:none; background:transparent; padding:9px 11px; border-radius:8px; cursor:pointer; font-size:.88rem; color:var(--ink); font-family:inherit; }
+  .ctx-pop button:hover{ background:var(--panel-2); }
+  .ctx-pop button .ic{ width:16px; text-align:center; opacity:.7; font-size:.85rem; }
+  .ctx-pop button.danger{ color:#b04a2e; }
+  .ctx-pop button.danger:hover{ background:#fdeee8; }
+  .ctx-pop .sep{ height:1px; background:var(--line); margin:4px 6px; }
+
+  /* ---------- Watermark ---------- */
+  .wm-overlay{ position:absolute; inset:0; overflow:hidden; pointer-events:none; z-index:5; border-radius:3px; display:none; }
+  .wm-rot{ position:absolute; top:50%; left:50%; width:200%; height:200%; transform:translate(-50%,-50%) rotate(-28deg); display:flex; flex-direction:column; justify-content:center; gap:16px; }
+  .wm-line{ white-space:nowrap; text-align:center; font-family:'Jost',sans-serif; font-weight:700; font-size:21px; letter-spacing:.2em; color:var(--wm-color, rgba(120,90,40,.13)); user-select:none; }
+
+  /* ---------- Responsive: desktop → tablet → phone ---------- */
+
+  /* Tablet (and small laptops): keep two columns but tighter */
+  @media (max-width:1080px) and (min-width:881px){
+    .app{ grid-template-columns:minmax(300px,360px) 1fr; gap:20px; padding-left:20px; padding-right:20px; }
+    .topbar{ padding-left:20px; padding-right:20px; }
+    .editor{ padding:18px; }
+    .stage{ padding:26px 16px; }
+  }
+
+  /* Tablet portrait & large phones: stack, comfortable spacing */
+  @media (max-width:880px){
+    .app{ grid-template-columns:1fr; gap:22px; padding-left:18px; padding-right:18px; }
+    .topbar{ padding:24px 18px 6px; flex-wrap:wrap; align-items:center; gap:8px 12px; }
+    .brand{ flex:1; gap:10px; }
+    .brand p{ flex-basis:100%; }
+    .back-btn{ width:40px; height:40px; }
+    .stage{ position:static; padding:26px 14px; }
+    #paper{ padding:36px 30px; }
+
+    /* keep iOS from zooming in when a field gets focus (needs >=16px font) */
+    .field, textarea.field, .sec-name-input, .sec-subtext-input,
+    .dish-name-input, .dish-price-input, .dish-desc-input, .dish-num-input,
+    .col-select, .lang-sel, select, input{ font-size:16px; }
+
+    /* finger-sized controls */
+    .mini-btn{ width:35px; height:37px; }
+    .ctrls{ gap:6px; }
+    .seg-btn{ padding:10px 5px; }
+    .ctl input[type=color]{ height:44px; }
+    .dish-prices .dish-price-input{ width:72px; }
+    .add-dish-btn, .add-sub-btn, .add-sec-btn{ padding:11px; }
+    .btn{ padding:13px 14px; }
+  }
+
+  /* Phones: compact */
+  @media (max-width:600px){
+    .app{ padding-left:13px; padding-right:13px; gap:18px; }
+    .topbar{ padding:18px 13px 4px; }
+    .brand h1{ font-size:1.55rem; }
+    .brand p{ font-size:.84rem; line-height:1.35; }
+    .editor{ padding:14px; border-radius:14px; }
+    .block{ margin-bottom:17px; }
+    .sec-card{ padding:11px; }
+    .stage{ padding:18px 10px; }
+    #paper{ padding:30px 24px; }
+    .style-card{ padding:12px; }
+    .seg-mini .seg-btn{ padding:8px 4px; font-size:.78rem; }
+    .matchall-btn{ font-size:.8rem; }
+  }
+
+  /* ---------- Print / Save as PDF ---------- */
+  @media print{
+    *{ -webkit-print-color-adjust:exact !important; print-color-adjust:exact !important; }
+    body{ background:#fff; }
+    body *{ visibility:hidden; }
+    .stage, .stage *{ visibility:visible; }
+    .stage{ position:absolute; inset:0; padding:0; margin:0; background:#fff; box-shadow:none; display:block; }
+    #paperScale{ width:auto !important; height:auto !important; transform:none !important; }
+    #paperInner{ height:auto !important; min-height:calc(100vh - 28mm) !important; }
+    #paper{
+      box-shadow:none !important; border-radius:0 !important;
+      width:100% !important; max-width:100% !important;
+      min-height:100vh; height:auto !important;
+      transform:none !important; overflow:visible !important;
+      padding:14mm 16mm !important; margin:0 !important;
+    }
+    .stage-hint{ display:none !important; }
+  }
+</style>
+</head>
+<body>
+
+  <!-- ============ FRONT PAGE ============ -->
+  <section id="frontpage" class="frontpage">
+    <div class="fp-langbar">
+      <button class="fp-lang" data-lang="da" type="button">DA</button>
+      <button class="fp-lang" data-lang="en" type="button">EN</button>
+      <button class="fp-lang" data-lang="tr" type="button">TR</button>
+      <button class="fp-lang" data-lang="uk" type="button">UK</button>
+    </div>
+    <div class="fp-inner">
+      <div class="fp-brand"><span class="fp-logo">Lusidio</span><span class="fp-dot"></span></div>
+      <h1 class="fp-title" data-i18n="fpTitle">Professionelle menukort på minutter</h1>
+      <p class="fp-lead" data-i18n="fpLead">Skriv dine retter, vælg en stil, og hent et færdigt menukort som PDF — uden grafiker og uden designprogrammer.</p>
+      <ul class="fp-features">
+        <li data-i18n="fpF1">Svært at lave grimt — det ser godt ud med det samme</li>
+        <li data-i18n="fpF2">Gem dit menukort og ret priser eller retter, når som helst</li>
+        <li data-i18n="fpF3">Til caféer, restauranter og private fester</li>
+        <li data-i18n="fpF4">Dit første menukort er gratis</li>
+      </ul>
+      <button class="fp-cta" id="enterAppBtn" type="button" data-i18n="fpStart">Lav dit menukort</button>
+      <p class="fp-sub" data-i18n="fpSub">Ingen oprettelse nødvendig — gå direkte i gang.</p>
+    </div>
+  </section>
+
+  <div class="topbar">
+    <button class="back-btn" id="backToFrontBtn" type="button" data-i18n-title="backToFront" title="Tilbage til forsiden">←</button>
+    <div class="brand">
+      <h1 data-i18n="brandH1">Menukort</h1><span class="dot"></span>
+      <p data-i18n="tagline">Skriv dine retter, tilpas udseendet — og klik direkte på en tekst i menuen for at redigere den.</p>
+    </div>
+    <select id="langSel" class="lang-sel" aria-label="Language / Sprog">
+      <option value="da">Dansk</option>
+      <option value="en">English</option>
+      <option value="tr">Türkçe</option>
+      <option value="uk">Українська</option>
+    </select>
+  </div>
+
+  <div class="app">
+
+    <!-- ============ EDITOR ============ -->
+    <div class="editor" id="editor">
+
+      <div class="block">
+        <p class="label"><span data-i18n="myMenus">Mine menuer</span> <span id="autosaveTag" class="tag" data-i18n-title="autosaveTitle" title="Gemmes automatisk">●</span></p>
+        <div class="save-actions">
+          <button class="btn-mini" id="saveAsBtn" data-i18n="saveAs">＋ Gem som…</button>
+          <button class="btn-mini" id="exportBtn" data-i18n="export">⬇ Eksportér</button>
+          <button class="btn-mini" id="importBtn" data-i18n="import">⬆ Importér</button>
+          <input type="file" id="importInput" accept="application/json,.json" style="display:none;">
+        </div>
+        <div id="libraryList" class="library"></div>
+        <p class="hint" id="saveStatus" style="text-align:left;"></p>
+      </div>
+
+      <div class="block">
+        <p class="label" data-i18n="heading">Overskrift</p>
+        <input class="field" data-meta="title" id="titleField" data-i18n-ph="titlePh" placeholder="Fx Aftenmenu" style="font-family:'Fraunces',serif; font-size:1.1rem;">
+        <input class="field" data-meta="subtitle" id="subField" data-i18n-ph="subtitlePh" placeholder="Undertitel (valgfri) — fx dato eller anledning" style="margin-top:9px;">
+      </div>
+
+      <div class="block">
+        <p class="label" data-i18n="logo">Logo (valgfri)</p>
+        <input type="file" id="logoInput" accept="image/*" class="file-in">
+        <button class="btn-ghost" id="logoRemove" data-i18n="removeLogo" style="display:none; text-align:left;">Fjern logo</button>
+      </div>
+
+      <div class="block">
+        <p class="label" data-i18n="style">Stil</p>
+        <div class="styles" id="styles">
+          <button class="style-card sc-elegant active" data-style="elegant"><span class="sc-name">Elegant</span><span class="sc-prev">Menu</span></button>
+          <button class="style-card sc-rustik" data-style="rustik"><span class="sc-name">Rustik</span><span class="sc-prev">Menu</span></button>
+          <button class="style-card sc-moderne" data-style="moderne"><span class="sc-name">Moderne</span><span class="sc-prev">MENU</span></button>
+          <button class="style-card sc-cafe" data-style="cafe"><span class="sc-name">Café</span><span class="sc-prev">Menu</span></button>
+        </div>
+        <p class="preset-note" data-i18n="presetNote">Vælg et udgangspunkt — finjustér derefter alt nedenfor.</p>
+      </div>
+
+      <div class="block">
+        <details class="adv" id="adv" open>
+          <summary><span data-i18n="customizeDesign">Tilpas design</span> <span class="chev">▾</span></summary>
+          <div class="adv-body">
+
+            <label class="mini-label" data-i18n="paperSize">Papirstørrelse</label>
+            <select class="field" id="selFormat" style="margin-bottom:15px;">
+              <option value="a5">A5 — 148 × 210 mm</option>
+              <option value="a4">A4 — 210 × 297 mm</option>
+              <option value="a3">A3 — 297 × 420 mm</option>
+              <option value="letter" data-i18n="fmtLetter">Letter — 8,5 × 11"</option>
+              <option value="square" data-i18n="fmtSquare">Kvadrat — 210 × 210 mm</option>
+              <option value="dl" data-i18n="fmtNarrow">Smal — 105 × 210 mm</option>
+            </select>
+
+            <label class="mini-label" data-i18n="orientation">Retning</label>
+            <div class="seg" id="segOrient" data-key="orient" style="margin-bottom:15px;">
+              <button class="seg-btn" data-val="portrait" data-i18n="portrait">Stående</button>
+              <button class="seg-btn" data-val="landscape" data-i18n="landscape">Liggende</button>
+            </div>
+
+            <div class="ctl-row3">
+              <label class="ctl"><span data-i18n="accent">Accent</span><input type="color" id="cAccent"></label>
+              <label class="ctl"><span data-i18n="paper">Papir</span><input type="color" id="cPaper"></label>
+              <label class="ctl"><span data-i18n="textColor">Tekst</span><input type="color" id="cInk"></label>
+            </div>
+
+            <label class="mini-label" data-i18n="titleFont">Titel-skrifttype</label>
+            <select class="field" id="selTitleFont"></select>
+
+            <label class="mini-label" style="margin-top:11px;" data-i18n="bodyFont">Brødtekst-skrifttype</label>
+            <select class="field" id="selBodyFont"></select>
+
+            <label class="mini-label" style="margin-top:13px;" data-i18n="textSize">Tekststørrelse</label>
+            <input type="range" id="rngScale" min="82" max="124" value="100" class="range">
+
+            <label class="mini-label" style="margin-top:13px;" data-i18n="spacing">Afstand mellem tekster</label>
+            <input type="range" id="rngGap" min="65" max="175" value="100" class="range">
+
+            <label class="mini-label" style="margin-top:13px;" data-i18n="layout">Opstilling</label>
+            <div class="seg" id="segLayout" data-key="layout" style="margin-bottom:4px;">
+              <button class="seg-btn" data-val="stacked" data-i18n="stacked">Under hinanden</button>
+              <button class="seg-btn" data-val="cols" data-i18n="sideBySide">Ved siden af hinanden</button>
+            </div>
+            <p class="mini-hint" id="layoutHint">Hver sektion får sin egen spalte ved siden af hinanden.</p>
+
+            <div class="ctl2">
+              <div><label class="mini-label" data-i18n="alignment">Justering</label>
+                <div class="seg" id="segAlign" data-key="align"><button class="seg-btn" data-val="center" data-i18n="alignCenter">Centreret</button><button class="seg-btn" data-val="left" data-i18n="alignLeft">Venstre</button></div></div>
+              <div id="colsBlock"><label class="mini-label" data-i18n="columns">Antal kolonner</label>
+                <div class="seg" id="segCols" data-key="cols"><button class="seg-btn" data-val="1">1</button><button class="seg-btn" data-val="2">2</button><button class="seg-btn" data-val="3">3</button><button class="seg-btn" data-val="4">4</button><button class="seg-btn" data-val="5">5</button></div></div>
+            </div>
+
+            <div class="ctl2">
+              <div><label class="mini-label" data-i18n="leaders">Prik-linjer</label>
+                <div class="seg" id="segLeaders" data-key="leaders"><button class="seg-btn" data-val="on" data-i18n="on">Til</button><button class="seg-btn" data-val="off" data-i18n="off">Fra</button></div></div>
+              <div><label class="mini-label" data-i18n="accentBar">Accentstribe</label>
+                <div class="seg" id="segBar" data-key="bar"><button class="seg-btn" data-val="off" data-i18n="off">Fra</button><button class="seg-btn" data-val="on" data-i18n="on">Til</button></div></div>
+            </div>
+
+            <label class="mini-label" style="margin-top:13px;" data-i18n="dividerLabel">Skillesymbol under titel</label>
+            <select class="field" id="selDivider">
+              <option value="❦" data-i18n="divOrnament">❦  Ornament</option>
+              <option value="✦" data-i18n="divStar">✦  Stjerne</option>
+              <option value="•" data-i18n="divDot">•  Prik</option>
+              <option value="—" data-i18n="divDash">—  Streg</option>
+              <option value="none" data-i18n="divNone">Intet</option>
+            </select>
+          </div>
+        </details>
+      </div>
+
+      <div class="block">
+        <p class="label" data-i18n="dishesLabel">Retter</p>
+        <div id="sections"></div>
+      </div>
+
+      <div class="block">
+        <p class="label" data-i18n="footerPrices">Sidefod &amp; priser</p>
+        <textarea class="field" data-meta="footer" id="footField" rows="2" data-i18n-ph="footerPh" placeholder="Sidefod (valgfri) — fx “Allergener oplyses på forespørgsel”"></textarea>
+        <div class="ctl2" style="margin-top:10px;">
+          <div><label class="mini-label" data-i18n="currency">Valuta</label><input class="field" data-meta="currency" id="curField" placeholder="kr."></div>
+          <div><label class="mini-label" data-i18n="placement">Placering</label>
+            <div class="seg" id="segCurpos" data-key="curpos"><button class="seg-btn" data-val="after" data-i18n="after">Efter</button><button class="seg-btn" data-val="before" data-i18n="before">Før</button></div></div>
+        </div>
+      </div>
+
+      <div class="block">
+        <p class="label" data-i18n="translateMenu">Oversæt menu</p>
+        <div class="ctl2">
+          <div><label class="mini-label" data-i18n="from">Fra</label><select class="field" id="selLangFrom"></select></div>
+          <div><label class="mini-label" data-i18n="to">Til</label><select class="field" id="selLangTo"></select></div>
+        </div>
+        <button class="btn btn-outline" id="translateBtn" style="margin-top:10px;" data-i18n="translateNow">Oversæt menu nu</button>
+        <button class="btn-ghost" id="revertBtn" data-i18n="revertTranslation" style="display:none; text-align:left;">↩ Fortryd oversættelse — gendan original</button>
+        <p class="hint" id="translateStatus" data-i18n="translateStatusDefault" style="text-align:left;">Gratis maskinoversættelse — læs altid teksten igennem. Kræver internet.</p>
+      </div>
+
+      <div class="actions">
+        <button class="btn btn-primary" id="pdfBtn" data-i18n="payPdf">Betal &amp; hent PDF — 99 kr.</button>
+        <button class="btn btn-outline" id="pngBtn" data-i18n="payImg">Betal &amp; hent som billede — 99 kr.</button>
+        <p class="hint" id="payNote" data-i18n-html="payNoteHtml" style="text-align:left;">Du betaler for <strong>præcis det menukort, du ser nu</strong>. Tjek at alt er rigtigt — tekst, priser og stavning — <strong>inden</strong> du betaler. Hver hentning koster 99 kr., så en ny eller rettet menu kræver ny betaling.</p>
+        <div class="code-row">
+          <input class="field code-input" id="codeInput" data-i18n-ph="codePh" placeholder="Har du en kode?">
+          <button class="btn-mini" id="useCodeBtn" data-i18n="useCode">Brug kode</button>
+        </div>
+        <p class="hint" id="wmStatus" style="text-align:left; margin:0;"></p>
+        <button class="btn btn-primary" id="getFileBtn" data-i18n="getFile" style="display:none;">✓ Betaling gennemført — hent din fil nu</button>
+        <button class="btn btn-ghost" id="resetBtn" data-i18n="resetAll">Ryd alt og start forfra</button>
+        <p class="hint" data-i18n="pdfNote">Du får én færdig PDF i den papirstørrelse, du har valgt — hele menuen samlet på ét ark.</p>
+      </div>
+    </div>
+
+    <!-- ============ PREVIEW ============ -->
+    <div class="stage">
+      <div class="paper-scale" id="paperScale">
+        <div class="menu-paper" id="paper"><div id="paperInner"></div><div class="wm-overlay" id="wmOverlay"></div></div>
+      </div>
+      <div class="stage-hint" id="overflowHint" data-i18n="overflowHint" style="display:none;">Indholdet fylder mere end siden — gør teksten mindre, brug 2 kolonner, eller vælg en større papirstørrelse.</div>
+    </div>
+
+  </div>
+
+  <div class="ctx-pop" id="ctxPop"></div>
+
+<script>
+  const byId = id => document.getElementById(id);
+  let uid = 1; const nid = () => String(uid++);
+
+  // ============ INTERFACE TRANSLATIONS (i18n) ============
+  const LS_LANG = 'menukort_lang_v1';
+  const I18N = {
+    da: {
+      brandH1:'Menukort',
+      fpTitle:'Professionelle menukort på minutter',
+      fpLead:'Skriv dine retter, vælg en stil, og hent et færdigt menukort som PDF — uden grafiker og uden designprogrammer.',
+      fpF1:'Svært at lave grimt — det ser godt ud med det samme',
+      fpF2:'Gem dit menukort og ret priser eller retter, når som helst',
+      fpF3:'Til caféer, restauranter og private fester',
+      fpF4:'Dit første menukort er gratis',
+      fpStart:'Lav dit menukort',
+      fpSub:'Ingen oprettelse nødvendig — gå direkte i gang.', backToFront:'Tilbage til forsiden',
+      tagline:'Skriv dine retter, tilpas udseendet — og klik direkte på en tekst i menuen for at redigere den.',
+      myMenus:'Mine menuer', autosaveTitle:'Gemmes automatisk',
+      saveAs:'＋ Gem som…', export:'⬇ Eksportér', import:'⬆ Importér',
+      heading:'Overskrift', titlePh:'Fx Aftenmenu', subtitlePh:'Undertitel (valgfri) — fx dato eller anledning',
+      logo:'Logo (valgfri)', removeLogo:'Fjern logo',
+      style:'Stil', presetNote:'Vælg et udgangspunkt — finjustér derefter alt nedenfor.',
+      customizeDesign:'Tilpas design', paperSize:'Papirstørrelse',
+      fmtLetter:'Letter — 8,5 × 11"', fmtSquare:'Kvadrat — 210 × 210 mm', fmtNarrow:'Smal — 105 × 210 mm',
+      orientation:'Retning', portrait:'Stående', landscape:'Liggende',
+      accent:'Accent', paper:'Papir', textColor:'Tekst',
+      titleFont:'Titel-skrifttype', bodyFont:'Brødtekst-skrifttype', textSize:'Tekststørrelse', spacing:'Afstand mellem tekster', numberTitle:'Nummer foran retten — til/fra', numberFieldTitle:'Eget tal (tomt = automatisk)', secSubtextPh:'Undertekst (valgfri) — fx “Perfekt til at dele”', szSmall:'Lille', szMedium:'Mellem', szLarge:'Stor', szSizeHead:'Overskrift-størrelse', szSizeSub:'Underoverskrift-størrelse', szGap:'Afstand til undertekst', szMatchAll:'Gør alle sektioner som denne', szMatchAllTitle:'Giv alle andre sektioner samme størrelse og afstand som denne', pSubtext:'Undertekst', editSubtext:'Rediger undertekst',
+      layout:'Opstilling', stacked:'Under hinanden', sideBySide:'Ved siden af hinanden',
+      layoutHintStacked:'Sektionerne står under hinanden og fortsætter i næste spalte, når siden er fuld. Vælg hvor mange spalter der må bruges.',
+      layoutHintCols:'Hver sektion får sin egen spalte ved siden af hinanden.',
+      alignment:'Justering', alignCenter:'Centreret', alignLeft:'Venstre', columns:'Antal kolonner',
+      leaders:'Prik-linjer', on:'Til', off:'Fra', accentBar:'Accentstribe',
+      dividerLabel:'Skillesymbol under titel', divOrnament:'❦  Ornament', divStar:'✦  Stjerne', divDot:'•  Prik', divDash:'—  Streg', divNone:'Intet',
+      dishesLabel:'Retter', footerPrices:'Sidefod & priser',
+      footerPh:'Sidefod (valgfri) — fx “Allergener oplyses på forespørgsel”',
+      currency:'Valuta', placement:'Placering', after:'Efter', before:'Før',
+      translateMenu:'Oversæt menu', from:'Fra', to:'Til', translateNow:'Oversæt menu nu',
+      revertTranslation:'↩ Fortryd oversættelse — gendan original',
+      translateStatusDefault:'Gratis maskinoversættelse — læs altid teksten igennem. Kræver internet.',
+      payPdf:'Betal & hent PDF — 99 kr.', payImg:'Betal & hent som billede — 99 kr.',
+      payNoteHtml:'Forhåndsvisningen vises med et vandmærke. Når du betaler, <strong>fjernes vandmærket</strong>, og du henter en ren fil med præcis det menukort, du ser nu. Tjek alt — tekst, priser og stavning — <strong>inden</strong> du betaler. Hver hentning koster 99 kr.',
+      getFile:'✓ Betaling gennemført — hent din fil nu', resetAll:'Ryd alt og start forfra', codePh:'Har du en kode?', useCode:'Brug kode', codeApplied:'Kode godkendt ✓ — hent din fil gratis med knapperne ovenfor.', codeInvalid:'Koden er ikke gyldig. Tjek den, og prøv igen.', codeUsed:'Denne kode er allerede brugt i denne browser.', priceLabelPh:'Pris-labels (fx Reg | Stor)', priceAddTitle:'Tilføj endnu en pris', priceDelTitle:'Fjern sidste pris', pPriceLabel:'Pris-label', editPriceLabel:'Rediger pris-label', alignLabel:'Justering af overskrift', alignLeft:'Venstre', alignCenter:'Midten', alignRight:'Højre', bgLabel:'Farvet baggrund', bgAdd:'Tilføj baggrund', bgRemove:'Fjern', radiusLabel:'Hjørner', radiusSharp:'Skarpe', radiusSoft:'Bløde', radiusRound:'Runde', textColorLabel:'Tekstfarve', textColorAdd:'Vælg farve', collapseRow:'Fold sektion sammen', expandRow:'Fold sektion ud', colLabel:'Kolonne', colAuto:'Auto', payPdfFree:'Hent PDF gratis', payImgFree:'Hent billede gratis',
+      pdfNote:'Du får én færdig PDF i den papirstørrelse, du har valgt — hele menuen samlet på ét ark.',
+      overflowHint:'Indholdet fylder mere end siden — gør teksten mindre, brug 2 kolonner, eller vælg en større papirstørrelse.',
+      secNamePh:'Sektionsnavn', moveSecUp:'Flyt sektion op', moveSecDown:'Flyt sektion ned', delSec:'Slet sektion',
+      subheadingPh:'Underoverskrift', moveUp:'Flyt op', moveDown:'Flyt ned', delSubheading:'Slet underoverskrift',
+      dishNamePh:'Rettens navn', pricePh:'Pris', descPh:'Beskrivelse (valgfri)', delDish:'Slet ret',
+      addDish:'+ Tilføj ret', addSubheading:'+ Tilføj underoverskrift', addSection:'+ Tilføj sektion',
+      emptyNote:'Tilføj retter i panelet til venstre …',
+      pHeading:'Overskrift', pSubtitle:'Undertitel', pSection:'Sektion', pSubheading:'Underoverskrift', pDish:'Ret',
+      edit:'Rediger', editHeading:'Rediger overskrift', editSubtitle:'Rediger undertitel', editSectionName:'Rediger sektionsnavn',
+      addDishHere:'Tilføj ret her', editSubheadingItem:'Rediger underoverskrift',
+      fieldName:'navn', fieldDesc:'beskrivelse', fieldPrice:'pris', fieldText:'tekst',
+      addDescription:'Tilføj beskrivelse', addPrice:'Tilføj pris',
+      moveDishUp:'Flyt ret op', moveDishDown:'Flyt ret ned', duplicateDish:'Dublér ret',
+      libEmpty:'Ingen gemte menuer endnu — tryk “Gem som…”.', open:'Åbn', del:'Slet',
+      confirmDelete:'Slet “{name}”?', confirmReset:'Rydder alle retter og indhold (designet beholdes). Fortsæt?',
+      confirmOverwrite:'“{name}” findes allerede. Overskriv den?',
+      askName:'Giv menuen et navn:',
+      stTransSame:'Vælg to forskellige sprog.', stTransNone:'Der er ingen tekst at oversætte endnu.',
+      stTransOk:'Oversat ✓ — finjustér gerne teksten, og husk at læse den igennem.',
+      stTransPartial:'Oversat, men {n} tekst(er) blev ikke ændret. Prøv igen, eller ret dem manuelt.',
+      stTransFail:'Kunne ikke oversætte. Forhåndsvisningen her i chatten blokerer måske; prøv at åbne den downloadede fil i din browser. (Det daglige gratis-loft kan også være nået.)',
+      stTransReverted:'Original gendannet.',
+      stAutosaveOk:'Gemt automatisk i denne browser.', stAutosaveFail:'Kunne ikke gemme automatisk — måske er logoet for stort til browserens lager.',
+      stOpened:'Åbnede “{name}”.', stDeleted:'Menu slettet.',
+      stStorageOff:'Lagring virker ikke her — åbn den downloadede fil i din browser.',
+      stSavedAs:'Gemt som “{name}”.', stSaveFail:'Kunne ikke gemme (måske er logoet for stort til browserens lager).',
+      stExported:'Eksporteret som .json-fil (din backup).', stImported:'Importeret ✓',
+      stImportNotMenu:'Filen kunne ikke læses som en menu.', stImportInvalid:'Ugyldig fil — kunne ikke importere.',
+      getImg:'✓ Betaling gennemført — hent dit billede nu', getPdf:'✓ Betaling gennemført — hent din PDF nu',
+      stPayOpenFail:'Kunne ikke åbne betaling. Det virker kun på den udgivne side (med serveren), ikke når filen åbnes lokalt.',
+      stPayCancelled:'Betalingen blev afbrudt — der er ikke trukket penge.',
+      stPayConfirming:'Bekræfter din betaling …',
+      stPayUnlocked:'Vandmærket er fjernet — hent din fil med knappen herover. Bagefter kommer vandmærket tilbage, så en ny menu kræver ny betaling.',
+      stPayVerifyFail:'Kunne ikke bekræfte betalingen. Skriv til mig, hvis beløbet er trukket.',
+      stPayReady:'Din betaling er klar — hent din fil med knappen herover.',
+      pdfFail:'Kunne ikke lave PDF her: {msg}. Prøv igen, eller brug billed-download.',
+      pngFail:'Kunne ikke generere billede her. Brug PDF i stedet.',
+      saveStatusInit:'Dine ændringer gemmes automatisk i denne browser.',
+      saveStatusInitOff:'Lagring virker ikke i forhåndsvisningen — åbn den downloadede fil i din browser.'
+    },
+    en: {
+      brandH1:'Menu Maker',
+      fpTitle:'Professional menu cards in minutes',
+      fpLead:'Write your dishes, choose a style, and download a finished menu as a PDF — no designer, no design software.',
+      fpF1:'Hard to make ugly — it looks good instantly',
+      fpF2:'Save your menu and change prices or dishes anytime',
+      fpF3:'For cafés, restaurants and private events',
+      fpF4:'Your first menu card is free',
+      fpStart:'Make your menu',
+      fpSub:'No sign-up needed — start right away.', backToFront:'Back to front page',
+      tagline:'Type your dishes, tweak the look — and click any text in the menu to edit it.',
+      myMenus:'My menus', autosaveTitle:'Saved automatically',
+      saveAs:'＋ Save as…', export:'⬇ Export', import:'⬆ Import',
+      heading:'Heading', titlePh:'E.g. Dinner menu', subtitlePh:'Subtitle (optional) — e.g. date or occasion',
+      logo:'Logo (optional)', removeLogo:'Remove logo',
+      style:'Style', presetNote:'Pick a starting point — then fine-tune everything below.',
+      customizeDesign:'Customize design', paperSize:'Paper size',
+      fmtLetter:'Letter — 8.5 × 11"', fmtSquare:'Square — 210 × 210 mm', fmtNarrow:'Narrow — 105 × 210 mm',
+      orientation:'Orientation', portrait:'Portrait', landscape:'Landscape',
+      accent:'Accent', paper:'Paper', textColor:'Text',
+      titleFont:'Title font', bodyFont:'Body font', textSize:'Text size', spacing:'Spacing between text', numberTitle:'Number in front of the dish — on/off', numberFieldTitle:'Custom number (empty = automatic)', secSubtextPh:'Subtext (optional) — e.g. “Perfect for sharing”', szSmall:'Small', szMedium:'Medium', szLarge:'Large', szSizeHead:'Heading size', szSizeSub:'Subheading size', szGap:'Gap to subtext', szMatchAll:'Make all sections like this', szMatchAllTitle:'Give all other sections the same size and gap as this one', pSubtext:'Subtext', editSubtext:'Edit subtext',
+      layout:'Layout', stacked:'Stacked', sideBySide:'Side by side',
+      layoutHintStacked:'Sections stack vertically and continue in the next column when the page is full. Choose how many columns may be used.',
+      layoutHintCols:'Each section gets its own column, side by side.',
+      alignment:'Alignment', alignCenter:'Center', alignLeft:'Left', columns:'Columns',
+      leaders:'Dot leaders', on:'On', off:'Off', accentBar:'Accent bar',
+      dividerLabel:'Divider under title', divOrnament:'❦  Ornament', divStar:'✦  Star', divDot:'•  Dot', divDash:'—  Dash', divNone:'None',
+      dishesLabel:'Dishes', footerPrices:'Footer & prices',
+      footerPh:'Footer (optional) — e.g. “Allergens on request”',
+      currency:'Currency', placement:'Placement', after:'After', before:'Before',
+      translateMenu:'Translate menu', from:'From', to:'To', translateNow:'Translate menu now',
+      revertTranslation:'↩ Undo translation — restore original',
+      translateStatusDefault:'Free machine translation — always proofread it. Requires internet.',
+      payPdf:'Pay & download PDF — 99 kr.', payImg:'Pay & download as image — 99 kr.',
+      payNoteHtml:'The preview is shown with a watermark. When you pay, <strong>the watermark is removed</strong> and you download a clean file with exactly the menu you see now. Check everything — text, prices and spelling — <strong>before</strong> you pay. Each download costs 99 kr.',
+      getFile:'✓ Payment complete — download your file now', resetAll:'Clear everything and start over', codePh:'Have a code?', useCode:'Use code', codeApplied:'Code accepted ✓ — download your file for free with the buttons above.', codeInvalid:'The code is not valid. Check it and try again.', codeUsed:'This code has already been used in this browser.', priceLabelPh:'Price labels (e.g. Reg | Large)', priceAddTitle:'Add another price', priceDelTitle:'Remove last price', pPriceLabel:'Price label', editPriceLabel:'Edit price label', alignLabel:'Heading alignment', alignLeft:'Left', alignCenter:'Center', alignRight:'Right', bgLabel:'Colored background', bgAdd:'Add background', bgRemove:'Remove', radiusLabel:'Corners', radiusSharp:'Sharp', radiusSoft:'Soft', radiusRound:'Round', textColorLabel:'Text color', textColorAdd:'Choose color', collapseRow:'Collapse section', expandRow:'Expand section', colLabel:'Column', colAuto:'Auto', payPdfFree:'Download PDF for free', payImgFree:'Download image for free',
+      pdfNote:'You get one finished PDF in the paper size you chose — the whole menu on a single sheet.',
+      overflowHint:'The content is taller than the page — make the text smaller, use 2 columns, or choose a larger paper size.',
+      secNamePh:'Section name', moveSecUp:'Move section up', moveSecDown:'Move section down', delSec:'Delete section',
+      subheadingPh:'Subheading', moveUp:'Move up', moveDown:'Move down', delSubheading:'Delete subheading',
+      dishNamePh:'Dish name', pricePh:'Price', descPh:'Description (optional)', delDish:'Delete dish',
+      addDish:'+ Add dish', addSubheading:'+ Add subheading', addSection:'+ Add section',
+      emptyNote:'Add dishes in the panel on the left …',
+      pHeading:'Heading', pSubtitle:'Subtitle', pSection:'Section', pSubheading:'Subheading', pDish:'Dish',
+      edit:'Edit', editHeading:'Edit heading', editSubtitle:'Edit subtitle', editSectionName:'Edit section name',
+      addDishHere:'Add dish here', editSubheadingItem:'Edit subheading',
+      fieldName:'name', fieldDesc:'description', fieldPrice:'price', fieldText:'text',
+      addDescription:'Add description', addPrice:'Add price',
+      moveDishUp:'Move dish up', moveDishDown:'Move dish down', duplicateDish:'Duplicate dish',
+      libEmpty:'No saved menus yet — tap “Save as…”.', open:'Open', del:'Delete',
+      confirmDelete:'Delete “{name}”?', confirmReset:'This clears all dishes and content (the design is kept). Continue?',
+      confirmOverwrite:'“{name}” already exists. Overwrite it?',
+      askName:'Give the menu a name:',
+      stTransSame:'Choose two different languages.', stTransNone:'There is no text to translate yet.',
+      stTransOk:'Translated ✓ — feel free to fine-tune the text, and remember to proofread it.',
+      stTransPartial:'Translated, but {n} text(s) were not changed. Try again, or fix them manually.',
+      stTransFail:'Could not translate. The preview here in the chat may be blocking it; try opening the downloaded file in your browser. (The daily free limit may also have been reached.)',
+      stTransReverted:'Original restored.',
+      stAutosaveOk:'Saved automatically in this browser.', stAutosaveFail:'Could not save automatically — the logo may be too large for the browser’s storage.',
+      stOpened:'Opened “{name}”.', stDeleted:'Menu deleted.',
+      stStorageOff:'Storage does not work here — open the downloaded file in your browser.',
+      stSavedAs:'Saved as “{name}”.', stSaveFail:'Could not save (the logo may be too large for the browser’s storage).',
+      stExported:'Exported as a .json file (your backup).', stImported:'Imported ✓',
+      stImportNotMenu:'The file could not be read as a menu.', stImportInvalid:'Invalid file — could not import.',
+      getImg:'✓ Payment complete — download your image now', getPdf:'✓ Payment complete — download your PDF now',
+      stPayOpenFail:'Could not open payment. It only works on the published site (with the server), not when the file is opened locally.',
+      stPayCancelled:'The payment was cancelled — no money was charged.',
+      stPayConfirming:'Confirming your payment …',
+      stPayUnlocked:'The watermark has been removed — download your file with the button above. Afterwards the watermark returns, so a new menu requires a new payment.',
+      stPayVerifyFail:'Could not confirm the payment. Write to me if the amount was charged.',
+      stPayReady:'Your payment is ready — download your file with the button above.',
+      pdfFail:'Could not create the PDF here: {msg}. Try again, or use image download.',
+      pngFail:'Could not generate the image here. Use PDF instead.',
+      saveStatusInit:'Your changes are saved automatically in this browser.',
+      saveStatusInitOff:'Storage does not work in the preview — open the downloaded file in your browser.'
+    },
+    tr: {
+      brandH1:'Menü Oluşturucu',
+      fpTitle:'Dakikalar içinde profesyonel menü kartları',
+      fpLead:'Yemeklerinizi yazın, bir stil seçin ve hazır menüyü PDF olarak indirin — tasarımcı ve tasarım programı olmadan.',
+      fpF1:'Çirkin yapmak zor — anında güzel görünür',
+      fpF2:'Menünüzü kaydedin, fiyatları veya yemekleri istediğiniz zaman değiştirin',
+      fpF3:'Kafeler, restoranlar ve özel etkinlikler için',
+      fpF4:'İlk menü kartınız ücretsiz',
+      fpStart:'Menünü oluştur',
+      fpSub:'Kayıt gerekmez — hemen başlayın.', backToFront:'Ana sayfaya dön',
+      tagline:'Yemeklerinizi yazın, görünümü ayarlayın — ve düzenlemek için menüdeki herhangi bir metne tıklayın.',
+      myMenus:'Menülerim', autosaveTitle:'Otomatik kaydedilir',
+      saveAs:'＋ Farklı kaydet…', export:'⬇ Dışa aktar', import:'⬆ İçe aktar',
+      heading:'Başlık', titlePh:'Örn. Akşam menüsü', subtitlePh:'Alt başlık (isteğe bağlı) — örn. tarih veya etkinlik',
+      logo:'Logo (isteğe bağlı)', removeLogo:'Logoyu kaldır',
+      style:'Stil', presetNote:'Bir başlangıç noktası seçin — ardından aşağıdaki her şeyi ince ayarlayın.',
+      customizeDesign:'Tasarımı özelleştir', paperSize:'Kağıt boyutu',
+      fmtLetter:'Letter — 8,5 × 11"', fmtSquare:'Kare — 210 × 210 mm', fmtNarrow:'Dar — 105 × 210 mm',
+      orientation:'Yön', portrait:'Dikey', landscape:'Yatay',
+      accent:'Vurgu', paper:'Kağıt', textColor:'Metin',
+      titleFont:'Başlık yazı tipi', bodyFont:'Gövde yazı tipi', textSize:'Metin boyutu', spacing:'Metinler arası boşluk', numberTitle:'Yemeğin önünde numara — açık/kapalı', numberFieldTitle:'Özel numara (boş = otomatik)', secSubtextPh:'Alt metin (isteğe bağlı) — örn. “Paylaşmak için ideal”', szSmall:'Küçük', szMedium:'Orta', szLarge:'Büyük', szSizeHead:'Başlık boyutu', szSizeSub:'Alt başlık boyutu', szGap:'Alt metne boşluk', szMatchAll:'Tüm bölümleri buna eşitle', szMatchAllTitle:'Diğer tüm bölümlere bununla aynı boyut ve boşluğu ver', pSubtext:'Alt metin', editSubtext:'Alt metni düzenle',
+      layout:'Düzen', stacked:'Alt alta', sideBySide:'Yan yana',
+      layoutHintStacked:'Bölümler alt alta dizilir ve sayfa dolduğunda bir sonraki sütunda devam eder. Kaç sütun kullanılabileceğini seçin.',
+      layoutHintCols:'Her bölüm yan yana kendi sütununu alır.',
+      alignment:'Hizalama', alignCenter:'Ortala', alignLeft:'Sol', columns:'Sütun sayısı',
+      leaders:'Nokta çizgileri', on:'Açık', off:'Kapalı', accentBar:'Vurgu çubuğu',
+      dividerLabel:'Başlık altı ayraç', divOrnament:'❦  Süs', divStar:'✦  Yıldız', divDot:'•  Nokta', divDash:'—  Çizgi', divNone:'Yok',
+      dishesLabel:'Yemekler', footerPrices:'Altbilgi ve fiyatlar',
+      footerPh:'Altbilgi (isteğe bağlı) — örn. “Alerjenler talep üzerine bildirilir”',
+      currency:'Para birimi', placement:'Konum', after:'Sonra', before:'Önce',
+      translateMenu:'Menüyü çevir', from:'Kaynak', to:'Hedef', translateNow:'Menüyü şimdi çevir',
+      revertTranslation:'↩ Çeviriyi geri al — orijinali geri yükle',
+      translateStatusDefault:'Ücretsiz makine çevirisi — her zaman kontrol edin. İnternet gerektirir.',
+      payPdf:'Öde ve PDF indir — 99 kr.', payImg:'Öde ve resim olarak indir — 99 kr.',
+      payNoteHtml:'Önizleme bir filigranla gösterilir. Ödeme yaptığınızda <strong>filigran kaldırılır</strong> ve tam olarak gördüğünüz menüyle temiz bir dosya indirirsiniz. Ödeme yapmadan <strong>önce</strong> her şeyi kontrol edin — metin, fiyatlar ve yazım. Her indirme 99 kr. tutar.',
+      getFile:'✓ Ödeme tamamlandı — dosyanızı şimdi indirin', resetAll:'Her şeyi temizle ve baştan başla', codePh:'Kodunuz var mı?', useCode:'Kodu kullan', codeApplied:'Kod kabul edildi ✓ — yukarıdaki düğmelerle dosyanızı ücretsiz indirin.', codeInvalid:'Kod geçerli değil. Kontrol edip tekrar deneyin.', codeUsed:'Bu kod bu tarayıcıda zaten kullanıldı.', priceLabelPh:'Fiyat etiketleri (örn. Reg | Büyük)', priceAddTitle:'Başka bir fiyat ekle', priceDelTitle:'Son fiyatı kaldır', pPriceLabel:'Fiyat etiketi', editPriceLabel:'Fiyat etiketini düzenle', alignLabel:'Başlık hizalama', alignLeft:'Sol', alignCenter:'Orta', alignRight:'Sağ', bgLabel:'Renkli arka plan', bgAdd:'Arka plan ekle', bgRemove:'Kaldır', radiusLabel:'Köşeler', radiusSharp:'Keskin', radiusSoft:'Yumuşak', radiusRound:'Yuvarlak', textColorLabel:'Metin rengi', textColorAdd:'Renk seç', collapseRow:'Bölümü daralt', expandRow:'Bölümü genişlet', colLabel:'Sütun', colAuto:'Otomatik', payPdfFree:'PDF’i ücretsiz indir', payImgFree:'Resmi ücretsiz indir',
+      pdfNote:'Seçtiğiniz kağıt boyutunda tek bir bitmiş PDF alırsınız — tüm menü tek bir sayfada.',
+      overflowHint:'İçerik sayfadan daha uzun — metni küçültün, 2 sütun kullanın veya daha büyük bir kağıt boyutu seçin.',
+      secNamePh:'Bölüm adı', moveSecUp:'Bölümü yukarı taşı', moveSecDown:'Bölümü aşağı taşı', delSec:'Bölümü sil',
+      subheadingPh:'Alt başlık', moveUp:'Yukarı taşı', moveDown:'Aşağı taşı', delSubheading:'Alt başlığı sil',
+      dishNamePh:'Yemek adı', pricePh:'Fiyat', descPh:'Açıklama (isteğe bağlı)', delDish:'Yemeği sil',
+      addDish:'+ Yemek ekle', addSubheading:'+ Alt başlık ekle', addSection:'+ Bölüm ekle',
+      emptyNote:'Soldaki panelden yemek ekleyin …',
+      pHeading:'Başlık', pSubtitle:'Alt başlık', pSection:'Bölüm', pSubheading:'Alt başlık', pDish:'Yemek',
+      edit:'Düzenle', editHeading:'Başlığı düzenle', editSubtitle:'Alt başlığı düzenle', editSectionName:'Bölüm adını düzenle',
+      addDishHere:'Buraya yemek ekle', editSubheadingItem:'Alt başlığı düzenle',
+      fieldName:'adı', fieldDesc:'açıklamayı', fieldPrice:'fiyatı', fieldText:'metni',
+      addDescription:'Açıklama ekle', addPrice:'Fiyat ekle',
+      moveDishUp:'Yemeği yukarı taşı', moveDishDown:'Yemeği aşağı taşı', duplicateDish:'Yemeği çoğalt',
+      libEmpty:'Henüz kayıtlı menü yok — “Farklı kaydet…”e dokunun.', open:'Aç', del:'Sil',
+      confirmDelete:'“{name}” silinsin mi?', confirmReset:'Tüm yemekler ve içerik temizlenir (tasarım korunur). Devam edilsin mi?',
+      confirmOverwrite:'“{name}” zaten var. Üzerine yazılsın mı?',
+      askName:'Menüye bir ad verin:',
+      stTransSame:'İki farklı dil seçin.', stTransNone:'Henüz çevrilecek metin yok.',
+      stTransOk:'Çevrildi ✓ — metni ince ayarlayabilirsiniz, kontrol etmeyi unutmayın.',
+      stTransPartial:'Çevrildi, ancak {n} metin değiştirilmedi. Tekrar deneyin veya manuel olarak düzeltin.',
+      stTransFail:'Çevrilemedi. Buradaki sohbet önizlemesi engelliyor olabilir; indirilen dosyayı tarayıcınızda açmayı deneyin. (Günlük ücretsiz sınıra da ulaşılmış olabilir.)',
+      stTransReverted:'Orijinal geri yüklendi.',
+      stAutosaveOk:'Bu tarayıcıya otomatik kaydedildi.', stAutosaveFail:'Otomatik kaydedilemedi — logo tarayıcının deposu için çok büyük olabilir.',
+      stOpened:'“{name}” açıldı.', stDeleted:'Menü silindi.',
+      stStorageOff:'Depolama burada çalışmıyor — indirilen dosyayı tarayıcınızda açın.',
+      stSavedAs:'“{name}” olarak kaydedildi.', stSaveFail:'Kaydedilemedi (logo tarayıcının deposu için çok büyük olabilir).',
+      stExported:'.json dosyası olarak dışa aktarıldı (yedeğiniz).', stImported:'İçe aktarıldı ✓',
+      stImportNotMenu:'Dosya bir menü olarak okunamadı.', stImportInvalid:'Geçersiz dosya — içe aktarılamadı.',
+      getImg:'✓ Ödeme tamamlandı — resminizi şimdi indirin', getPdf:'✓ Ödeme tamamlandı — PDF’inizi şimdi indirin',
+      stPayOpenFail:'Ödeme açılamadı. Yalnızca yayınlanan sitede (sunucuyla) çalışır, dosya yerel olarak açıldığında değil.',
+      stPayCancelled:'Ödeme iptal edildi — para çekilmedi.',
+      stPayConfirming:'Ödemeniz onaylanıyor …',
+      stPayUnlocked:'Filigran kaldırıldı — yukarıdaki düğmeyle dosyanızı indirin. Ardından filigran geri gelir, bu yüzden yeni bir menü yeni bir ödeme gerektirir.',
+      stPayVerifyFail:'Ödeme onaylanamadı. Tutar çekildiyse bana yazın.',
+      stPayReady:'Ödemeniz hazır — yukarıdaki düğmeyle dosyanızı indirin.',
+      pdfFail:'PDF burada oluşturulamadı: {msg}. Tekrar deneyin veya resim indirmeyi kullanın.',
+      pngFail:'Resim burada oluşturulamadı. Bunun yerine PDF kullanın.',
+      saveStatusInit:'Değişiklikleriniz bu tarayıcıya otomatik kaydedilir.',
+      saveStatusInitOff:'Depolama önizlemede çalışmıyor — indirilen dosyayı tarayıcınızda açın.'
+    },
+    uk: {
+      brandH1:'Конструктор меню',
+      fpTitle:'Професійні меню-картки за лічені хвилини',
+      fpLead:'Впишіть свої страви, оберіть стиль і завантажте готове меню у форматі PDF — без дизайнера та програм для дизайну.',
+      fpF1:'Важко зробити негарно — гарний вигляд одразу',
+      fpF2:'Зберігайте меню та змінюйте ціни чи страви будь-коли',
+      fpF3:'Для кафе, ресторанів і приватних подій',
+      fpF4:'Перша меню-картка безкоштовна',
+      fpStart:'Створити меню',
+      fpSub:'Реєстрація не потрібна — почніть одразу.', backToFront:'Назад на головну',
+      tagline:'Введіть свої страви, налаштуйте вигляд — і натисніть на будь-який текст у меню, щоб відредагувати його.',
+      myMenus:'Мої меню', autosaveTitle:'Зберігається автоматично',
+      saveAs:'＋ Зберегти як…', export:'⬇ Експорт', import:'⬆ Імпорт',
+      heading:'Заголовок', titlePh:'Напр. Вечірнє меню', subtitlePh:'Підзаголовок (необов’язково) — напр. дата або привід',
+      logo:'Логотип (необов’язково)', removeLogo:'Видалити логотип',
+      style:'Стиль', presetNote:'Виберіть відправну точку — потім налаштуйте все нижче.',
+      customizeDesign:'Налаштувати дизайн', paperSize:'Розмір паперу',
+      fmtLetter:'Letter — 8,5 × 11"', fmtSquare:'Квадрат — 210 × 210 мм', fmtNarrow:'Вузький — 105 × 210 мм',
+      orientation:'Орієнтація', portrait:'Книжкова', landscape:'Альбомна',
+      accent:'Акцент', paper:'Папір', textColor:'Текст',
+      titleFont:'Шрифт заголовка', bodyFont:'Основний шрифт', textSize:'Розмір тексту', spacing:'Відстань між текстами', numberTitle:'Номер перед стравою — увімк./вимк.', numberFieldTitle:'Власний номер (порожньо = автоматично)', secSubtextPh:'Підтекст (необов’язково) — напр. «Ідеально для спільного столу»', szSmall:'Малий', szMedium:'Середній', szLarge:'Великий', szSizeHead:'Розмір заголовка', szSizeSub:'Розмір підзаголовка', szGap:'Відступ до підтексту', szMatchAll:'Зробити всі розділи як цей', szMatchAllTitle:'Надати всім іншим розділам такий самий розмір і відступ, як у цього', pSubtext:'Підтекст', editSubtext:'Редагувати підтекст',
+      layout:'Розташування', stacked:'Одне під одним', sideBySide:'Поруч',
+      layoutHintStacked:'Розділи розміщуються один під одним і продовжуються в наступній колонці, коли сторінка заповнена. Виберіть, скільки колонок можна використати.',
+      layoutHintCols:'Кожен розділ отримує власну колонку поруч.',
+      alignment:'Вирівнювання', alignCenter:'По центру', alignLeft:'Ліворуч', columns:'Кількість колонок',
+      leaders:'Пунктир', on:'Увімк.', off:'Вимк.', accentBar:'Акцентна смуга',
+      dividerLabel:'Роздільник під заголовком', divOrnament:'❦  Орнамент', divStar:'✦  Зірка', divDot:'•  Крапка', divDash:'—  Тире', divNone:'Немає',
+      dishesLabel:'Страви', footerPrices:'Нижній колонтитул і ціни',
+      footerPh:'Нижній колонтитул (необов’язково) — напр. «Алергени за запитом»',
+      currency:'Валюта', placement:'Розташування', after:'Після', before:'Перед',
+      translateMenu:'Перекласти меню', from:'З', to:'На', translateNow:'Перекласти меню зараз',
+      revertTranslation:'↩ Скасувати переклад — відновити оригінал',
+      translateStatusDefault:'Безкоштовний машинний переклад — завжди перевіряйте текст. Потрібен інтернет.',
+      payPdf:'Сплатити та завантажити PDF — 99 kr.', payImg:'Сплатити та завантажити як зображення — 99 kr.',
+      payNoteHtml:'Попередній перегляд показано з водяним знаком. Коли ви платите, <strong>водяний знак видаляється</strong>, і ви завантажуєте чистий файл саме з тим меню, яке бачите зараз. Перевірте все — текст, ціни та орфографію — <strong>перш ніж</strong> платити. Кожне завантаження коштує 99 kr.',
+      getFile:'✓ Оплату завершено — завантажте файл зараз', resetAll:'Очистити все та почати спочатку', codePh:'Маєте код?', useCode:'Застосувати код', codeApplied:'Код прийнято ✓ — завантажте файл безкоштовно кнопками вище.', codeInvalid:'Код недійсний. Перевірте його та спробуйте ще раз.', codeUsed:'Цей код уже використано в цьому браузері.', priceLabelPh:'Мітки цін (напр. Reg | Великий)', priceAddTitle:'Додати ще одну ціну', priceDelTitle:'Видалити останню ціну', pPriceLabel:'Мітка ціни', editPriceLabel:'Редагувати мітку ціни', alignLabel:'Вирівнювання заголовка', alignLeft:'Ліворуч', alignCenter:'По центру', alignRight:'Праворуч', bgLabel:'Кольоровий фон', bgAdd:'Додати фон', bgRemove:'Прибрати', radiusLabel:'Кути', radiusSharp:'Гострі', radiusSoft:'М’які', radiusRound:'Круглі', textColorLabel:'Колір тексту', textColorAdd:'Вибрати колір', collapseRow:'Згорнути розділ', expandRow:'Розгорнути розділ', colLabel:'Колонка', colAuto:'Авто', payPdfFree:'Завантажити PDF безкоштовно', payImgFree:'Завантажити зображення безкоштовно',
+      pdfNote:'Ви отримаєте один готовий PDF у вибраному розмірі паперу — усе меню на одному аркуші.',
+      overflowHint:'Вміст більший за сторінку — зменшіть текст, використайте 2 колонки або виберіть більший розмір паперу.',
+      secNamePh:'Назва розділу', moveSecUp:'Перемістити розділ вгору', moveSecDown:'Перемістити розділ вниз', delSec:'Видалити розділ',
+      subheadingPh:'Підзаголовок', moveUp:'Перемістити вгору', moveDown:'Перемістити вниз', delSubheading:'Видалити підзаголовок',
+      dishNamePh:'Назва страви', pricePh:'Ціна', descPh:'Опис (необов’язково)', delDish:'Видалити страву',
+      addDish:'+ Додати страву', addSubheading:'+ Додати підзаголовок', addSection:'+ Додати розділ',
+      emptyNote:'Додайте страви на панелі ліворуч …',
+      pHeading:'Заголовок', pSubtitle:'Підзаголовок', pSection:'Розділ', pSubheading:'Підзаголовок', pDish:'Страва',
+      edit:'Редагувати', editHeading:'Редагувати заголовок', editSubtitle:'Редагувати підзаголовок', editSectionName:'Редагувати назву розділу',
+      addDishHere:'Додати страву сюди', editSubheadingItem:'Редагувати підзаголовок',
+      fieldName:'назву', fieldDesc:'опис', fieldPrice:'ціну', fieldText:'текст',
+      addDescription:'Додати опис', addPrice:'Додати ціну',
+      moveDishUp:'Перемістити страву вгору', moveDishDown:'Перемістити страву вниз', duplicateDish:'Дублювати страву',
+      libEmpty:'Збережених меню ще немає — натисніть «Зберегти як…».', open:'Відкрити', del:'Видалити',
+      confirmDelete:'Видалити «{name}»?', confirmReset:'Це очистить усі страви та вміст (дизайн збережеться). Продовжити?',
+      confirmOverwrite:'«{name}» вже існує. Перезаписати?',
+      askName:'Дайте меню назву:',
+      stTransSame:'Виберіть дві різні мови.', stTransNone:'Поки немає тексту для перекладу.',
+      stTransOk:'Перекладено ✓ — за бажанням відредагуйте текст і не забудьте перевірити його.',
+      stTransPartial:'Перекладено, але {n} текст(ів) не змінено. Спробуйте ще раз або виправте вручну.',
+      stTransFail:'Не вдалося перекласти. Попередній перегляд у чаті може блокувати це; спробуйте відкрити завантажений файл у браузері. (Можливо, також досягнуто денного безкоштовного ліміту.)',
+      stTransReverted:'Оригінал відновлено.',
+      stAutosaveOk:'Збережено автоматично в цьому браузері.', stAutosaveFail:'Не вдалося зберегти автоматично — можливо, логотип завеликий для сховища браузера.',
+      stOpened:'Відкрито «{name}».', stDeleted:'Меню видалено.',
+      stStorageOff:'Сховище тут не працює — відкрийте завантажений файл у браузері.',
+      stSavedAs:'Збережено як «{name}».', stSaveFail:'Не вдалося зберегти (можливо, логотип завеликий для сховища браузера).',
+      stExported:'Експортовано як файл .json (ваша резервна копія).', stImported:'Імпортовано ✓',
+      stImportNotMenu:'Не вдалося прочитати файл як меню.', stImportInvalid:'Недійсний файл — не вдалося імпортувати.',
+      getImg:'✓ Оплату завершено — завантажте зображення зараз', getPdf:'✓ Оплату завершено — завантажте PDF зараз',
+      stPayOpenFail:'Не вдалося відкрити оплату. Це працює лише на опублікованому сайті (із сервером), а не коли файл відкрито локально.',
+      stPayCancelled:'Оплату скасовано — кошти не списано.',
+      stPayConfirming:'Підтвердження вашої оплати …',
+      stPayUnlocked:'Водяний знак видалено — завантажте файл кнопкою вище. Після цього водяний знак повертається, тож нове меню потребує нової оплати.',
+      stPayVerifyFail:'Не вдалося підтвердити оплату. Напишіть мені, якщо суму списано.',
+      stPayReady:'Вашу оплату готово — завантажте файл кнопкою вище.',
+      pdfFail:'Не вдалося створити PDF тут: {msg}. Спробуйте ще раз або скористайтеся завантаженням зображення.',
+      pngFail:'Не вдалося створити зображення тут. Скористайтеся PDF.',
+      saveStatusInit:'Ваші зміни зберігаються автоматично в цьому браузері.',
+      saveStatusInitOff:'Сховище не працює в попередньому перегляді — відкрийте завантажений файл у браузері.'
+    }
+  };
+  let LANG = 'da';
+  function detectLang(){
+    try { const s = localStorage.getItem(LS_LANG); if (s && I18N[s]) return s; } catch(e){}
+    const n = (navigator.language || 'da').slice(0,2).toLowerCase();
+    return I18N[n] ? n : 'da';
+  }
+  function t(key, vars){
+    let s = (I18N[LANG] && I18N[LANG][key] != null) ? I18N[LANG][key] : (I18N.da[key] != null ? I18N.da[key] : key);
+    if (vars) for (const k in vars) s = s.replace('{'+k+'}', vars[k]);
+    return s;
+  }
+  function applyStaticI18n(){
+    document.querySelectorAll('[data-i18n]').forEach(el => { el.textContent = t(el.getAttribute('data-i18n')); });
+    document.querySelectorAll('[data-i18n-ph]').forEach(el => { el.setAttribute('placeholder', t(el.getAttribute('data-i18n-ph'))); });
+    document.querySelectorAll('[data-i18n-title]').forEach(el => { el.setAttribute('title', t(el.getAttribute('data-i18n-title'))); });
+    document.querySelectorAll('[data-i18n-html]').forEach(el => { el.innerHTML = t(el.getAttribute('data-i18n-html')); });
+  }
+  function applyLang(lang){
+    if (!I18N[lang]) lang = 'da';
+    LANG = lang;
+    try { localStorage.setItem(LS_LANG, lang); } catch(e){}
+    document.documentElement.lang = lang;
+    applyStaticI18n();
+    if (typeof renderSections === 'function') renderSections();
+    if (typeof renderPreview === 'function') renderPreview();
+    if (typeof renderLibrary === 'function') renderLibrary();
+    if (typeof syncLayoutControls === 'function') syncLayoutControls();
+    const gf = byId('getFileBtn');
+    if (gf && gf.style.display !== 'none' && gf.dataset.kind) gf.textContent = (gf.dataset.kind === 'png') ? t('getImg') : t('getPdf');
+    if (typeof applyPaperScale === 'function') applyPaperScale();
+    if (typeof checkOverflow === 'function') checkOverflow();
+  }
+  LANG = detectLang();
+  // ============ END i18n ============
+
+  function hexToRgb(hex){
+    if (typeof hex !== 'string') return null;
+    let h = hex.trim().replace('#','');
+    if (h.length === 3) h = h.split('').map(c => c + c).join('');
+    if (h.length !== 6 || /[^0-9a-fA-F]/.test(h)) return null;
+    return { r:parseInt(h.slice(0,2),16), g:parseInt(h.slice(2,4),16), b:parseInt(h.slice(4,6),16) };
+  }
+  const blankDish = () => ({ id:nid(), name:'', desc:'', price:'', price2:'', price3:'', priceCount:1 });
+  const blankSub  = () => ({ id:nid(), kind:'sub', name:'' });
+
+  // Three discrete levels for heading size and subtext gap (multipliers)
+  const SIZE_LV = { sm:0.74, md:1, lg:1.42 };
+  const GAP_LV  = { sm:0.4,  md:1, lg:2.2 };
+  const sizeLevel = v => { v = v || 1; return v <= 0.91 ? 'sm' : (v >= 1.12 ? 'lg' : 'md'); };
+  const gapLevel  = v => { v = v || 1; return v <= 0.6  ? 'sm' : (v >= 1.6  ? 'lg' : 'md'); };
+  const sizeSeg = (kind, si, di, cur) => {
+    const lv = sizeLevel(cur);
+    const dd = (di != null) ? ` data-di="${di}"` : '';
+    return `<div class="seg seg-mini">
+      <button class="seg-btn${lv==='sm'?' active':''}" data-kind="${kind}" data-si="${si}"${dd} data-val="sm">${t('szSmall')}</button>
+      <button class="seg-btn${lv==='md'?' active':''}" data-kind="${kind}" data-si="${si}"${dd} data-val="md">${t('szMedium')}</button>
+      <button class="seg-btn${lv==='lg'?' active':''}" data-kind="${kind}" data-si="${si}"${dd} data-val="lg">${t('szLarge')}</button>
+    </div>`;
+  };
+  const gapSeg = (si, cur) => {
+    const lv = gapLevel(cur);
+    return `<div class="seg seg-mini">
+      <button class="seg-btn${lv==='sm'?' active':''}" data-kind="secgap" data-si="${si}" data-val="sm">${t('szSmall')}</button>
+      <button class="seg-btn${lv==='md'?' active':''}" data-kind="secgap" data-si="${si}" data-val="md">${t('szMedium')}</button>
+      <button class="seg-btn${lv==='lg'?' active':''}" data-kind="secgap" data-si="${si}" data-val="lg">${t('szLarge')}</button>
+    </div>`;
+  };
+  const alignSeg = (si, cur) => {
+    const a = cur || 'left';
+    return `<div class="seg seg-mini">
+      <button class="seg-btn${a==='left'?' active':''}" data-kind="secalign" data-si="${si}" data-val="left">${t('alignLeft')}</button>
+      <button class="seg-btn${a==='center'?' active':''}" data-kind="secalign" data-si="${si}" data-val="center">${t('alignCenter')}</button>
+      <button class="seg-btn${a==='right'?' active':''}" data-kind="secalign" data-si="${si}" data-val="right">${t('alignRight')}</button>
+    </div>`;
+  };
+  const radiusLevel = v => { v = (v == null ? 11 : v); return v <= 4 ? 'sharp' : (v >= 16 ? 'round' : 'soft'); };
+  const radiusSeg = (si, cur) => {
+    const lv = radiusLevel(cur);
+    return `<div class="seg seg-mini">
+      <button class="seg-btn${lv==='sharp'?' active':''}" data-kind="secradius" data-si="${si}" data-val="sharp">${t('radiusSharp')}</button>
+      <button class="seg-btn${lv==='soft'?' active':''}" data-kind="secradius" data-si="${si}" data-val="soft">${t('radiusSoft')}</button>
+      <button class="seg-btn${lv==='round'?' active':''}" data-kind="secradius" data-si="${si}" data-val="round">${t('radiusRound')}</button>
+    </div>`;
+  };
+  const colSelect = (si, cur, n) => {
+    let opts = `<option value="0"${!cur ? ' selected' : ''}>${t('colAuto')}</option>`;
+    for (let k = 1; k <= n; k++) opts += `<option value="${k}"${(+cur === k) ? ' selected' : ''}>${k}</option>`;
+    return `<select class="col-select" data-kind="seccol" data-si="${si}">${opts}</select>`;
+  };
+  const esc = s => (s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+
+  // ---------- Style presets (starting points for the design tokens) ----------
+  const PRESETS = {
+    elegant: { accent:'#8a6d3b', paper:'#fffdf6', ink:'#2a241d',
+      titleFont:"'Cormorant Garamond', serif", bodyFont:"'EB Garamond', serif",
+      titleSize:2.7, titleItalic:false, titleColor:'ink', secCaps:true,
+      align:'center', columns:1, leaders:true, accentBar:false, divider:'❦' },
+    rustik: { accent:'#7a4a2b', paper:'#f6ead5', ink:'#3b2f22',
+      titleFont:"'Caveat', cursive", bodyFont:"'Lora', serif",
+      titleSize:3.4, titleItalic:false, titleColor:'accent', secCaps:false,
+      align:'center', columns:1, leaders:true, accentBar:false, divider:'✦' },
+    moderne: { accent:'#1a1a1a', paper:'#ffffff', ink:'#1a1a1a',
+      titleFont:"'Archivo', sans-serif", bodyFont:"'Jost', sans-serif",
+      titleSize:2.3, titleItalic:false, titleColor:'ink', secCaps:true,
+      align:'left', columns:1, leaders:false, accentBar:true, divider:'none' },
+    cafe: { accent:'#b5542a', paper:'#fff6e7', ink:'#3d2c1a',
+      titleFont:"'Fraunces', serif", bodyFont:"'Nunito', sans-serif",
+      titleSize:2.85, titleItalic:true, titleColor:'accent', secCaps:false,
+      align:'center', columns:1, leaders:true, accentBar:false, divider:'•' },
+  };
+
+  // ---------- Paper formats (screen proportions + print page size) ----------
+  const FORMATS = {
+    a5:     { w:559,  h:794,  padding:'40px 44px', pageName:'A5' },
+    a4:     { w:794,  h:1123, padding:'54px 60px', pageName:'A4' },
+    a3:     { w:1123, h:1587, padding:'74px 82px', pageName:'A3' },
+    letter: { w:816,  h:1056, padding:'54px 60px', pageName:'letter' },
+    square: { w:794,  h:794,  padding:'52px 58px', pageDims:[210,210] },
+    dl:     { w:397,  h:794,  padding:'30px 34px', pageDims:[105,210] },
+  };
+
+  // Build the print @page size string, honouring orientation
+  function pageSizeString(fmt, orientation){
+    if (fmt.pageName) return `${fmt.pageName} ${orientation}`;
+    const [pw, ph] = fmt.pageDims;
+    return orientation === 'landscape' ? `${ph}mm ${pw}mm` : `${pw}mm ${ph}mm`;
+  }
+
+  // Current page pixel size, and a function that scales the (true-size) page to fit the stage
+  let curPageW = 794, curPageH = 1123;
+  function applyPaperScale(){
+    const paper = byId('paper'); const wrap = byId('paperScale'); const stage = paper.closest('.stage');
+    if (!stage) return;
+    const cs = getComputedStyle(stage);
+    const padX = parseFloat(cs.paddingLeft) + parseFloat(cs.paddingRight);
+    const padY = parseFloat(cs.paddingTop) + parseFloat(cs.paddingBottom);
+    const availW = stage.clientWidth - padX;
+    // fit within the visible viewport height: sticky top offset + stage padding + room for the hint
+    const stickyTop = (getComputedStyle(stage).position === 'sticky') ? (parseFloat(cs.top) || 0) : 12;
+    const availH = window.innerHeight - stickyTop - padY - 60;
+    let s = Math.min(availW / curPageW, availH / curPageH, 1.1);
+    if (!isFinite(s) || s <= 0.05) s = 0.2;
+    paper.style.transformOrigin = 'top left';
+    paper.style.transform = `scale(${s})`;
+    wrap.style.width  = (curPageW * s) + 'px';
+    wrap.style.height = (curPageH * s) + 'px';
+  }
+
+  // Warn when the menu content is taller than the chosen page
+  function checkOverflow(){
+    const paper = byId('paper'); const inner = byId('paperInner'); const hint = byId('overflowHint');
+    if (!paper || !hint) return;
+    const cs = getComputedStyle(paper);
+    const innerH = paper.clientHeight - parseFloat(cs.paddingTop) - parseFloat(cs.paddingBottom);
+    hint.style.display = (inner.scrollHeight > innerH + 3) ? 'block' : 'none';
+  }
+
+  // ---------- State ----------
+  let state = {
+    title: 'Aftenmenu',
+    subtitle: 'Sankthansaften · 23. juni',
+    currency: 'kr.',
+    currencyPos: 'after',
+    footer: 'Allergener oplyses gerne på forespørgsel',
+    logo: null,
+    style: 'elegant',
+    design: Object.assign({ format:'a4', orientation:'portrait', layout:'cols', gap:1 }, PRESETS.elegant),
+    sections: [
+      { id:nid(), name:'Forretter', dishes:[
+        { id:nid(), name:'Tomatsalat med burrata', desc:'Modne tomater, frisk basilikum og cremet burrata', price:'95' },
+        { id:nid(), name:'Hjemmerøget laks', desc:'Dildcreme, syltede agurker og ristet rugbrød', price:'110' },
+      ]},
+      { id:nid(), name:'Hovedretter', dishes:[
+        { id:nid(), name:'Helstegt krydderurte-kylling', desc:'Fløderistede kartofler og sæsonens grønt', price:'185' },
+        { id:nid(), name:'Pandestegt torsk', desc:'Brunet smør, kapers, citron og kogte kartofler', price:'195' },
+      ]},
+      { id:nid(), name:'Desserter', dishes:[
+        { id:nid(), name:'Citrontærte', desc:'Sprød tærtebund, frisk citroncreme og marengs', price:'75' },
+      ]},
+    ]
+  };
+
+  // ---------- Font option lists ----------
+  const TITLE_FONTS = [
+    ["'Cormorant Garamond', serif","Cormorant (serif)"],
+    ["'Playfair Display', serif","Playfair (serif)"],
+    ["'Fraunces', serif","Fraunces (serif)"],
+    ["'Bodoni Moda', serif","Bodoni (serif)"],
+    ["'Lora', serif","Lora (serif)"],
+    ["'Archivo', sans-serif","Archivo (sans)"],
+    ["'Jost', sans-serif","Jost (sans)"],
+    ["'Caveat', cursive","Caveat (håndskrift)"],
+  ];
+  const BODY_FONTS = [
+    ["'EB Garamond', serif","EB Garamond (serif)"],
+    ["'Lora', serif","Lora (serif)"],
+    ["'Cormorant Garamond', serif","Cormorant (serif)"],
+    ["'Jost', sans-serif","Jost (sans)"],
+    ["'Nunito', sans-serif","Nunito (sans)"],
+    ["'Archivo', sans-serif","Archivo (sans)"],
+  ];
+  const fillSelect = (id, arr) => {
+    byId(id).innerHTML = arr.map(([v,l]) => `<option value="${v}">${l}</option>`).join('');
+  };
+
+  // ---------- Render: editor sections ----------
+  function renderSections(){
+    const Ncols = state.design.columns || 1;
+    const sideBySide = (state.design.layout || 'cols') !== 'stacked';
+    let autoNo = 0;   // mirrors the preview's automatic counter (for the placeholder)
+    byId('sections').innerHTML = state.sections.map((sec, si) => `
+      <div class="sec-card${sec.collapsed ? ' collapsed' : ''}" data-si="${si}">
+        <div class="sec-head">
+          <button class="mini-btn collapse-btn" data-kind="seccollapse" data-si="${si}" title="${sec.collapsed ? t('expandRow') : t('collapseRow')}">${sec.collapsed ? '▸' : '▾'}</button>
+          <input class="sec-name-input" data-kind="secname" data-si="${si}" value="${esc(sec.name)}" placeholder="${t('secNamePh')}">
+          <div class="ctrls">
+            <button class="mini-btn" data-kind="secup" data-si="${si}" title="${t('moveSecUp')}">▲</button>
+            <button class="mini-btn" data-kind="secdown" data-si="${si}" title="${t('moveSecDown')}">▼</button>
+            <button class="mini-btn danger" data-kind="delsec" data-si="${si}" title="${t('delSec')}">✕</button>
+          </div>
+        </div>
+        <div class="sec-body">
+        <input class="sec-subtext-input" data-kind="secsubtext" data-si="${si}" value="${esc(sec.subtext || '')}" placeholder="${t('secSubtextPh')}">
+        <input class="sec-subtext-input" data-kind="secpricelabel" data-si="${si}" value="${esc(sec.priceLabel || '')}" placeholder="${t('priceLabelPh')}">
+        <div class="hd-ctrls">
+          <div class="hd-ctrl"><span class="mini-label">${t('szSizeHead')}</span>${sizeSeg('secsize', si, null, sec.titleSize)}</div>
+          <div class="hd-ctrl"><span class="mini-label">${t('szGap')}</span>${gapSeg(si, sec.subGap)}</div>
+        </div>
+        <div class="hd-ctrls">
+          <div class="hd-ctrl"><span class="mini-label">${t('alignLabel')}</span>${alignSeg(si, sec.align)}</div>
+          <div class="hd-ctrl">
+            <span class="mini-label">${t('bgLabel')}</span>
+            ${ sec.bg
+              ? `<div class="sec-bg-row"><input type="color" class="sec-bg-color" data-kind="secbg" data-si="${si}" value="${esc(sec.bg)}"><button class="btn-tiny" data-kind="secbgoff" data-si="${si}">${t('bgRemove')}</button></div>`
+              : `<button class="btn-tiny" data-kind="secbgon" data-si="${si}">${t('bgAdd')}</button>` }
+          </div>
+        </div>
+        ${ sec.bg ? `<div class="hd-ctrls"><div class="hd-ctrl"><span class="mini-label">${t('radiusLabel')}</span>${radiusSeg(si, sec.radius)}</div></div>` : '' }
+        <div class="hd-ctrls">
+          <div class="hd-ctrl">
+            <span class="mini-label">${t('textColorLabel')}</span>
+            ${ sec.textColor
+              ? `<div class="sec-bg-row"><input type="color" class="sec-bg-color" data-kind="sectext" data-si="${si}" value="${esc(sec.textColor)}"><button class="btn-tiny" data-kind="sectextoff" data-si="${si}">${t('bgRemove')}</button></div>`
+              : `<button class="btn-tiny" data-kind="sectexton" data-si="${si}">${t('textColorAdd')}</button>` }
+          </div>
+        </div>
+        <button class="btn-mini matchall-btn" data-kind="matchall" data-si="${si}" title="${t('szMatchAllTitle')}">${t('szMatchAll')}</button>
+        ${ (sideBySide && Ncols > 1) ? `<div class="hd-ctrls"><div class="hd-ctrl"><span class="mini-label">${t('colLabel')}</span>${colSelect(si, sec.col, Ncols)}</div></div>` : '' }
+        <div class="dish-list">
+          ${sec.dishes.map((d, di) => {
+            if (d.kind === 'sub') return `
+            <div class="sub-row" data-si="${si}" data-di="${di}">
+              <div class="sub-row-top">
+                <input class="sub-name-input" data-kind="dsub" data-si="${si}" data-di="${di}" value="${esc(d.name)}" placeholder="${t('subheadingPh')}">
+                <div class="ctrls">
+                  <button class="mini-btn" data-kind="dishup" data-si="${si}" data-di="${di}" title="${t('moveUp')}">▲</button>
+                  <button class="mini-btn" data-kind="dishdown" data-si="${si}" data-di="${di}" title="${t('moveDown')}">▼</button>
+                  <button class="mini-btn danger" data-kind="deldish" data-si="${si}" data-di="${di}" title="${t('delSubheading')}">✕</button>
+                </div>
+              </div>
+              <div class="hd-ctrls">
+                <div class="hd-ctrl"><span class="mini-label">${t('szSizeSub')}</span>${sizeSeg('subsize', si, di, d.size)}</div>
+              </div>
+            </div>`;
+            const isEmpty = !d.name && !d.desc && !d.price;
+            const autoForThis = (d.num && !isEmpty) ? (++autoNo) : '';
+            const numField = d.num
+              ? `<input class="dish-num-input" data-kind="dnumval" data-si="${si}" data-di="${di}" value="${esc(d.numVal || '')}" placeholder="${autoForThis}" title="${t('numberFieldTitle')}">`
+              : '';
+            const pc = d.priceCount || 1;
+            let priceInputs = `<input class="dish-price-input" data-kind="dprice" data-si="${si}" data-di="${di}" value="${esc(d.price)}" placeholder="${t('pricePh')}">`;
+            if (pc >= 2) priceInputs += `<input class="dish-price-input" data-kind="dprice2" data-si="${si}" data-di="${di}" value="${esc(d.price2 || '')}" placeholder="${t('pricePh')}">`;
+            if (pc >= 3) priceInputs += `<input class="dish-price-input" data-kind="dprice3" data-si="${si}" data-di="${di}" value="${esc(d.price3 || '')}" placeholder="${t('pricePh')}">`;
+            if (pc < 3) priceInputs += `<button class="mini-btn price-add" data-kind="addprice" data-si="${si}" data-di="${di}" title="${t('priceAddTitle')}">＋</button>`;
+            if (pc >= 2) priceInputs += `<button class="mini-btn price-del" data-kind="delprice" data-si="${si}" data-di="${di}" title="${t('priceDelTitle')}">−</button>`;
+            return `
+            <div class="dish-row" data-si="${si}" data-di="${di}">
+              <div class="dish-row-top${d.num ? ' has-num' : ''}${pc > 1 ? ' multi-price' : ''}">
+                ${numField}
+                <input class="dish-name-input" data-kind="dname" data-si="${si}" data-di="${di}" value="${esc(d.name)}" placeholder="${t('dishNamePh')}">
+                <div class="dish-prices">${priceInputs}</div>
+                <div class="ctrls">
+                  <button class="mini-btn num-btn${d.num ? ' active' : ''}" data-kind="dnum" data-si="${si}" data-di="${di}" title="${t('numberTitle')}">#</button>
+                  <button class="mini-btn" data-kind="dishup" data-si="${si}" data-di="${di}" title="${t('moveUp')}">▲</button>
+                  <button class="mini-btn" data-kind="dishdown" data-si="${si}" data-di="${di}" title="${t('moveDown')}">▼</button>
+                  <button class="mini-btn danger" data-kind="deldish" data-si="${si}" data-di="${di}" title="${t('delDish')}">✕</button>
+                </div>
+              </div>
+              <input class="dish-desc-input" data-kind="ddesc" data-si="${si}" data-di="${di}" value="${esc(d.desc)}" placeholder="${t('descPh')}">
+            </div>`;
+          }).join('')}
+        </div>
+        <div class="add-row">
+          <button class="add-dish-btn" data-kind="adddish" data-si="${si}">${t('addDish')}</button>
+          <button class="add-sub-btn" data-kind="addsub" data-si="${si}">${t('addSubheading')}</button>
+        </div>
+        </div>
+      </div>
+    `).join('') + `<button class="add-sec-btn" data-kind="addsec">${t('addSection')}</button>`;
+  }
+
+  // ---------- Render: live menu preview ----------
+  // Distribute items (whole sections) into n columns in reading order, balanced by count.
+  // Distribute whole sections into n columns by content size, honoring any forced column starts
+  // (forced[i] = chosen 1-based column for section i, or 0 = auto). Keeps reading order.
+  function distributeColumns(items, weights, forced, n){
+    n = Math.max(1, n|0);
+    const cols = Array.from({length:n}, () => []);
+    if (n === 1){ cols[0] = items.slice(); return cols; }
+    const total = weights.reduce((a, b) => a + (b || 0), 0) || 1;
+    const target = total / n;
+    let c = 0, curW = 0;
+    for (let i = 0; i < items.length; i++){
+      const f = (forced[i] | 0);
+      if (f >= 1){
+        const want = Math.min(n, f) - 1;
+        if (want > c){ c = want; curW = 0; }          // jump forward to the chosen column (never backward)
+      } else {
+        let nextForced = -1;                            // don't let auto-fill spill into a forthcoming forced column
+        for (let j = i; j < items.length; j++){ const fj = forced[j] | 0; if (fj >= 1){ nextForced = Math.min(n, fj) - 1; break; } }
+        const cap = (nextForced >= 0) ? (nextForced - 1) : (n - 1);
+        if (cols[c].length && (curW + (weights[i] || 1) / 2) > target && c < n - 1 && (c + 1) <= cap){
+          c++; curW = 0;
+        }
+      }
+      if (c > n - 1) c = n - 1;
+      cols[c].push(items[i]); curW += (weights[i] || 1);
+    }
+    return cols;
+  }
+
+  function splitIntoColumns(items, n){
+    n = Math.max(1, n|0);
+    const cols = Array.from({length:n}, () => []);
+    const per = Math.ceil(items.length / n) || 1;
+    for (let i = 0; i < items.length; i++){
+      let c = Math.floor(i / per);
+      if (c > n - 1) c = n - 1;
+      cols[c].push(items[i]);
+    }
+    return cols;
+  }
+
+  // Distribute whole sections into n columns balanced by estimated content size (keeps reading order)
+  function splitByWeight(items, weights, n){
+    n = Math.max(1, n|0);
+    if (n === 1 || items.length <= 1) return [items.slice()].concat(Array.from({length:n-1}, () => []));
+    const total = weights.reduce((a, b) => a + (b || 0), 0) || 1;
+    const target = total / n;
+    const cols = []; let cur = []; let curW = 0;
+    for (let i = 0; i < items.length; i++){
+      const w = weights[i] || 1;
+      const colsRemaining = n - cols.length;      // current column + ones not yet started
+      const itemsLeft = items.length - i;          // including this item
+      const mustBreak    = cur.length > 0 && itemsLeft <= (colsRemaining - 1);   // save one item per remaining column
+      const balanceBreak = cur.length > 0 && (curW + w / 2) > target && colsRemaining > 1;
+      if (mustBreak || balanceBreak){ cols.push(cur); cur = []; curW = 0; }
+      cur.push(items[i]); curW += w;
+    }
+    if (cur.length) cols.push(cur);
+    while (cols.length < n) cols.push([]);
+    return cols;
+  }
+
+  function renderPreview(){
+    const d = state.design;
+    const paper = byId('paper');
+
+    paper.style.setProperty('--m-accent', d.accent);
+    const accRGB = hexToRgb(d.accent) || { r:181, g:84, b:42 };
+    paper.style.setProperty('--m-accent-35', `rgba(${accRGB.r},${accRGB.g},${accRGB.b},0.35)`);
+    paper.style.setProperty('--m-accent-13', `rgba(${accRGB.r},${accRGB.g},${accRGB.b},0.13)`);
+    paper.style.setProperty('--m-accent-07', `rgba(${accRGB.r},${accRGB.g},${accRGB.b},0.07)`);
+    paper.style.setProperty('--m-paper', d.paper);
+    paper.style.setProperty('--m-ink', d.ink);
+    paper.style.setProperty('--m-title-font', d.titleFont);
+    paper.style.setProperty('--m-body-font', d.bodyFont);
+    paper.style.setProperty('--m-scale', d.scale);
+    paper.style.setProperty('--m-gap', d.gap || 1);
+    paper.style.setProperty('--m-title-size', d.titleSize + 'em');
+    paper.style.setProperty('--m-title-color', d.titleColor === 'accent' ? d.accent : d.ink);
+    paper.style.setProperty('--m-cols', d.columns || 1);
+
+    paper.className = 'menu-paper'
+      + (d.align === 'left' ? ' align-left' : '')
+      + ((d.layout === 'stacked') ? ' layout-fill' : ' layout-grid')
+      + (!d.leaders ? ' no-leaders' : '')
+      + (d.accentBar ? ' has-bar' : '')
+      + (d.secCaps ? ' sec-caps' : '')
+      + (d.titleItalic ? ' title-italic' : '');
+
+    const fmt = FORMATS[d.format] || FORMATS.a4;
+    const orientation = d.orientation || 'portrait';
+    const land = orientation === 'landscape';
+    curPageW = land ? fmt.h : fmt.w;
+    curPageH = land ? fmt.w : fmt.h;
+    paper.style.width = curPageW + 'px';
+    paper.style.height = curPageH + 'px';
+    paper.style.padding = fmt.padding;
+    setPageSize(pageSizeString(fmt, orientation));
+    applyPaperScale();
+
+    const cur = (state.currency || '').trim();
+    const before = state.currencyPos === 'before';
+    const dividerEl = (d.divider && d.divider !== 'none')
+      ? `<div class="menu-rule"><span class="line"></span><span class="rule-dot">${esc(d.divider)}</span><span class="line"></span></div>` : '';
+    const logoEl = state.logo ? `<img class="m-logo" src="${state.logo}" alt="logo">` : '';
+
+    const head = `
+      <div class="m-accent-bar"></div>
+      <header class="menu-head">
+        ${logoEl}
+        ${state.title ? `<h1 class="menu-title editable" data-el="title">${esc(state.title)}</h1>` : ''}
+        ${state.subtitle ? `<p class="menu-sub editable" data-el="subtitle">${esc(state.subtitle)}</p>` : ''}
+        ${dividerEl}
+      </header>`;
+
+    // Build per-section HTML (grid mode) and an ordered atom list (stacked mode)
+    const atoms = [];
+    const sectionBlocks = [];
+    const sectionWeights = [];   // estimated content size per section, for balanced columns
+    const sectionForced = [];    // chosen column per section (1-based, 0 = auto)
+    let dishNo = 0;   // continuous numbering across the whole menu (only numbered dishes)
+    state.sections.forEach((sec, si) => {
+      let dishesHTML = '';
+      const secSub = (sec.subtext && sec.subtext.trim())
+        ? `<p class="m-sec-subtext editable" data-el="secsubtext" data-si="${si}" style="--sg:${sec.subGap || 1}">${esc(sec.subtext)}</p>` : '';
+      const secPriceLabel = (sec.priceLabel && sec.priceLabel.trim())
+        ? `<p class="m-price-label editable" data-el="secpricelabel" data-si="${si}">${esc(sec.priceLabel)}</p>` : '';
+      const secAlign = sec.align || 'left';
+      const hasBg = !!sec.bg;
+      const asBlock = hasBg || !!sec.textColor;   // colour/bg sections render as one solid block
+      let secW = 0;   // estimated weight for stacked packing when this section is one block
+      const titleBlock = sec.name
+        ? `<div class="m-titleblock" style="text-align:${secAlign}"><h2 class="m-sec-title editable" data-el="sectitle" data-si="${si}" style="--ts:${sec.titleSize || 1}">${esc(sec.name)}</h2>${secSub}${secPriceLabel}</div>`
+        : (secPriceLabel ? `<div class="m-titleblock" style="text-align:${secAlign}">${secPriceLabel}</div>` : '');
+      if (sec.name){
+        const tw = 2.6 + (secSub ? 0.8 : 0); secW += tw;
+        if (!asBlock) atoms.push({ type:'title', w:tw, html:titleBlock });
+      }
+      sec.dishes.forEach((dish, di) => {
+        if (dish.kind === 'sub'){
+          if (!dish.name) return;
+          const h = `<h3 class="m-subhead editable" data-el="dsub" data-si="${si}" data-di="${di}" style="--ss:${dish.size || 1}">${esc(dish.name)}</h3>`;
+          secW += 1.9;
+          if (!asBlock) atoms.push({ type:'sub', w:1.9, html:h });
+          dishesHTML += h; return;
+        }
+        const priceList = [dish.price, dish.price2, dish.price3]
+          .slice(0, dish.priceCount || 1)
+          .map(p => (p == null ? '' : String(p).trim()))
+          .filter(p => p !== '');
+        const hasPrice = priceList.length > 0;
+        let priceInner = '';
+        if (hasPrice){
+          priceInner = priceList.map(p => {
+            const e = esc(p);
+            const withCur = cur ? (before ? `${esc(cur)} ${e}` : `${e} ${esc(cur)}`) : e;
+            return `<span class="d-price-val">${withCur}</span>`;
+          }).join('');
+        }
+        if (!dish.name && !dish.desc && !hasPrice) return;
+        const price  = hasPrice ? `<span class="d-price editable" data-el="dprice" data-si="${si}" data-di="${di}">${priceInner}</span>` : '';
+        const leader = hasPrice ? `<span class="d-leader"></span>` : '';
+        const descEl = dish.desc  ? `<p class="d-desc editable" data-el="ddesc" data-si="${si}" data-di="${di}">${esc(dish.desc)}</p>` : '';
+        let numEl = '';
+        if (dish.num){
+          const auto = ++dishNo;   // automatikken tæller altid videre (manuelle tal forstyrrer ikke)
+          const manual = (dish.numVal != null && String(dish.numVal).trim() !== '') ? String(dish.numVal).trim() : null;
+          numEl = `<span class="d-num">${esc(manual != null ? manual : String(auto))}.</span>`;
+        }
+        const h = `<div class="d-item"><div class="d-line"><span class="d-namewrap">${numEl}<span class="d-name editable" data-el="dname" data-si="${si}" data-di="${di}">${esc(dish.name)}</span></span>${leader}${price}</div>${descEl}</div>`;
+        const w = 1.1 + (dish.desc ? Math.ceil(dish.desc.length / 42) * 0.75 : 0);
+        secW += w;
+        if (!asBlock) atoms.push({ type:'dish', w, html:h });
+        dishesHTML += h;
+      });
+      if (!sec.name && !dishesHTML) return;
+      const radius = (sec.radius != null ? sec.radius : 11);
+      let secStyle = '';
+      if (hasBg) secStyle += `background:${sec.bg}; border-radius:${radius}px; `;
+      if (sec.textColor) secStyle += `--m-accent:${sec.textColor}; --m-ink:${sec.textColor}; color:${sec.textColor}; `;
+      const secClass = (hasBg ? ' has-bg' : '') + (sec.textColor ? ' has-textcolor' : '');
+      const styleAttr = secStyle ? ` style="${secStyle.trim()}"` : '';
+      const sectionHTML = `<section class="m-sec${secClass}"${styleAttr}>${titleBlock}<div class="m-dishes">${dishesHTML}</div></section>`;
+      sectionBlocks.push(sectionHTML);
+      sectionWeights.push(secW || 1);
+      sectionForced.push(sec.col | 0);
+      if (asBlock) atoms.push({ type:'secblock', w: secW + 1, html: sectionHTML });   // keep coloured section together in stacked mode too
+    });
+
+    const footEl = (state.footer && state.footer.trim())
+      ? `<footer class="m-foot">${esc(state.footer).replace(/\n/g,'<br>')}</footer>` : '';
+
+    const N = Math.max(1, d.columns || 1);
+    const inner = byId('paperInner');
+
+    if (d.layout === 'stacked' && N > 1 && atoms.length){
+      // Render everything in column 1 first, measure real heights at column width,
+      // then fill column 1 down the page and continue in the next column,
+      // using a grid so the PDF renders identically.
+      const allCol = `<div class="m-fillcol">${atoms.map(a => a.html).join('')}</div>`;
+      const emptyCols = Array(N - 1).fill('<div class="m-fillcol"></div>').join('');
+      inner.innerHTML = head + `<div class="m-body"><div class="m-fillgrid">${allCol}${emptyCols}</div></div>` + footEl;
+
+      const paperEl = byId('paper');
+      const cs = getComputedStyle(paperEl);
+      const header = paperEl.querySelector('.menu-head');
+      const footer = paperEl.querySelector('.m-foot');
+      const availH = paperEl.clientHeight
+        - parseFloat(cs.paddingTop) - parseFloat(cs.paddingBottom)
+        - (header ? header.offsetHeight : 0)
+        - (footer ? footer.offsetHeight : 0) - 6;
+      const firstCol = paperEl.querySelector('.m-fillcol');
+      const kids = firstCol ? Array.from(firstCol.children) : [];
+      const heights = kids.map(el => {
+        const s = getComputedStyle(el);
+        return el.offsetHeight + parseFloat(s.marginTop) + parseFloat(s.marginBottom);
+      });
+
+      const cols = []; let cur = []; let curH = 0;
+      for (let i = 0; i < atoms.length; i++){
+        const h = heights[i] || 20;
+        if (cur.length && (curH + h) > availH && cols.length < N - 1){
+          cols.push(cur); cur = []; curH = 0;
+        }
+        cur.push(atoms[i].html); curH += h;
+      }
+      if (cur.length) cols.push(cur);
+      while (cols.length < N) cols.push([]);
+
+      const grid = `<div class="m-fillgrid">${cols.map(c => `<div class="m-fillcol">${c.join('')}</div>`).join('')}</div>`;
+      inner.innerHTML = head + `<div class="m-body">${grid}</div>` + footEl;
+    } else {
+      let bodyInner;
+      if (d.layout === 'stacked'){
+        bodyInner = `<div class="m-fillcol">${atoms.map(a => a.html).join('')}</div>`;
+      } else {
+        // Side by side: distribute whole sections into N columns, balanced by content size, honoring forced columns
+        const colsArr = distributeColumns(sectionBlocks, sectionWeights, sectionForced, N);
+        bodyInner = `<div class="m-colgrid">${colsArr.map(c => `<div class="m-col">${c.join('')}</div>`).join('')}</div>`;
+      }
+      inner.innerHTML = head
+        + `<div class="m-body">${ (sectionBlocks.length ? bodyInner : '<p class="empty-note">'+t('emptyNote')+'</p>') }</div>`
+        + footEl;
+    }
+
+    // Auto-fit: if the content is taller than the page, shrink the text (only the size, never the
+    // distribution) step by step until it fits above the footer — so nothing overflows or hides behind it.
+    fitTextToPage();
+
+    scheduleAutosave();
+    buildWatermark();
+    checkOverflow();
+  }
+
+  // Shrinks the effective text size until the menu fits the chosen paper. Never grows past the
+  // user's chosen size, and never touches the column distribution (so it can't create holes).
+  function fitTextToPage(){
+    const paper = byId('paper'); const inner = byId('paperInner');
+    if (!paper || !inner) return;
+    const base = state.design.scale || 1;
+    const cs = getComputedStyle(paper);
+    const innerH = paper.clientHeight - parseFloat(cs.paddingTop) - parseFloat(cs.paddingBottom);
+    let fit = 1;
+    paper.style.setProperty('--m-scale', base);   // start from the user's chosen size
+    // step down until it fits (floor at 50% so text never becomes unreadable)
+    let guard = 0;
+    while (inner.scrollHeight > innerH + 2 && fit > 0.5 && guard < 40){
+      fit -= 0.03;
+      paper.style.setProperty('--m-scale', base * fit);
+      guard++;
+    }
+  }
+
+  // ---------- Sync design controls from state ----------
+  function setSeg(id, val){
+    document.querySelectorAll(`#${id} .seg-btn`).forEach(b => b.classList.toggle('active', b.dataset.val === val));
+  }
+  function syncLayoutControls(){
+    const cols = state.design.columns || 1;
+    const layout = state.design.layout || 'cols';
+    setSeg('segLayout', layout);
+    setSeg('segCols', String(cols));
+    const hint = byId('layoutHint');
+    if (hint) hint.textContent = layout === 'stacked' ? t('layoutHintStacked') : t('layoutHintCols');
+  }
+  function setPageSize(size){
+    let el = document.getElementById('pageStyle');
+    if (!el){ el = document.createElement('style'); el.id = 'pageStyle'; document.head.appendChild(el); }
+    el.textContent = `@page{ size:${size}; margin:0; }`;
+  }
+  function syncDesignControls(){
+    const d = state.design;
+    byId('cAccent').value = d.accent;
+    byId('cPaper').value  = d.paper;
+    byId('cInk').value    = d.ink;
+    byId('selTitleFont').value = d.titleFont;
+    byId('selBodyFont').value  = d.bodyFont;
+    byId('rngScale').value = Math.round((d.scale || 1) * 100);
+    byId('rngGap').value = Math.round((d.gap || 1) * 100);
+    byId('selDivider').value = d.divider;
+    byId('selFormat').value = d.format || 'a4';
+    setSeg('segAlign', d.align);
+    syncLayoutControls();
+    setSeg('segOrient', d.orientation || 'portrait');
+    setSeg('segLeaders', d.leaders ? 'on' : 'off');
+    setSeg('segBar', d.accentBar ? 'on' : 'off');
+  }
+  function applyPreset(name){
+    state.style = name;
+    const base = Object.assign({}, PRESETS[name]);
+    base.scale = state.design.scale || 1;        // keep current text size when switching style
+    base.format = state.design.format || 'a4';   // keep current paper size when switching style
+    base.orientation = state.design.orientation || 'portrait';  // keep current orientation
+    base.columns = state.design.columns || 1;    // keep current column count
+    base.layout = state.design.layout || 'cols';  // keep current layout choice
+    base.gap = state.design.gap || 1;             // keep current spacing
+    state.design = base;
+    document.querySelectorAll('.style-card').forEach(x => x.classList.toggle('active', x.dataset.style === name));
+    syncDesignControls();
+    renderPreview();
+  }
+
+  // ---------- Editor input (text fields) ----------
+  byId('editor').addEventListener('input', e => {
+    const t = e.target;
+    if (t.dataset.meta){ state[t.dataset.meta] = t.value; renderPreview(); return; }
+    const k = t.dataset.kind; if (!k) return;
+    const si = +t.dataset.si, di = +t.dataset.di;
+    if      (k === 'secname') state.sections[si].name = t.value;
+    else if (k === 'dname')   state.sections[si].dishes[di].name  = t.value;
+    else if (k === 'dprice')  state.sections[si].dishes[di].price = t.value;
+    else if (k === 'dprice2') state.sections[si].dishes[di].price2 = t.value;
+    else if (k === 'dprice3') state.sections[si].dishes[di].price3 = t.value;
+    else if (k === 'secpricelabel') state.sections[si].priceLabel = t.value;
+    else if (k === 'ddesc')   state.sections[si].dishes[di].desc  = t.value;
+    else if (k === 'dnumval') state.sections[si].dishes[di].numVal = t.value;
+    else if (k === 'dsub')    state.sections[si].dishes[di].name  = t.value;
+    else if (k === 'secsubtext') state.sections[si].subtext = t.value;
+    else if (k === 'secbg')      state.sections[si].bg = t.value;
+    else if (k === 'sectext')    state.sections[si].textColor = t.value;
+    else if (k === 'seccol')     state.sections[si].col = +t.value;
+    renderPreview();
+  });
+
+  // When the subtext field loses focus, refresh the section controls (so the gap control appears)
+  byId('editor').addEventListener('change', e => {
+    if (e.target.dataset && e.target.dataset.kind === 'secsubtext') renderSections();
+  });
+
+  // ---------- Editor clicks (add / remove / reorder) ----------
+  byId('editor').addEventListener('click', e => {
+    const b = e.target.closest('[data-kind]'); if (!b) return;
+    const k = b.dataset.kind; const si = +b.dataset.si, di = +b.dataset.di;
+    const secs = state.sections;
+    if (k === 'adddish'){
+      secs[si].dishes.push(blankDish()); renderSections(); renderPreview();
+      const rows = document.querySelectorAll(`.dish-row[data-si="${si}"]`);
+      const last = rows[rows.length - 1]; if (last) last.querySelector('.dish-name-input').focus();
+    }
+    else if (k === 'addsub'){
+      secs[si].dishes.push(blankSub()); renderSections(); renderPreview();
+      const rows = document.querySelectorAll(`.sub-row[data-si="${si}"]`);
+      const last = rows[rows.length - 1]; if (last) last.querySelector('.sub-name-input').focus();
+    }
+    else if (k === 'deldish'){ secs[si].dishes.splice(di, 1); renderSections(); renderPreview(); }
+    else if (k === 'dnum'){ const dd = secs[si].dishes[di]; dd.num = !dd.num; renderSections(); renderPreview(); }
+    else if (k === 'addprice'){ const dd = secs[si].dishes[di]; dd.priceCount = Math.min(3, (dd.priceCount || 1) + 1); renderSections(); renderPreview(); }
+    else if (k === 'delprice'){ const dd = secs[si].dishes[di]; const pc = dd.priceCount || 1; if (pc >= 3) dd.price3 = ''; else if (pc === 2) dd.price2 = ''; dd.priceCount = Math.max(1, pc - 1); renderSections(); renderPreview(); }
+    else if (k === 'secsize'){ secs[si].titleSize = SIZE_LV[b.dataset.val] || 1; renderSections(); renderPreview(); }
+    else if (k === 'subsize'){ secs[si].dishes[di].size = SIZE_LV[b.dataset.val] || 1; renderSections(); renderPreview(); }
+    else if (k === 'secgap'){ secs[si].subGap = GAP_LV[b.dataset.val] || 1; renderSections(); renderPreview(); }
+    else if (k === 'seccollapse'){ secs[si].collapsed = !secs[si].collapsed; renderSections(); }
+    else if (k === 'secalign'){ secs[si].align = b.dataset.val || 'left'; renderSections(); renderPreview(); }
+    else if (k === 'secbgon'){ secs[si].bg = '#f3eee7'; renderSections(); renderPreview(); }
+    else if (k === 'secbgoff'){ secs[si].bg = ''; renderSections(); renderPreview(); }
+    else if (k === 'secradius'){ const map = { sharp:0, soft:10, round:22 }; secs[si].radius = map[b.dataset.val] != null ? map[b.dataset.val] : 11; renderSections(); renderPreview(); }
+    else if (k === 'sectexton'){ secs[si].textColor = '#ffffff'; renderSections(); renderPreview(); }
+    else if (k === 'sectextoff'){ secs[si].textColor = ''; renderSections(); renderPreview(); }
+    else if (k === 'matchall'){
+      const src = secs[si];
+      const firstSub = (src.dishes || []).find(x => x.kind === 'sub');
+      const subSize = firstSub ? (firstSub.size || 1) : null;   // only propagate if this section has a subheading
+      secs.forEach(s => {
+        s.titleSize = src.titleSize || 1;
+        s.subGap = src.subGap || 1;
+        if (subSize != null) (s.dishes || []).forEach(x => { if (x.kind === 'sub') x.size = subSize; });
+      });
+      renderSections(); renderPreview();
+    }
+    else if (k === 'delsec'){ secs.splice(si, 1); renderSections(); renderPreview(); }
+    else if (k === 'addsec'){
+      secs.push({ id:nid(), name:'', dishes:[blankDish()] }); renderSections(); renderPreview();
+      const cards = document.querySelectorAll('.sec-card');
+      const last = cards[cards.length - 1]; if (last) last.querySelector('.sec-name-input').focus();
+    }
+    else if (k === 'secup'  && si > 0){ [secs[si-1], secs[si]] = [secs[si], secs[si-1]]; renderSections(); renderPreview(); }
+    else if (k === 'secdown' && si < secs.length - 1){ [secs[si+1], secs[si]] = [secs[si], secs[si+1]]; renderSections(); renderPreview(); }
+    else if (k === 'dishup'){ const a = secs[si].dishes; if (di > 0){ [a[di-1], a[di]] = [a[di], a[di-1]]; renderSections(); renderPreview(); } }
+    else if (k === 'dishdown'){ const a = secs[si].dishes; if (di < a.length - 1){ [a[di+1], a[di]] = [a[di], a[di+1]]; renderSections(); renderPreview(); } }
+  });
+
+  // ---------- Style presets ----------
+  byId('styles').addEventListener('click', e => {
+    const c = e.target.closest('.style-card'); if (!c) return;
+    applyPreset(c.dataset.style);
+  });
+
+  // ---------- Design controls ----------
+  byId('cAccent').addEventListener('input', e => { state.design.accent = e.target.value; renderPreview(); });
+  byId('cPaper').addEventListener('input',  e => { state.design.paper  = e.target.value; renderPreview(); });
+  byId('cInk').addEventListener('input',    e => { state.design.ink    = e.target.value; renderPreview(); });
+  byId('selTitleFont').addEventListener('change', e => { state.design.titleFont = e.target.value; renderPreview(); });
+  byId('selBodyFont').addEventListener('change',  e => { state.design.bodyFont  = e.target.value; renderPreview(); });
+  byId('rngScale').addEventListener('input', e => { state.design.scale = +e.target.value / 100; renderPreview(); });
+  byId('rngGap').addEventListener('input', e => { state.design.gap = +e.target.value / 100; renderPreview(); });
+  byId('selDivider').addEventListener('change', e => { state.design.divider = e.target.value; renderPreview(); });
+  byId('selFormat').addEventListener('change', e => { state.design.format = e.target.value; renderPreview(); });
+
+  document.querySelectorAll('.seg').forEach(group => {
+    group.addEventListener('click', e => {
+      const b = e.target.closest('.seg-btn'); if (!b) return;
+      const val = b.dataset.val; const key = group.dataset.key;
+      if      (key === 'align')   state.design.align     = val;
+      else if (key === 'cols')  { state.design.columns   = +val; syncLayoutControls(); }
+      else if (key === 'layout'){ state.design.layout    = val; syncLayoutControls(); }
+      else if (key === 'orient')  state.design.orientation = val;
+      else if (key === 'leaders') state.design.leaders   = (val === 'on');
+      else if (key === 'bar')     state.design.accentBar = (val === 'on');
+      else if (key === 'curpos')  state.currencyPos      = val;
+      if (key !== 'layout' && key !== 'cols') setSeg(group.id, val);
+      renderPreview();
+    });
+  });
+
+  // ---------- Click-to-edit on the menu preview ----------
+  const ctxPop = byId('ctxPop');
+
+  const FIELD_LABEL = { dname:'fieldName', ddesc:'fieldDesc', dprice:'fieldPrice' };
+
+  function hidePopover(){ ctxPop.classList.remove('show'); }
+
+  function commitActiveEdit(){
+    const a = document.activeElement;
+    if (a && a.isContentEditable) a.blur();
+  }
+
+  // Turn a rendered menu element into an in-place editable field
+  function startInlineEdit(el){
+    hidePopover();
+    const elType = el.dataset.el;
+    const si = el.dataset.si !== undefined ? +el.dataset.si : null;
+    const di = el.dataset.di !== undefined ? +el.dataset.di : null;
+    // price is displayed with currency appended — edit the raw value only
+    if (elType === 'dprice') el.textContent = (state.sections[si].dishes[di].price || '');
+    el.contentEditable = 'true';
+    el.focus();
+    // select all text
+    const range = document.createRange(); range.selectNodeContents(el);
+    const sel = window.getSelection(); sel.removeAllRanges(); sel.addRange(range);
+
+    const commit = () => {
+      el.contentEditable = 'false';
+      const txt = el.innerText.replace(/\s+/g, ' ').trim();
+      if (elType === 'title'){ state.title = txt; byId('titleField').value = txt; }
+      else if (elType === 'subtitle'){ state.subtitle = txt; byId('subField').value = txt; }
+      else if (elType === 'sectitle'){ state.sections[si].name = txt; }
+      else if (elType === 'secsubtext'){ state.sections[si].subtext = txt; }
+      else if (elType === 'secpricelabel'){ state.sections[si].priceLabel = txt; }
+      else if (elType === 'dname'){ state.sections[si].dishes[di].name = txt; }
+      else if (elType === 'ddesc'){ state.sections[si].dishes[di].desc = txt; }
+      else if (elType === 'dprice'){ state.sections[si].dishes[di].price = txt; }
+      else if (elType === 'dsub'){ state.sections[si].dishes[di].name = txt; }
+      renderSections(); renderPreview();
+    };
+    el.addEventListener('blur', commit, { once: true });
+    el.addEventListener('keydown', ev => {
+      if (ev.key === 'Enter'){ ev.preventDefault(); el.blur(); }
+      else if (ev.key === 'Escape'){ ev.preventDefault(); el.removeEventListener('blur', commit); el.contentEditable = 'false'; renderPreview(); }
+    });
+  }
+
+  // Focus a field in the side editor (used to add a missing description/price)
+  function focusEditorField(si, di, field){
+    hidePopover();
+    const row = document.querySelector(`.dish-row[data-si="${si}"][data-di="${di}"]`);
+    if (!row) return;
+    row.scrollIntoView({ behavior:'smooth', block:'center' });
+    const cls = field === 'desc' ? '.dish-desc-input' : '.dish-price-input';
+    const input = row.querySelector(cls);
+    if (input){ input.focus(); }
+  }
+
+  // Build the popover for a clicked element
+  function openPopover(el){
+    const type = el.dataset.el;
+    const si = el.dataset.si !== undefined ? +el.dataset.si : null;
+    const di = el.dataset.di !== undefined ? +el.dataset.di : null;
+    const rows = [];
+
+    const btn = (icon, label, handler, danger) =>
+      rows.push({ icon, label, handler, danger: !!danger });
+
+    if (type === 'title'){
+      rows.push({ head:t('pHeading') });
+      btn('✎', t('editHeading'), () => startInlineEdit(el));
+    }
+    else if (type === 'subtitle'){
+      rows.push({ head:t('pSubtitle') });
+      btn('✎', t('editSubtitle'), () => startInlineEdit(el));
+    }
+    else if (type === 'sectitle'){
+      rows.push({ head:t('pSection') });
+      btn('✎', t('editSectionName'), () => startInlineEdit(el));
+      btn('+', t('addDishHere'), () => {
+        hidePopover();
+        state.sections[si].dishes.push(blankDish());
+        renderSections(); renderPreview();
+        const r = document.querySelectorAll(`.dish-row[data-si="${si}"]`);
+        const last = r[r.length-1]; if (last) last.querySelector('.dish-name-input').focus();
+      });
+      if (si > 0) btn('↑', t('moveSecUp'), () => { hidePopover(); const s=state.sections; [s[si-1],s[si]]=[s[si],s[si-1]]; renderSections(); renderPreview(); });
+      if (si < state.sections.length - 1) btn('↓', t('moveSecDown'), () => { hidePopover(); const s=state.sections; [s[si+1],s[si]]=[s[si],s[si+1]]; renderSections(); renderPreview(); });
+      rows.push({ sep:true });
+      btn('✕', t('delSec'), () => { hidePopover(); state.sections.splice(si,1); renderSections(); renderPreview(); }, true);
+    }
+    else if (type === 'secpricelabel'){
+      rows.push({ head:t('pPriceLabel') });
+      btn('✎', t('editPriceLabel'), () => startInlineEdit(el));
+    }
+    else if (type === 'secsubtext'){
+      rows.push({ head:t('pSubtext') });
+      btn('✎', t('editSubtext'), () => startInlineEdit(el));
+    }
+    else { // dname / ddesc / dprice
+      const dish = state.sections[si].dishes[di];
+      if (dish && dish.kind === 'sub'){
+        const arr = state.sections[si].dishes;
+        rows.push({ head:t('pSubheading') });
+        btn('✎', t('editSubheadingItem'), () => startInlineEdit(el));
+        if (di > 0) btn('↑', t('moveUp'), () => { hidePopover(); [arr[di-1],arr[di]]=[arr[di],arr[di-1]]; renderSections(); renderPreview(); });
+        if (di < arr.length - 1) btn('↓', t('moveDown'), () => { hidePopover(); [arr[di+1],arr[di]]=[arr[di],arr[di+1]]; renderSections(); renderPreview(); });
+        rows.push({ sep:true });
+        btn('✕', t('delSubheading'), () => { hidePopover(); arr.splice(di,1); renderSections(); renderPreview(); }, true);
+      } else {
+      rows.push({ head:t('pDish') });
+      btn('✎', t('edit') + ' ' + t(FIELD_LABEL[type] || 'fieldText'), () => startInlineEdit(el));
+      if (!dish.desc)  btn('+', t('addDescription'), () => focusEditorField(si, di, 'desc'));
+      if (!dish.price) btn('+', t('addPrice'), () => focusEditorField(si, di, 'price'));
+      const arr = state.sections[si].dishes;
+      if (di > 0) btn('↑', t('moveDishUp'), () => { hidePopover(); [arr[di-1],arr[di]]=[arr[di],arr[di-1]]; renderSections(); renderPreview(); });
+      if (di < arr.length - 1) btn('↓', t('moveDishDown'), () => { hidePopover(); [arr[di+1],arr[di]]=[arr[di],arr[di+1]]; renderSections(); renderPreview(); });
+      btn('⧉', t('duplicateDish'), () => {
+        hidePopover();
+        arr.splice(di+1, 0, Object.assign({}, dish, { id:nid() }));
+        renderSections(); renderPreview();
+      });
+      rows.push({ sep:true });
+      btn('✕', t('delDish'), () => { hidePopover(); arr.splice(di,1); renderSections(); renderPreview(); }, true);
+      }
+    }
+
+    // Render popover content
+    ctxPop.innerHTML = '';
+    rows.forEach(r => {
+      if (r.head){ const h=document.createElement('div'); h.className='pop-head'; h.textContent=r.head; ctxPop.appendChild(h); return; }
+      if (r.sep){ const s=document.createElement('div'); s.className='sep'; ctxPop.appendChild(s); return; }
+      const b=document.createElement('button');
+      if (r.danger) b.className='danger';
+      b.innerHTML = `<span class="ic">${r.icon}</span><span>${r.label}</span>`;
+      b.addEventListener('click', ev => { ev.stopPropagation(); r.handler(); });
+      ctxPop.appendChild(b);
+    });
+
+    // Position near the clicked element
+    ctxPop.classList.add('show');
+    const rect = el.getBoundingClientRect();
+    const pw = ctxPop.offsetWidth, ph = ctxPop.offsetHeight;
+    let left = rect.left + window.scrollX;
+    let top  = rect.bottom + window.scrollY + 8;
+    const maxLeft = window.scrollX + document.documentElement.clientWidth - pw - 12;
+    if (left > maxLeft) left = Math.max(window.scrollX + 12, maxLeft);
+    // flip above if it would go off the bottom of the viewport
+    if (rect.bottom + ph + 12 > window.innerHeight) top = rect.top + window.scrollY - ph - 8;
+    ctxPop.style.left = left + 'px';
+    ctxPop.style.top  = top + 'px';
+  }
+
+  // Click on the preview opens the popover for the nearest editable element
+  byId('paperInner').addEventListener('click', e => {
+    if (e.target.isContentEditable) return;          // currently editing — let it be
+    const el = e.target.closest('.editable');
+    if (!el){ hidePopover(); return; }
+    e.stopPropagation();
+    openPopover(el);
+  });
+
+  // Double-click jumps straight to inline editing
+  byId('paperInner').addEventListener('dblclick', e => {
+    const el = e.target.closest('.editable');
+    if (el){ e.preventDefault(); startInlineEdit(el); }
+  });
+
+  // Close popover on outside click or Escape
+  document.addEventListener('mousedown', e => {
+    if (!ctxPop.contains(e.target) && !e.target.closest('.editable')) hidePopover();
+  });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') hidePopover(); });
+
+  // ---------- Logo upload ----------
+  byId('logoInput').addEventListener('change', e => {
+    const f = e.target.files[0]; if (!f) return;
+    const r = new FileReader();
+    r.onload = () => { state.logo = r.result; byId('logoRemove').style.display = 'block'; renderPreview(); };
+    r.readAsDataURL(f);
+  });
+  byId('logoRemove').addEventListener('click', () => {
+    state.logo = null; byId('logoInput').value = ''; byId('logoRemove').style.display = 'none'; renderPreview();
+  });
+
+  // ---------- Free machine translation (MyMemory public API, no key) ----------
+  const LANGS = [
+    ['da','Dansk'], ['en','Engelsk'], ['de','Tysk'], ['sv','Svensk'], ['no','Norsk'],
+    ['nl','Hollandsk'], ['fr','Fransk'], ['es','Spansk'], ['it','Italiensk'], ['pt','Portugisisk'], ['pl','Polsk']
+  ];
+  let translationSnapshot = null;
+  const setTransStatus = msg => { byId('translateStatus').textContent = msg; };
+
+  async function translateText(text, from, to){
+    const t = (text || '').trim();
+    if (!t) return { ok:true, text:text };
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), 8000);
+    try {
+      const url = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(t)}&langpair=${from}|${to}`;
+      const res = await fetch(url, { signal: controller.signal });
+      clearTimeout(timer);
+      if (!res.ok) return { ok:false, text:text };
+      const data = await res.json();
+      const out = data && data.responseData && data.responseData.translatedText;
+      if (!out || /MYMEMORY WARNING|QUERY LENGTH LIMIT|INVALID|NO QUERY/i.test(out)) return { ok:false, text:text };
+      const decoded = out.replace(/&quot;/g,'"').replace(/&#39;/g,"'").replace(/&amp;/g,'&').replace(/&lt;/g,'<').replace(/&gt;/g,'>');
+      return { ok:true, text:decoded };
+    } catch (e){
+      clearTimeout(timer);
+      return { ok:false, text:text };
+    }
+  }
+
+  async function translateMenu(){
+    commitActiveEdit(); hidePopover();
+    const from = byId('selLangFrom').value, to = byId('selLangTo').value;
+    if (from === to){ setTransStatus(t('stTransSame')); return; }
+
+    // snapshot for revert (translatable text only)
+    translationSnapshot = JSON.parse(JSON.stringify({
+      title:state.title, subtitle:state.subtitle, footer:state.footer, sections:state.sections
+    }));
+
+    // collect jobs (skip prices/currency)
+    const jobs = [];
+    if (state.title)    jobs.push({ get:()=>state.title,    set:v=>state.title=v });
+    if (state.subtitle) jobs.push({ get:()=>state.subtitle, set:v=>state.subtitle=v });
+    state.sections.forEach(sec => {
+      if (sec.name) jobs.push({ get:()=>sec.name, set:v=>sec.name=v });
+      sec.dishes.forEach(d => {
+        if (d.name) jobs.push({ get:()=>d.name, set:v=>d.name=v });
+        if (d.desc) jobs.push({ get:()=>d.desc, set:v=>d.desc=v });
+      });
+    });
+    if (state.footer) jobs.push({ get:()=>state.footer, set:v=>state.footer=v });
+
+    if (jobs.length === 0){ setTransStatus(t('stTransNone')); return; }
+
+    const btn = byId('translateBtn');
+    const label = btn.textContent;
+    btn.disabled = true;
+    byId('revertBtn').style.display = 'none';
+
+    const syncMeta = () => {
+      byId('titleField').value = state.title;
+      byId('subField').value   = state.subtitle;
+      byId('footField').value  = state.footer;
+    };
+
+    let done = 0, fails = 0;
+    for (const job of jobs){
+      btn.textContent = `Oversætter ${done + 1}/${jobs.length} …`;
+      const r = await translateText(job.get(), from, to);
+      if (r.ok) job.set(r.text); else fails++;
+      done++;
+      if (done % 3 === 0){ syncMeta(); renderSections(); renderPreview(); }
+    }
+    syncMeta(); renderSections(); renderPreview();
+    btn.disabled = false; btn.textContent = label;
+
+    if (fails === 0){
+      byId('revertBtn').style.display = 'block';
+      setTransStatus(t('stTransOk'));
+    } else if (fails < jobs.length){
+      byId('revertBtn').style.display = 'block';
+      setTransStatus(t('stTransPartial',{n:fails}));
+    } else {
+      setTransStatus(t('stTransFail'));
+    }
+  }
+
+  function revertTranslation(){
+    if (!translationSnapshot) return;
+    state.title    = translationSnapshot.title;
+    state.subtitle = translationSnapshot.subtitle;
+    state.footer   = translationSnapshot.footer;
+    state.sections = JSON.parse(JSON.stringify(translationSnapshot.sections));
+    byId('titleField').value = state.title;
+    byId('subField').value   = state.subtitle;
+    byId('footField').value  = state.footer;
+    renderSections(); renderPreview();
+    byId('revertBtn').style.display = 'none';
+    setTransStatus(t('stTransReverted'));
+  }
+
+  byId('translateBtn').addEventListener('click', translateMenu);
+  byId('revertBtn').addEventListener('click', revertTranslation);
+
+  // ---------- Download helpers (called after payment) ----------
+  // Page sizes in mm (portrait base) matching the FORMATS list
+  const PAGE_MM = {
+    a5:[148,210], a4:[210,297], a3:[297,420], letter:[215.9,279.4], square:[210,210], dl:[105,210]
+  };
+
+  // High-resolution capture scale: ~4K on the long edge, at least print quality (~300 DPI),
+  // capped by a megapixel budget so it doesn't run out of memory on weaker devices.
+  function exportScale(){
+    const longEdge = Math.max(curPageW, curPageH);
+    const s4k = 3840 / longEdge;     // ~4K on the long edge
+    const s300 = 300 / 96;           // ~300 DPI print quality
+    let scale = Math.max(s4k, s300, 2);
+    const mp = (curPageW * scale) * (curPageH * scale) / 1e6;
+    if (mp > 30) scale *= Math.sqrt(30 / mp);
+    return scale;
+  }
+
+  // Make a one-page PDF at the chosen paper size; the whole menu is scaled to fit on it.
+  async function downloadPDF(){
+    commitActiveEdit(); hidePopover();
+    const paper = byId('paper');
+    const hasLibs = (typeof html2canvas !== 'undefined') && window.jspdf && window.jspdf.jsPDF;
+    if (!hasLibs){
+      // Fallback: use the browser print dialog if libraries didn't load
+      window.print();
+      return;
+    }
+    const d = state.design;
+    const land = (d.orientation || 'portrait') === 'landscape';
+    const [bw, bh] = PAGE_MM[d.format] || PAGE_MM.a4;   // portrait base
+
+    // Capture the paper exactly as shown (fixed chosen size, columns and all) — only drop the preview zoom
+    const prevT = paper.style.transform;
+    paper.style.transform = 'none';
+    try {
+      const canvas = await html2canvas(paper, { scale: exportScale(), backgroundColor: (d.paper || '#fffdf8'), useCORS: true });
+      const { jsPDF } = window.jspdf;
+      const pdf = new jsPDF({ orientation: land ? 'landscape' : 'portrait', unit:'mm', format:[bw, bh] });
+      const pw = pdf.internal.pageSize.getWidth();
+      const ph = pdf.internal.pageSize.getHeight();
+      // Fit the whole menu image onto the single page (contain, centered)
+      const imgAspect = canvas.width / canvas.height;
+      const pageAspect = pw / ph;
+      let w, h;
+      if (imgAspect > pageAspect){ w = pw; h = pw / imgAspect; }
+      else { h = ph; w = ph * imgAspect; }
+      const x = (pw - w) / 2, y = (ph - h) / 2;
+      const imgData = canvas.toDataURL('image/png');
+      pdf.addImage(imgData, 'PNG', x, y, w, h);
+      const name = (state.title ? state.title.replace(/[^\wæøåÆØÅ -]/g,'').trim() : 'menukort') || 'menukort';
+      pdf.save(name + '.pdf');
+    } catch (err){
+      console.error('PDF-fejl:', err);
+      alert(t('pdfFail',{msg:(err && err.message ? err.message : '?')}));
+    } finally {
+      paper.style.transform = prevT;
+      applyPaperScale();
+    }
+  }
+
+  async function downloadPNG(){
+    commitActiveEdit(); hidePopover();
+    const paper = byId('paper');
+    if (typeof html2canvas === 'undefined'){
+      alert('Billed-download kunne ikke indlæses her. Brug PDF i stedet.');
+      return;
+    }
+    // capture at the fixed chosen size (matches the preview); only drop the preview zoom
+    const prevT = paper.style.transform;
+    paper.style.transform = 'none';
+    try {
+      const canvas = await html2canvas(paper, { scale: exportScale(), backgroundColor: (state.design.paper || '#fffdf8'), useCORS: true });
+      const link = document.createElement('a');
+      link.download = (state.title ? state.title.replace(/[^\wæøåÆØÅ -]/g,'').trim() : 'menukort') + '.png';
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+    } catch (err){
+      alert(t('pngFail'));
+    } finally {
+      paper.style.transform = prevT;
+      applyPaperScale();
+    }
+  }
+
+  // ---------- Reset ----------
+  byId('resetBtn').addEventListener('click', () => {
+    if (!confirm(t('confirmReset'))) return;
+    state.title = ''; state.subtitle = ''; state.footer = ''; state.logo = null;
+    state.sections = [{ id:nid(), name:'Forretter', dishes:[blankDish()] }];
+    byId('titleField').value = ''; byId('subField').value = ''; byId('footField').value = '';
+    byId('logoInput').value = ''; byId('logoRemove').style.display = 'none';
+    renderSections(); renderPreview(); byId('titleField').focus();
+  });
+
+  // ---------- Local save system (no server / no database) ----------
+  const LS_AUTOSAVE = 'menukort_autosave_v1';
+  const LS_LIBRARY  = 'menukort_library_v1';
+
+  let storageOK = true;
+  try { localStorage.setItem('__menukort_test__', '1'); localStorage.removeItem('__menukort_test__'); }
+  catch (e) { storageOK = false; }
+
+  const setSaveStatus = msg => { byId('saveStatus').textContent = msg; };
+
+  function serialize(){
+    return {
+      title:state.title, subtitle:state.subtitle, currency:state.currency,
+      currencyPos:state.currencyPos, footer:state.footer, logo:state.logo,
+      style:state.style, design:state.design, sections:state.sections
+    };
+  }
+
+  function applyData(d){
+    if (!d || typeof d !== 'object') return false;
+    state.title       = d.title || '';
+    state.subtitle    = d.subtitle || '';
+    state.currency    = (d.currency !== undefined && d.currency !== null) ? d.currency : 'kr.';
+    state.currencyPos = d.currencyPos || 'after';
+    state.footer      = d.footer || '';
+    state.logo        = d.logo || null;
+    state.style       = d.style || 'elegant';
+    const base = Object.assign({ format:'a4' }, PRESETS[state.style] || PRESETS.elegant);
+    state.design = Object.assign(base, d.design || {});
+    if (!state.design.format) state.design.format = 'a4';
+    if (!state.design.orientation) state.design.orientation = 'portrait';
+    if (!state.design.gap) state.design.gap = 1;
+    state.sections = (Array.isArray(d.sections) && d.sections.length)
+      ? d.sections.map(s => ({
+          id: s.id || nid(), name: s.name || '', subtext: s.subtext || '', titleSize: s.titleSize || 1, subGap: s.subGap || 1, priceLabel: s.priceLabel || '', align: s.align || 'left', bg: s.bg || '', radius: (s.radius != null ? s.radius : 11), textColor: s.textColor || '', col: (s.col | 0),
+          dishes: Array.isArray(s.dishes)
+            ? s.dishes.map(x => x.kind === 'sub'
+                ? ({ id:x.id||nid(), kind:'sub', name:x.name||'', size: x.size || 1 })
+                : ({ id:x.id||nid(), name:x.name||'', desc:x.desc||'', price:x.price||'', price2:x.price2||'', price3:x.price3||'', priceCount: Math.min(3, Math.max(1, x.priceCount || 1)), num: !!x.num, numVal: x.numVal || '' }))
+            : []
+        }))
+      : [{ id:nid(), name:'Forretter', dishes:[blankDish()] }];
+    return true;
+  }
+
+  // Push restored/loaded state into all the editor controls + preview
+  function refreshFromState(){
+    byId('titleField').value = state.title;
+    byId('subField').value   = state.subtitle;
+    byId('curField').value   = state.currency;
+    byId('footField').value  = state.footer;
+    byId('logoRemove').style.display = state.logo ? 'block' : 'none';
+    setSeg('segCurpos', state.currencyPos);
+    document.querySelectorAll('.style-card').forEach(x => x.classList.toggle('active', x.dataset.style === state.style));
+    syncDesignControls();
+    renderSections(); renderPreview();
+  }
+
+  // --- Autosave (debounced) ---
+  let autosaveTimer = null;
+  function scheduleAutosave(){
+    if (!storageOK) return;
+    clearTimeout(autosaveTimer);
+    autosaveTimer = setTimeout(doAutosave, 600);
+  }
+  function doAutosave(){
+    if (!storageOK) return;
+    try {
+      localStorage.setItem(LS_AUTOSAVE, JSON.stringify(serialize()));
+      byId('autosaveTag').classList.add('on');
+      setSaveStatus(t('stAutosaveOk'));
+    } catch (e) {
+      setSaveStatus(t('stAutosaveFail'));
+    }
+  }
+
+  // --- Named library ---
+  function loadLibrary(){
+    if (!storageOK) return [];
+    try { return JSON.parse(localStorage.getItem(LS_LIBRARY) || '[]'); } catch (e) { return []; }
+  }
+  function saveLibrary(arr){
+    if (!storageOK) return false;
+    try { localStorage.setItem(LS_LIBRARY, JSON.stringify(arr)); return true; } catch (e) { return false; }
+  }
+  function renderLibrary(){
+    const list = byId('libraryList');
+    if (!storageOK){
+      list.innerHTML = '<p class="lib-empty">Lagring virker ikke her i forhåndsvisningen. Åbn den downloadede fil i din browser, så kan du gemme menuer.</p>';
+      return;
+    }
+    const arr = loadLibrary();
+    if (!arr.length){ list.innerHTML = '<p class="lib-empty">'+esc(t('libEmpty'))+'</p>'; return; }
+    list.innerHTML = arr.map((m, i) => `
+      <div class="lib-item">
+        <div class="lib-info"><span class="lib-name">${esc(m.name)}</span><span class="lib-date">${esc(m.savedAt || '')}</span></div>
+        <div class="lib-btns">
+          <button class="mini-btn" data-act="open" data-i="${i}">${t('open')}</button>
+          <button class="mini-btn danger" data-act="del" data-i="${i}" title="${t('del')}">✕</button>
+        </div>
+      </div>`).join('');
+  }
+
+  byId('libraryList').addEventListener('click', e => {
+    const b = e.target.closest('[data-act]'); if (!b) return;
+    const i = +b.dataset.i; const arr = loadLibrary(); const m = arr[i]; if (!m) return;
+    if (b.dataset.act === 'open'){
+      commitActiveEdit(); hidePopover();
+      if (applyData(m.data)){ refreshFromState(); doAutosave(); setSaveStatus(t('stOpened', {name:m.name})); }
+    } else if (b.dataset.act === 'del'){
+      if (!confirm(t('confirmDelete', {name:m.name}))) return;
+      arr.splice(i, 1); saveLibrary(arr); renderLibrary(); setSaveStatus(t('stDeleted'));
+    }
+  });
+
+  byId('saveAsBtn').addEventListener('click', () => {
+    if (!storageOK){ setSaveStatus(t('stStorageOff')); return; }
+    commitActiveEdit();
+    const name = (prompt(t('askName'), state.title || 'Menu') || '').trim();
+    if (!name) return;
+    const arr = loadLibrary();
+    const now = new Date().toLocaleString(LANG + '-' + LANG.toUpperCase(), { dateStyle:'short', timeStyle:'short' });
+    const entry = { id: nid(), name, savedAt: now, data: serialize() };
+    const existing = arr.findIndex(m => (m.name || '').toLowerCase() === name.toLowerCase());
+    if (existing >= 0){
+      if (!confirm(t('confirmOverwrite', {name:name}))) return;
+      entry.id = arr[existing].id; arr[existing] = entry;
+    } else {
+      arr.unshift(entry);
+    }
+    if (saveLibrary(arr)){ renderLibrary(); setSaveStatus(t('stSavedAs', {name:name})); }
+    else setSaveStatus(t('stSaveFail'));
+  });
+
+  // --- Export / import (backup files) ---
+  byId('exportBtn').addEventListener('click', () => {
+    commitActiveEdit();
+    const blob = new Blob([JSON.stringify(serialize(), null, 2)], { type:'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = (state.title ? state.title.replace(/[^\wæøåÆØÅ -]/g,'').trim() : 'menu') + '.json';
+    a.click();
+    URL.revokeObjectURL(url);
+    setSaveStatus(t('stExported'));
+  });
+
+  byId('importBtn').addEventListener('click', () => byId('importInput').click());
+  byId('importInput').addEventListener('change', e => {
+    const f = e.target.files[0]; if (!f) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      try {
+        const data = JSON.parse(reader.result);
+        if (applyData(data)){ commitActiveEdit(); hidePopover(); refreshFromState(); doAutosave(); setSaveStatus(t('stImported')); }
+        else setSaveStatus(t('stImportNotMenu'));
+      } catch (err){ setSaveStatus(t('stImportInvalid')); }
+      byId('importInput').value = '';
+    };
+    reader.readAsText(f);
+  });
+
+  // ---------- Pay-per-download (verified by Stripe via your server) ----------
+  const LS_PAID = 'menukort_paid_session_v1';
+  const LS_PENDING = 'menukort_pending_dl_v1';
+  let unlocked = false;   // true only between a payment and the single download it grants
+
+  function buildWatermark(){
+    const ov = byId('wmOverlay');
+    if (unlocked){ ov.style.display = 'none'; ov.innerHTML = ''; return; }
+    // Pick a watermark colour that stays visible on whatever paper colour is chosen
+    const rgb = hexToRgb((state.design && state.design.paper) || '#fffdf8') || { r:255, g:253, b:248 };
+    const lum = (0.299 * rgb.r + 0.587 * rgb.g + 0.114 * rgb.b);
+    ov.style.setProperty('--wm-color', lum < 130 ? 'rgba(255,255,255,0.17)' : 'rgba(45,30,15,0.14)');
+    const lineText = ('MENUKORT' + '\u00A0\u00A0·\u00A0\u00A0').repeat(10);
+    let rows = '';
+    for (let i = 0; i < 18; i++) rows += `<div class="wm-line">${lineText}</div>`;
+    ov.innerHTML = `<div class="wm-rot">${rows}</div>`;
+    ov.style.display = 'block';
+  }
+
+  function setStatus(msg){ const s = byId('wmStatus'); if (s) s.textContent = msg || ''; }
+  function showGetFile(kind){
+    const b = byId('getFileBtn');
+    b.style.display = 'block';
+    b.textContent = (kind === 'png')
+      ? t('getImg')
+      : t('getPdf');
+    b.dataset.kind = kind || 'pdf';
+  }
+  function hideGetFile(){ byId('getFileBtn').style.display = 'none'; }
+
+  // After the one download a payment grants, lock everything again
+  function relock(){
+    unlocked = false;
+    codeActive = false;
+    try { localStorage.removeItem(LS_PAID); } catch (e) {}
+    try { localStorage.removeItem(LS_PENDING); } catch (e) {}
+    hideGetFile();
+    buildWatermark();
+    // restore the normal "Betal & hent … 99 kr." button labels
+    const pf = byId('pdfBtn'), pg = byId('pngBtn');
+    if (pf) pf.textContent = t('payPdf');
+    if (pg) pg.textContent = t('payImg');
+  }
+
+  // ---- Discount / free codes ----
+  // NOTE: this is the TEMPORARY in-browser version so the feature is visible and usable.
+  // "One use per browser" is enforced via localStorage — it is a friendly limit, not a
+  // secure one (it can be bypassed with another browser / incognito / cleared data).
+  // A real, cross-user "X uses total" limit arrives with the server step.
+  let codeActive = false;
+  const TEMP_CODES = ['1234567'];                 // gyldig prøvekode
+  const LS_USED_CODES = 'menukort_used_codes_v1'; // koder allerede brugt i denne browser
+  function getUsedCodes(){
+    try { return JSON.parse(localStorage.getItem(LS_USED_CODES) || '[]'); } catch (e){ return []; }
+  }
+  function markCodeUsed(code){
+    try { const u = getUsedCodes(); if (!u.includes(code)){ u.push(code); localStorage.setItem(LS_USED_CODES, JSON.stringify(u)); } } catch (e){}
+  }
+  function setLabelsFree(){
+    const pf = byId('pdfBtn'), pg = byId('pngBtn');
+    if (pf) pf.textContent = t('payPdfFree');
+    if (pg) pg.textContent = t('payImgFree');
+  }
+  function applyCode(){
+    const v = (byId('codeInput').value || '').trim().toUpperCase();
+    if (!v) return;
+    if (!TEMP_CODES.includes(v)){ setStatus(t('codeInvalid')); return; }
+    if (getUsedCodes().includes(v)){ setStatus(t('codeUsed')); return; }   // already used in this browser
+    markCodeUsed(v);
+    codeActive = true; unlocked = true;
+    buildWatermark();        // remove watermark
+    setLabelsFree();         // buttons now say "Hent gratis"
+    setStatus(t('codeApplied'));
+  }
+  byId('useCodeBtn').addEventListener('click', applyCode);
+  byId('codeInput').addEventListener('keydown', e => { if (e.key === 'Enter') applyCode(); });
+
+  // Ask your server (which checks Stripe) whether a payment session is paid
+  async function verifyPaid(sessionId){
+    try {
+      const res = await fetch('/api/verify-session?session_id=' + encodeURIComponent(sessionId));
+      if (!res.ok) return false;
+      const data = await res.json();
+      return !!data.paid;
+    } catch (e){ return false; }
+  }
+
+  // Start a paid download: remember which file, then send the user to Stripe
+  async function startPaidDownload(kind){
+    commitActiveEdit(); hidePopover();
+    if (unlocked){ doDownload(kind); return; }   // already paid, not yet used
+    try { localStorage.setItem(LS_PENDING, kind); } catch (e) {}
+    const btn = (kind === 'png') ? byId('pngBtn') : byId('pdfBtn');
+    const label = btn.textContent; btn.disabled = true; btn.textContent = 'Åbner betaling …';
+    try {
+      const res = await fetch('/api/create-checkout-session', { method:'POST' });
+      if (!res.ok) throw new Error('server');
+      const data = await res.json();
+      if (data.url){ window.location.href = data.url; return; }
+      throw new Error('no url');
+    } catch (e){
+      btn.disabled = false; btn.textContent = label;
+      setStatus(t('stPayOpenFail'));
+    }
+  }
+
+  // Perform the actual download (assumes already unlocked), then re-lock
+  function doDownload(kind){
+    const after = () => setTimeout(relock, 600);
+    if (kind === 'png'){ downloadPNG().finally(after); }
+    else { downloadPDF().finally(after); }
+  }
+
+  byId('pdfBtn').addEventListener('click', () => startPaidDownload('pdf'));
+  byId('pngBtn').addEventListener('click', () => startPaidDownload('png'));
+  byId('getFileBtn').addEventListener('click', () => {
+    const kind = byId('getFileBtn').dataset.kind || 'pdf';
+    setStatus('');
+    doDownload(kind);
+  });
+
+  // On load: handle the return from Stripe (and let a paid-but-not-downloaded user finish)
+  async function initUnlock(){
+    const params = new URLSearchParams(location.search);
+    if (params.get('afbrudt')){
+      history.replaceState(null, '', location.pathname);
+      relock();
+      setStatus(t('stPayCancelled'));
+      return;
+    }
+    const returned = params.get('betalt');
+    if (returned){
+      setStatus(t('stPayConfirming'));
+      const ok = await verifyPaid(returned);
+      history.replaceState(null, '', location.pathname);
+      if (ok){
+        try { localStorage.setItem(LS_PAID, returned); } catch (e) {}
+        unlocked = true; buildWatermark();
+        let kind = 'pdf'; try { kind = localStorage.getItem(LS_PENDING) || 'pdf'; } catch (e) {}
+        showGetFile(kind);
+        setStatus(t('stPayUnlocked'));
+      } else {
+        relock();
+        setStatus(t('stPayVerifyFail'));
+      }
+      return;
+    }
+    // Paid but reloaded before downloading? Let them still get their one file.
+    let stored = null; try { stored = localStorage.getItem(LS_PAID); } catch (e) {}
+    if (stored){
+      const ok = await verifyPaid(stored);
+      if (ok){
+        unlocked = true; buildWatermark();
+        let kind = 'pdf'; try { kind = localStorage.getItem(LS_PENDING) || 'pdf'; } catch (e) {}
+        showGetFile(kind);
+        setStatus(t('stPayReady'));
+      } else { relock(); }
+    } else {
+      buildWatermark();
+    }
+  }
+
+  // ---------- Init ----------
+  // Restore the last auto-saved menu (if any) before first render
+  if (storageOK){
+    try {
+      const saved = localStorage.getItem(LS_AUTOSAVE);
+      if (saved) applyData(JSON.parse(saved));
+    } catch (e) { /* ignore corrupt autosave */ }
+  }
+
+  fillSelect('selTitleFont', TITLE_FONTS);
+  fillSelect('selBodyFont', BODY_FONTS);
+  fillSelect('selLangFrom', LANGS);
+  fillSelect('selLangTo', LANGS);
+  byId('selLangFrom').value = 'da';
+  byId('selLangTo').value = 'en';
+  byId('titleField').value = state.title;
+  byId('subField').value   = state.subtitle;
+  byId('curField').value   = state.currency;
+  byId('footField').value  = state.footer;
+  byId('logoRemove').style.display = state.logo ? 'block' : 'none';
+  setSeg('segCurpos', state.currencyPos);
+  document.querySelectorAll('.style-card').forEach(x => x.classList.toggle('active', x.dataset.style === state.style));
+  syncDesignControls();
+  renderSections();
+  renderPreview();
+  renderLibrary();
+  buildWatermark();
+  initUnlock();
+  // ---- Language selector wiring ----
+  (function(){
+    document.documentElement.lang = LANG;
+    applyStaticI18n();
+    const sel = byId('langSel');
+    if (sel){ sel.value = LANG; sel.addEventListener('change', () => applyLang(sel.value)); }
+  })();
+  // ---- Front page wiring ----
+  (function(){
+    const fp = byId('frontpage'); if (!fp) return;
+    const markActive = () => fp.querySelectorAll('.fp-lang').forEach(b => b.classList.toggle('active', b.dataset.lang === LANG));
+    markActive();
+    fp.querySelectorAll('.fp-lang').forEach(btn => {
+      btn.addEventListener('click', () => {
+        applyLang(btn.dataset.lang);
+        const sel = byId('langSel'); if (sel) sel.value = LANG;
+        markActive();
+      });
+    });
+    const enter = byId('enterAppBtn');
+    if (enter) enter.addEventListener('click', () => {
+      document.body.classList.add('app-started');
+      window.scrollTo(0, 0);
+      requestAnimationFrame(() => { applyPaperScale(); checkOverflow(); });
+    });
+    const back = byId('backToFrontBtn');
+    if (back) back.addEventListener('click', () => {
+      document.body.classList.remove('app-started');
+      markActive();
+      window.scrollTo(0, 0);
+    });
+  })();
+  window.addEventListener('resize', () => { applyPaperScale(); checkOverflow(); });
+  window.addEventListener('load', () => { applyPaperScale(); checkOverflow(); });
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => { applyPaperScale(); checkOverflow(); });
+  setSaveStatus(storageOK ? t('saveStatusInit') : t('saveStatusInitOff'));
+</script>
+<!-- Vercel Web Analytics (tæller besøgende) -->
+<script>
+  window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
+</script>
+<script defer src="/_vercel/insights/script.js"></script>
+</body>
+</html>
