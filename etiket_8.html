@@ -1,0 +1,1578 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lusidio — Fødevare-etiketter med korrekt deklaration</title>
+<meta name="description" content="Lav professionelle fødevare-etiketter med korrekt deklaration: allergener fremhæves automatisk, og skriftstørrelsen lov-tjekkes. Ingen login.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,600;0,700;1,400&family=Jost:ital,wght@0,300;0,400;0,500;0,600;1,400&family=Playfair+Display:ital,wght@0,500;0,700;1,500&family=EB+Garamond:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+  :root{
+    --bg:#f1ece1; --panel:#fbf7ee; --line:#e2d9c8; --ink:#2c2620; --muted:#8c8275;
+    --accent:#b5542a; --accent-d:#963f1f; --ok:#3e7a4e; --warn:#a3452a;
+  }
+  *{ box-sizing:border-box; }
+  html,body{ margin:0; padding:0; }
+  body{ background:var(--bg); color:var(--ink); font-family:'Jost',sans-serif; font-size:15.5px; line-height:1.5; }
+
+  /* ---------- Top bar ---------- */
+  .topbar{ max-width:1240px; margin:0 auto; padding:28px 30px 6px; display:flex; align-items:flex-start; justify-content:space-between; gap:16px; }
+  .home-link{
+    flex:none; display:inline-flex; align-items:center; justify-content:center;
+    width:42px; height:42px; margin-top:2px; text-decoration:none;
+    border:1px solid var(--line); border-radius:11px; background:var(--field);
+    color:var(--ink); font-size:1.15rem; line-height:1; transition:all .15s;
+  }
+  .home-link:hover{ border-color:var(--accent); color:var(--accent); }
+  .brand{ display:flex; align-items:baseline; gap:14px; flex-wrap:wrap; flex:1; }
+  .brand h1{ font-family:'Fraunces',serif; font-weight:600; font-style:italic; font-size:2rem; margin:0; color:var(--ink); }
+  .brand .dot{ width:9px; height:9px; border-radius:50%; background:var(--accent); display:inline-block; margin-bottom:5px; }
+  .brand p{ margin:0; color:var(--muted); font-size:.95rem; max-width:78ch; }
+  .lang-select{ font-family:'Jost',sans-serif; font-size:.85rem; padding:6px 10px; border:1px solid var(--line); border-radius:8px; background:#fff; color:var(--ink); }
+
+  /* ---------- Layout ---------- */
+  .wrap{ max-width:1180px; margin:0 auto; padding:26px 22px 70px; }
+  .grid{ display:grid; grid-template-columns:minmax(330px, 430px) minmax(0,1fr); gap:26px; align-items:start; }
+
+  /* ---------- Editor panel ---------- */
+  .editor{ background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:18px 18px 22px; }
+  .mini-label{ display:block; font-size:.74rem; letter-spacing:.04em; color:var(--muted); margin:0 0 4px; font-weight:500; }
+  .grp-label{ display:block; font-size:.66rem; font-weight:700; letter-spacing:.1em; text-transform:uppercase; color:var(--accent-d); border-top:1px dashed var(--line); padding-top:12px; margin:14px 0 8px; }
+  .grp-label.first{ border-top:none; padding-top:2px; margin-top:0; }
+  .field{ width:100%; font-family:'Jost',sans-serif; font-size:.95rem; color:var(--ink); background:#fff; border:1px solid var(--line); border-radius:9px; padding:9px 11px; outline:none; }
+  .field:focus{ border-color:var(--accent); }
+  textarea.field{ resize:vertical; min-height:64px; }
+  .ctl2{ display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+  .ctl3{ display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px; }
+  .ctl{ display:flex; flex-direction:column; gap:4px; font-size:.74rem; color:var(--muted); }
+  .ctl input[type="color"]{ width:100%; height:34px; border:1px solid var(--line); border-radius:8px; background:#fff; padding:2px; cursor:pointer; }
+  .hint{ font-size:.74rem; color:var(--muted); margin:5px 0 0; line-height:1.45; }
+  .hint.law{ background:#f5efdf; border:1px solid var(--line); border-radius:8px; padding:7px 10px; }
+  .row-gap{ margin-top:10px; }
+
+  .seg{ display:flex; border:1px solid var(--line); border-radius:9px; overflow:hidden; background:#fff; }
+  .seg-btn{ flex:1; font-family:'Jost',sans-serif; font-size:.82rem; padding:8px 6px; border:none; background:transparent; color:var(--ink); cursor:pointer; white-space:nowrap; }
+  .seg-btn + .seg-btn{ border-left:1px solid var(--line); }
+  .seg-btn.active{ background:var(--accent); color:#fff; font-weight:600; }
+  .range{ width:100%; accent-color:var(--accent); }
+  .check{ display:flex; align-items:center; gap:8px; font-size:.88rem; cursor:pointer; }
+  .check input{ accent-color:var(--accent); width:16px; height:16px; }
+
+  /* Templates (quick start) */
+
+  /* Allergen chips */
+  .chips{ display:flex; flex-wrap:wrap; gap:6px; margin-top:7px; }
+  .chip{ font-size:.72rem; padding:4px 9px; border-radius:999px; border:1px solid var(--line); background:#fff; color:var(--muted); }
+  .chip.hit{ background:#eef4ec; border-color:#b9d2bd; color:var(--ok); font-weight:600; }
+
+  /* Nutrition inputs */
+  .nut-grid{ display:grid; grid-template-columns:1fr 86px; gap:6px 10px; align-items:center; margin-top:8px; }
+  .nut-grid .nlbl{ font-size:.84rem; }
+  .nut-grid .nlbl.sub{ padding-left:14px; color:var(--muted); }
+  .nut-grid input{ text-align:right; }
+  .energy-pair{ display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+
+  /* Legal indicator */
+  .law-badge{ display:flex; align-items:center; gap:8px; font-size:.8rem; margin-top:7px; padding:8px 10px; border-radius:9px; border:1px solid; }
+  .law-badge.ok{ color:var(--ok); border-color:#b9d2bd; background:#eef4ec; }
+  .law-badge.bad{ color:#fff; border-color:var(--warn); background:var(--warn); font-weight:600; }
+
+  /* Buttons & pay */
+  .btn{ display:block; width:100%; text-align:center; font-family:'Jost',sans-serif; font-weight:600; font-size:.95rem; border-radius:10px; padding:12px 14px; cursor:pointer; border:1px solid transparent; margin-top:9px; }
+  .btn-primary{ background:var(--accent); color:#fff; }
+  .btn-primary:hover{ background:var(--accent-d); }
+  .btn-outline{ background:#fff; color:var(--accent-d); border-color:var(--accent); }
+  .btn-outline:hover{ background:#faf2ec; }
+  .btn-ghost{ background:transparent; color:var(--muted); border:1px dashed var(--line); font-weight:500; }
+  .code-row{ display:flex; gap:8px; margin-top:10px; }
+  .code-row .field{ flex:1; }
+  .code-row .btn{ width:auto; margin-top:0; padding:9px 14px; }
+  .status{ font-size:.8rem; color:var(--muted); margin-top:8px; min-height:1.2em; }
+  .getfile{ display:none; background:#eef4ec; border:1px solid #b9d2bd; color:var(--ok); border-radius:10px; padding:10px 12px; font-size:.88rem; margin-top:10px; cursor:pointer; text-align:center; font-weight:600; }
+  .disclaimer{ font-size:.74rem; color:var(--muted); border-top:1px dashed var(--line); margin-top:16px; padding-top:11px; line-height:1.5; }
+  .disclaimer a{ color:var(--accent-d); }
+
+  /* ---------- Preview ---------- */
+  .preview-col{ position:sticky; top:18px; min-width:0; }
+  .side-tabs{ display:flex; gap:8px; margin-bottom:12px; }
+  .side-tab{ font-family:'Jost',sans-serif; font-size:.85rem; padding:8px 16px; border-radius:999px; border:1px solid var(--line); background:#fff; cursor:pointer; color:var(--ink); }
+  .side-tab.active{ background:var(--ink); color:#fff; border-color:var(--ink); }
+  .stage{ display:flex; align-items:flex-start; justify-content:center; padding:18px 8px 8px; min-height:340px; min-width:0; }
+  .label-holder{ position:relative; flex:0 0 auto; }
+  .label-card{ position:absolute; top:0; left:0; background:#fff; box-shadow:0 14px 38px rgba(60,45,25,.16); overflow:hidden; }
+  #segDate .seg-btn{ white-space:normal; line-height:1.2; padding:7px 5px; }
+  .fit-warn{ display:none; margin:12px auto 0; max-width:430px; font-size:.8rem; color:#fff; background:var(--warn); border-radius:9px; padding:8px 12px; text-align:center; }
+  .meta-line{ text-align:center; font-size:.78rem; color:var(--muted); margin-top:12px; }
+
+  /* Label inner typography (mm-præcis: 6 px = 1 mm) */
+  .lab-inner{ position:absolute; inset:0; padding:calc(var(--pad,3) * 6px); display:flex; flex-direction:column; overflow:hidden; }
+
+  .lab-back{ justify-content:flex-start; font-size:calc(var(--fs,2.4) * 6px); line-height:1.32; }
+  .lb-name{ font-weight:700; font-size:1.06em; margin-bottom:.28em; }
+  .lb-block{ margin-bottom:.34em; }
+  .lb-block:last-child{ margin-bottom:0; }
+  .lb-k{ font-weight:600; }
+  .nut-tbl{ width:100%; border-collapse:collapse; margin-top:.18em; }
+  .nut-tbl caption{ text-align:left; font-weight:700; padding-bottom:.14em; caption-side:top; }
+  .nut-tbl td{ padding:.07em 0; border-top:.6px solid var(--lab-line, rgba(0,0,0,.35)); vertical-align:baseline; }
+  .nut-tbl td:last-child{ text-align:right; white-space:nowrap; }
+  .nut-tbl tr.sub td:first-child{ padding-left:1em; }
+
+  /* Forside-stile */
+  .style-row{ display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin-top:4px; }
+  .style-card{ border:1px solid var(--line); background:#fff; border-radius:9px; padding:8px 6px; text-align:center; cursor:pointer; font-family:'Jost',sans-serif; font-size:.78rem; color:var(--ink); }
+  .style-card:hover{ border-color:var(--accent); }
+  .style-card.active{ border-color:var(--accent); background:#faf2ec; font-weight:600; }
+  .lf-frame{ position:absolute; inset:calc(2.2 * 6px); pointer-events:none; }
+  .fr-thin{ border:1.5px solid var(--fr-col, currentColor); }
+  .fr-double{ border:4.5px double var(--fr-col, currentColor); }
+  .fr-dashed{ border:1.5px dashed var(--fr-col, currentColor); }
+  .style-twotone{ padding:0 !important; justify-content:flex-start !important; }
+  .c-tl{ top:calc(1.8 * 6px); left:calc(1.8 * 6px); border-top-width:1.5px; border-left-width:1.5px; }
+  .c-tr{ top:calc(1.8 * 6px); right:calc(1.8 * 6px); border-top-width:1.5px; border-right-width:1.5px; }
+  .c-bl{ bottom:calc(1.8 * 6px); left:calc(1.8 * 6px); border-bottom-width:1.5px; border-left-width:1.5px; }
+  .c-br{ bottom:calc(1.8 * 6px); right:calc(1.8 * 6px); border-bottom-width:1.5px; border-right-width:1.5px; }
+
+  /* Bibliotek: Gem som / Eksport / Import (porteret fra visitkort) */
+  .save-actions{ display:flex; gap:7px; flex-wrap:wrap; }
+  .btn-mini{ flex:1; min-width:84px; font-family:inherit; font-size:.8rem; font-weight:600; color:var(--accent-d,var(--accent)); background:var(--field,#fbf7ee); border:1px solid var(--line); border-radius:9px; padding:9px 8px; cursor:pointer; transition:.15s; }
+  .btn-mini:hover{ border-color:var(--accent); color:var(--accent); }
+  .tag{ font-size:.6rem; color:#cabfae; vertical-align:middle; margin-left:4px; }
+  .library{ margin-top:11px; display:flex; flex-direction:column; gap:7px; }
+  .lib-empty{ font-size:.8rem; color:var(--muted,#8a7f6e); margin:6px 2px; line-height:1.4; }
+  .lib-item{ display:flex; align-items:center; gap:8px; background:var(--field,#fbf7ee); border:1px solid var(--line); border-radius:10px; padding:8px 10px; }
+  .lib-info{ flex:1; min-width:0; display:flex; flex-direction:column; }
+  .lib-name{ font-weight:600; font-size:.88rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .lib-date{ font-size:.7rem; color:var(--muted,#8a7f6e); }
+  .lib-btns{ display:flex; gap:5px; }
+  .lib-btn{ font-family:inherit; font-size:.78rem; border:1px solid var(--line); background:var(--field,#fbf7ee); color:var(--ink); border-radius:7px; padding:5px 10px; cursor:pointer; }
+  .lib-btn:hover{ border-color:var(--accent); color:var(--accent-d,var(--accent)); }
+  .lib-btn.danger:hover{ border-color:#b14545; color:#b14545; }
+  .save-note{ font-size:.78rem; color:var(--muted,#8a7f6e); }
+
+  /* Fri forside: boks-editor (porteret fra visitkort) */
+  .pos-grid{ display:grid; grid-template-columns:repeat(3,28px); grid-template-rows:repeat(3,22px); gap:3px; flex:none; }
+  .pos-grid button{ border:1px solid var(--line); background:var(--field,#fbf7ee); border-radius:5px; cursor:pointer; padding:0; transition:.12s; position:relative; }
+  .pos-grid button::after{ content:''; position:absolute; inset:6px; background:var(--muted,#8a7f6e); border-radius:2px; opacity:.35; transition:.12s; }
+  .pos-grid button:hover{ border-color:var(--accent); }
+  .pos-grid button:hover::after{ opacity:.7; background:var(--accent); }
+  .pos-grid button.active{ background:var(--accent); border-color:var(--accent); }
+  .pos-grid button.active::after{ background:#fff; opacity:1; }
+  .contact-list{ display:flex; flex-direction:column; gap:8px; }
+  .cli{ display:grid; grid-template-columns:34px 1fr auto; gap:8px; align-items:center; background:#fff; border:1px solid var(--line); border-radius:10px; padding:8px 10px; }
+  .cli-ic{ width:26px; height:26px; display:inline-flex; align-items:center; justify-content:center; color:var(--accent-d,var(--accent)); background:#fff7f1; border:1px solid var(--line); border-radius:7px; flex:none; font-size:.62rem; font-weight:700; letter-spacing:.04em; text-transform:uppercase; }
+  .cli-input{ width:100%; font-family:inherit; font-size:.92rem; color:var(--ink); background:transparent; border:none; padding:6px 0; outline:none; min-width:0; box-shadow:none; }
+  .cli-btns{ display:flex; gap:3px; }
+  .cli-btn{ width:28px; height:28px; padding:0; border:1px solid var(--line); background:var(--field,#fbf7ee); color:var(--muted,#8a7f6e); border-radius:6px; font-size:.85rem; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; transition:.12s; font-family:inherit; }
+  .cli-btn:hover{ border-color:var(--accent); color:var(--accent-d,var(--accent)); }
+  .cli-btn:disabled{ opacity:.3; cursor:not-allowed; }
+  .cli-btn.danger:hover{ border-color:#b14545; color:#b14545; }
+  .cli-btn.active{ background:var(--accent); border-color:var(--accent); color:#fff; }
+  .add-contact{ width:100%; border:1.5px dashed var(--accent); background:#fff7f1; color:var(--accent-d,var(--accent)); border-radius:11px; padding:9px; cursor:pointer; font-family:inherit; font-size:.86rem; font-weight:600; transition:.15s; }
+  .type-chips{ display:flex; flex-wrap:wrap; gap:6px; margin-top:9px; align-items:center; }
+  .type-chip{ font-family:inherit; font-size:.78rem; font-weight:600; color:var(--accent-d,var(--accent)); background:#fff7f1; border:1px dashed var(--accent); border-radius:999px; padding:6px 11px; cursor:pointer; transition:.13s; }
+  .type-chip:hover{ background:var(--accent); color:#fff; border-style:solid; }
+  .add-contact:hover{ background:var(--accent); color:#fff; }
+  .box-card{ background:var(--field,#fbf7ee); border:1px solid var(--line); border-radius:12px; padding:12px; margin-bottom:10px; }
+  .box-head{ display:flex; align-items:center; gap:8px; margin-bottom:10px; flex-wrap:wrap; }
+  .box-card.collapsed{ padding:10px 12px; }
+  .box-card.collapsed .box-head{ margin-bottom:0; }
+  .box-title{ font-size:.76rem; font-weight:700; letter-spacing:.06em; text-transform:uppercase; color:var(--accent-d,var(--accent)); flex:1; }
+  .box-head-btns{ display:flex; gap:3px; }
+  .fl-row{ display:flex; gap:6px; align-items:center; flex-wrap:wrap; grid-column:1 / -1; }
+  .fl-mini{ margin:0; font-size:.7rem; }
+
+  /* Fri-stil: 3×3 grid på etiketten (som visitkortets bc-inner) */
+  .fb-inner{ position:absolute; inset:0; display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr) minmax(0,1fr); grid-template-rows:minmax(0,1fr) minmax(0,1fr) minmax(0,1fr); padding:calc(var(--pad,3) * 6px); gap:8px; }
+  .fb-box{ min-width:0; }
+  .fb-box.pos-top-left{ grid-row:1; grid-column:1; align-self:start; justify-self:start; }
+  .fb-box.pos-top-center{ grid-row:1; grid-column:2; align-self:start; justify-self:center; }
+  .fb-box.pos-top-right{ grid-row:1; grid-column:3; align-self:start; justify-self:end; }
+  .fb-box.pos-middle-left{ grid-row:2; grid-column:1; align-self:center; justify-self:start; }
+  .fb-box.pos-middle-center{ grid-row:2; grid-column:2; align-self:center; justify-self:center; }
+  .fb-box.pos-middle-right{ grid-row:2; grid-column:3; align-self:center; justify-self:end; }
+  .fb-box.pos-bottom-left{ grid-row:3; grid-column:1; align-self:end; justify-self:start; }
+  .fb-box.pos-bottom-center{ grid-row:3; grid-column:2; align-self:end; justify-self:center; }
+  .fb-box.pos-bottom-right{ grid-row:3; grid-column:3; align-self:end; justify-self:end; }
+  .fb-box.layout-stack{ display:flex; flex-direction:column; gap:var(--box-gap,6px); }
+  .fb-box.layout-row{ display:flex; flex-direction:row; flex-wrap:nowrap; gap:var(--box-gap,6px); align-items:baseline; }
+  .fb-box.al-left{ text-align:left; } .fb-box.al-center{ text-align:center; } .fb-box.al-right{ text-align:right; }
+  .fb-line-group{ display:flex; flex-direction:row; flex-wrap:nowrap; align-items:baseline; width:100%; }
+
+  /* Bagside-stile */
+  .back-rules .lb-name{ border-bottom:1.1px solid var(--lab-line-strong, currentColor); padding-bottom:.16em; margin-bottom:.26em; }
+  .back-rules .lb-block{ border-top:.6px solid var(--lab-line, rgba(0,0,0,.35)); padding-top:.24em; margin-bottom:.22em; }
+  .back-rules .lb-name + .lb-block{ border-top:none; padding-top:0; }
+  .lb-cols{ display:grid; grid-template-columns:1.15fr 1fr; gap:0 calc(var(--fs,2.4) * 6px * 1.2); align-items:start; }
+  .lb-col{ min-width:0; }
+  .nut-box{ border:1.1px solid var(--lab-line-strong, currentColor); padding:.22em .45em .3em; margin-top:.24em; }
+  .nut-box .nut-tbl{ margin-top:0; }
+  .back-box .nut-tbl caption{ border-bottom:1.1px solid var(--lab-line-strong, currentColor); padding-bottom:.16em; }
+  .back-box .nut-tbl tr:first-child td{ border-top:none; }
+  .back-compact{ line-height:1.24; }
+  .back-compact .lb-block{ margin-bottom:.22em; }
+  .back-compact .lb-name{ margin-bottom:.2em; }
+  .back-compact .nut-tbl td{ padding:.035em 0; }
+
+  /* Watermark */
+  .lab-wm{ position:absolute; inset:-30%; display:flex; flex-direction:column; justify-content:space-around; transform:rotate(-24deg); pointer-events:none; }
+  .lab-wm .wmln{ white-space:nowrap; text-align:center; font-family:'Jost',sans-serif; font-weight:700; font-size:15px; letter-spacing:.22em; color:var(--wm-col); user-select:none; }
+
+  @media (max-width: 920px){
+    .grid{ grid-template-columns:minmax(0,1fr); gap:18px; }
+    .preview-col{ order:-1; position:sticky; top:0; z-index:40; background:var(--bg);
+      margin:0 -14px; padding:8px 14px 10px; border-bottom:1px solid var(--line);
+      box-shadow:0 8px 16px rgba(60,45,25,.07); }
+    .wrap{ padding:18px 14px 60px; }
+    .topbar{ padding:14px 14px 4px; }
+    .brand{ gap:9px; }
+    .brand h1{ font-size:1.35rem; }
+    .brand p{ font-size:.8rem; }
+    .editor{ padding:14px 13px 18px; }
+    .stage{ min-height:0; padding:8px 2px 2px; }
+    .side-tabs{ gap:6px; margin-bottom:8px; }
+    .side-tab{ flex:1; text-align:center; padding:9px 6px; font-size:.86rem; font-weight:600; }
+    .meta-line{ margin-top:8px; font-size:.72rem; }
+    .fit-warn{ margin-top:8px; }
+    .field{ font-size:16px; }   /* forhindrer iOS-autozoom ved fokus */
+    .nut-grid{ grid-template-columns:1fr 80px; }
+    .seg-btn{ font-size:.78rem; padding:8px 4px; }
+  }
+  @media print{ .topbar, .editor, .side-tabs, .fit-warn, .meta-line{ display:none !important; } }
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <a class="home-link" href="/" title="Lusidio">←</a>
+  <div class="brand">
+    <h1 data-i18n="brandH1">Etiket</h1><span class="dot"></span>
+    <p data-i18n="intro">Udfyld felterne — værktøjet sætter deklarationen rigtigt op efter EU-reglerne: allergener fremhæves automatisk i ingredienslisten, næringstabellen får den lovpligtige rækkefølge, og skriftstørrelsen lov-tjekkes mod kravet om x-højde.</p>
+  </div>
+  <select class="lang-select" id="langSel" aria-label="Sprog">
+    <option value="da">Dansk</option>
+    <option value="en">English</option>
+    <option value="tr">Türkçe</option>
+    <option value="uk">Українська</option>
+  </select>
+</header>
+
+<div class="wrap">
+  <div class="grid">
+    <!-- ======================= EDITOR ======================= -->
+    <aside class="editor" id="editor">
+
+      <label class="grp-label first"><span data-i18n="myCards">Mine etiketter</span> <span class="tag" data-i18n-title="autosaveTitle" title="Gemmes automatisk">●</span></label>
+      <div class="save-actions">
+        <button class="btn-mini" id="saveAsBtn" data-i18n="saveAs" type="button">＋ Gem som…</button>
+        <button class="btn-mini" id="exportBtn" data-i18n="exportBtn" type="button">⬇ Eksportér</button>
+        <button class="btn-mini" id="importBtn" data-i18n="importBtn" type="button">⬆ Importér</button>
+        <input type="file" id="importInput" accept="application/json,.json" style="display:none;">
+      </div>
+      <div id="libraryList" class="library"></div>
+      <p class="save-note" id="saveStatus" style="margin-top:4px;"></p>
+
+      <label class="grp-label" data-i18n="grpDesign">Tilpas design</label>
+      <label class="mini-label" data-i18n="sizeLabel">Etiketstørrelse</label>
+      <select class="field" id="selSize">
+        <option value="l6040">60 × 40 mm</option>
+        <option value="l7050">70 × 50 mm</option>
+        <option value="l9060" selected>90 × 60 mm</option>
+        <option value="l10070">100 × 70 mm</option>
+        <option value="a7">A7 — 105 × 74 mm</option>
+        <option value="a6">A6 — 148 × 105 mm</option>
+        <option value="r40">Ø 40 mm</option>
+        <option value="r60">Ø 60 mm</option>
+        <option value="r80">Ø 80 mm</option>
+      </select>
+      <div class="ctl2 row-gap" id="rowShape">
+        <div><label class="mini-label" data-i18n="orient">Retning</label>
+          <div class="seg" id="segOrient">
+            <button class="seg-btn" type="button" data-val="landscape" data-i18n="landscape">Liggende</button>
+            <button class="seg-btn" type="button" data-val="portrait" data-i18n="portrait">Stående</button>
+          </div></div>
+        <div><label class="mini-label" data-i18n="radius">Hjørner</label>
+          <div class="seg" id="segRadius">
+            <button class="seg-btn" type="button" data-val="sharp" data-i18n="rSharp">Skarpe</button>
+            <button class="seg-btn" type="button" data-val="soft" data-i18n="rSoft">Bløde</button>
+            <button class="seg-btn" type="button" data-val="round" data-i18n="rRound">Runde</button>
+          </div></div>
+      </div>
+      <div class="ctl2 row-gap">
+        <div><label class="mini-label" data-i18n="titleFont">Titel-skrifttype</label>
+          <select class="field" id="selTitleFont"></select></div>
+        <div><label class="mini-label" data-i18n="bodyFont">Tekst-skrifttype</label>
+          <select class="field" id="selBodyFont"></select></div>
+      </div>
+      <label class="mini-label row-gap" data-i18n="colSideLabel">Farver for</label>
+      <div class="seg" id="segColSide">
+        <button class="seg-btn" type="button" data-val="front" data-i18n="csFront">Forside</button>
+        <button class="seg-btn" type="button" data-val="back" data-i18n="csBack">Bagside</button>
+      </div>
+      <div class="ctl3 row-gap">
+        <label class="ctl"><span data-i18n="accent">Accent</span><input type="color" id="cAccent"></label>
+        <label class="ctl"><span data-i18n="paperC">Papir</span><input type="color" id="cPaper"></label>
+        <label class="ctl"><span data-i18n="inkC">Tekst</span><input type="color" id="cInk"></label>
+      </div>
+
+
+      <label class="grp-label" data-i18n="grpFront">Forside</label>
+      <div id="freeBoxWrap"></div>
+      <p class="hint" data-i18n="frontLawHint">Husk: Varebetegnelse og nettoindhold skal stå i samme synsfelt. Tilføj dem som linjer på forsiden — de hentes automatisk fra deklarationen.</p>
+      <label class="mini-label row-gap" data-i18n="frameLabel">Ramme</label>
+      <div class="seg" id="segFrame">
+        <button class="seg-btn" type="button" data-val="none" data-i18n="frNone">Ingen</button>
+        <button class="seg-btn" type="button" data-val="thin" data-i18n="frThin">Tynd</button>
+        <button class="seg-btn" type="button" data-val="double" data-i18n="frDouble">Dobbelt</button>
+        <button class="seg-btn" type="button" data-val="dashed" data-i18n="frDashed">Stiplet</button>
+      </div>
+      <div id="frameColWrap" class="row-gap" style="display:none;">
+        <label class="mini-label" data-i18n="frameColLabel">Rammefarve</label>
+        <div class="seg" id="segFrameCol">
+          <button class="seg-btn" type="button" data-val="ink" data-i18n="fcInk">Tekst</button>
+          <button class="seg-btn" type="button" data-val="accent" data-i18n="fcAccent">Accent</button>
+        </div>
+      </div>
+
+      <label class="grp-label" data-i18n="grpDecl">Deklaration (bagside)</label>
+      <label class="mini-label" data-i18n="vareb">Varebetegnelse</label>
+      <input class="field" id="dVareb" data-i18n-ph="varebPh" placeholder="fx Jordbærmarmelade">
+      <p class="hint" data-i18n="varebHint">Den neutrale betegnelse for hvad varen ér — ikke et fantasinavn.</p>
+
+      <label class="mini-label row-gap" data-i18n="ingr">Ingrediensliste</label>
+      <textarea class="field" id="dIngr" rows="3" data-i18n-ph="ingrPh" placeholder="Jordbær (55 %), sukker, citronsaft, geleringsmiddel (pektin)"></textarea>
+      <p class="hint" data-i18n="ingrHint">Skriv i faldende orden efter vægt. De 14 allergener fremhæves automatisk med fed, når du skriver dem.</p>
+      <div class="chips" id="allergChips"></div>
+
+      <label class="mini-label row-gap" data-i18n="traces">»Kan indeholde spor af« (frivillig)</label>
+      <input class="field" id="dTraces" data-i18n-ph="tracesPh" placeholder="fx andre nødder og sesam">
+      <p class="hint" data-i18n="tracesHint">Spor-listen skal ikke fremhæves — det er kun ingredienslisten, der har fremhævningskrav.</p>
+
+      <div class="ctl2 row-gap">
+        <div>
+          <label class="mini-label" data-i18n="netto">Nettoindhold</label>
+          <div style="display:flex;gap:8px;">
+            <input class="field" id="dNetto" inputmode="decimal" placeholder="450" style="flex:1;min-width:0;">
+            <select class="field" id="dNettoUnit" style="width:74px;">
+              <option value="g">g</option><option value="kg">kg</option>
+              <option value="ml">ml</option><option value="cl">cl</option><option value="l">l</option>
+            </select>
+          </div>
+        </div>
+        <div>
+          <label class="mini-label" data-i18n="lot">Lot/parti (valgfri)</label>
+          <input class="field" id="dLot" placeholder="L-2406">
+        </div>
+      </div>
+
+      <label class="mini-label row-gap" data-i18n="dateType">Holdbarhed</label>
+      <div class="seg" id="segDate">
+        <button class="seg-btn" type="button" data-val="bb" data-i18n="dtBB">Bedst før</button>
+        <button class="seg-btn" type="button" data-val="bbu" data-i18n="dtBBU">Bedst før udgangen af</button>
+        <button class="seg-btn" type="button" data-val="sa" data-i18n="dtSA">Sidste anvendelsesdato</button>
+      </div>
+      <input class="field row-gap" id="dDate" data-i18n-ph="datePh" placeholder="fx 12.06.2027">
+      <p class="hint law" data-i18n="dateHint">Holdbarhed under 3 mdr.: dag + måned. 3–18 mdr.: »Bedst før udgangen af« + måned + år. Over 18 mdr.: år er nok. Letfordærvelige varer skal bruge »Sidste anvendelsesdato«.</p>
+
+      <label class="mini-label row-gap" data-i18n="storage">Opbevaring</label>
+      <input class="field" id="dStorage" data-i18n-ph="storagePh" placeholder="Opbevares mørkt og tørt. Efter åbning på køl.">
+
+      <div class="ctl2 row-gap">
+        <div><label class="mini-label" data-i18n="producer">Producent</label>
+          <input class="field" id="dProducer" placeholder="Annes Køkken"></div>
+        <div><label class="mini-label" data-i18n="address">Adresse</label>
+          <input class="field" id="dAddress" placeholder="Solvej 12, 3400 Hillerød"></div>
+      </div>
+
+      <label class="grp-label" data-i18n="grpNut">Næringsdeklaration</label>
+      <div class="ctl2">
+        <div class="seg" id="segNutOn">
+          <button class="seg-btn" type="button" data-val="on" data-i18n="on">Med</button>
+          <button class="seg-btn" type="button" data-val="off" data-i18n="off">Uden</button>
+        </div>
+        <div class="seg" id="segNutPer">
+          <button class="seg-btn" type="button" data-val="g" data-i18n="per100g">pr. 100 g</button>
+          <button class="seg-btn" type="button" data-val="ml" data-i18n="per100ml">pr. 100 ml</button>
+        </div>
+      </div>
+      <div id="nutFields">
+        <div class="nut-grid">
+          <span class="nlbl" data-i18n="nEnergy">Energi</span>
+          <span></span>
+        </div>
+        <div class="energy-pair">
+          <div><label class="mini-label">kJ</label><input class="field" id="nKj" inputmode="decimal" placeholder="auto"></div>
+          <div><label class="mini-label">kcal</label><input class="field" id="nKcal" inputmode="decimal" placeholder="163"></div>
+        </div>
+        <div class="nut-grid">
+          <span class="nlbl" data-i18n="nFat">Fedt</span><input class="field" id="nFat" inputmode="decimal" placeholder="0,1">
+          <span class="nlbl sub" data-i18n="nSat">heraf mættede fedtsyrer</span><input class="field" id="nSat" inputmode="decimal" placeholder="0">
+          <span class="nlbl" data-i18n="nCarb">Kulhydrat</span><input class="field" id="nCarb" inputmode="decimal" placeholder="40">
+          <span class="nlbl sub" data-i18n="nSugar">heraf sukkerarter</span><input class="field" id="nSugar" inputmode="decimal" placeholder="39">
+          <span class="nlbl" id="fiberLbl" style="display:none;" data-i18n="nFiber">Kostfibre</span><input class="field" id="nFiber" inputmode="decimal" placeholder="7" style="display:none;">
+          <span class="nlbl" data-i18n="nProt">Protein</span><input class="field" id="nProt" inputmode="decimal" placeholder="0,3">
+          <span class="nlbl" data-i18n="nSalt">Salt</span><input class="field" id="nSalt" inputmode="decimal" placeholder="0,02">
+        </div>
+        <label class="check row-gap"><input type="checkbox" id="chkFiber"><span data-i18n="fiberOn">Medtag kostfibre (frivillig)</span></label>
+        <p class="hint" data-i18n="nutHint">kJ beregnes automatisk ud fra kcal (× 4,184). Brug lovens betegnelser: »sukkerarter« og »mættede fedtsyrer«.</p>
+        <p class="hint" data-i18n="nutExemptHint">Undtagelse: Er emballagens største flade under 25 cm², kræves der slet ingen næringsdeklaration.</p>
+      </div>
+
+      <label class="grp-label" data-i18n="grpBackStyle">Bagside-stil</label>
+      <div class="style-row" id="backStyleRow">
+        <button class="style-card active" type="button" data-bstyle="classic" data-i18n="bsClassic">Klassisk</button>
+        <button class="style-card" type="button" data-bstyle="rules" data-i18n="bsRules">Linjeret</button>
+        <button class="style-card" type="button" data-bstyle="columns" data-i18n="bsColumns">To spalter</button>
+        <button class="style-card" type="button" data-bstyle="box" data-i18n="bsBox">Indrammet tabel</button>
+        <button class="style-card" type="button" data-bstyle="compact" data-i18n="bsCompact">Kompakt</button>
+      </div>
+
+      <label class="grp-label" data-i18n="legalTitle">Lov-tjek af skriftstørrelse</label>
+      <label class="mini-label" data-i18n="declSize">Tekststørrelse på deklarationen</label>
+      <input type="range" class="range" id="rngDeclSize" min="70" max="160" value="100">
+      <label class="check row-gap"><input type="checkbox" id="chkSmallPack"><span data-i18n="smallPack">Emballagens største flade er under 80 cm² (krav: 0,9 mm)</span></label>
+      <div class="law-badge ok" id="lawBadge"><span id="lawBadgeTxt"></span></div>
+      <p class="hint" data-i18n="tinyHint">Tip: Er emballagens største flade under 10 cm², kræves kun varebetegnelse, allergener, nettoindhold og dato.</p>
+
+      <button class="btn btn-primary" id="pdfBtn" data-i18n="payPdf">Betal &amp; hent PDF — 49 kr.</button>
+      <button class="btn btn-outline" id="pngBtn" data-i18n="payImg">Betal &amp; hent som billede — 49 kr.</button>
+      <button class="btn btn-outline" id="freeBtn" data-i18n="freeDl" type="button">Hent gratis prøve — PDF med vandmærke</button>
+      <p class="hint" data-i18n="pdfContains">PDF'en indeholder: et A4-ark fyldt med forsider, et A4-ark med bagsider — og begge etiketter enkeltvis i præcise mål.</p>
+      <div class="getfile" id="getFileBar" data-i18n="getFile">✓ Betaling gennemført — hent din fil nu</div>
+      <div class="code-row">
+        <input class="field" id="codeInput" data-i18n-ph="codePh" placeholder="Har du en kode?">
+        <button class="btn btn-outline" id="useCodeBtn" data-i18n="useCode" type="button">Brug kode</button>
+      </div>
+      <p class="status" id="statusLine"></p>
+      <button class="btn btn-ghost" id="resetBtn" data-i18n="resetAll" type="button">Ryd alt og start forfra</button>
+
+      <p class="disclaimer"><span data-i18n="disclaimer">Vejledende værktøj — du er som producent selv ansvarlig for, at mærkningen er korrekt og fuldstændig. Særregler gælder bl.a. for honning, alkohol, kosttilskud og økologi.</span>
+        <a href="https://foedevarestyrelsen.dk" target="_blank" rel="noopener" data-i18n="readMore">Læs reglerne hos Fødevarestyrelsen</a></p>
+    </aside>
+
+    <!-- ======================= PREVIEW ======================= -->
+    <section class="preview-col">
+      <div class="side-tabs">
+        <button class="side-tab active" id="tabFront" type="button" data-i18n="sideFront">Forside</button>
+        <button class="side-tab" id="tabBack" type="button" data-i18n="sideBack">Bagside (deklaration)</button>
+      </div>
+      <div class="stage"><div class="label-holder" id="labelHolder"><div class="label-card" id="labelCard"></div></div></div>
+      <div class="fit-warn" id="fitWarn" data-i18n="fitWarn">⚠ Indholdet fylder mere end etiketten — gør skriften mindre, kort teksten ned, eller vælg en større etiket.</div>
+      <p class="meta-line" id="metaLine"></p>
+    </section>
+  </div>
+</div>
+<script>
+(function(){
+  'use strict';
+  const byId = id => document.getElementById(id);
+  const esc = s => String(s == null ? '' : s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+
+  /* ============================== I18N ============================== */
+  const I18N = {
+    da: {
+      brandH1:'Etiket',
+      intro:'Udfyld felterne — værktøjet sætter deklarationen rigtigt op efter EU-reglerne: allergener fremhæves automatisk i ingredienslisten, næringstabellen får den lovpligtige rækkefølge, og skriftstørrelsen lov-tjekkes mod kravet om x-højde.',
+            grpFront:'Forside',       grpDecl:'Deklaration (bagside)', vareb:'Varebetegnelse', varebPh:'fx Jordbærmarmelade', varebHint:'Den neutrale betegnelse for, hvad varen ér — ikke et fantasinavn.',
+      ingr:'Ingrediensliste', ingrPh:'Jordbær (55 %), sukker, citronsaft, geleringsmiddel (pektin)', ingrHint:'Skriv i faldende orden efter vægt. De 14 allergener fremhæves automatisk med fed, når du skriver dem.',
+      traces:'»Kan indeholde spor af« (frivillig)', tracesPh:'fx andre nødder og sesam', tracesHint:'Spor-listen skal ikke fremhæves — det er kun ingredienslisten, der har fremhævningskrav.',
+      netto:'Nettoindhold', lot:'Lot/parti (valgfri)', dateType:'Holdbarhed', dtBB:'Bedst før', dtBBU:'Bedst før udgangen af', dtSA:'Sidste anvendelsesdato', datePh:'fx 12.06.2027',
+      dateHint:'Holdbarhed under 3 mdr.: dag + måned. 3–18 mdr.: »Bedst før udgangen af« + måned + år. Over 18 mdr.: år er nok. Letfordærvelige varer skal bruge »Sidste anvendelsesdato«.',
+      storage:'Opbevaring', storagePh:'Opbevares mørkt og tørt. Efter åbning på køl.', producer:'Producent', address:'Adresse',
+      grpNut:'Næringsdeklaration', on:'Med', off:'Uden', per100g:'pr. 100 g', per100ml:'pr. 100 ml',
+      nEnergy:'Energi', nFat:'Fedt', nSat:'heraf mættede fedtsyrer', nCarb:'Kulhydrat', nSugar:'heraf sukkerarter', nFiber:'Kostfibre', nProt:'Protein', nSalt:'Salt',
+      fiberOn:'Medtag kostfibre (frivillig)', nutHint:'kJ beregnes automatisk ud fra kcal (× 4,184). Brug lovens betegnelser: »sukkerarter« og »mættede fedtsyrer«.',
+      nutExemptHint:'Undtagelse: Er emballagens største flade under 25 cm², kræves der slet ingen næringsdeklaration.',
+            frameLabel:'Ramme', frNone:'Ingen', frThin:'Tynd', frDouble:'Dobbelt', frDashed:'Stiplet', frameColLabel:'Rammefarve', fcInk:'Tekst', fcAccent:'Accent',
+      grpBackStyle:'Bagside-stil', bsClassic:'Klassisk', bsRules:'Linjeret', bsColumns:'To spalter', bsBox:'Indrammet tabel', bsCompact:'Kompakt',
+      grpDesign:'Tilpas design', sizeLabel:'Etiketstørrelse', orient:'Retning', landscape:'Liggende', portrait:'Stående',
+      radius:'Hjørner', rSharp:'Skarpe', rSoft:'Bløde', rRound:'Runde', titleFont:'Titel-skrifttype', bodyFont:'Tekst-skrifttype',
+      accent:'Accent', paperC:'Papir', inkC:'Tekst',             flAdd:'Tilføj linje:', flAddDiv:'Skillelinje', flBox:'Tekstboks', flAddBox:'+ Tilføj tekstboks', flPos:'Placering', flLayout:'Linjer', flStack:'Under hinanden', flRow:'På række', flAlign:'Justering', flGap:'Afstand', flSize:'Størrelse', flStyle:'Skrift', flColor:'Farve', flWrap:'Linjebrud', flLs:'Bogstavafstand', flLsN:'Normal', flLsS:'Lidt', flLsW:'Meget', flText:'Tekst', flMoveUp:'Flyt op', flMoveDown:'Flyt ned', flDelete:'Slet', flInline:'Sæt på samme linje som forrige',
+      tOverline:'Lille overskrift', tName:'Produktnavn', tSubhead:'Underoverskrift', tTagline:'Undertekst', tVareb:'Varebetegnelse', tNet:'Nettoindhold', tProducer:'Producent', tCustom:'Fri tekst', autoFromDecl:'Hentes automatisk fra deklarationen', frontLawHint:'Husk: Varebetegnelse og nettoindhold skal stå i samme synsfelt. Tilføj dem som linjer på forsiden — de hentes automatisk fra deklarationen.',
+      myCards:'Mine etiketter', autosaveTitle:'Gemmes automatisk', saveAs:'＋ Gem som…', exportBtn:'⬇ Eksportér', importBtn:'⬆ Importér', saveAsPrompt:'Giv din etiket et navn:', libOpen:'Åbn', libDelete:'Slet', libConfirmDelete:'Slet denne etiket?', libConfirmReplace:'En etiket med dette navn findes — overskriv?', libNone:'Ingen gemte etiketter endnu — tryk "Gem som…".', saveStatusSaved:'Gemt: ', saveStatusDeleted:'Slettet: ', saveStatusExported:'Etiket eksporteret.', saveStatusImported:'Etiket importeret.', saveStatusImportFail:'Filen kunne ikke læses.', saveStatusInit:'Dine ændringer gemmes automatisk i denne browser.',
+      colSideLabel:'Farver for', csFront:'Forside', csBack:'Bagside',
+      legalTitle:'Lov-tjek af skriftstørrelse', declSize:'Tekststørrelse — bagside (deklaration)', smallPack:'Emballagens største flade er under 80 cm² (krav: 0,9 mm)',
+      tinyHint:'Tip: Er emballagens største flade under 10 cm², kræves kun varebetegnelse, allergener, nettoindhold og dato.',
+      xRead:'Skrift ≈ {f} mm · x-højde ≈ {x} mm — krav ≥ {req} mm', xOk:'✓ Opfylder kravet', xBad:'⚠ Under lovkravet',
+      payPdf:'Betal & hent PDF — 49 kr.', payImg:'Betal & hent som billede — 49 kr.', payPdfFree:'Hent PDF gratis', payImgFree:'Hent billede gratis',
+      freeDl:'Hent gratis prøve — PDF med vandmærke', pdfContains:'PDF\u2019en indeholder: et A4-ark fyldt med forsider, et A4-ark med bagsider — og begge etiketter enkeltvis i præcise mål.',
+      getFile:'✓ Betaling gennemført — hent din fil nu', codePh:'Har du en kode?', useCode:'Brug kode',
+      codeApplied:'Kode godkendt ✓ — hent din fil gratis med knapperne ovenfor.', codeInvalid:'Koden er ikke gyldig. Tjek den, og prøv igen.', codeUsed:'Denne kode er allerede brugt i denne browser.',
+      stPayStart:'Sender dig til betaling …', stPayFail:'Kunne ikke starte betalingen. Prøv igen.', stPayUnlocked:'Vandmærket er fjernet — hent din fil med knapperne ovenfor.',
+      stMakingPdf:'Laver PDF …', stMakingPng:'Laver billede …', stDone:'Klar ✓', stFail:'Noget gik galt — prøv igen.',
+      resetAll:'Ryd alt og start forfra', confirmReset:'Slet alt indhold og start forfra?',
+      disclaimer:'Vejledende værktøj — du er som producent selv ansvarlig for, at mærkningen er korrekt og fuldstændig. Særregler gælder bl.a. for honning, alkohol, kosttilskud og økologi.',
+      readMore:'Læs reglerne hos Fødevarestyrelsen', sideFront:'Forside', sideBack:'Bagside (deklaration)',
+      fitWarn:'⚠ Indholdet fylder mere end etiketten — gør skriften mindre, kort teksten ned, eller vælg en større etiket.',
+      sheetInfo:'A4-ark: {n} etiketter pr. ark ({c} × {r})', metaSize:'{w} × {h} mm',
+      lblIngr:'Ingredienser:', lblTraces:'Kan indeholde spor af', lblNetW:'Nettovægt:', lblNetV:'Nettoindhold:', lblNut:'Næringsindhold pr. 100', lblLot:'Lot:',
+      lblEnergy:'Energi', lblFat:'Fedt', lblSat:'heraf mættede fedtsyrer', lblCarb:'Kulhydrat', lblSugar:'heraf sukkerarter', lblFiber:'Kostfibre', lblProt:'Protein', lblSalt:'Salt'
+    },
+    en: {
+      brandH1:'Label',
+      intro:'Fill in the fields — the tool lays out the declaration correctly under EU rules: allergens are automatically highlighted in the ingredient list, the nutrition table follows the legal order, and the font size is checked against the x-height requirement.',
+            grpFront:'Front',       grpDecl:'Declaration (back)', vareb:'Name of the food', varebPh:'e.g. Strawberry jam', varebHint:'The neutral name of what the food is — not a fantasy name.',
+      ingr:'Ingredient list', ingrPh:'Strawberries (55 %), sugar, lemon juice, gelling agent (pectin)', ingrHint:'Write in descending order by weight. The 14 allergens are automatically bolded as you type them.',
+      traces:'“May contain traces of” (voluntary)', tracesPh:'e.g. other nuts and sesame', tracesHint:'The traces list must not be highlighted — only the ingredient list has the highlighting requirement.',
+      netto:'Net quantity', lot:'Lot/batch (optional)', dateType:'Durability', dtBB:'Best before', dtBBU:'Best before end of', dtSA:'Use by', datePh:'e.g. 12.06.2027',
+      dateHint:'Durability under 3 months: day + month. 3–18 months: “Best before end of” + month + year. Over 18 months: year only. Perishable foods must use “Use by”.',
+      storage:'Storage', storagePh:'Store in a dark, dry place. Refrigerate after opening.', producer:'Producer', address:'Address',
+      grpNut:'Nutrition declaration', on:'With', off:'Without', per100g:'per 100 g', per100ml:'per 100 ml',
+      nEnergy:'Energy', nFat:'Fat', nSat:'of which saturates', nCarb:'Carbohydrate', nSugar:'of which sugars', nFiber:'Fibre', nProt:'Protein', nSalt:'Salt',
+      fiberOn:'Include fibre (voluntary)', nutHint:'kJ is calculated automatically from kcal (× 4.184). Use the legal terms: “sugars” and “saturates”.',
+      nutExemptHint:'Exemption: if the largest surface of the packaging is under 25 cm², no nutrition declaration is required.',
+            frameLabel:'Frame', frNone:'None', frThin:'Thin', frDouble:'Double', frDashed:'Dashed', frameColLabel:'Frame color', fcInk:'Text', fcAccent:'Accent',
+      grpBackStyle:'Back style', bsClassic:'Classic', bsRules:'Ruled', bsColumns:'Two columns', bsBox:'Boxed table', bsCompact:'Compact',
+      grpDesign:'Customize design', sizeLabel:'Label size', orient:'Orientation', landscape:'Landscape', portrait:'Portrait',
+      radius:'Corners', rSharp:'Sharp', rSoft:'Soft', rRound:'Round', titleFont:'Title font', bodyFont:'Text font',
+      accent:'Accent', paperC:'Paper', inkC:'Text',             flAdd:'Add line:', flAddDiv:'Divider', flBox:'Text box', flAddBox:'+ Add text box', flPos:'Position', flLayout:'Lines', flStack:'Stacked', flRow:'In a row', flAlign:'Alignment', flGap:'Spacing', flSize:'Size', flStyle:'Font', flColor:'Color', flWrap:'Line break', flLs:'Letter spacing', flLsN:'Normal', flLsS:'Some', flLsW:'Wide', flText:'Text', flMoveUp:'Move up', flMoveDown:'Move down', flDelete:'Delete', flInline:'Place on same line as previous',
+      tOverline:'Small heading', tName:'Product name', tSubhead:'Subheading', tTagline:'Tagline', tVareb:'Legal name', tNet:'Net quantity', tProducer:'Producer', tCustom:'Free text', autoFromDecl:'Filled in automatically from the declaration', frontLawHint:'Reminder: The legal name and net quantity must appear in the same field of vision. Add them as lines on the front — they are filled in automatically from the declaration.',
+      myCards:'My labels', autosaveTitle:'Saved automatically', saveAs:'＋ Save as…', exportBtn:'⬇ Export', importBtn:'⬆ Import', saveAsPrompt:'Give your label a name:', libOpen:'Open', libDelete:'Delete', libConfirmDelete:'Delete this label?', libConfirmReplace:'A label with this name exists — overwrite?', libNone:'No saved labels yet — press "Save as…".', saveStatusSaved:'Saved: ', saveStatusDeleted:'Deleted: ', saveStatusExported:'Label exported.', saveStatusImported:'Label imported.', saveStatusImportFail:'The file could not be read.', saveStatusInit:'Your changes are saved automatically in this browser.',
+      colSideLabel:'Colors for', csFront:'Front', csBack:'Back',
+      legalTitle:'Legal font-size check', declSize:'Text size — back (declaration)', smallPack:'Largest surface of the packaging is under 80 cm² (requirement: 0.9 mm)',
+      tinyHint:'Tip: if the largest surface is under 10 cm², only the name, allergens, net quantity and date are required.',
+      xRead:'Type ≈ {f} mm · x-height ≈ {x} mm — requirement ≥ {req} mm', xOk:'✓ Meets the requirement', xBad:'⚠ Below the legal minimum',
+      payPdf:'Pay & download PDF — 49 kr.', payImg:'Pay & download image — 49 kr.', payPdfFree:'Download PDF for free', payImgFree:'Download image for free',
+      freeDl:'Free sample — PDF with watermark', pdfContains:'The PDF contains: an A4 sheet filled with fronts, an A4 sheet with backs — and both labels individually at exact size.',
+      getFile:'✓ Payment complete — download your file now', codePh:'Have a code?', useCode:'Use code',
+      codeApplied:'Code accepted ✓ — download your file for free with the buttons above.', codeInvalid:'The code is not valid. Check it and try again.', codeUsed:'This code has already been used in this browser.',
+      stPayStart:'Sending you to payment …', stPayFail:'Could not start the payment. Try again.', stPayUnlocked:'The watermark has been removed — download your file with the buttons above.',
+      stMakingPdf:'Building PDF …', stMakingPng:'Building image …', stDone:'Done ✓', stFail:'Something went wrong — try again.',
+      resetAll:'Clear everything and start over', confirmReset:'Delete all content and start over?',
+      disclaimer:'Guidance tool — as the producer you are responsible for the labelling being correct and complete. Special rules apply to e.g. honey, alcohol, food supplements and organics.',
+      readMore:'Read the rules at the Danish Veterinary and Food Administration', sideFront:'Front', sideBack:'Back (declaration)',
+      fitWarn:'⚠ The content is larger than the label — reduce the text size, shorten the text, or choose a larger label.',
+      sheetInfo:'A4 sheet: {n} labels per sheet ({c} × {r})', metaSize:'{w} × {h} mm',
+      lblIngr:'Ingredients:', lblTraces:'May contain traces of', lblNetW:'Net weight:', lblNetV:'Net volume:', lblNut:'Nutrition per 100', lblLot:'Lot:',
+      lblEnergy:'Energy', lblFat:'Fat', lblSat:'of which saturates', lblCarb:'Carbohydrate', lblSugar:'of which sugars', lblFiber:'Fibre', lblProt:'Protein', lblSalt:'Salt'
+    },
+    tr: {
+      brandH1:'Etiket',
+      intro:'Alanları doldurun — araç beyanı AB kurallarına göre doğru düzenler: alerjenler içindekiler listesinde otomatik vurgulanır, besin tablosu yasal sırayı izler ve yazı boyutu x-yüksekliği şartına göre denetlenir.',
+            grpFront:'Ön yüz',       grpDecl:'Beyan (arka yüz)', vareb:'Gıdanın adı', varebPh:'örn. Çilek reçeli', varebHint:'Gıdanın ne olduğunu anlatan tarafsız ad — fantezi ad değil.',
+      ingr:'İçindekiler listesi', ingrPh:'Çilek (%55), şeker, limon suyu, jelleştirici (pektin)', ingrHint:'Ağırlığa göre azalan sırada yazın. 14 alerjen siz yazdıkça otomatik kalınlaştırılır.',
+      traces:'«Eser miktarda içerebilir» (isteğe bağlı)', tracesPh:'örn. diğer kuruyemişler ve susam', tracesHint:'Eser listesi vurgulanmaz — vurgulama şartı yalnızca içindekiler listesi içindir.',
+      netto:'Net miktar', lot:'Lot/parti (isteğe bağlı)', dateType:'Dayanıklılık', dtBB:'Tavsiye edilen tüketim tarihi', dtBBU:'Şu ayın sonuna kadar', dtSA:'Son tüketim tarihi', datePh:'örn. 12.06.2027',
+      dateHint:'3 aydan kısa: gün + ay. 3–18 ay: ay + yıl. 18 aydan uzun: yıl yeterli. Çabuk bozulan gıdalar «Son tüketim tarihi» kullanmalı.',
+      storage:'Saklama', storagePh:'Karanlık ve kuru yerde saklayın. Açıldıktan sonra buzdolabında.', producer:'Üretici', address:'Adres',
+      grpNut:'Besin beyanı', on:'Var', off:'Yok', per100g:'100 g başına', per100ml:'100 ml başına',
+      nEnergy:'Enerji', nFat:'Yağ', nSat:'doymuş yağ', nCarb:'Karbonhidrat', nSugar:'şekerler', nFiber:'Lif', nProt:'Protein', nSalt:'Tuz',
+      fiberOn:'Lif ekle (isteğe bağlı)', nutHint:'kJ, kcal değerinden otomatik hesaplanır (× 4,184). Yasal terimleri kullanın.',
+      nutExemptHint:'İstisna: Ambalajın en büyük yüzeyi 25 cm²\u2019den küçükse besin beyanı gerekmez.',
+            frameLabel:'Çerçeve', frNone:'Yok', frThin:'İnce', frDouble:'Çift', frDashed:'Kesikli', frameColLabel:'Çerçeve rengi', fcInk:'Metin', fcAccent:'Vurgu',
+      grpBackStyle:'Arka yüz stili', bsClassic:'Klasik', bsRules:'Çizgili', bsColumns:'İki sütun', bsBox:'Çerçeveli tablo', bsCompact:'Kompakt',
+      grpDesign:'Tasarımı özelleştir', sizeLabel:'Etiket boyutu', orient:'Yön', landscape:'Yatay', portrait:'Dikey',
+      radius:'Köşeler', rSharp:'Keskin', rSoft:'Yumuşak', rRound:'Yuvarlak', titleFont:'Başlık yazı tipi', bodyFont:'Metin yazı tipi',
+      accent:'Vurgu', paperC:'Kağıt', inkC:'Metin',             flAdd:'Satır ekle:', flAddDiv:'Ayraç çizgisi', flBox:'Metin kutusu', flAddBox:'+ Metin kutusu ekle', flPos:'Konum', flLayout:'Satırlar', flStack:'Alt alta', flRow:'Yan yana', flAlign:'Hizalama', flGap:'Aralık', flSize:'Boyut', flStyle:'Yazı', flColor:'Renk', flWrap:'Satır sonu', flLs:'Harf aralığı', flLsN:'Normal', flLsS:'Biraz', flLsW:'Geniş', flText:'Metin', flMoveUp:'Yukarı taşı', flMoveDown:'Aşağı taşı', flDelete:'Sil', flInline:'Öncekiyle aynı satıra koy',
+      tOverline:'Küçük başlık', tName:'Ürün adı', tSubhead:'Alt başlık', tTagline:'Alt metin', tVareb:'Yasal ad', tNet:'Net miktar', tProducer:'Üretici', tCustom:'Serbest metin', autoFromDecl:'Beyandan otomatik alınır', frontLawHint:'Hatırlatma: Yasal ad ve net miktar aynı görüş alanında olmalıdır. Bunları ön yüze satır olarak ekleyin — beyandan otomatik alınır.',
+      myCards:'Etiketlerim', autosaveTitle:'Otomatik kaydedilir', saveAs:'＋ Farklı kaydet…', exportBtn:'⬇ Dışa aktar', importBtn:'⬆ İçe aktar', saveAsPrompt:'Etiketinize bir ad verin:', libOpen:'Aç', libDelete:'Sil', libConfirmDelete:'Bu etiket silinsin mi?', libConfirmReplace:'Bu adda bir etiket var — üzerine yazılsın mı?', libNone:'Henüz kayıtlı etiket yok — "Farklı kaydet…" deyin.', saveStatusSaved:'Kaydedildi: ', saveStatusDeleted:'Silindi: ', saveStatusExported:'Etiket dışa aktarıldı.', saveStatusImported:'Etiket içe aktarıldı.', saveStatusImportFail:'Dosya okunamadı.', saveStatusInit:'Değişiklikleriniz bu tarayıcıda otomatik kaydedilir.',
+      colSideLabel:'Renkler', csFront:'Ön yüz', csBack:'Arka yüz',
+      legalTitle:'Yasal yazı boyutu denetimi', declSize:'Metin boyutu — arka yüz (beyan)', smallPack:'Ambalajın en büyük yüzeyi 80 cm²\u2019den küçük (şart: 0,9 mm)',
+      tinyHint:'İpucu: En büyük yüzey 10 cm²\u2019den küçükse yalnızca ad, alerjenler, net miktar ve tarih gerekir.',
+      xRead:'Yazı ≈ {f} mm · x-yüksekliği ≈ {x} mm — şart ≥ {req} mm', xOk:'✓ Şartı karşılıyor', xBad:'⚠ Yasal sınırın altında',
+      payPdf:'Öde & PDF indir — 49 kr.', payImg:'Öde & görsel indir — 49 kr.', payPdfFree:'PDF\u2019i ücretsiz indir', payImgFree:'Görseli ücretsiz indir',
+      freeDl:'Ücretsiz örnek — filigranlı PDF', pdfContains:'PDF içeriği: ön yüzlerle dolu bir A4, arka yüzlerle dolu bir A4 — ve her iki etiket tam ölçüde tek tek.',
+      getFile:'✓ Ödeme tamamlandı — dosyanızı şimdi indirin', codePh:'Kodunuz var mı?', useCode:'Kodu kullan',
+      codeApplied:'Kod kabul edildi ✓ — dosyanızı yukarıdaki düğmelerle ücretsiz indirin.', codeInvalid:'Kod geçerli değil. Kontrol edip tekrar deneyin.', codeUsed:'Bu kod bu tarayıcıda zaten kullanıldı.',
+      stPayStart:'Ödemeye yönlendiriliyorsunuz …', stPayFail:'Ödeme başlatılamadı. Tekrar deneyin.', stPayUnlocked:'Filigran kaldırıldı — dosyanızı yukarıdaki düğmelerle indirin.',
+      stMakingPdf:'PDF hazırlanıyor …', stMakingPng:'Görsel hazırlanıyor …', stDone:'Hazır ✓', stFail:'Bir şeyler ters gitti — tekrar deneyin.',
+      resetAll:'Her şeyi temizle ve baştan başla', confirmReset:'Tüm içerik silinsin ve baştan başlansın mı?',
+      disclaimer:'Yol gösterici araç — etiketin doğru ve eksiksiz olmasından üretici olarak siz sorumlusunuz. Bal, alkol, takviyeler ve organik ürünler için özel kurallar geçerlidir.',
+      readMore:'Kuralları Gıda İdaresi\u2019nde okuyun', sideFront:'Ön yüz', sideBack:'Arka yüz (beyan)',
+      fitWarn:'⚠ İçerik etiketten büyük — yazıyı küçültün, metni kısaltın veya daha büyük etiket seçin.',
+      sheetInfo:'A4 sayfa: sayfa başına {n} etiket ({c} × {r})', metaSize:'{w} × {h} mm',
+      lblIngr:'İçindekiler:', lblTraces:'Eser miktarda içerebilir:', lblNetW:'Net ağırlık:', lblNetV:'Net hacim:', lblNut:'Besin değeri / 100', lblLot:'Lot:',
+      lblEnergy:'Enerji', lblFat:'Yağ', lblSat:'doymuş yağ', lblCarb:'Karbonhidrat', lblSugar:'şekerler', lblFiber:'Lif', lblProt:'Protein', lblSalt:'Tuz'
+    },
+    uk: {
+      brandH1:'Етикетка',
+      intro:'Заповніть поля — інструмент оформлює декларацію за правилами ЄС: алергени автоматично виділяються у списку інгредієнтів, таблиця поживності має законний порядок, а розмір шрифту перевіряється за вимогою x-висоти.',
+            grpFront:'Лицьовий бік',       grpDecl:'Декларація (зворот)', vareb:'Назва харчового продукту', varebPh:'напр. Полуничне варення', varebHint:'Нейтральна назва того, чим є продукт — не фантазійна назва.',
+      ingr:'Список інгредієнтів', ingrPh:'Полуниця (55 %), цукор, лимонний сік, желюючий агент (пектин)', ingrHint:'Пишіть у порядку зменшення ваги. 14 алергенів автоматично виділяються жирним.',
+      traces:'«Може містити сліди» (добровільно)', tracesPh:'напр. інших горіхів і кунжуту', tracesHint:'Список слідів не виділяється — вимога виділення стосується лише списку інгредієнтів.',
+      netto:'Нетто', lot:'Партія (необов\u2019язково)', dateType:'Термін придатності', dtBB:'Краще спожити до', dtBBU:'Краще спожити до кінця', dtSA:'Вжити до', datePh:'напр. 12.06.2027',
+      dateHint:'Менше 3 міс.: день + місяць. 3–18 міс.: місяць + рік. Понад 18 міс.: достатньо року. Швидкопсувні продукти: «Вжити до».',
+      storage:'Зберігання', storagePh:'Зберігати в темному сухому місці. Після відкриття — у холодильнику.', producer:'Виробник', address:'Адреса',
+      grpNut:'Декларація поживності', on:'З', off:'Без', per100g:'на 100 г', per100ml:'на 100 мл',
+      nEnergy:'Енергія', nFat:'Жири', nSat:'з них насичені', nCarb:'Вуглеводи', nSugar:'з них цукри', nFiber:'Клітковина', nProt:'Білки', nSalt:'Сіль',
+      fiberOn:'Додати клітковину (добровільно)', nutHint:'кДж обчислюється автоматично з ккал (× 4,184). Використовуйте законні терміни.',
+      nutExemptHint:'Виняток: якщо найбільша поверхня пакування менша за 25 см², декларація поживності не потрібна.',
+            frameLabel:'Рамка', frNone:'Немає', frThin:'Тонка', frDouble:'Подвійна', frDashed:'Пунктирна', frameColLabel:'Колір рамки', fcInk:'Текст', fcAccent:'Акцент',
+      grpBackStyle:'Стиль звороту', bsClassic:'Класичний', bsRules:'З лініями', bsColumns:'Дві колонки', bsBox:'Таблиця в рамці', bsCompact:'Компактний',
+      grpDesign:'Налаштувати дизайн', sizeLabel:'Розмір етикетки', orient:'Орієнтація', landscape:'Альбомна', portrait:'Книжкова',
+      radius:'Кути', rSharp:'Гострі', rSoft:'М\u2019які', rRound:'Круглі', titleFont:'Шрифт назви', bodyFont:'Шрифт тексту',
+      accent:'Акцент', paperC:'Папір', inkC:'Текст',             flAdd:'Додати рядок:', flAddDiv:'Розділювач', flBox:'Текстовий блок', flAddBox:'+ Додати блок', flPos:'Розташування', flLayout:'Рядки', flStack:'Один під одним', flRow:'В один ряд', flAlign:'Вирівнювання', flGap:'Відстань', flSize:'Розмір', flStyle:'Шрифт', flColor:'Колір', flWrap:'Перенос рядка', flLs:'Міжлітерний інтервал', flLsN:'Звичайний', flLsS:'Трохи', flLsW:'Широкий', flText:'Текст', flMoveUp:'Вгору', flMoveDown:'Вниз', flDelete:'Видалити', flInline:'В один рядок із попереднім',
+      tOverline:'Малий заголовок', tName:'Назва продукту', tSubhead:'Підзаголовок', tTagline:'Підпис', tVareb:'Юридична назва', tNet:'Нетто', tProducer:'Виробник', tCustom:'Вільний текст', autoFromDecl:'Підставляється автоматично з декларації', frontLawHint:'Нагадування: юридична назва та нетто мають бути в одному полі зору. Додайте їх рядками на лицьовий бік — вони підставляються автоматично з декларації.',
+      myCards:'Мої етикетки', autosaveTitle:'Зберігається автоматично', saveAs:'＋ Зберегти як…', exportBtn:'⬇ Експорт', importBtn:'⬆ Імпорт', saveAsPrompt:'Дайте етикетці назву:', libOpen:'Відкрити', libDelete:'Видалити', libConfirmDelete:'Видалити цю етикетку?', libConfirmReplace:'Етикетка з такою назвою існує — перезаписати?', libNone:'Ще немає збережених етикеток — натисніть «Зберегти як…».', saveStatusSaved:'Збережено: ', saveStatusDeleted:'Видалено: ', saveStatusExported:'Етикетку експортовано.', saveStatusImported:'Етикетку імпортовано.', saveStatusImportFail:'Не вдалося прочитати файл.', saveStatusInit:'Ваші зміни зберігаються автоматично в цьому браузері.',
+      colSideLabel:'Кольори для', csFront:'Лице', csBack:'Зворот',
+      legalTitle:'Перевірка розміру шрифту', declSize:'Розмір тексту — зворот (декларація)', smallPack:'Найбільша поверхня пакування менша за 80 см² (вимога: 0,9 мм)',
+      tinyHint:'Порада: якщо найбільша поверхня менша за 10 см², потрібні лише назва, алергени, нетто і дата.',
+      xRead:'Шрифт ≈ {f} мм · x-висота ≈ {x} мм — вимога ≥ {req} мм', xOk:'✓ Відповідає вимозі', xBad:'⚠ Нижче законного мінімуму',
+      payPdf:'Оплатити та завантажити PDF — 49 kr.', payImg:'Оплатити та завантажити зображення — 49 kr.', payPdfFree:'Завантажити PDF безкоштовно', payImgFree:'Завантажити зображення безкоштовно',
+      freeDl:'Безкоштовний зразок — PDF з водяним знаком', pdfContains:'PDF містить: аркуш A4 з лицьовими боками, аркуш A4 зі зворотами — та обидві етикетки окремо в точному розмірі.',
+      getFile:'✓ Оплату завершено — завантажте файл зараз', codePh:'Маєте код?', useCode:'Застосувати код',
+      codeApplied:'Код прийнято ✓ — завантажте файл безкоштовно кнопками вище.', codeInvalid:'Код недійсний. Перевірте та спробуйте ще раз.', codeUsed:'Цей код уже використано в цьому браузері.',
+      stPayStart:'Перенаправляємо на оплату …', stPayFail:'Не вдалося розпочати оплату. Спробуйте ще раз.', stPayUnlocked:'Водяний знак знято — завантажте файл кнопками вище.',
+      stMakingPdf:'Створюємо PDF …', stMakingPng:'Створюємо зображення …', stDone:'Готово ✓', stFail:'Щось пішло не так — спробуйте ще раз.',
+      resetAll:'Очистити все та почати спочатку', confirmReset:'Видалити весь вміст і почати спочатку?',
+      disclaimer:'Довідковий інструмент — ви як виробник відповідаєте за правильність і повноту маркування. Особливі правила діють для меду, алкоголю, добавок та органіки.',
+      readMore:'Читати правила у Данській продовольчій адміністрації', sideFront:'Лицьовий бік', sideBack:'Зворот (декларація)',
+      fitWarn:'⚠ Вміст більший за етикетку — зменшіть шрифт, скоротіть текст або виберіть більшу етикетку.',
+      sheetInfo:'Аркуш A4: {n} етикеток на аркуш ({c} × {r})', metaSize:'{w} × {h} мм',
+      lblIngr:'Інгредієнти:', lblTraces:'Може містити сліди:', lblNetW:'Маса нетто:', lblNetV:'Об\u2019єм нетто:', lblNut:'Поживна цінність на 100', lblLot:'Партія:',
+      lblEnergy:'Енергія', lblFat:'Жири', lblSat:'з них насичені', lblCarb:'Вуглеводи', lblSugar:'з них цукри', lblFiber:'Клітковина', lblProt:'Білки', lblSalt:'Сіль'
+    }
+  };
+
+  /* ============================== ALLERGENER (bilag II) ============================== */
+  /* m:'p' = ord der starter sådan (hvedemel → hele ordet fremhæves), m:'e' = kun hele ordet */
+  const ALLERGENS = [
+    { id:'gluten', n:{da:'Gluten (hvede, rug, byg, havre, spelt)', en:'Cereals containing gluten', tr:'Gluten içeren tahıllar', uk:'Злаки з глютеном'},
+      kw:[['hvede','p'],['hvedemel','p'],['durum','p'],['rug','e'],['rugmel','p'],['byg','e'],['bygmalt','p'],['havre','p'],['spelt','p'],['grahamsmel','p'],['kamut','p'],['gluten','p'],['wheat','p'],['rye','e'],['barley','p'],['oat','p'],['oats','e']] },
+    { id:'crust', n:{da:'Krebsdyr', en:'Crustaceans', tr:'Kabuklular', uk:'Ракоподібні'},
+      kw:[['reje','p'],['rejer','p'],['krebs','p'],['hummer','p'],['krabbe','p'],['jomfruhummer','p'],['shrimp','p'],['prawn','p'],['crab','p'],['lobster','p']] },
+    { id:'egg', n:{da:'Æg', en:'Eggs', tr:'Yumurta', uk:'Яйця'},
+      kw:[['æg','e'],['æggehvide','p'],['æggeblomme','p'],['æggepulver','p'],['helæg','p'],['egg','p'],['eggs','e']] },
+    { id:'fish', n:{da:'Fisk', en:'Fish', tr:'Balık', uk:'Риба'},
+      kw:[['fisk','p'],['laks','p'],['torsk','p'],['makrel','p'],['tun','e'],['tunfisk','p'],['ansjos','p'],['sild','p'],['ørred','p'],['fish','p'],['salmon','p'],['tuna','p'],['cod','e'],['anchovy','p']] },
+    { id:'peanut', n:{da:'Jordnødder', en:'Peanuts', tr:'Yer fıstığı', uk:'Арахіс'},
+      kw:[['jordnød','p'],['jordnødder','p'],['peanut','p'],['peanuts','e']] },
+    { id:'soy', n:{da:'Soja', en:'Soybeans', tr:'Soya', uk:'Соя'},
+      kw:[['soja','p'],['soya','p'],['soy','p'],['edamame','p'],['tofu','p']] },
+    { id:'milk', n:{da:'Mælk (laktose)', en:'Milk (lactose)', tr:'Süt (laktoz)', uk:'Молоко (лактоза)'},
+      kw:[['mælk','p'],['sødmælk','p'],['skummetmælk','p'],['letmælk','p'],['kærnemælk','p'],['mælkepulver','p'],['fløde','p'],['piskefløde','p'],['smør','p'],['ost','e'],['flødeost','p'],['parmesan','p'],['mozzarella','p'],['yoghurt','p'],['ymer','p'],['valle','p'],['vallepulver','p'],['laktose','p'],['kasein','p'],['milk','p'],['cream','p'],['butter','p'],['cheese','p'],['whey','p'],['lactose','p'],['yogurt','p']] },
+    { id:'nuts', n:{da:'Nødder', en:'Tree nuts', tr:'Sert kabuklu meyveler', uk:'Горіхи'},
+      kw:[['mandel','p'],['mandler','p'],['hasselnød','p'],['valnød','p'],['cashew','p'],['pekan','p'],['paranød','p'],['pistacie','p'],['macadamia','p'],['queenslandnød','p'],['nød','e'],['nødder','e'],['nødde','p'],['almond','p'],['hazelnut','p'],['walnut','p'],['pistachio','p'],['pecan','p']] },
+    { id:'celery', n:{da:'Selleri', en:'Celery', tr:'Kereviz', uk:'Селера'},
+      kw:[['selleri','p'],['knoldselleri','p'],['bladselleri','p'],['celery','p']] },
+    { id:'mustard', n:{da:'Sennep', en:'Mustard', tr:'Hardal', uk:'Гірчиця'},
+      kw:[['sennep','p'],['sennepsfrø','p'],['dijonsennep','p'],['mustard','p']] },
+    { id:'sesame', n:{da:'Sesamfrø', en:'Sesame', tr:'Susam', uk:'Кунжут'},
+      kw:[['sesam','p'],['sesamfrø','p'],['sesamolie','p'],['tahin','p'],['tahini','p'],['sesame','p']] },
+    { id:'sulph', n:{da:'Svovldioxid & sulfitter', en:'Sulphur dioxide & sulphites', tr:'Kükürt dioksit & sülfitler', uk:'Діоксид сірки та сульфіти'},
+      kw:[['sulfit','p'],['sulfitter','p'],['svovldioxid','p'],['metabisulfit','p'],['e220','e'],['e221','e'],['e222','e'],['e223','e'],['e224','e'],['e226','e'],['e227','e'],['e228','e'],['sulphite','p'],['sulfite','p']] },
+    { id:'lupin', n:{da:'Lupin', en:'Lupin', tr:'Acı bakla (lüpen)', uk:'Люпин'},
+      kw:[['lupin','p'],['lupinmel','p']] },
+    { id:'moll', n:{da:'Bløddyr', en:'Molluscs', tr:'Yumuşakçalar', uk:'Молюски'},
+      kw:[['musling','p'],['muslinger','p'],['blåmusling','p'],['kammusling','p'],['østers','p'],['blæksprutte','p'],['snegle','p'],['mussel','p'],['oyster','p'],['squid','p'],['scallop','p']] }
+  ];
+
+  /* ============================== STØRRELSER & SKRIFTER ============================== */
+  const SIZES = {
+    l6040:{ w:60, h:40 }, l7050:{ w:70, h:50 }, l9060:{ w:90, h:60 },
+    l10070:{ w:100, h:70 }, a7:{ w:105, h:74 }, a6:{ w:148, h:105 },
+    r40:{ w:40, h:40, round:true }, r60:{ w:60, h:60, round:true }, r80:{ w:80, h:80, round:true }
+  };
+  const FONTS_TITLE = [
+    { name:'Fraunces', css:"'Fraunces', serif" },
+    { name:'Playfair Display', css:"'Playfair Display', serif" },
+    { name:'Jost', css:"'Jost', sans-serif" },
+    { name:'EB Garamond', css:"'EB Garamond', serif" }
+  ];
+  const FONTS_BODY = [
+    { name:'Jost', css:"'Jost', sans-serif" },
+    { name:'EB Garamond', css:"'EB Garamond', serif" },
+    { name:'Fraunces', css:"'Fraunces', serif" }
+  ];
+
+  /* ============================== SKABELONER ============================== */
+
+  /* ============================== STATE ============================== */
+  const PXMM = 6;
+  const DEFAULTS = {
+    size:'l9060', orientation:'landscape', radius:'soft', side:'front', smallPack:false,
+    front:{ overline:'HJEMMELAVET', name:'Jordbærmarmelade', sub:'med vanilje · 2026', producer:'Annes Køkken', nextBoxId:3, boxes:[
+      { id:1, pos:'middle-center', align:'center', layout:'stack', gap:6, items:[
+        { id:1, type:'over', value:'HJEMMELAVET', size:.58, lspace:.3, accent:true, wrap:true },
+        { id:2, type:'name', value:'Jordbærmarmelade', size:2.5, bold:true, wrap:false },
+        { id:3, type:'tagline', value:'med vanilje · 2026', size:.95, italic:true, wrap:true }
+      ], nextItemId:4 },
+      { id:2, pos:'bottom-center', align:'center', layout:'stack', gap:4, items:[
+        { id:1, type:'net', value:'', size:.85, wrap:true },
+        { id:2, type:'producer', value:'Annes Køkken', size:.72, lspace:.12, dim:true, wrap:true }
+      ], nextItemId:3 }
+    ] },
+    decl:{ vareb:'Jordbærmarmelade', ingr:'Jordbær (55 %), sukker, citronsaft, geleringsmiddel (pektin)', traces:'',
+      netto:'450', nettoUnit:'g', dateType:'bbu', date:'06.2027', storage:'Opbevares mørkt og tørt. Efter åbning på køl.',
+      producer:'Annes Køkken', address:'Solvej 12, 3400 Hillerød', lot:'',
+      nut:{ on:true, per:'g', kcal:'163', kj:'682', fat:'0,1', sat:'0', carb:'40', sugar:'39', fiber:'', fiberOn:false, prot:'0,3', salt:'0,02' } },
+    design:{ accent:'#b5542a', paper:'#fffdf8', ink:'#2c2620', titleFont:"'Fraunces', serif", bodyFont:"'Jost', sans-serif",
+      backStyle:'classic', frame:'none', frameC:'ink', backC:null,
+      declSize:1.0 }
+  };
+
+  /* Startpunkter fra forsidens forhåndsvisninger (?template=…) — ingen UI, kun URL */
+  const LABEL_TEMPLATES = {
+    jam: {},
+    granola: {
+      size:'a7',
+      design:{ backStyle:'box', paper:'#2d4a2b', ink:'#f4ead8', accent:'#e8b04b', backC:{ paper:'#fdfaf2', ink:'#2a2723', accent:'#b5542a' } },
+      front:{ nextBoxId:5, boxes:[
+        { id:1, pos:'top-left', align:'left', layout:'stack', gap:4, items:[
+          { id:1, type:'over', value:'HÅNDLAVET', size:.55, lspace:.3, accent:true, wrap:true }
+        ], nextItemId:2 },
+        { id:2, pos:'middle-center', align:'center', layout:'stack', gap:6, items:[
+          { id:1, type:'name', value:'Granola', size:3.2, bold:true, wrap:false },
+          { id:2, type:'subhead', value:'med mandler & honning', size:1.1, wrap:true }
+        ], nextItemId:3 },
+        { id:3, pos:'bottom-left', align:'left', layout:'stack', gap:4, items:[
+          { id:1, type:'vareb', value:'', size:.62, dim:true, wrap:true }
+        ], nextItemId:2 },
+        { id:4, pos:'bottom-right', align:'right', layout:'stack', gap:4, items:[
+          { id:1, type:'net', value:'', size:.85, wrap:true },
+          { id:2, type:'producer', value:'Brødladen', size:.68, lspace:.12, dim:true, wrap:true }
+        ], nextItemId:3 }
+      ] },
+      decl:{ vareb:'Granola — ristet müsli med mandler og honning', ingr:'Havregryn (45 %), mandler (15 %), honning, rapsolie, havsalt', traces:'andre nødder', netto:'400', nettoUnit:'g', dateType:'bbu', date:'12.2026', lot:'', storage:'Opbevares tørt og ikke for varmt.', producer:'Brødladen', address:'Møllevej 4, 8000 Aarhus C',
+        nut:{ on:true, per:'g', kcal:'452', kj:'1895', fat:'18', sat:'2,1', carb:'58', sugar:'14', fiber:'', fiberOn:false, prot:'11', salt:'0,40' } }
+    },
+    cookies: {
+      size:'l10070',
+      design:{ backStyle:'columns', frame:'double', frameC:'ink', paper:'#fffdf8', ink:'#3a2f23', accent:'#b5542a' },
+      front:{ nextBoxId:3, boxes:[
+        { id:1, pos:'middle-center', align:'center', layout:'stack', gap:6, items:[
+          { id:1, type:'over', value:'BAGT I HÅNDEN', size:.55, lspace:.3, accent:true, wrap:true },
+          { id:2, type:'name', value:'Chokolade-cookies', size:2.4, bold:true, wrap:false },
+          { id:3, type:'line', value:'', size:1 },
+          { id:4, type:'tagline', value:'med hasselnødder', size:.95, italic:true, wrap:true }
+        ], nextItemId:5 },
+        { id:2, pos:'bottom-center', align:'center', layout:'stack', gap:4, items:[
+          { id:1, type:'vareb', value:'', size:.66, dim:true, wrap:true },
+          { id:2, type:'net', value:'', size:.85, wrap:true },
+          { id:3, type:'producer', value:'Kagehuset', size:.7, lspace:.12, dim:true, wrap:true }
+        ], nextItemId:4 }
+      ] },
+      decl:{ vareb:'Småkager med chokolade og hasselnødder', ingr:'Hvedemel, smør, sukker, chokolade (20 %) (kakaomasse, sukker, kakaosmør), hasselnødder (10 %), æg, havsalt, bagepulver', traces:'andre nødder og sesam', netto:'250', nettoUnit:'g', dateType:'bbu', date:'03.2027', lot:'', storage:'Opbevares tørt og ikke for varmt.', producer:'Kagehuset', address:'Bagergade 12, 5000 Odense C',
+        nut:{ on:true, per:'g', kcal:'503', kj:'2105', fat:'27', sat:'14', carb:'58', sugar:'28', fiber:'', fiberOn:false, prot:'6,5', salt:'0,50' } }
+    }
+  };
+  const clone = o => JSON.parse(JSON.stringify(o));
+  let state = clone(DEFAULTS);
+
+  const LS_LANG = 'etiket_lang_v1', LS_SAVE = 'etiket_autosave_v1',
+        LS_USED = 'etiket_used_codes_v1', LS_PENDING = 'etiket_pending_v1';
+  let LANG = 'da';
+  try {
+    const saved = localStorage.getItem(LS_LANG);
+    if (saved && I18N[saved]) LANG = saved;
+    else { const nav = (navigator.language || '').slice(0,2); if (I18N[nav]) LANG = nav; }
+  } catch(e){}
+  const t = k => (I18N[LANG] && I18N[LANG][k]) || I18N.da[k] || k;
+
+  /* ============================== ALLERGEN-MOTOR ============================== */
+  const isLetter = c => /[0-9a-zæøåäöüçğışа-яіїєґ]/i.test(c);
+  function detectAndBold(raw){
+    const lower = String(raw || '').toLowerCase();
+    const ranges = []; const hits = new Set();
+    for (const a of ALLERGENS){
+      for (const kw of a.kw){
+        const w = kw[0], mode = kw[1];
+        let idx = 0;
+        while ((idx = lower.indexOf(w, idx)) !== -1){
+          const before = idx === 0 ? '' : lower[idx - 1];
+          if (before && isLetter(before)){ idx += 1; continue; }
+          let end = idx + w.length;
+          if (mode === 'e'){
+            const after = lower[end];
+            if (after && isLetter(after)){ idx += 1; continue; }
+          } else {
+            while (end < lower.length && isLetter(lower[end])) end++;
+          }
+          ranges.push([idx, end]); hits.add(a.id);
+          idx = end;
+        }
+      }
+    }
+    ranges.sort((x,y) => x[0]-y[0] || y[1]-x[1]);
+    const merged = [];
+    for (const r of ranges){
+      if (merged.length && r[0] <= merged[merged.length-1][1]) merged[merged.length-1][1] = Math.max(merged[merged.length-1][1], r[1]);
+      else merged.push([r[0], r[1]]);
+    }
+    let out = '', pos = 0;
+    for (const m of merged){
+      out += esc(raw.slice(pos, m[0])) + '<strong>' + esc(raw.slice(m[0], m[1])) + '</strong>';
+      pos = m[1];
+    }
+    out += esc(raw.slice(pos));
+    return { html: out, hits };
+  }
+
+  /* ============================== GEOMETRI & DESIGN ============================== */
+  function dims(){
+    const s = SIZES[state.size] || SIZES.l7050;
+    if (s.round) return { w:s.w, h:s.h, round:true };
+    return state.orientation === 'portrait' ? { w:s.h, h:s.w } : { w:s.w, h:s.h };
+  }
+  function hexToRgb(hex){
+    const m = String(hex||'').match(/^#?([0-9a-f]{2})([0-9a-f]{2})([0-9a-f]{2})$/i);
+    return m ? { r:parseInt(m[1],16), g:parseInt(m[2],16), b:parseInt(m[3],16) } : { r:44, g:38, b:32 };
+  }
+  function applyDesignVars(card, side){
+    const d = state.design, dd = dims(), w = dd.w, h = dd.h;
+    const pal = (side === 'back' && d.backC) ? d.backC : d;
+    const ink = hexToRgb(pal.ink), pap = hexToRgb(pal.paper);
+    const lum = (0.299*pap.r + 0.587*pap.g + 0.114*pap.b) / 255;
+    card.style.width = (w * PXMM) + 'px';
+    card.style.height = (h * PXMM) + 'px';
+    card.style.background = pal.paper;
+    card.style.color = pal.ink;
+    card.style.fontFamily = d.bodyFont;
+    card.style.borderRadius = dd.round ? '50%' : (state.radius === 'sharp' ? '0' : (state.radius === 'round' ? '18px' : '8px'));
+    card.style.setProperty('--lab-tfont', d.titleFont);
+    card.style.setProperty('--lab-accent', pal.accent);
+    card.style.setProperty('--lab-line', `rgba(${ink.r},${ink.g},${ink.b},0.35)`);
+    card.style.setProperty('--lab-line-strong', `rgba(${ink.r},${ink.g},${ink.b},0.75)`);
+    card.style.setProperty('--wm-col', lum < 0.45 ? 'rgba(255,255,255,.15)' : 'rgba(60,45,25,.11)');
+    card.style.setProperty('--fs', (2.4 * d.declSize).toFixed(3));
+    card.style.setProperty('--pad', dd.round ? Math.round(w * 0.15) : (Math.min(w, h) >= 70 ? 4 : 3));
+    card.style.setProperty('--lab-paper', pal.paper);
+    card.style.setProperty('--fr-col', (d.frameC === 'accent') ? pal.accent : pal.ink);
+  }
+
+  /* ============================== ETIKET-HTML ============================== */
+  function nutTable(){
+    const n = state.decl.nut, v = x => (x && String(x).trim()) ? esc(x) : '–';
+    let rows = `<tr><td>${t('lblEnergy')}</td><td>${v(n.kj)} kJ / ${v(n.kcal)} kcal</td></tr>`
+      + `<tr><td>${t('lblFat')}</td><td>${v(n.fat)} g</td></tr>`
+      + `<tr class="sub"><td>${t('lblSat')}</td><td>${v(n.sat)} g</td></tr>`
+      + `<tr><td>${t('lblCarb')}</td><td>${v(n.carb)} g</td></tr>`
+      + `<tr class="sub"><td>${t('lblSugar')}</td><td>${v(n.sugar)} g</td></tr>`;
+    if (n.fiberOn) rows += `<tr><td>${t('lblFiber')}</td><td>${v(n.fiber)} g</td></tr>`;
+    rows += `<tr><td>${t('lblProt')}</td><td>${v(n.prot)} g</td></tr>`
+      + `<tr><td>${t('lblSalt')}</td><td>${v(n.salt)} g</td></tr>`;
+    return `<table class="nut-tbl"><caption>${t('lblNut')} ${state.decl.nut.per === 'ml' ? 'ml' : 'g'}</caption>${rows}</table>`;
+  }
+  function buildLabelHTML(side){
+    const f = state.front, d = state.decl;
+    let inner = '';
+    if (side === 'front'){
+      {
+        seedFreeBoxes();
+        const acc = state.design.accent;
+        const styleStrF = (it) => {
+          let weight = 400;
+          if (it.bold) weight = 700; else if (it.thin) weight = 300;
+          const fsty = it.italic ? 'italic' : 'normal';
+          const wr = it.wrap === false ? 'white-space:nowrap;' : 'white-space:normal;';
+          const ls = (it.lspace && it.lspace > 0) ? `letter-spacing:${it.lspace}em;` : '';
+          const co = it.accent ? `color:${acc};` : '';
+          const di = it.dim ? 'opacity:.65;' : '';
+          return `font-weight:${weight};font-style:${fsty};${wr}${ls}${co}${di}`;
+        };
+        const rowF = (it) => {
+          if (it.type === 'line'){
+            const w = Math.round(24 * (it.size || 1));
+            return `<div style="width:${w}px;height:2px;background:${acc};margin:2px 0;flex:none;"></div>`;
+          }
+          const fpx = Math.round(15 * (it.size || 1));
+          return `<div style="margin:0;line-height:1.12;font-size:${fpx}px;${styleStrF(it)}">${esc(freeLiveVal(it))}</div>`;
+        };
+        const buildBoxF = (items, align, layout, gap) => {
+          const visible = (items || []).filter(it => it.type === 'line' || freeLiveVal(it).trim());
+          if (!visible.length) return '';
+          if (layout === 'row') return visible.map(rowF).join('');
+          let html = ''; let i2 = 0;
+          while (i2 < visible.length){
+            const grp = [visible[i2]]; let j2 = i2 + 1;
+            while (j2 < visible.length && visible[j2].inline){ grp.push(visible[j2]); j2++; }
+            if (grp.length === 1) html += rowF(grp[0]);
+            else {
+              const just = align === 'center' ? 'center' : (align === 'right' ? 'flex-end' : 'flex-start');
+              html += `<div class="fb-line-group" style="gap:${gap}px;justify-content:${just};">` + grp.map(rowF).join('') + `</div>`;
+            }
+            i2 = j2;
+          }
+          return html;
+        };
+        let parts = '';
+        (state.front.boxes || []).forEach(box => {
+          const al = box.align || 'left', ly = box.layout || 'stack', g = (box.gap != null ? box.gap : 6);
+          const bi = buildBoxF(box.items, al, ly, g);
+          if (!bi) return;
+          parts += `<div class="fb-box pos-${box.pos || 'middle-center'} al-${al} layout-${ly}" style="--box-gap:${g}px;">${bi}</div>`;
+        });
+        const frameF = (state.design.frame && state.design.frame !== 'none') ? `<div class="lf-frame fr-${state.design.frame}"></div>` : '';
+        inner = `<div class="lab-inner">` + frameF + `<div class="fb-inner">${parts}</div></div>`;
+      }
+    } else {
+      const bs = state.design.backStyle || 'classic';
+      const dd = dims();
+      const bolded = detectAndBold(d.ingr).html;
+      const netLbl = ['ml','cl','l'].includes(d.nettoUnit) ? t('lblNetV') : t('lblNetW');
+      const dtLbl = d.dateType === 'bbu' ? t('dtBBU') : (d.dateType === 'sa' ? t('dtSA') : t('dtBB'));
+      const dtSep = d.dateType === 'bbu' ? ' ' : ': ';
+      const dateBits = [];
+      if (d.date) dateBits.push(`<span class="lb-k">${dtLbl}${dtSep}</span>${esc(d.date)}`);
+      if (d.lot) dateBits.push(`<span class="lb-k">${t('lblLot')}</span> ${esc(d.lot)}`);
+      const prodLine = [d.producer, d.address].filter(Boolean).join(', ');
+      const nameB = d.vareb ? `<div class="lb-name">${esc(d.vareb)}</div>` : '';
+      const ingrB = d.ingr ? `<div class="lb-block"><span class="lb-k">${t('lblIngr')}</span> ${bolded}</div>` : '';
+      const tracesB = d.traces ? `<div class="lb-block">${t('lblTraces')} ${esc(d.traces)}.</div>` : '';
+      const nettoTxt = d.netto ? `<span class="lb-k">${netLbl}</span> ${esc(d.netto)}&nbsp;${esc(d.nettoUnit)}` : '';
+      const dateTxt = dateBits.join(' &nbsp;·&nbsp; ');
+      let metaB = '';
+      if (bs === 'compact'){
+        const m = [nettoTxt, dateTxt].filter(Boolean).join(' &nbsp;·&nbsp; ');
+        metaB = m ? `<div class="lb-block">${m}</div>` : '';
+      } else {
+        metaB = (nettoTxt ? `<div class="lb-block">${nettoTxt}</div>` : '') + (dateTxt ? `<div class="lb-block">${dateTxt}</div>` : '');
+      }
+      const storageB = d.storage ? `<div class="lb-block">${esc(d.storage)}</div>` : '';
+      const prodB = prodLine ? `<div class="lb-block">${esc(prodLine)}</div>` : '';
+      let tableB = d.nut.on ? nutTable() : '';
+      if (bs === 'box' && tableB && dd.w >= 50) tableB = `<div class="nut-box">${tableB}</div>`;
+      const colsOk = (bs === 'columns') && !dd.round && dd.w >= 85;
+      if (colsOk){
+        inner = `<div class="lab-inner lab-back back-columns">` + nameB +
+          `<div class="lb-cols"><div class="lb-col">` + ingrB + tracesB + `</div><div class="lb-col">` + metaB + storageB + prodB + tableB + `</div></div></div>`;
+      } else {
+        inner = `<div class="lab-inner lab-back back-${bs}">` + nameB + ingrB + tracesB + metaB + storageB + prodB + tableB + `</div>`;
+      }
+    }
+    if (!unlocked){
+      const lineText = ('LUSIDIO' + '\u00A0\u00A0·\u00A0\u00A0').repeat(8);
+      let rows = '';
+      for (let i = 0; i < 12; i++) rows += `<div class="wmln">${lineText}</div>`;
+      inner += `<div class="lab-wm">${rows}</div>`;
+    }
+    return inner;
+  }
+
+  /* ============================== RENDER ============================== */
+  function sheetGrid(){
+    const { w, h } = dims(), m = 8, gap = 3;
+    const cols = Math.max(1, Math.floor((210 - 2*m + gap) / (w + gap)));
+    const rows = Math.max(1, Math.floor((297 - 2*m + gap) / (h + gap)));
+    return { m, gap, cols, rows, n: cols * rows };
+  }
+  function renderChips(){
+    const hits = detectAndBold(state.decl.ingr).hits;
+    byId('allergChips').innerHTML = ALLERGENS.map(a =>
+      `<span class="chip${hits.has(a.id) ? ' hit' : ''}">${hits.has(a.id) ? '✓ ' : ''}${esc(a.n[LANG] || a.n.da)}</span>`).join('');
+  }
+  function updateLawBadge(){
+    const fMm = 2.4 * state.design.declSize;
+    const xMm = fMm * 0.52;
+    const req = state.smallPack ? 0.9 : 1.2;
+    const ok = xMm >= req - 1e-9;
+    const badge = byId('lawBadge');
+    badge.className = 'law-badge ' + (ok ? 'ok' : 'bad');
+    const da = n => n.toFixed(2).replace('.', ',').replace(/,?0+$/, m => m.includes(',') ? '' : m);
+    byId('lawBadgeTxt').textContent = (ok ? t('xOk') : t('xBad')) + ' — ' +
+      t('xRead').replace('{f}', fMm.toFixed(1).replace('.', ',')).replace('{x}', xMm.toFixed(2).replace('.', ',')).replace('{req}', String(req).replace('.', ','));
+  }
+  function renderMeta(){
+    const { w, h } = dims(), g = sheetGrid();
+    byId('metaLine').textContent = t('metaSize').replace('{w}', w).replace('{h}', h) + ' · ' +
+      t('sheetInfo').replace('{n}', g.n).replace('{c}', g.cols).replace('{r}', g.rows);
+  }
+  function renderLabel(){
+    const card = byId('labelCard'), holder = byId('labelHolder');
+    applyDesignVars(card, state.side);
+    card.innerHTML = buildLabelHTML(state.side);
+    const stage = holder.parentElement;
+    const { w, h } = dims();
+    const cw = w * PXMM, ch = h * PXMM;
+    const stageW = stage.clientWidth || stage.getBoundingClientRect().width || document.documentElement.clientWidth - 30;
+    const availW = Math.max(120, Math.min(stageW - 12, document.documentElement.clientWidth - 28));
+    const isMobile = window.matchMedia('(max-width: 920px)').matches;
+    const availH = isMobile ? Math.max(150, Math.round(window.innerHeight * 0.34)) : Infinity;
+    const fit = Math.min(1, availW / cw, availH / ch);
+    card.style.transformOrigin = 'top left';
+    card.style.transform = fit < 1 ? `scale(${fit})` : 'none';
+    holder.style.width = Math.round(cw * fit) + 'px';
+    holder.style.height = Math.round(ch * fit) + 'px';
+    requestAnimationFrame(() => {
+      const inner = card.querySelector('.lab-inner');
+      byId('fitWarn').style.display = (inner && inner.scrollHeight > inner.clientHeight + 1) ? 'block' : 'none';
+    });
+  }
+  const POSITIONS = ['top-left','top-center','top-right','middle-left','middle-center','middle-right','bottom-left','bottom-center','bottom-right'];
+  const FREE_TYPES = ['over','name','subhead','tagline','vareb','net','producer','custom','line'];
+  const TYPE_KEY = { over:'tOverline', name:'tName', subhead:'tSubhead', tagline:'tTagline', vareb:'tVareb', net:'tNet', producer:'tProducer', custom:'tCustom', line:'flAddDiv' };
+  function freeLiveVal(it){
+    if (it.type === 'net') return state.decl.netto ? state.decl.netto + '\u00A0' + state.decl.nettoUnit : '';
+    if (it.type === 'vareb') return state.decl.vareb || '';
+    return it.value || '';
+  }
+  function freeNewItem(box, type){
+    const base = { id: box.nextItemId++, type, value:'', wrap:true };
+    if (type === 'over') Object.assign(base, { size:.58, lspace:.3, accent:true });
+    else if (type === 'name') Object.assign(base, { size:2.5, bold:true, wrap:false });
+    else if (type === 'subhead') base.size = 1.15;
+    else if (type === 'tagline') Object.assign(base, { size:.95, italic:true });
+    else if (type === 'vareb') base.size = .8;
+    else if (type === 'net') base.size = .85;
+    else if (type === 'producer') Object.assign(base, { size:.72, lspace:.12, dim:true });
+    else if (type === 'line') base.size = 1;
+    else base.size = 1;
+    return base;
+  }
+  const collapsedFreeBoxes = {};
+  function seedFreeBoxes(){
+    if (state.front.boxes && state.front.boxes.length) return;
+    const f = state.front; const items = []; let id = 1;
+    if (f.overline) items.push({ id:id++, type:'over', value:f.overline, size:.6, lspace:.3, accent:true, wrap:true });
+    items.push({ id:id++, type:'name', value:f.name || '', size:2.8, bold:true, wrap:false });
+    if (f.sub) items.push({ id:id++, type:'tagline', value:f.sub, size:.9, italic:true, wrap:true });
+    if (f.producer) items.push({ id:id++, type:'producer', value:f.producer, size:.75, lspace:.12, dim:true, wrap:true });
+    state.front.boxes = [{ id:1, pos:'middle-center', align:'center', layout:'stack', gap:6, items, nextItemId:id }];
+    state.front.nextBoxId = 2;
+  }
+  function posGridHtmlF(currentPos, boxId){
+    return `<div class="pos-grid" data-box-id="${boxId}" title="${esc(t('flPos'))}">` +
+      POSITIONS.map(pp => `<button type="button" data-pos="${pp}" class="${pp === currentPos ? 'active' : ''}"></button>`).join('') + `</div>`;
+  }
+  function renderItemRowF(c, i, listLen, layout){
+    const pct = Math.round((c.size || 1) * 100);
+    const sizeRow = `<div class="fl-row"><span class="mini-label fl-mini">${esc(t('flSize'))}</span>
+      <button type="button" class="cli-btn ${pct === 70 ? 'active' : ''}" data-act="size-preset" data-val="70">XS</button>
+      <button type="button" class="cli-btn ${pct === 100 ? 'active' : ''}" data-act="size-preset" data-val="100">S</button>
+      <button type="button" class="cli-btn ${pct === 150 ? 'active' : ''}" data-act="size-preset" data-val="150">M</button>
+      <button type="button" class="cli-btn ${pct === 220 ? 'active' : ''}" data-act="size-preset" data-val="220">L</button>
+      <button type="button" class="cli-btn ${pct === 320 ? 'active' : ''}" data-act="size-preset" data-val="320">XL</button>
+      <input type="range" class="range" data-act="size" min="40" max="500" step="5" value="${pct}" style="flex:1;min-width:90px;">
+      <span class="mini-label fl-mini" data-size-pct style="min-width:36px;text-align:right;">${pct}%</span></div>`;
+    const styleRows = c.type === 'line' ? '' : `
+      <div class="fl-row">
+        <span class="mini-label fl-mini">${esc(t('flStyle'))}</span>
+        <button type="button" class="cli-btn ${!c.bold && !c.thin && !c.italic ? 'active' : ''}" data-act="style-reset">A</button>
+        <button type="button" class="cli-btn ${c.bold ? 'active' : ''}" data-act="style-bold" style="font-weight:700;">B</button>
+        <button type="button" class="cli-btn ${c.thin ? 'active' : ''}" data-act="style-thin" style="font-weight:300;">T</button>
+        <button type="button" class="cli-btn ${c.italic ? 'active' : ''}" data-act="style-italic" style="font-style:italic;">I</button>
+        <span class="mini-label fl-mini" style="margin-left:8px;">${esc(t('flColor'))}</span>
+        <button type="button" class="cli-btn ${c.accent ? 'active' : ''}" data-act="style-accent" style="color:var(--accent);">●</button>
+        <button type="button" class="cli-btn ${c.dim ? 'active' : ''}" data-act="style-dim"><span style="opacity:.4;">●</span></button>
+        <span class="mini-label fl-mini" style="margin-left:8px;">${esc(t('flWrap'))}</span>
+        <button type="button" class="cli-btn ${c.wrap !== false ? 'active' : ''}" data-act="wrap-yes">↵</button>
+        <button type="button" class="cli-btn ${c.wrap === false ? 'active' : ''}" data-act="wrap-no">→</button>
+      </div>
+      <div class="fl-row"><span class="mini-label fl-mini">${esc(t('flLs'))}</span>
+        <button type="button" class="cli-btn ${!(c.lspace > 0) ? 'active' : ''}" data-act="lspace" data-val="0" style="width:auto;padding:6px 9px;font-size:.72rem;">${esc(t('flLsN'))}</button>
+        <button type="button" class="cli-btn ${c.lspace === 0.12 ? 'active' : ''}" data-act="lspace" data-val="0.12" style="width:auto;padding:6px 9px;font-size:.72rem;">${esc(t('flLsS'))}</button>
+        <button type="button" class="cli-btn ${c.lspace === 0.3 ? 'active' : ''}" data-act="lspace" data-val="0.3" style="width:auto;padding:6px 9px;font-size:.72rem;">${esc(t('flLsW'))}</button>
+      </div>`;
+    const auto = (c.type === 'net' || c.type === 'vareb');
+    const typeName = t(TYPE_KEY[c.type] || 'tCustom');
+    return `<div class="cli" data-id="${c.id}">
+      <span class="cli-ic" title="${esc(typeName)}">${c.type === 'line' ? '—' : esc(typeName.slice(0,2))}</span>
+      <input type="text" class="cli-input" data-act="value" value="${esc(auto ? freeLiveVal(c) : (c.value || ''))}" placeholder="${c.type === 'line' ? '———' : esc(typeName)}" ${(c.type === 'line' || auto) ? 'disabled' : ''} ${auto ? `title="${esc(t('autoFromDecl'))}"` : ''}>
+      <div class="cli-btns">
+        ${layout === 'stack' && i > 0 && c.type !== 'line' ? `<button type="button" class="cli-btn ${c.inline ? 'active' : ''}" data-act="inline-toggle" title="${esc(t('flInline'))}">⇄</button>` : ''}
+        <button type="button" class="cli-btn" data-act="up" ${i === 0 ? 'disabled' : ''} title="${esc(t('flMoveUp'))}">▲</button>
+        <button type="button" class="cli-btn" data-act="down" ${i === listLen - 1 ? 'disabled' : ''} title="${esc(t('flMoveDown'))}">▼</button>
+        <button type="button" class="cli-btn danger" data-act="del" title="${esc(t('flDelete'))}">×</button>
+      </div>
+      ${sizeRow}${styleRows}
+    </div>`;
+  }
+  function renderFreeList(){
+    const wrap = byId('freeBoxWrap'); if (!wrap) return;
+    seedFreeBoxes();
+    const boxes = state.front.boxes || [];
+    wrap.innerHTML = boxes.map((box, bi) => {
+      const layout = box.layout || 'stack', align = box.align || 'left', g = (box.gap != null ? box.gap : 6);
+      const collapsed = !!collapsedFreeBoxes[box.id];
+      const rows = (box.items || []).map((c, i) => renderItemRowF(c, i, box.items.length, layout)).join('');
+      return `<div class="box-card ${collapsed ? 'collapsed' : ''}" data-box-id="${box.id}">
+        <div class="box-head">
+          <button type="button" class="cli-btn" data-box-act="toggle" style="width:24px;height:24px;font-size:.7rem;">${collapsed ? '▸' : '▾'}</button>
+          <span class="box-title">${esc(t('flBox'))} ${bi + 1}</span>
+          ${collapsed ? '' : posGridHtmlF(box.pos || 'middle-center', box.id)}
+          <div class="box-head-btns">
+            <button type="button" class="cli-btn" data-box-act="up" ${bi === 0 ? 'disabled' : ''}>▲</button>
+            <button type="button" class="cli-btn" data-box-act="down" ${bi === boxes.length - 1 ? 'disabled' : ''}>▼</button>
+            <button type="button" class="cli-btn danger" data-box-act="del">×</button>
+          </div>
+        </div>
+        <div class="box-body" ${collapsed ? 'style="display:none;"' : ''}>
+          <div class="fl-row" style="margin-bottom:8px;">
+            <span class="mini-label fl-mini">${esc(t('flLayout'))}</span>
+            <button type="button" class="cli-btn ${layout === 'stack' ? 'active' : ''}" data-box-layout="stack" style="width:auto;padding:6px 10px;font-size:.74rem;">${esc(t('flStack'))}</button>
+            <button type="button" class="cli-btn ${layout === 'row' ? 'active' : ''}" data-box-layout="row" style="width:auto;padding:6px 10px;font-size:.74rem;">${esc(t('flRow'))}</button>
+            <span class="mini-label fl-mini" style="margin-left:8px;">${esc(t('flAlign'))}</span>
+            <button type="button" class="cli-btn ${align === 'left' ? 'active' : ''}" data-box-align="left">⇤</button>
+            <button type="button" class="cli-btn ${align === 'center' ? 'active' : ''}" data-box-align="center">⇔</button>
+            <button type="button" class="cli-btn ${align === 'right' ? 'active' : ''}" data-box-align="right">⇥</button>
+          </div>
+          <div class="fl-row" style="margin-bottom:10px;">
+            <span class="mini-label fl-mini" style="white-space:nowrap;">${esc(t('flGap'))}</span>
+            <input type="range" class="range" data-box-gap min="-8" max="24" step="1" value="${g}" style="flex:1;">
+            <span class="mini-label fl-mini" data-gap-pct style="min-width:36px;text-align:right;">${g}px</span>
+          </div>
+          <div class="contact-list">${rows}</div>
+          <div class="type-chips">
+            <span class="mini-label fl-mini" style="width:100%;">${esc(t('flAdd'))}</span>
+            ${FREE_TYPES.map(tt => `<button type="button" class="type-chip" data-add-type="${tt}">${esc(t(TYPE_KEY[tt]))}</button>`).join('')}
+          </div>
+        </div>
+      </div>`;
+    }).join('') + `<button type="button" class="add-contact" id="freeAddBox" style="margin-top:2px;">${esc(t('flAddBox'))}</button>`;
+  }
+  const LS_LIB = 'etiket_library_v1';
+  let colSide = 'front';
+  function loadLib(){ try { return JSON.parse(localStorage.getItem(LS_LIB) || '[]'); } catch(e){ return []; } }
+  function saveLib(arr){ try { localStorage.setItem(LS_LIB, JSON.stringify(arr)); return true; } catch(e){ return false; } }
+  function setSaveStatus(msg){ const el = byId('saveStatus'); if (el) el.textContent = msg || ''; }
+  function fmtDate(ts){ const d = new Date(ts); const pad = n => (n < 10 ? '0' : '') + n; return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate()) + ' ' + pad(d.getHours()) + ':' + pad(d.getMinutes()); }
+  function renderLibrary(){
+    const list = byId('libraryList'); if (!list) return;
+    const arr = loadLib();
+    if (!arr.length){ list.innerHTML = `<div class="lib-empty">${esc(t('libNone'))}</div>`; return; }
+    list.innerHTML = arr.map((it, i) =>
+      `<div class="lib-item" data-i="${i}">
+         <div class="lib-info"><span class="lib-name">${esc(it.name)}</span><span class="lib-date">${fmtDate(it.ts)}</span></div>
+         <div class="lib-btns">
+           <button class="lib-btn" data-act="open" type="button">${esc(t('libOpen'))}</button>
+           <button class="lib-btn danger" data-act="del" type="button">${esc(t('libDelete'))}</button>
+         </div>
+       </div>`).join('');
+  }
+  function updatePanelVis(){
+    const dd = dims();
+    const rs = byId('rowShape'); if (rs) rs.style.display = dd.round ? 'none' : '';
+    const fw = byId('frameColWrap'); if (fw) fw.style.display = (state.design.frame && state.design.frame !== 'none') ? '' : 'none';
+  }
+  function renderAll(){
+    renderLabel(); renderChips(); updateLawBadge(); renderMeta(); updateFreeBtn(); updatePanelVis();
+  }
+
+  /* ============================== AUTOSAVE ============================== */
+  let saveTimer = null;
+  function save(){
+    clearTimeout(saveTimer);
+    saveTimer = setTimeout(() => { try { localStorage.setItem(LS_SAVE, JSON.stringify(state)); } catch(e){} }, 350);
+  }
+  function applyData(sv){
+    state = clone(DEFAULTS);
+    ['size','orientation','radius','side','smallPack'].forEach(k => { if (sv[k] !== undefined) state[k] = sv[k]; });
+    Object.assign(state.front, sv.front || {});
+    if (sv.front && !sv.front.boxes) state.front.boxes = null;
+    const nut = Object.assign({}, state.decl.nut, (sv.decl || {}).nut || {});
+    Object.assign(state.decl, sv.decl || {}); state.decl.nut = nut;
+    Object.assign(state.design, sv.design || {});
+  }
+  function restore(){
+    try {
+      const raw = localStorage.getItem(LS_SAVE);
+      if (!raw) return;
+      applyData(JSON.parse(raw));
+    } catch(e){}
+  }
+
+  /* ============================== I18N-ANVENDELSE ============================== */
+  function applyLang(){
+    document.documentElement.lang = LANG;
+    document.querySelectorAll('[data-i18n]').forEach(el => { el.textContent = t(el.dataset.i18n); });
+    document.querySelectorAll('[data-i18n-ph]').forEach(el => { el.placeholder = t(el.dataset.i18nPh); });
+    document.querySelectorAll('[data-i18n-title]').forEach(el => el.title = t(el.dataset.i18nTitle));
+    byId('langSel').value = LANG;
+    updatePayLabels();
+    renderAll();
+  }
+
+  /* ============================== BETALING & VANDMÆRKE ============================== */
+  let unlocked = false, codeActive = false;
+  const TEMP_CODES = ['1234567'];
+  function updateFreeBtn(){
+    const b = byId('freeBtn');
+    if (b) b.style.display = (unlocked || codeActive) ? 'none' : '';
+  }
+  function updatePayLabels(){
+    byId('pdfBtn').textContent = codeActive ? t('payPdfFree') : t('payPdf');
+    byId('pngBtn').textContent = codeActive ? t('payImgFree') : t('payImg');
+  }
+  function setStatus(s){ byId('statusLine').textContent = s || ''; }
+
+  async function startPaidDownload(kind){
+    if (unlocked){ await doDownload(kind); if (!codeActive){ unlocked = false; renderAll(); } return; }
+    try { localStorage.setItem(LS_PENDING, kind); } catch(e){}
+    setStatus(t('stPayStart'));
+    try {
+      const res = await fetch('/api/create-checkout-session', {
+        method:'POST', headers:{ 'Content-Type':'application/json' },
+        body: JSON.stringify({ product:'etiket', returnPath: window.location.pathname })
+      });
+      const data = await res.json();
+      if (data && data.url) window.location.href = data.url;
+      else setStatus(t('stPayFail'));
+    } catch(e){ setStatus(t('stPayFail')); }
+  }
+  function applyCode(){
+    const v = (byId('codeInput').value || '').trim();
+    if (!TEMP_CODES.includes(v)){ setStatus(t('codeInvalid')); return; }
+    let used = [];
+    try { used = JSON.parse(localStorage.getItem(LS_USED) || '[]'); } catch(e){}
+    if (used.includes(v)){ setStatus(t('codeUsed')); return; }
+    used.push(v);
+    try { localStorage.setItem(LS_USED, JSON.stringify(used)); } catch(e){}
+    codeActive = true; unlocked = true;
+    updatePayLabels(); renderAll(); setStatus(t('codeApplied'));
+  }
+
+  /* ============================== EKSPORT ============================== */
+  async function captureSide(side){
+    const { w, h } = dims();
+    const host = document.createElement('div');
+    host.style.cssText = `position:fixed;left:-10000px;top:0;`;
+    const card = document.createElement('div');
+    card.className = 'label-card';
+    applyDesignVars(card, side);
+    card.style.boxShadow = 'none'; card.style.borderRadius = '0';
+    card.innerHTML = buildLabelHTML(side);
+    host.appendChild(card); document.body.appendChild(host);
+    try {
+      return await html2canvas(card, { scale: 3, backgroundColor: null, useCORS: true });
+    } finally { document.body.removeChild(host); }
+  }
+  async function doDownload(kind){
+    const hasLibs = (typeof html2canvas !== 'undefined') && window.jspdf && window.jspdf.jsPDF;
+    if (!hasLibs){ window.print(); return; }
+    const dd0 = dims(), w = dd0.w, h = dd0.h, isRound = !!dd0.round;
+    setStatus(kind === 'png' ? t('stMakingPng') : t('stMakingPdf'));
+    try {
+      if (kind === 'png'){
+        const c = await captureSide(state.side);
+        const a = document.createElement('a');
+        a.href = c.toDataURL('image/png'); a.download = 'etiket-lusidio.png'; a.click();
+      } else {
+        const fImg = (await captureSide('front')).toDataURL('image/png');
+        const bImg = (await captureSide('back')).toDataURL('image/png');
+        const { jsPDF } = window.jspdf;
+        const pdf = new jsPDF({ unit:'mm', format:'a4', orientation:'portrait' });
+        const g = sheetGrid();
+        const drawSheet = img => {
+          pdf.setDrawColor(205); pdf.setLineWidth(0.2);
+          for (let r = 0; r < g.rows; r++) for (let c = 0; c < g.cols; c++){
+            const x = g.m + c * (w + g.gap), y = g.m + r * (h + g.gap);
+            pdf.addImage(img, 'PNG', x, y, w, h);
+            if (isRound) pdf.circle(x + w / 2, y + h / 2, w / 2); else pdf.rect(x, y, w, h);
+          }
+        };
+        drawSheet(fImg);
+        pdf.addPage('a4', 'portrait'); drawSheet(bImg);
+        pdf.addPage([w, h], w >= h ? 'landscape' : 'portrait'); pdf.addImage(fImg, 'PNG', 0, 0, w, h);
+        pdf.addPage([w, h], w >= h ? 'landscape' : 'portrait'); pdf.addImage(bImg, 'PNG', 0, 0, w, h);
+        pdf.save('etiket-lusidio.pdf');
+      }
+      setStatus(t('stDone'));
+    } catch(e){ setStatus(t('stFail')); }
+  }
+
+  /* ============================== KONTROL-SYNK ============================== */
+  function setSeg(id, val){
+    byId(id).querySelectorAll('.seg-btn').forEach(b => b.classList.toggle('active', b.dataset.val === String(val)));
+  }
+  function bindSeg(id, fn){
+    byId(id).addEventListener('click', e => {
+      const b = e.target.closest('.seg-btn'); if (!b) return;
+      setSeg(id, b.dataset.val); fn(b.dataset.val); save();
+    });
+  }
+  function syncControls(){
+    setSeg('segColSide', colSide);
+    { const cpal = (colSide === 'back' && state.design.backC) ? state.design.backC : state.design;
+      byId('cAccent').value = cpal.accent; byId('cPaper').value = cpal.paper; byId('cInk').value = cpal.ink; }
+    const f = state.front, d = state.decl, n = d.nut, ds = state.design;
+    byId('dVareb').value = d.vareb; byId('dIngr').value = d.ingr; byId('dTraces').value = d.traces;
+    byId('dNetto').value = d.netto; byId('dNettoUnit').value = d.nettoUnit;
+    byId('dDate').value = d.date; byId('dStorage').value = d.storage;
+    byId('dProducer').value = d.producer; byId('dAddress').value = d.address; byId('dLot').value = d.lot;
+    byId('nKj').value = n.kj; byId('nKcal').value = n.kcal; byId('nFat').value = n.fat; byId('nSat').value = n.sat;
+    byId('nCarb').value = n.carb; byId('nSugar').value = n.sugar; byId('nFiber').value = n.fiber;
+    byId('nProt').value = n.prot; byId('nSalt').value = n.salt;
+    byId('chkFiber').checked = !!n.fiberOn;
+    byId('fiberLbl').style.display = n.fiberOn ? '' : 'none';
+    byId('nFiber').style.display = n.fiberOn ? '' : 'none';
+    byId('nutFields').style.display = n.on ? '' : 'none';
+    setSeg('segNutOn', n.on ? 'on' : 'off'); setSeg('segNutPer', n.per);
+    setSeg('segDate', d.dateType);
+    byId('selSize').value = state.size;
+    setSeg('segOrient', state.orientation); setSeg('segRadius', state.radius);
+    document.querySelectorAll('#backStyleRow .style-card').forEach(b => b.classList.toggle('active', b.dataset.bstyle === (ds.backStyle || 'classic')));
+    renderFreeList();
+    setSeg('segFrame', ds.frame || 'none'); setSeg('segFrameCol', ds.frameC || 'ink');
+    byId('selTitleFont').value = ds.titleFont; byId('selBodyFont').value = ds.bodyFont;
+        byId('rngDeclSize').value = Math.round(ds.declSize * 100);
+    byId('chkSmallPack').checked = !!state.smallPack;
+    byId('tabFront').classList.toggle('active', state.side === 'front');
+    byId('tabBack').classList.toggle('active', state.side === 'back');
+  }
+
+  /* ============================== INIT & LISTENERS ============================== */
+  function bindText(id, setter){
+    byId(id).addEventListener('input', e => { setter(e.target.value); renderAll(); save(); });
+  }
+  function init(){
+    FONTS_TITLE.forEach(f => { const o = document.createElement('option'); o.value = f.css; o.textContent = f.name; byId('selTitleFont').appendChild(o); });
+    FONTS_BODY.forEach(f => { const o = document.createElement('option'); o.value = f.css; o.textContent = f.name; byId('selBodyFont').appendChild(o); });
+
+    restore();
+    try {
+      const tplQ = new URLSearchParams(location.search).get('template');
+      if (tplQ && LABEL_TEMPLATES[tplQ]){ applyData(clone(LABEL_TEMPLATES[tplQ])); save(); }
+    } catch(e){}
+
+    renderLibrary();
+
+    setSaveStatus(t('saveStatusInit'));
+    bindText('dVareb', v => state.decl.vareb = v);
+    bindText('dIngr', v => state.decl.ingr = v);
+    bindText('dTraces', v => state.decl.traces = v);
+    bindText('dNetto', v => state.decl.netto = v);
+    bindText('dDate', v => state.decl.date = v);
+    bindText('dStorage', v => state.decl.storage = v);
+    bindText('dProducer', v => state.decl.producer = v);
+    bindText('dAddress', v => state.decl.address = v);
+    bindText('dLot', v => state.decl.lot = v);
+    byId('dNettoUnit').addEventListener('change', e => { state.decl.nettoUnit = e.target.value; renderAll(); save(); });
+
+    const num = v => parseFloat(String(v).replace(',', '.'));
+    ['nFat','nSat','nCarb','nSugar','nFiber','nProt','nSalt'].forEach(id => {
+      const key = id.slice(1).toLowerCase();
+      bindText(id, v => state.decl.nut[key] = v);
+    });
+    byId('nKcal').addEventListener('input', e => {
+      state.decl.nut.kcal = e.target.value;
+      const k = num(e.target.value);
+      if (isFinite(k)){ state.decl.nut.kj = String(Math.round(k * 4.184)); byId('nKj').value = state.decl.nut.kj; }
+      renderAll(); save();
+    });
+    byId('nKj').addEventListener('input', e => {
+      state.decl.nut.kj = e.target.value;
+      const k = num(e.target.value);
+      if (isFinite(k)){ state.decl.nut.kcal = String(Math.round(k / 4.184)); byId('nKcal').value = state.decl.nut.kcal; }
+      renderAll(); save();
+    });
+    byId('chkFiber').addEventListener('change', e => {
+      state.decl.nut.fiberOn = e.target.checked;
+      byId('fiberLbl').style.display = e.target.checked ? '' : 'none';
+      byId('nFiber').style.display = e.target.checked ? '' : 'none';
+      renderAll(); save();
+    });
+
+    bindSeg('segDate', v => { state.decl.dateType = v; renderAll(); });
+    bindSeg('segNutOn', v => { state.decl.nut.on = (v === 'on'); byId('nutFields').style.display = state.decl.nut.on ? '' : 'none'; renderAll(); });
+    bindSeg('segNutPer', v => { state.decl.nut.per = v; renderAll(); });
+    bindSeg('segOrient', v => { state.orientation = v; renderAll(); });
+    bindSeg('segRadius', v => { state.radius = v; renderAll(); });
+    document.querySelectorAll('#backStyleRow .style-card').forEach(btn => btn.addEventListener('click', () => {
+      state.design.backStyle = btn.dataset.bstyle;
+      state.side = 'back';
+      syncControls(); renderAll(); save();
+    }));
+    const freeWrap = byId('freeBoxWrap');
+    const findFreeBox = el => {
+      const card = el.closest('[data-box-id]'); if (!card) return null;
+      return (state.front.boxes || []).find(b => b.id === +card.dataset.boxId) || null;
+    };
+    freeWrap.addEventListener('input', e => {
+      const box = findFreeBox(e.target); if (!box) return;
+      if (e.target.matches('[data-box-gap]')){
+        box.gap = +e.target.value;
+        const lbl = e.target.parentElement.querySelector('[data-gap-pct]'); if (lbl) lbl.textContent = box.gap + 'px';
+        renderLabel(); save(); return;
+      }
+      const cli = e.target.closest('.cli'); if (!cli) return;
+      const it = (box.items || []).find(x => x.id === +cli.dataset.id); if (!it) return;
+      const act = e.target.dataset.act;
+      if (act === 'value'){ it.value = e.target.value; renderLabel(); save(); }
+      else if (act === 'size'){
+        it.size = (+e.target.value) / 100;
+        const lbl = cli.querySelector('[data-size-pct]'); if (lbl) lbl.textContent = e.target.value + '%';
+        renderLabel(); save();
+      }
+    });
+    freeWrap.addEventListener('click', e => {
+      if (e.target.closest('#freeAddBox')){
+        state.front.boxes.push({ id:state.front.nextBoxId++, pos:'middle-center', align:'center', layout:'stack', gap:6, items:[], nextItemId:1 });
+        renderFreeList(); renderAll(); save(); return;
+      }
+      const posBtn = e.target.closest('.pos-grid [data-pos]');
+      const box = findFreeBox(e.target);
+      if (posBtn && box){ box.pos = posBtn.dataset.pos; renderFreeList(); renderAll(); save(); return; }
+      if (!box) return;
+      const alignBtn = e.target.closest('[data-box-align]');
+      if (alignBtn){ box.align = alignBtn.dataset.boxAlign; renderFreeList(); renderAll(); save(); return; }
+      const layoutBtn = e.target.closest('[data-box-layout]');
+      if (layoutBtn){ box.layout = layoutBtn.dataset.boxLayout; renderFreeList(); renderAll(); save(); return; }
+      const addType = e.target.closest('[data-add-type]');
+      if (addType){ box.items.push(freeNewItem(box, addType.dataset.addType)); renderFreeList(); renderAll(); save(); return; }
+      const boxAct = e.target.closest('[data-box-act]');
+      if (boxAct){
+        const a = boxAct.dataset.boxAct;
+        const arr = state.front.boxes; const bi = arr.indexOf(box);
+        if (a === 'toggle'){ collapsedFreeBoxes[box.id] = !collapsedFreeBoxes[box.id]; }
+        else if (a === 'up' && bi > 0){ arr.splice(bi, 1); arr.splice(bi - 1, 0, box); }
+        else if (a === 'down' && bi < arr.length - 1){ arr.splice(bi, 1); arr.splice(bi + 1, 0, box); }
+        else if (a === 'del'){ arr.splice(bi, 1); }
+        renderFreeList(); renderAll(); save(); return;
+      }
+      const actBtn = e.target.closest('[data-act]'); if (!actBtn) return;
+      const cli = e.target.closest('.cli'); if (!cli) return;
+      const items = box.items || []; const ii = items.findIndex(x => x.id === +cli.dataset.id);
+      const it = items[ii]; if (!it) return;
+      const act = actBtn.dataset.act;
+      if (act === 'size-preset') it.size = (+actBtn.dataset.val) / 100;
+      else if (act === 'style-reset'){ it.bold = false; it.thin = false; it.italic = false; }
+      else if (act === 'style-bold'){ it.bold = !it.bold; if (it.bold) it.thin = false; }
+      else if (act === 'style-thin'){ it.thin = !it.thin; if (it.thin) it.bold = false; }
+      else if (act === 'style-italic') it.italic = !it.italic;
+      else if (act === 'style-accent'){ it.accent = !it.accent; if (it.accent) it.dim = false; }
+      else if (act === 'style-dim'){ it.dim = !it.dim; if (it.dim) it.accent = false; }
+      else if (act === 'wrap-yes') it.wrap = true;
+      else if (act === 'wrap-no') it.wrap = false;
+      else if (act === 'lspace') it.lspace = +actBtn.dataset.val;
+      else if (act === 'inline-toggle') it.inline = !it.inline;
+      else if (act === 'up' && ii > 0){ items.splice(ii, 1); items.splice(ii - 1, 0, it); }
+      else if (act === 'down' && ii < items.length - 1){ items.splice(ii, 1); items.splice(ii + 1, 0, it); }
+      else if (act === 'del') items.splice(ii, 1);
+      else return;
+      renderFreeList(); renderAll(); save();
+    });
+    bindSeg('segFrame', v => { state.design.frame = v; renderAll(); });
+    bindSeg('segFrameCol', v => { state.design.frameC = v; renderAll(); });
+    byId('selSize').addEventListener('change', e => { state.size = e.target.value; renderAll(); save(); });
+    byId('selTitleFont').addEventListener('change', e => { state.design.titleFont = e.target.value; renderAll(); save(); });
+    byId('selBodyFont').addEventListener('change', e => { state.design.bodyFont = e.target.value; renderAll(); save(); });
+    ['cAccent','cPaper','cInk'].forEach(id => byId(id).addEventListener('input', e => {
+      const key = id === 'cAccent' ? 'accent' : id === 'cPaper' ? 'paper' : 'ink';
+      const d = state.design;
+      if (colSide === 'back'){
+        if (!d.backC) d.backC = { accent: d.accent, paper: d.paper, ink: d.ink };
+        d.backC[key] = e.target.value;
+      } else d[key] = e.target.value;
+      renderAll(); save();
+    }));
+    bindSeg('segColSide', v => { colSide = v; state.side = v; syncControls(); renderAll(); });
+    byId('rngDeclSize').addEventListener('input', e => { state.design.declSize = (+e.target.value) / 100; renderAll(); save(); });
+    byId('chkSmallPack').addEventListener('change', e => { state.smallPack = e.target.checked; updateLawBadge(); save(); });
+
+
+    byId('tabFront').addEventListener('click', () => { state.side = 'front'; syncControls(); renderAll(); save(); });
+    byId('tabBack').addEventListener('click', () => { state.side = 'back'; syncControls(); renderAll(); save(); });
+
+    byId('pdfBtn').addEventListener('click', () => startPaidDownload('pdf'));
+    byId('pngBtn').addEventListener('click', () => startPaidDownload('png'));
+    byId('freeBtn').addEventListener('click', () => doDownload('pdf'));
+    byId('useCodeBtn').addEventListener('click', applyCode);
+    byId('codeInput').addEventListener('keydown', e => { if (e.key === 'Enter') applyCode(); });
+    byId('libraryList').addEventListener('click', e => {
+      const btn = e.target.closest('.lib-btn'); if (!btn) return;
+      const item = btn.closest('.lib-item'); const i = +item.dataset.i;
+      const arr = loadLib(); const it = arr[i]; if (!it) return;
+      if (btn.dataset.act === 'open'){
+        applyData(it.data);
+        state.side = 'front';
+        syncControls(); renderAll(); save();
+        setSaveStatus(t('saveStatusSaved') + it.name);
+      } else if (btn.dataset.act === 'del'){
+        if (!confirm(t('libConfirmDelete') + ' ' + it.name)) return;
+        arr.splice(i, 1); saveLib(arr); renderLibrary();
+        setSaveStatus(t('saveStatusDeleted') + it.name);
+      }
+    });
+    byId('saveAsBtn').addEventListener('click', () => {
+      const name = (prompt(t('saveAsPrompt')) || '').trim();
+      if (!name) return;
+      const arr = loadLib();
+      const exists = arr.findIndex(x => x.name === name);
+      if (exists >= 0 && !confirm(t('libConfirmReplace'))) return;
+      const entry = { name, ts: Date.now(), data: clone(state) };
+      if (exists >= 0) arr[exists] = entry; else arr.unshift(entry);
+      saveLib(arr); renderLibrary();
+      setSaveStatus(t('saveStatusSaved') + name);
+    });
+    byId('exportBtn').addEventListener('click', () => {
+      const payload = { type:'lusidio-etiket', version:1, exported: new Date().toISOString(), data: state };
+      const blob = new Blob([JSON.stringify(payload, null, 2)], { type:'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      const allItems = (state.front.boxes || []).flatMap(b => b.items || []);
+      const nm = allItems.find(x => x.type === 'name' && (x.value || '').trim());
+      const baseName = (nm && nm.value) || state.decl.vareb || 'etiket';
+      const safe = baseName.replace(/[^a-z0-9æøåÆØÅ\- ]+/gi, '').trim().replace(/\s+/g, '-') || 'etiket';
+      a.href = url; a.download = 'lusidio-' + safe.toLowerCase() + '.json';
+      document.body.appendChild(a); a.click(); document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      setSaveStatus(t('saveStatusExported'));
+    });
+    byId('importBtn').addEventListener('click', () => byId('importInput').click());
+    byId('importInput').addEventListener('change', e => {
+      const f = e.target.files && e.target.files[0]; if (!f) return;
+      const r = new FileReader();
+      r.onload = () => {
+        try {
+          const obj = JSON.parse(r.result);
+          const data = (obj && obj.data && obj.data.front && obj.data.decl) ? obj.data : ((obj && obj.front && obj.decl) ? obj : null);
+          if (!data) throw new Error('bad shape');
+          applyData(data);
+          state.side = 'front';
+          syncControls(); renderAll(); save();
+          setSaveStatus(t('saveStatusImported'));
+        } catch(err){ setSaveStatus(t('saveStatusImportFail')); }
+        e.target.value = '';
+      };
+      r.readAsText(f);
+    });
+    byId('resetBtn').addEventListener('click', () => {
+      if (!confirm(t('confirmReset'))) return;
+      try { localStorage.removeItem(LS_SAVE); } catch(e){}
+      state = clone(DEFAULTS);
+      state.front.overline = ''; state.front.name = ''; state.front.sub = ''; state.front.producer = '';
+      state.front.boxes = [{ id:1, pos:'middle-center', align:'center', layout:'stack', gap:6, items:[], nextItemId:1 }];
+      state.front.nextBoxId = 2;
+      ['vareb','ingr','traces','netto','date','lot','storage','producer','address'].forEach(k => state.decl[k] = '');
+      Object.keys(state.decl.nut).forEach(k => { if (k !== 'on') state.decl.nut[k] = ''; });
+      state.decl.nut.on = false;
+      syncControls(); renderAll(); save();
+    });
+    byId('langSel').addEventListener('change', e => {
+      LANG = e.target.value;
+      try { localStorage.setItem(LS_LANG, LANG); } catch(e){}
+      applyLang(); syncControls(); renderLibrary();
+    });
+    byId('getFileBar').addEventListener('click', async () => {
+      const kind = (function(){ try { return localStorage.getItem(LS_PENDING) || 'pdf'; } catch(e){ return 'pdf'; } })();
+      await doDownload(kind);
+      try { localStorage.removeItem(LS_PENDING); } catch(e){}
+      byId('getFileBar').style.display = 'none';
+      if (!codeActive){ unlocked = false; renderAll(); }
+    });
+
+    try {
+      const p = new URLSearchParams(location.search);
+      if (p.get('paid') === '1' || p.get('success') === '1'){
+        unlocked = true;
+        byId('getFileBar').style.display = 'block';
+        setStatus(t('stPayUnlocked'));
+        history.replaceState({}, '', location.pathname);
+      }
+    } catch(e){}
+
+    syncControls();
+    applyLang();
+    window.addEventListener('resize', renderLabel);
+    if (window.ResizeObserver){
+      let raf = 0, lastW = -1;
+      const ro = new ResizeObserver(entries => {
+        const w = Math.round(entries[0].contentRect.width);
+        if (w === lastW) return;
+        lastW = w;
+        if (raf) return;
+        raf = requestAnimationFrame(() => { raf = 0; renderLabel(); });
+      });
+      ro.observe(byId('labelHolder').parentElement);
+    }
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(renderLabel);
+  }
+  init();
+})();
+</script>
+</body>
+</html>
