@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lusidio – professionelle menukort, visitkort og etiketter på minutter</title>
+<meta name="description" content="Lusidio lader dig lave flotte menukort, visitkort og fødevareetiketter på få minutter — uden grafiker og uden designprogrammer. Skriv dine oplysninger, vælg en stil, og hent en printklar PDF.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,600;1,400;1,600&family=Jost:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Bebas+Neue&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#ece3d2; --panel:#fbf7ef; --ink:#2c2620; --muted:#8c8275;
+    --line:#e2d8c6; --accent:#b5542a; --accent-d:#963f1f; --field:#fffdf8;
+  }
+  *{ box-sizing:border-box; }
+  html,body{ margin:0; padding:0; }
+  body{
+    font-family:'Jost',sans-serif; color:var(--ink); min-height:100vh;
+    line-height:1.55; -webkit-font-smoothing:antialiased;
+    background:
+      radial-gradient(900px 600px at 88% -10%, #f7ecd9, transparent 60%),
+      radial-gradient(820px 560px at -8% 110%, #efe4cf, transparent 60%),
+      var(--bg);
+  }
+  button{ -webkit-tap-highlight-color:transparent; font-family:inherit; }
+
+  .lang-bar{ position:absolute; top:22px; right:24px; display:flex; gap:4px; z-index:10; }
+  .lang-btn{
+    border:1px solid var(--line); background:var(--field); color:var(--muted);
+    font-size:.78rem; font-weight:600; letter-spacing:.03em;
+    padding:6px 10px; border-radius:8px; cursor:pointer; transition:all .15s;
+  }
+  .lang-btn:hover{ color:var(--ink); border-color:var(--accent); }
+  .lang-btn.active{ background:var(--accent); color:#fff; border-color:var(--accent); }
+
+  .wrap{ max-width:1100px; margin:0 auto; padding:60px 24px 80px; text-align:center; }
+
+  .brand{ display:inline-flex; align-items:center; gap:10px; margin-bottom:32px; }
+  .brand-name{ font-family:'Fraunces',serif; font-weight:600; font-style:italic; font-size:1.85rem; color:var(--ink); }
+  .brand-dot{ width:10px; height:10px; border-radius:50%; background:var(--accent); }
+
+  .hero-title{ font-family:'Fraunces',serif; font-weight:600; font-size:3rem; line-height:1.1; color:var(--ink); margin:0 0 20px; max-width:780px; margin-left:auto; margin-right:auto; }
+  .hero-lead{ font-size:1.15rem; line-height:1.55; color:var(--muted); margin:0 auto 14px; max-width:620px; }
+  .quick-nav{ display:flex; justify-content:center; gap:14px; flex-wrap:wrap; margin:0 auto 50px; }
+  .qn-btn{
+    display:inline-block; padding:13px 32px; border-radius:999px;
+    background:var(--accent); color:#fff; text-decoration:none;
+    font-family:'Jost',sans-serif; font-weight:600; font-size:1.02rem; letter-spacing:.02em;
+    box-shadow:0 8px 20px rgba(181,84,42,.22); transition:all .18s;
+  }
+  .qn-btn:hover{ background:var(--accent-d); transform:translateY(-2px); box-shadow:0 14px 28px rgba(181,84,42,.3); }
+
+  /* Product section */
+  .product-section{ margin-bottom:62px; }
+  .section-head{ display:flex; flex-direction:column; align-items:center; gap:8px; margin-bottom:30px; }
+  .section-title{ font-family:'Fraunces',serif; font-weight:600; font-size:1.95rem; color:var(--ink); margin:0; }
+  .section-sub{ font-size:1rem; color:var(--muted); margin:0; max-width:560px; }
+  .section-price{
+    margin-top:6px; font-size:.84rem; font-weight:600; color:var(--accent-d);
+    background:#fff7f1; border:1px solid rgba(181,84,42,.25);
+    padding:5px 13px; border-radius:999px;
+  }
+
+  /* Template grid */
+  .templates{
+    display:grid; grid-template-columns:repeat(3, minmax(0, 1fr)); gap:22px;
+    width:100%; max-width:980px; margin:0 auto;
+  }
+  .template{
+    background:var(--panel); border:1.5px solid var(--line); border-radius:18px;
+    padding:18px; cursor:pointer; transition:all .22s;
+    display:flex; flex-direction:column; gap:14px;
+    text-decoration:none; color:inherit;
+    box-shadow:0 8px 24px rgba(60,40,22,.05);
+  }
+  .template:hover{
+    transform:translateY(-4px); border-color:var(--accent);
+    box-shadow:0 18px 38px rgba(60,40,22,.12);
+  }
+  .template-preview{
+    width:100%; aspect-ratio:16/10; border-radius:11px; overflow:hidden;
+    background:#fff; position:relative; box-shadow:inset 0 0 0 1px rgba(0,0,0,.04);
+  }
+  /* Visitkort preview er ca. 1.55:1 (85x55mm) */
+  .template-preview.bcard{ aspect-ratio:1.55/1; }
+  .template-name{ font-family:'Fraunces',serif; font-weight:600; font-size:1.15rem; color:var(--ink); margin:0; text-align:center; }
+  .template-desc{ font-size:.86rem; color:var(--muted); margin:0; text-align:center; line-height:1.4; }
+  .template-cta{ margin-top:auto; font-size:.88rem; font-weight:600; color:var(--accent); text-align:center; padding-top:4px; }
+  .template:hover .template-cta{ color:var(--accent-d); }
+
+  /* === Menu card previews === */
+  .mp{ width:100%; height:100%; padding:14px 16px; display:flex; flex-direction:column; gap:6px; overflow:hidden; }
+  /* Klassisk café (cream + brun) */
+  .mp.classic-cafe{ background:#fbf6ec; color:#3a2a1c; font-family:'Fraunces',serif; }
+  .mp.classic-cafe .h{ font-size:.78rem; font-style:italic; font-weight:600; letter-spacing:.08em; text-transform:uppercase; color:#b5542a; text-align:center; }
+  .mp.classic-cafe .t{ font-size:1.25rem; font-weight:600; text-align:center; margin:2px 0 6px; }
+  .mp.classic-cafe .ln{ display:flex; justify-content:space-between; align-items:baseline; font-size:.55rem; gap:8px; font-family:'Jost',sans-serif; }
+  .mp.classic-cafe .ln b{ font-weight:600; font-family:'Fraunces',serif; }
+  .mp.classic-cafe .ln .dots{ flex:1; border-bottom:1.2px dotted #b5542a; transform:translateY(-3px); opacity:.6; }
+  .mp.classic-cafe .ln .price{ font-weight:600; color:#b5542a; }
+
+  /* Moderne minimalistisk (hvid + sort, sans) */
+  .mp.modern-min{ background:#ffffff; color:#1a1a1a; font-family:'Jost',sans-serif; padding:18px 18px; }
+  .mp.modern-min .h{ font-size:.6rem; font-weight:500; letter-spacing:.32em; text-transform:uppercase; color:#888; text-align:left; }
+  .mp.modern-min .t{ font-size:1.55rem; font-weight:300; letter-spacing:.01em; text-align:left; margin:4px 0 10px; line-height:1; }
+  .mp.modern-min .grid2{ display:grid; grid-template-columns:1fr 1fr; gap:10px 14px; }
+  .mp.modern-min .it{ display:flex; flex-direction:column; gap:1px; }
+  .mp.modern-min .it .nm{ font-size:.58rem; font-weight:500; }
+  .mp.modern-min .it .pr{ font-size:.55rem; color:#888; font-weight:400; }
+
+  /* Mørk & fancy (mørk baggrund + guld) */
+  .mp.dark-fancy{ background:linear-gradient(135deg,#1d1612 0%, #2a1f17 100%); color:#f4e6cc; font-family:'Playfair Display',serif; padding:14px 18px; }
+  .mp.dark-fancy .h{ font-size:.62rem; letter-spacing:.3em; text-transform:uppercase; color:#caa15a; text-align:center; font-family:'Jost',sans-serif; font-weight:500; }
+  .mp.dark-fancy .t{ font-size:1.32rem; font-weight:400; font-style:italic; text-align:center; margin:0 0 4px; color:#f6e3b9; }
+  .mp.dark-fancy .div{ width:30px; height:1px; background:#caa15a; margin:2px auto 6px; opacity:.7; }
+  .mp.dark-fancy .ln{ display:flex; justify-content:space-between; align-items:baseline; font-size:.6rem; font-family:'Jost',sans-serif; font-weight:300; }
+  .mp.dark-fancy .ln .price{ color:#caa15a; font-weight:500; }
+
+  /* === Business card previews === */
+  .bp{ width:100%; height:100%; padding:14px 18px; display:flex; overflow:hidden; position:relative; }
+  /* Klassisk (cream + terracotta) */
+  .bp.bc-classic{ background:#fbf6ec; color:#2c2620; font-family:'Fraunces',serif; flex-direction:column; justify-content:center; align-items:flex-start; }
+  .bp.bc-classic .nm{ font-size:1.2rem; font-weight:600; line-height:1; margin-bottom:2px; }
+  .bp.bc-classic .tt{ font-size:.55rem; color:#8c8275; font-style:italic; margin-bottom:6px; font-family:'Jost',sans-serif; font-style:normal; letter-spacing:.04em; }
+  .bp.bc-classic .accent{ width:24px; height:2px; background:#b5542a; margin-bottom:6px; }
+  .bp.bc-classic .co{ font-size:.6rem; color:#b5542a; font-weight:600; letter-spacing:.06em; text-transform:uppercase; font-family:'Jost',sans-serif; }
+
+  /* Moderne sort/hvid */
+  .bp.bc-bold{ background:#0a0a0a; color:#fff; font-family:'Bebas Neue',sans-serif; flex-direction:column; justify-content:space-between; padding:16px 20px; }
+  .bp.bc-bold .top{ font-size:.55rem; letter-spacing:.4em; color:#999; font-family:'Jost',sans-serif; font-weight:500; }
+  .bp.bc-bold .nm{ font-size:1.7rem; line-height:1; letter-spacing:.04em; }
+  .bp.bc-bold .bottom{ font-size:.55rem; color:#aaa; font-family:'Jost',sans-serif; letter-spacing:.04em; font-weight:400; }
+
+  /* Farverig håndværker (terra + grøn-accent) */
+  .bp.bc-craft{ background:linear-gradient(135deg, #2d4a3e 0%, #1f3a2e 100%); color:#fefae0; font-family:'Jost',sans-serif; flex-direction:column; justify-content:center; padding:16px 20px; position:relative; }
+  .bp.bc-craft::before{ content:''; position:absolute; right:0; top:0; bottom:0; width:34%; background:linear-gradient(135deg, #d4a574 0%, #b8895c 100%); clip-path:polygon(100% 0, 100% 100%, 0 100%); }
+  .bp.bc-craft .nm{ font-size:1.05rem; font-weight:700; letter-spacing:.02em; line-height:1.1; margin-bottom:3px; position:relative; z-index:1; }
+  .bp.bc-craft .tt{ font-size:.55rem; color:#cbd9c8; text-transform:uppercase; letter-spacing:.16em; font-weight:500; position:relative; z-index:1; }
+
+  /* === Label previews === */
+  .template-preview.label{ aspect-ratio:1.5/1; }
+  .lp{ width:100%; height:100%; padding:12px 16px; display:flex; flex-direction:column; overflow:hidden; }
+  /* Klassisk glas (creme) */
+  .lp.lb-jam{ background:#fdfaf2; color:#3a2f23; font-family:'Fraunces',serif; align-items:center; justify-content:center; text-align:center; gap:3px; }
+  .lp.lb-jam .ov{ font-size:.5rem; letter-spacing:.3em; text-transform:uppercase; color:#b5542a; font-family:'Jost',sans-serif; font-weight:600; }
+  .lp.lb-jam .nm{ font-size:1.28rem; font-weight:600; line-height:1.1; }
+  .lp.lb-jam .tg{ font-size:.62rem; font-style:italic; color:#6b6155; }
+  .lp.lb-jam .bt{ margin-top:9px; font-size:.58rem; font-family:'Jost',sans-serif; font-weight:500; }
+  .lp.lb-jam .pr{ font-size:.48rem; letter-spacing:.16em; text-transform:uppercase; color:#8a7f6e; font-family:'Jost',sans-serif; }
+  /* Mørk & moderne */
+  .lp.lb-dark{ background:linear-gradient(150deg,#2d4a2b,#1d3a1e); color:#f4ead8; font-family:'Jost',sans-serif; align-items:center; justify-content:center; text-align:center; gap:3px; }
+  .lp.lb-dark .ov{ font-size:.5rem; letter-spacing:.34em; text-transform:uppercase; color:#e8b04b; font-weight:600; }
+  .lp.lb-dark .nm{ font-size:1.6rem; font-weight:700; line-height:1; font-family:'Fraunces',serif; }
+  .lp.lb-dark .tg{ font-size:.6rem; color:#cfdcc4; }
+  .lp.lb-dark .pr{ margin-top:9px; font-size:.5rem; letter-spacing:.14em; text-transform:uppercase; color:#b9c9ad; }
+  /* For/bag-flip ved hover */
+  .template-preview.label{ position:relative; }
+  .template-preview.label .side-front,
+  .template-preview.label .side-back{ position:absolute; inset:0; transition:opacity .28s ease; }
+  .template-preview.label .side-back{ opacity:0; }
+  .template:hover .template-preview.label .side-back{ opacity:1; }
+  .template:hover .template-preview.label .side-front{ opacity:0; }
+  .flip-hint{ font-size:.82rem; color:var(--accent-d); margin:8px 0 0; text-align:center; }
+  @media (hover:none){ .flip-hint{ display:none; } }
+  /* Minimal med dobbeltramme (cookies) */
+  .lp.lb-cookie{ background:#fffdf8; color:#3a2f23; font-family:'Fraunces',serif; align-items:center; justify-content:center; text-align:center; gap:3px; border:3px double #3a2f23; }
+  .lp.lb-cookie .ov{ font-size:.48rem; letter-spacing:.3em; text-transform:uppercase; color:#b5542a; font-family:'Jost',sans-serif; font-weight:600; }
+  .lp.lb-cookie .nm{ font-size:1.05rem; font-weight:600; line-height:1.1; }
+  .lp.lb-cookie .acc{ width:22px; height:2px; background:#b5542a; margin:3px 0; }
+  .lp.lb-cookie .tg{ font-size:.6rem; font-style:italic; color:#6b6155; }
+  .lp.lb-cookie .pr{ margin-top:7px; font-size:.5rem; letter-spacing:.14em; text-transform:uppercase; color:#8a7f6e; font-family:'Jost',sans-serif; }
+  /* Deklarations-bagside */
+  .lp.lb-decl{ background:#fbf7ee; color:#2c2620; font-family:'Jost',sans-serif; gap:2px; padding:11px 14px; text-align:left; }
+  .lp.lb-decl .vb{ font-family:'Fraunces',serif; font-weight:600; font-size:.72rem; margin-bottom:1px; }
+  .lp.lb-decl .row{ font-size:.46rem; line-height:1.35; color:#3a342c; }
+  .lp.lb-decl .row b{ font-weight:600; }
+  .lp.lb-decl .nt{ margin-top:4px; font-size:.5rem; font-weight:600; border-bottom:1px solid rgba(44,38,32,.55); padding-bottom:2px; }
+  .lp.lb-decl .nr{ display:flex; justify-content:space-between; font-size:.45rem; border-bottom:1px solid rgba(44,38,32,.16); padding:1.5px 0; }
+
+  .footer{ margin-top:54px; font-size:.85rem; color:var(--muted); text-align:center; }
+  .footer a{ color:var(--accent-d); text-decoration:none; }
+  .footer a:hover{ text-decoration:underline; }
+
+  @media (max-width:880px){
+    .templates{ grid-template-columns:1fr 1fr; }
+  }
+  @media (max-width:580px){
+    .wrap{ padding:54px 16px 60px; }
+    .lang-bar{ top:16px; right:16px; }
+    .hero-title{ font-size:2.1rem; }
+    .hero-lead{ font-size:1.02rem; }
+    .quick-nav{ margin-bottom:34px; gap:10px; }
+    .qn-btn{ padding:11px 22px; font-size:.95rem; }
+    .section-title{ font-size:1.55rem; }
+    .templates{ grid-template-columns:1fr; gap:16px; }
+    .template{ padding:14px; }
+    .product-section{ margin-bottom:46px; }
+  }
+</style>
+</head>
+<body>
+
+  <div class="lang-bar">
+    <button class="lang-btn" data-lang="da" type="button">DA</button>
+    <button class="lang-btn" data-lang="en" type="button">EN</button>
+    <button class="lang-btn" data-lang="tr" type="button">TR</button>
+    <button class="lang-btn" data-lang="uk" type="button">UK</button>
+  </div>
+
+  <div class="wrap">
+
+    <div class="brand">
+      <span class="brand-name">Lusidio</span>
+      <span class="brand-dot"></span>
+    </div>
+
+    <h1 class="hero-title" data-i18n="heroTitle">Professionelle menukort, visitkort og etiketter på minutter</h1>
+    <p class="hero-lead" data-i18n="heroLead">Skriv dine oplysninger, vælg en stil, og hent et færdigt design som PDF — uden grafiker og uden designprogrammer.</p>
+    <div class="quick-nav">
+      <a class="qn-btn" href="/menukort.html" data-i18n="qnMenu">Menukort</a>
+      <a class="qn-btn" href="/visitkort.html" data-i18n="qnVisit">Visitkort</a>
+      <a class="qn-btn" href="/etiket.html" data-i18n="qnLabel">Etiket</a>
+    </div>
+
+    <!-- ============ MENUKORT ============ -->
+    <section class="product-section">
+      <div class="section-head">
+        <h2 class="section-title" data-i18n="menuSecTitle">Menukort</h2>
+        <p class="section-sub" data-i18n="menuSecSub">Vælg en stil at starte fra — eller byg dit eget fra bunden</p>
+        <span class="section-price" data-i18n="menuPrice">99 kr.</span>
+      </div>
+      <div class="templates">
+
+        <a class="template" data-product="menu" data-template="classic-cafe">
+          <div class="template-preview">
+            <div class="mp classic-cafe">
+              <div class="h" data-i18n="mpClassicHead">Café Solsikken</div>
+              <div class="t" data-i18n="mpClassicTitle">Menu</div>
+              <div class="ln"><b>Espresso</b><span class="dots"></span><span class="price">30</span></div>
+              <div class="ln"><b>Latte</b><span class="dots"></span><span class="price">42</span></div>
+              <div class="ln"><b>Cappuccino</b><span class="dots"></span><span class="price">42</span></div>
+              <div class="ln"><b>Croissant</b><span class="dots"></span><span class="price">28</span></div>
+              <div class="ln"><b>Wienerbrød</b><span class="dots"></span><span class="price">32</span></div>
+            </div>
+          </div>
+          <h3 class="template-name" data-i18n="mtClassicName">Klassisk café</h3>
+          <p class="template-desc" data-i18n="mtClassicDesc">Varm cremebaggrund med terracotta-accent</p>
+          <span class="template-cta" data-i18n="useTemplate">Brug denne →</span>
+        </a>
+
+        <a class="template" data-product="menu" data-template="modern-min">
+          <div class="template-preview">
+            <div class="mp modern-min">
+              <div class="h" data-i18n="mpModernHead">DRIKKEKORT</div>
+              <div class="t" data-i18n="mpModernTitle">Onsdag</div>
+              <div class="grid2">
+                <div class="it"><span class="nm">Pinot Noir</span><span class="pr">95 kr</span></div>
+                <div class="it"><span class="nm">Chardonnay</span><span class="pr">85 kr</span></div>
+                <div class="it"><span class="nm">Aperol Spritz</span><span class="pr">75 kr</span></div>
+                <div class="it"><span class="nm">Negroni</span><span class="pr">95 kr</span></div>
+                <div class="it"><span class="nm">Carlsberg</span><span class="pr">45 kr</span></div>
+                <div class="it"><span class="nm">IPA fadøl</span><span class="pr">55 kr</span></div>
+              </div>
+            </div>
+          </div>
+          <h3 class="template-name" data-i18n="mtModernName">Moderne minimalistisk</h3>
+          <p class="template-desc" data-i18n="mtModernDesc">Lyst, rent og luftigt — to kolonner</p>
+          <span class="template-cta" data-i18n="useTemplate">Brug denne →</span>
+        </a>
+
+        <a class="template" data-product="menu" data-template="dark-fancy">
+          <div class="template-preview">
+            <div class="mp dark-fancy">
+              <div class="h" data-i18n="mpDarkHead">Restaurant</div>
+              <div class="t" data-i18n="mpDarkTitle">Aftensmenu</div>
+              <div class="div"></div>
+              <div class="ln"><span>Tatar af oksefilet</span><span class="price">185</span></div>
+              <div class="ln"><span>Pighvar, beurre blanc</span><span class="price">245</span></div>
+              <div class="ln"><span>Confiteret andelår</span><span class="price">215</span></div>
+              <div class="ln"><span>Chokoladefondant</span><span class="price">95</span></div>
+            </div>
+          </div>
+          <h3 class="template-name" data-i18n="mtDarkName">Mørk og elegant</h3>
+          <p class="template-desc" data-i18n="mtDarkDesc">Mørk baggrund med guld-detaljer</p>
+          <span class="template-cta" data-i18n="useTemplate">Brug denne →</span>
+        </a>
+
+      </div>
+    </section>
+
+    <!-- ============ VISITKORT ============ -->
+    <section class="product-section">
+      <div class="section-head">
+        <h2 class="section-title" data-i18n="visitSecTitle">Visitkort</h2>
+        <p class="section-sub" data-i18n="visitSecSub">Vælg en stil at starte fra — eller byg dit eget fra bunden</p>
+        <span class="section-price" data-i18n="visitPrice">49 kr.</span>
+      </div>
+      <div class="templates">
+
+        <a class="template" data-product="visit" data-template="bc-classic">
+          <div class="template-preview bcard">
+            <div class="bp bc-classic">
+              <div class="nm" data-i18n="bcClassicName">Anna Jensen</div>
+              <div class="tt" data-i18n="bcClassicTitle">Ejer & barista</div>
+              <div class="accent"></div>
+              <div class="co" data-i18n="bcClassicCompany">Café Solsikken</div>
+            </div>
+          </div>
+          <h3 class="template-name" data-i18n="btClassicName">Klassisk</h3>
+          <p class="template-desc" data-i18n="btClassicDesc">Cremebaggrund med terracotta-streg</p>
+          <span class="template-cta" data-i18n="useTemplate">Brug denne →</span>
+        </a>
+
+        <a class="template" data-product="visit" data-template="bc-bold">
+          <div class="template-preview bcard">
+            <div class="bp bc-bold">
+              <div class="top" data-i18n="bcBoldTop">DESIGNER · KØBENHAVN</div>
+              <div class="nm" data-i18n="bcBoldName">MARTIN KOFOED</div>
+              <div class="bottom" data-i18n="bcBoldBottom">martin@studio.dk · +45 22 33 44 55</div>
+            </div>
+          </div>
+          <h3 class="template-name" data-i18n="btBoldName">Moderne sort</h3>
+          <p class="template-desc" data-i18n="btBoldDesc">Stærk og minimalistisk i sort-hvid</p>
+          <span class="template-cta" data-i18n="useTemplate">Brug denne →</span>
+        </a>
+
+        <a class="template" data-product="visit" data-template="bc-craft">
+          <div class="template-preview bcard">
+            <div class="bp bc-craft">
+              <div class="nm" data-i18n="bcCraftName">Peter Sørensen</div>
+              <div class="tt" data-i18n="bcCraftTitle">Tømrermester</div>
+            </div>
+          </div>
+          <h3 class="template-name" data-i18n="btCraftName">Naturlig & farverig</h3>
+          <p class="template-desc" data-i18n="btCraftDesc">Skovgrøn med varm sand-accent</p>
+          <span class="template-cta" data-i18n="useTemplate">Brug denne →</span>
+        </a>
+
+      </div>
+    </section>
+
+    <!-- ============ ETIKETTER ============ -->
+    <section class="product-section">
+      <div class="section-head">
+        <h2 class="section-title" data-i18n="labelSecTitle">Etiketter</h2>
+        <p class="section-sub" data-i18n="labelSecSub">Fødevareetiketter med lovpligtig deklaration på bagsiden — klar til glas, poser og flasker</p>
+        <span class="section-price" data-i18n="labelPrice">49 kr.</span>
+        <p class="flip-hint" data-i18n="labelFlipHint">Hold musen over et kort for at se bagsiden</p>
+      </div>
+      <div class="templates">
+
+        <a class="template" data-product="etiket" data-template="jam">
+          <div class="template-preview label">
+            <div class="lp lb-jam side-front">
+              <div class="ov" data-i18n="lpJamOv">Hjemmelavet</div>
+              <div class="nm" data-i18n="lpJamName">Jordbærmarmelade</div>
+              <div class="tg" data-i18n="lpJamTag">med vanilje · 2026</div>
+              <div class="bt">450 g</div>
+              <div class="pr" data-i18n="lpJamPr">Annes Køkken</div>
+            </div>
+            <div class="lp lb-decl side-back">
+              <div class="vb" data-i18n="lpJamVb">Jordbærmarmelade</div>
+              <div class="row" data-i18n-html="lpJamIngHtml"><b>Ingredienser:</b> Jordbær (55&nbsp;%), sukker, citronsaft, geleringsmiddel (pektin)</div>
+              <div class="row" data-i18n-html="lpJamNetHtml"><b>Nettovægt:</b> 450&nbsp;g</div>
+              <div class="nt" data-i18n="lpDeclNut">Næringsindhold pr. 100 g</div>
+              <div class="nr"><span data-i18n="lpDeclE">Energi</span><span>682 kJ / 163 kcal</span></div>
+              <div class="nr"><span data-i18n="lpDeclFat">Fedt</span><span>0,1 g</span></div>
+              <div class="nr"><span data-i18n="lpDeclCarb">Kulhydrat</span><span>40 g</span></div>
+            </div>
+          </div>
+          <h3 class="template-name" data-i18n="ltJamName">Klassisk glas</h3>
+          <p class="template-desc" data-i18n="ltJamDesc">Varm creme med terracotta-overskrift</p>
+          <span class="template-cta" data-i18n="useTemplate">Brug denne →</span>
+        </a>
+
+        <a class="template" data-product="etiket" data-template="granola">
+          <div class="template-preview label">
+            <div class="lp lb-dark side-front">
+              <div class="ov" data-i18n="lpDarkOv">Håndlavet</div>
+              <div class="nm" data-i18n="lpDarkName">Granola</div>
+              <div class="tg" data-i18n="lpDarkSub">med mandler &amp; honning</div>
+              <div class="pr" data-i18n="lpDarkPr">400 g · Brødladen</div>
+            </div>
+            <div class="lp lb-decl side-back">
+              <div class="vb" data-i18n="lpDarkVb">Granola — ristet müsli med mandler og honning</div>
+              <div class="row" data-i18n-html="lpDarkIngHtml"><b>Ingredienser:</b> Havregryn (45&nbsp;%), mandler (15&nbsp;%), honning, rapsolie, havsalt</div>
+              <div class="row" data-i18n-html="lpDarkNetHtml"><b>Nettovægt:</b> 400&nbsp;g</div>
+              <div class="nt" data-i18n="lpDeclNut">Næringsindhold pr. 100 g</div>
+              <div class="nr"><span data-i18n="lpDeclE">Energi</span><span>1895 kJ / 452 kcal</span></div>
+              <div class="nr"><span data-i18n="lpDeclFat">Fedt</span><span>18 g</span></div>
+              <div class="nr"><span data-i18n="lpDeclCarb">Kulhydrat</span><span>58 g</span></div>
+            </div>
+          </div>
+          <h3 class="template-name" data-i18n="ltDarkName">Mørk &amp; moderne</h3>
+          <p class="template-desc" data-i18n="ltDarkDesc">Dyb grøn forside med lys bagside</p>
+          <span class="template-cta" data-i18n="useTemplate">Brug denne →</span>
+        </a>
+
+        <a class="template" data-product="etiket" data-template="cookies">
+          <div class="template-preview label">
+            <div class="lp lb-cookie side-front">
+              <div class="ov" data-i18n="lpCookieOv">Bagt i hånden</div>
+              <div class="nm" data-i18n="lpCookieName">Chokolade-cookies</div>
+              <div class="acc"></div>
+              <div class="tg" data-i18n="lpCookieTag">med hasselnødder</div>
+              <div class="pr" data-i18n="lpCookiePr">250 g · Kagehuset</div>
+            </div>
+            <div class="lp lb-decl side-back">
+              <div class="vb" data-i18n="lpCookieVb">Småkager med chokolade og hasselnødder</div>
+              <div class="row" data-i18n-html="lpCookieIngHtml"><b>Ingredienser:</b> Hvedemel, smør, sukker, chokolade (20&nbsp;%), hasselnødder (10&nbsp;%), æg, havsalt</div>
+              <div class="row" data-i18n-html="lpCookieNetHtml"><b>Nettovægt:</b> 250&nbsp;g</div>
+              <div class="nt" data-i18n="lpDeclNut">Næringsindhold pr. 100 g</div>
+              <div class="nr"><span data-i18n="lpDeclE">Energi</span><span>2105 kJ / 503 kcal</span></div>
+              <div class="nr"><span data-i18n="lpDeclFat">Fedt</span><span>27 g</span></div>
+              <div class="nr"><span data-i18n="lpDeclCarb">Kulhydrat</span><span>58 g</span></div>
+            </div>
+          </div>
+          <h3 class="template-name" data-i18n="ltCookieName">Minimal med ramme</h3>
+          <p class="template-desc" data-i18n="ltCookieDesc">Ren hvid med klassisk dobbeltramme</p>
+          <span class="template-cta" data-i18n="useTemplate">Brug denne →</span>
+        </a>
+
+      </div>
+    </section>
+
+    <p class="footer" data-i18n-html="footerHtml">Spørgsmål? Skriv til <a href="mailto:hej@lusidio.com">hej@lusidio.com</a></p>
+
+  </div>
+
+<script>
+  const MENU_HREF   = '/menukort.html';
+  const VISIT_HREF  = '/visitkort.html';
+  const ETIKET_HREF = '/etiket.html';
+
+  // Click on template → open editor with ?template=NAME
+  document.querySelectorAll('.template').forEach(el => {
+    el.addEventListener('click', e => {
+      e.preventDefault();
+      const product = el.dataset.product;
+      const tpl = el.dataset.template;
+      const base = product === 'menu' ? MENU_HREF : product === 'visit' ? VISIT_HREF : ETIKET_HREF;
+      window.location.href = tpl ? base + '?template=' + encodeURIComponent(tpl) : base;
+    });
+  });
+
+  // ====== i18n ======
+  const I18N = {
+    da:{
+      heroTitle:'Professionelle menukort, visitkort og etiketter på minutter',
+      heroLead:'Skriv dine oplysninger, vælg en stil, og hent et færdigt design som PDF — uden grafiker og uden designprogrammer.',
+      qnMenu:'Menukort', qnVisit:'Visitkort', qnLabel:'Etiket',
+            menuSecTitle:'Menukort', menuSecSub:'Vælg en stil at starte fra — eller byg dit eget fra bunden', menuPrice:'99 kr.',
+      visitSecTitle:'Visitkort', visitSecSub:'Vælg en stil at starte fra — eller byg dit eget fra bunden', visitPrice:'49 kr.',
+      useTemplate:'Brug denne →',
+      mtClassicName:'Klassisk café', mtClassicDesc:'Varm cremebaggrund med terracotta-accent',
+      mtModernName:'Moderne minimalistisk', mtModernDesc:'Lyst, rent og luftigt — to kolonner',
+      mtDarkName:'Mørk og elegant', mtDarkDesc:'Mørk baggrund med guld-detaljer',
+      btClassicName:'Klassisk', btClassicDesc:'Cremebaggrund med terracotta-streg',
+      btBoldName:'Moderne sort', btBoldDesc:'Stærk og minimalistisk i sort-hvid',
+      btCraftName:'Naturlig & farverig', btCraftDesc:'Skovgrøn med varm sand-accent',
+      mpClassicHead:'Café Solsikken', mpClassicTitle:'Menu',
+      mpModernHead:'DRIKKEKORT', mpModernTitle:'Onsdag',
+      mpDarkHead:'Restaurant', mpDarkTitle:'Aftensmenu',
+      bcClassicName:'Anna Jensen', bcClassicTitle:'Ejer & barista', bcClassicCompany:'Café Solsikken',
+      bcBoldTop:'DESIGNER · KØBENHAVN', bcBoldName:'MARTIN KOFOED', bcBoldBottom:'martin@studio.dk · +45 22 33 44 55',
+      bcCraftName:'Peter Sørensen', bcCraftTitle:'Tømrermester',
+      labelSecTitle:'Etiketter', labelSecSub:'Fødevareetiketter med lovpligtig deklaration på bagsiden — klar til glas, poser og flasker', labelPrice:'49 kr.',
+      ltJamName:'Klassisk glas', ltJamDesc:'Varm creme med terracotta-overskrift',
+      ltDarkName:'Mørk & moderne', ltDarkDesc:'Dyb grøn forside med lys bagside',
+            lpJamOv:'Hjemmelavet', lpJamName:'Jordbærmarmelade', lpJamTag:'med vanilje · 2026', lpJamPr:'Annes Køkken',
+      lpDarkOv:'Håndlavet', lpDarkName:'Granola', lpDarkSub:'med mandler & honning', lpDarkPr:'400 g · Brødladen',
+                        lpDeclNut:'Næringsindhold pr. 100 g', lpDeclE:'Energi', lpDeclFat:'Fedt', lpDeclCarb:'Kulhydrat',
+      labelFlipHint:'Hold musen over et kort for at se bagsiden',
+      ltCookieName:'Minimal med ramme', ltCookieDesc:'Ren hvid med klassisk dobbeltramme',
+      lpJamVb:'Jordbærmarmelade', lpJamIngHtml:'<b>Ingredienser:</b> Jordbær (55&nbsp;%), sukker, citronsaft, geleringsmiddel (pektin)', lpJamNetHtml:'<b>Nettovægt:</b> 450&nbsp;g',
+      lpDarkVb:'Granola — ristet müsli med mandler og honning', lpDarkIngHtml:'<b>Ingredienser:</b> Havregryn (45&nbsp;%), mandler (15&nbsp;%), honning, rapsolie, havsalt', lpDarkNetHtml:'<b>Nettovægt:</b> 400&nbsp;g',
+      lpCookieOv:'Bagt i hånden', lpCookieName:'Chokolade-cookies', lpCookieTag:'med hasselnødder', lpCookiePr:'250 g · Kagehuset',
+      lpCookieVb:'Småkager med chokolade og hasselnødder', lpCookieIngHtml:'<b>Ingredienser:</b> Hvedemel, smør, sukker, chokolade (20&nbsp;%), hasselnødder (10&nbsp;%), æg, havsalt', lpCookieNetHtml:'<b>Nettovægt:</b> 250&nbsp;g',
+      footerHtml:'Spørgsmål? Skriv til <a href="mailto:hej@lusidio.com">hej@lusidio.com</a>'
+    },
+    en:{
+      heroTitle:'Professional menu cards, business cards and labels in minutes',
+      heroLead:'Type your details, pick a style, and download a finished design as a PDF — no designer, no design software.',
+      qnMenu:'Menu cards', qnVisit:'Business cards', qnLabel:'Labels',
+            menuSecTitle:'Menu cards', menuSecSub:'Pick a style to start from — or build your own from scratch', menuPrice:'99 kr.',
+      visitSecTitle:'Business cards', visitSecSub:'Pick a style to start from — or build your own from scratch', visitPrice:'49 kr.',
+      useTemplate:'Use this →',
+      mtClassicName:'Classic café', mtClassicDesc:'Warm cream background with terracotta accents',
+      mtModernName:'Modern minimal', mtModernDesc:'Light, clean and airy — two columns',
+      mtDarkName:'Dark and elegant', mtDarkDesc:'Dark background with gold details',
+      btClassicName:'Classic', btClassicDesc:'Cream background with terracotta line',
+      btBoldName:'Modern black', btBoldDesc:'Strong and minimalist in black & white',
+      btCraftName:'Natural & colorful', btCraftDesc:'Forest green with warm sand accent',
+      mpClassicHead:'Café Solsikken', mpClassicTitle:'Menu',
+      mpModernHead:'DRINKS', mpModernTitle:'Wednesday',
+      mpDarkHead:'Restaurant', mpDarkTitle:'Dinner menu',
+      bcClassicName:'Anna Jensen', bcClassicTitle:'Owner & barista', bcClassicCompany:'Café Solsikken',
+      bcBoldTop:'DESIGNER · COPENHAGEN', bcBoldName:'MARTIN KOFOED', bcBoldBottom:'martin@studio.dk · +45 22 33 44 55',
+      bcCraftName:'Peter Sørensen', bcCraftTitle:'Carpenter',
+      labelSecTitle:'Labels', labelSecSub:'Food labels with the legally required declaration on the back — ready for jars, bags and bottles', labelPrice:'49 kr.',
+      ltJamName:'Classic jar', ltJamDesc:'Warm cream with terracotta overline',
+      ltDarkName:'Dark & modern', ltDarkDesc:'Deep green front with a light back',
+            lpJamOv:'Homemade', lpJamName:'Strawberry jam', lpJamTag:'with vanilla · 2026', lpJamPr:'Annes Køkken',
+      lpDarkOv:'Handmade', lpDarkName:'Granola', lpDarkSub:'with almonds & honey', lpDarkPr:'400 g · Brødladen',
+                        lpDeclNut:'Nutrition per 100 g', lpDeclE:'Energy', lpDeclFat:'Fat', lpDeclCarb:'Carbohydrate',
+      labelFlipHint:'Hover over a card to see the back',
+      ltCookieName:'Minimal with frame', ltCookieDesc:'Clean white with a classic double frame',
+      lpJamVb:'Strawberry jam', lpJamIngHtml:'<b>Ingredients:</b> Strawberries (55&nbsp;%), sugar, lemon juice, gelling agent (pectin)', lpJamNetHtml:'<b>Net weight:</b> 450&nbsp;g',
+      lpDarkVb:'Granola — toasted muesli with almonds and honey', lpDarkIngHtml:'<b>Ingredients:</b> Oats (45&nbsp;%), almonds (15&nbsp;%), honey, rapeseed oil, sea salt', lpDarkNetHtml:'<b>Net weight:</b> 400&nbsp;g',
+      lpCookieOv:'Baked by hand', lpCookieName:'Chocolate cookies', lpCookieTag:'with hazelnuts', lpCookiePr:'250 g · Kagehuset',
+      lpCookieVb:'Cookies with chocolate and hazelnuts', lpCookieIngHtml:'<b>Ingredients:</b> Wheat flour, butter, sugar, chocolate (20&nbsp;%), hazelnuts (10&nbsp;%), egg, sea salt', lpCookieNetHtml:'<b>Net weight:</b> 250&nbsp;g',
+      footerHtml:'Questions? Write to <a href="mailto:hej@lusidio.com">hej@lusidio.com</a>'
+    },
+    tr:{
+      heroTitle:'Dakikalar içinde profesyonel menü, kartvizit ve etiketler',
+      heroLead:'Bilgilerinizi yazın, bir stil seçin ve hazır tasarımı PDF olarak indirin — tasarımcı ve tasarım programı olmadan.',
+      qnMenu:'Menüler', qnVisit:'Kartvizitler', qnLabel:'Etiketler',
+            menuSecTitle:'Menüler', menuSecSub:'Başlamak için bir stil seçin — veya sıfırdan kendi tasarımınızı yapın', menuPrice:'99 kr.',
+      visitSecTitle:'Kartvizitler', visitSecSub:'Başlamak için bir stil seçin — veya sıfırdan kendi tasarımınızı yapın', visitPrice:'49 kr.',
+      useTemplate:'Bunu kullan →',
+      mtClassicName:'Klasik kafe', mtClassicDesc:'Sıcak krem zemin, terracotta vurgular',
+      mtModernName:'Modern minimal', mtModernDesc:'Aydınlık, temiz ve havadar — iki sütun',
+      mtDarkName:'Koyu ve şık', mtDarkDesc:'Altın detaylı koyu zemin',
+      btClassicName:'Klasik', btClassicDesc:'Krem zemin, terracotta çizgi',
+      btBoldName:'Modern siyah', btBoldDesc:'Siyah-beyazda güçlü ve minimal',
+      btCraftName:'Doğal & renkli', btCraftDesc:'Orman yeşili, sıcak kum vurgusu',
+      mpClassicHead:'Café Solsikken', mpClassicTitle:'Menü',
+      mpModernHead:'İÇECEKLER', mpModernTitle:'Çarşamba',
+      mpDarkHead:'Restoran', mpDarkTitle:'Akşam menüsü',
+      bcClassicName:'Anna Jensen', bcClassicTitle:'Sahip & barista', bcClassicCompany:'Café Solsikken',
+      bcBoldTop:'TASARIMCI · KOPENHAG', bcBoldName:'MARTIN KOFOED', bcBoldBottom:'martin@studio.dk · +45 22 33 44 55',
+      bcCraftName:'Peter Sørensen', bcCraftTitle:'Marangoz',
+      labelSecTitle:'Etiketler', labelSecSub:'Arka yüzünde yasal beyan bulunan gıda etiketleri — kavanoz, poşet ve şişeler için hazır', labelPrice:'49 kr.',
+      ltJamName:'Klasik kavanoz', ltJamDesc:'Terracotta üst başlıklı sıcak krem',
+      ltDarkName:'Koyu & modern', ltDarkDesc:'Koyu yeşil ön yüz, açık arka yüz',
+            lpJamOv:'Ev yapımı', lpJamName:'Çilek reçeli', lpJamTag:'vanilyalı · 2026', lpJamPr:'Annes Køkken',
+      lpDarkOv:'El yapımı', lpDarkName:'Granola', lpDarkSub:'badem & ballı', lpDarkPr:'400 g · Brødladen',
+                        lpDeclNut:'100 g başına besin değeri', lpDeclE:'Enerji', lpDeclFat:'Yağ', lpDeclCarb:'Karbonhidrat',
+      labelFlipHint:'Arka yüzü görmek için kartın üzerine gelin',
+      ltCookieName:'Çerçeveli minimal', ltCookieDesc:'Klasik çift çerçeveli saf beyaz',
+      lpJamVb:'Çilek reçeli', lpJamIngHtml:'<b>İçindekiler:</b> Çilek (%55), şeker, limon suyu, jelleştirici (pektin)', lpJamNetHtml:'<b>Net ağırlık:</b> 450&nbsp;g',
+      lpDarkVb:'Granola — badem ve ballı kavrulmuş müsli', lpDarkIngHtml:'<b>İçindekiler:</b> Yulaf (%45), badem (%15), bal, kanola yağı, deniz tuzu', lpDarkNetHtml:'<b>Net ağırlık:</b> 400&nbsp;g',
+      lpCookieOv:'Elde pişirildi', lpCookieName:'Çikolatalı kurabiye', lpCookieTag:'fındıklı', lpCookiePr:'250 g · Kagehuset',
+      lpCookieVb:'Çikolatalı ve fındıklı kurabiye', lpCookieIngHtml:'<b>İçindekiler:</b> Buğday unu, tereyağı, şeker, çikolata (%20), fındık (%10), yumurta, deniz tuzu', lpCookieNetHtml:'<b>Net ağırlık:</b> 250&nbsp;g',
+      footerHtml:'Sorularınız mı var? <a href="mailto:hej@lusidio.com">hej@lusidio.com</a> adresine yazın'
+    },
+    uk:{
+      heroTitle:'Професійні меню, візитівки та етикетки за лічені хвилини',
+      heroLead:'Впишіть свої дані, оберіть стиль і завантажте готовий дизайн у форматі PDF — без дизайнера та програм для дизайну.',
+      qnMenu:'Меню', qnVisit:'Візитівки', qnLabel:'Етикетки',
+            menuSecTitle:'Меню', menuSecSub:'Оберіть стиль для старту — або створіть власний з нуля', menuPrice:'99 kr.',
+      visitSecTitle:'Візитівки', visitSecSub:'Оберіть стиль для старту — або створіть власний з нуля', visitPrice:'49 kr.',
+      useTemplate:'Обрати →',
+      mtClassicName:'Класичне кафе', mtClassicDesc:'Тепле кремове тло з акцентом теракота',
+      mtModernName:'Сучасний мінімалізм', mtModernDesc:'Світло, чисто й повітряно — дві колонки',
+      mtDarkName:'Темний і елегантний', mtDarkDesc:'Темне тло з золотими деталями',
+      btClassicName:'Класичний', btClassicDesc:'Кремове тло з теракотовою лінією',
+      btBoldName:'Сучасний чорний', btBoldDesc:'Сильний і мінімальний у чорно-білому',
+      btCraftName:'Природний і яскравий', btCraftDesc:'Лісовий зелений із теплим піщаним акцентом',
+      mpClassicHead:'Café Solsikken', mpClassicTitle:'Меню',
+      mpModernHead:'НАПОЇ', mpModernTitle:'Середа',
+      mpDarkHead:'Ресторан', mpDarkTitle:'Вечеря',
+      bcClassicName:'Anna Jensen', bcClassicTitle:'Власник & бариста', bcClassicCompany:'Café Solsikken',
+      bcBoldTop:'ДИЗАЙНЕР · КОПЕНГАГЕН', bcBoldName:'MARTIN KOFOED', bcBoldBottom:'martin@studio.dk · +45 22 33 44 55',
+      bcCraftName:'Peter Sørensen', bcCraftTitle:'Тесля',
+      labelSecTitle:'Етикетки', labelSecSub:'Харчові етикетки з обов\u2019язковою декларацією на звороті — для банок, пакетів і пляшок', labelPrice:'49 kr.',
+      ltJamName:'Класична банка', ltJamDesc:'Теплий крем із теракотовим надзаголовком',
+      ltDarkName:'Темна & сучасна', ltDarkDesc:'Глибокий зелений лицьовий бік зі світлим зворотом',
+            lpJamOv:'Домашнє', lpJamName:'Полуничне варення', lpJamTag:'з ваніллю · 2026', lpJamPr:'Annes Køkken',
+      lpDarkOv:'Ручна робота', lpDarkName:'Гранола', lpDarkSub:'з мигдалем і медом', lpDarkPr:'400 g · Brødladen',
+                        lpDeclNut:'Поживна цінність на 100 г', lpDeclE:'Енергія', lpDeclFat:'Жири', lpDeclCarb:'Вуглеводи',
+      labelFlipHint:'Наведіть курсор на картку, щоб побачити зворот',
+      ltCookieName:'Мінімалізм із рамкою', ltCookieDesc:'Чистий білий із класичною подвійною рамкою',
+      lpJamVb:'Полуничне варення', lpJamIngHtml:'<b>Інгредієнти:</b> полуниця (55&nbsp;%), цукор, лимонний сік, желюючий агент (пектин)', lpJamNetHtml:'<b>Нетто:</b> 450&nbsp;g',
+      lpDarkVb:'Гранола — запечені мюслі з мигдалем і медом', lpDarkIngHtml:'<b>Інгредієнти:</b> вівсяні пластівці (45&nbsp;%), мигдаль (15&nbsp;%), мед, ріпакова олія, морська сіль', lpDarkNetHtml:'<b>Нетто:</b> 400&nbsp;g',
+      lpCookieOv:'Випечено вручну', lpCookieName:'Шоколадне печиво', lpCookieTag:'з фундуком', lpCookiePr:'250 g · Kagehuset',
+      lpCookieVb:'Печиво з шоколадом і фундуком', lpCookieIngHtml:'<b>Інгредієнти:</b> пшеничне борошно, масло, цукор, шоколад (20&nbsp;%), фундук (10&nbsp;%), яйце, морська сіль', lpCookieNetHtml:'<b>Нетто:</b> 250&nbsp;g',
+      footerHtml:'Питання? Пишіть на <a href="mailto:hej@lusidio.com">hej@lusidio.com</a>'
+    }
+  };
+
+  const LS_LANG = 'lusidio_lang_v1';
+  let LANG = 'da';
+  try { LANG = localStorage.getItem(LS_LANG) || ((navigator.language || 'da').slice(0,2)); } catch(e){}
+  if (!I18N[LANG]) LANG = 'da';
+
+  function t(k){ return (I18N[LANG] && I18N[LANG][k]) || I18N.da[k] || k; }
+  function apply(){
+    document.documentElement.lang = LANG;
+    document.querySelectorAll('[data-i18n]').forEach(el => { el.textContent = t(el.getAttribute('data-i18n')); });
+    document.querySelectorAll('[data-i18n-html]').forEach(el => { el.innerHTML = t(el.getAttribute('data-i18n-html')); });
+    document.querySelectorAll('.lang-btn').forEach(b => b.classList.toggle('active', b.dataset.lang === LANG));
+  }
+  document.querySelectorAll('.lang-btn').forEach(b => {
+    b.addEventListener('click', () => {
+      LANG = b.dataset.lang;
+      try { localStorage.setItem(LS_LANG, LANG); } catch(e){}
+      apply();
+    });
+  });
+  apply();
+</script>
+
+<!-- Vercel Web Analytics -->
+<script>
+  window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
+</script>
+<script defer src="/_vercel/insights/script.js"></script>
+</body>
+</html>
