@@ -1,0 +1,1581 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lusidio – lav klippekort og loyalitetskort online</title>
+<meta name="description" content="Lav et klippekort til din café eller butik på minutter. Vælg antal felter, stil og farver — og hent en printklar PDF.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,600;1,400;1,600&family=Jost:wght@300;400;500;600;700&family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=Montserrat:wght@400;500;600;700&family=Bebas+Neue&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+  :root{
+    --bg:#f1ece1; --panel:#fbf7ef; --panel-2:#f4ecdc; --ink:#2c2620; --muted:#8c8275;
+    --line:#e3d9c6; --field:#fffdf8; --accent:#b5542a; --accent-d:#8f3f1d; --shadow:0 10px 30px rgba(70,50,25,.12);
+  }
+  *{ box-sizing:border-box; }
+  html,body{ margin:0; padding:0; }
+  body{
+    font-family:'Jost',sans-serif; color:var(--ink); background:var(--bg);
+    min-height:100vh; line-height:1.5; -webkit-font-smoothing:antialiased;
+  }
+
+  /* ---------- Topbar ---------- */
+  .topbar{ max-width:1240px; margin:0 auto; padding:28px 30px 6px; display:flex; align-items:flex-start; justify-content:space-between; gap:16px; }
+  .home-link{
+    flex:none; display:inline-flex; align-items:center; justify-content:center;
+    width:42px; height:42px; border-radius:50%; border:1px solid var(--line);
+    background:var(--panel); color:var(--ink); text-decoration:none; font-size:1.15rem;
+    margin-top:4px; transition:all .15s;
+  }
+  .home-link:hover{ border-color:var(--accent); color:var(--accent); }
+  .brand{ display:flex; align-items:baseline; gap:14px; flex-wrap:wrap; flex:1; }
+  .brand h1{ font-family:'Fraunces',serif; font-weight:600; font-style:italic; font-size:2rem; margin:0; color:var(--ink); }
+  .brand .dot{ width:9px; height:9px; border-radius:50%; background:var(--accent); display:inline-block; margin-bottom:5px; }
+  .brand p{ margin:0; color:var(--muted); font-size:.95rem; }
+  .lang-sel{ flex:none; width:auto; margin-top:4px; padding:7px 30px 7px 11px; border:1px solid var(--line); border-radius:8px; background:var(--field); color:var(--ink); font-size:.9rem; font-family:inherit; cursor:pointer; -webkit-appearance:none; appearance:none; background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23998f7d' stroke-width='2.5'><path d='M6 9l6 6 6-6'/></svg>"); background-repeat:no-repeat; background-position:right 10px center; }
+
+  /* ---------- App layout ---------- */
+  .app{ max-width:1240px; margin:0 auto; padding:14px 30px 60px; display:grid; grid-template-columns:minmax(320px,380px) 1fr; gap:30px; align-items:start; }
+
+  /* ---------- Editor ---------- */
+  .editor{ background:var(--panel); border:1px solid var(--line); border-radius:18px; padding:22px; box-shadow:var(--shadow); }
+  .block{ margin-bottom:18px; }
+  .block:last-child{ margin-bottom:0; }
+  .label{ font-size:.7rem; letter-spacing:.16em; text-transform:uppercase; font-weight:700; color:var(--accent); margin:0 0 9px; }
+  .mini-label{ display:block; font-size:.78rem; color:var(--muted); margin:0 0 5px; font-weight:500; }
+  .field, select, input[type=text], textarea{
+    width:100%; padding:10px 12px; border:1px solid var(--line); border-radius:10px;
+    background:var(--field); font-family:'Jost',sans-serif; font-size:.95rem; color:var(--ink);
+  }
+  textarea{ resize:vertical; min-height:54px; line-height:1.45; }
+  .field:focus, select:focus, input:focus, textarea:focus{ outline:none; border-color:var(--accent); }
+  .hint{ font-size:.78rem; color:var(--muted); margin:6px 2px 0; line-height:1.4; }
+  .mini-hint{ font-size:.74rem; color:var(--muted); margin:5px 2px 11px; line-height:1.4; }
+
+  .ctl2{ display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+  .ctl-row{ display:grid; gap:10px; }
+  .ctl{ display:flex; align-items:center; justify-content:space-between; gap:8px; padding:7px 11px; border:1px solid var(--line); border-radius:10px; background:var(--field); font-size:.82rem; color:var(--muted); }
+  .ctl input[type=color]{ width:30px; height:26px; padding:0; border:none; background:none; cursor:pointer; }
+
+  .seg{ display:flex; gap:5px; padding:4px; background:var(--field); border:1px solid var(--line); border-radius:11px; }
+  .seg.seg-mini{ padding:3px; }
+  .seg-btn{
+    flex:1; border:none; background:transparent; font-family:'Jost',sans-serif; font-weight:600;
+    font-size:.82rem; color:var(--muted); padding:9px 6px; border-radius:8px; cursor:pointer; transition:all .15s;
+  }
+  .seg-btn:hover{ color:var(--ink); }
+  .seg-btn.active{ background:var(--accent); color:#fff; }
+
+  .check{ display:flex; align-items:center; gap:9px; margin-top:8px; font-size:.88rem; color:var(--ink); cursor:pointer; user-select:none; }
+  .check input{ width:17px; height:17px; accent-color:var(--accent); cursor:pointer; }
+
+  .range{ width:100%; accent-color:var(--accent); }
+
+  details.adv{ border:1px solid var(--line); border-radius:12px; background:var(--field); overflow:hidden; }
+  details.adv > summary{ list-style:none; cursor:pointer; padding:12px 14px; font-weight:600; font-size:.9rem; display:flex; align-items:center; justify-content:space-between; gap:8px; }
+  details.adv > summary::-webkit-details-marker{ display:none; }
+  details.adv .chev{ color:var(--muted); transition:transform .2s; font-size:.8rem; }
+  details.adv[open] .chev{ transform:rotate(180deg); }
+  .adv-body{ padding:2px 14px 16px; }
+  .block .adv{ margin-bottom:9px; }
+  .block .adv:last-child{ margin-bottom:0; }
+
+  .btn-tiny{ font-family:inherit; font-size:.8rem; border:1px solid var(--line); background:var(--field); color:var(--ink); border-radius:8px; padding:7px 11px; cursor:pointer; transition:.15s; }
+  .btn-tiny:hover{ border-color:var(--accent); color:var(--accent-d); }
+  .save-actions{ display:flex; gap:7px; flex-wrap:wrap; }
+  .btn-mini{ flex:1; min-width:84px; font-family:inherit; font-size:.8rem; font-weight:600; color:var(--accent-d); background:var(--field); border:1px solid var(--line); border-radius:9px; padding:9px 8px; cursor:pointer; transition:.15s; }
+  .btn-mini:hover{ border-color:var(--accent); background:#fff6ef; }
+  .btn{ width:100%; border:none; border-radius:12px; font-family:inherit; font-size:.98rem; font-weight:600; padding:13px 14px; cursor:pointer; transition:all .15s; }
+  .btn-primary{ background:var(--accent); color:#fff; box-shadow:0 8px 20px rgba(181,84,42,.25); }
+  .btn-primary:hover{ background:var(--accent-d); }
+  .btn-outline{ background:var(--field); color:var(--accent-d); border:1.5px solid var(--accent); }
+  .btn-outline:hover{ background:#fff7f1; }
+  .btn-ghost{ background:transparent; color:var(--muted); border:1px dashed var(--line); font-weight:500; }
+  .btn-ghost:hover{ border-color:var(--accent); color:var(--accent-d); }
+  .dl-actions{ display:flex; flex-direction:column; gap:9px; }
+  .code-row{ display:flex; gap:8px; }
+  .code-row .field{ flex:1; }
+
+  /* ---------- Library ---------- */
+  .tag{ font-size:.6rem; color:#cabfae; vertical-align:middle; margin-left:4px; }
+  .library{ margin-top:11px; display:flex; flex-direction:column; gap:7px; }
+  .lib-empty{ font-size:.8rem; color:var(--muted); margin:6px 2px; line-height:1.4; }
+  .lib-item{ display:flex; align-items:center; gap:8px; background:var(--field); border:1px solid var(--line); border-radius:10px; padding:8px 10px; }
+  .lib-info{ flex:1; min-width:0; display:flex; flex-direction:column; }
+  .lib-name{ font-weight:600; font-size:.88rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .lib-date{ font-size:.7rem; color:var(--muted); }
+  .lib-btns{ display:flex; gap:5px; }
+  .lib-btn{ font-family:inherit; font-size:.78rem; border:1px solid var(--line); background:var(--field); color:var(--ink); border-radius:7px; padding:5px 10px; cursor:pointer; }
+  .lib-btn:hover{ border-color:var(--accent); color:var(--accent-d); }
+  .lib-btn.danger:hover{ border-color:#b14545; color:#b14545; }
+  .save-note{ font-size:.78rem; color:var(--muted); }
+
+  /* ---------- Stage / preview ---------- */
+  .stage{ position:sticky; top:18px; padding:18px 8px 8px; display:flex; flex-direction:column; align-items:center; gap:26px; }
+  .side-switch-mobile{ display:none; }
+  .bc-wrap{ width:100%; display:flex; flex-direction:column; align-items:center; gap:8px; }
+  .bc-side-lbl{ font-size:.72rem; font-weight:600; letter-spacing:.1em; text-transform:uppercase; color:var(--muted); }
+  .bc-fit{ position:relative; transform-origin:top left; }
+
+  /* The loyalty card itself */
+  .card{
+    position:relative; overflow:hidden; border-radius:10px;
+    box-shadow:0 14px 40px rgba(50,35,18,.22), 0 2px 8px rgba(50,35,18,.10);
+    background:#fbf6ec;
+  }
+  .card-inner{ position:absolute; inset:0; display:flex; flex-direction:column; }
+  .lc-pad{ flex:1; display:flex; flex-direction:column; padding:var(--lc-pad,22px); min-height:0; }
+
+  /* Stamp grid */
+  .stamp-grid{ display:grid; gap:var(--stamp-gap,8px); justify-content:center; align-content:center; }
+  .stamp{
+    width:var(--stamp-size,44px); height:var(--stamp-size,44px);
+    display:flex; align-items:center; justify-content:center;
+    border:1.6px solid var(--stamp-border, currentColor); position:relative;
+    font-weight:600; line-height:1;
+  }
+  .stamp.shape-circle{ border-radius:50%; }
+  .stamp.shape-square{ border-radius:4px; }
+  .stamp.shape-rounded{ border-radius:30%; }
+  .stamp .stamp-num{ opacity:.5; }
+  .stamp.is-reward{
+    background:var(--stamp-reward-bg, currentColor);
+    border-style:solid;
+  }
+  .stamp.is-reward .reward-ico{
+    /* Symboler som ★ ☕ ♥ er korte — tekst som GRATIS skal også passe. Auto-tilpasning: */
+    display:inline-block;
+    max-width:88%;
+    line-height:1;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:clip;
+    font-size:1.1em;
+    letter-spacing:0;
+  }
+  /* Når gevinsten er en tekst-etiket (klassen "is-text"), gør den mindre og tæt så hele ordet passer */
+  .stamp.is-reward .reward-ico.is-text{
+    font-size:.32em;
+    font-weight:800;
+    letter-spacing:.04em;
+  }
+
+  /* Decorative accent line */
+  .lc-accent{ height:3px; border-radius:2px; width:42px; }
+
+  /* Watermark (preview only — removed after payment) */
+  .lc-wm{ position:absolute; inset:0; overflow:hidden; pointer-events:none; border-radius:inherit; }
+  .lc-wm-rot{ position:absolute; top:50%; left:50%; width:220%; height:220%; transform:translate(-50%,-50%) rotate(-26deg); display:flex; flex-direction:column; justify-content:center; gap:13px; }
+  .lc-wm-line{ white-space:nowrap; text-align:center; font-family:'Jost',sans-serif; font-weight:700; font-size:17px; letter-spacing:.22em; color:var(--lc-wm, rgba(120,90,40,.14)); user-select:none; }
+
+  /* Front-side text placement (porteret fra etiket) */
+  .pos-grid{ display:grid; grid-template-columns:repeat(3,28px); grid-template-rows:repeat(3,22px); gap:3px; flex:none; }
+  .pos-grid button{ border:1px solid var(--line); background:var(--field); border-radius:5px; cursor:pointer; padding:0; transition:.12s; position:relative; }
+  .pos-grid button::after{ content:''; position:absolute; inset:6px; background:var(--muted); border-radius:2px; opacity:.35; transition:.12s; }
+  .pos-grid button:hover{ border-color:var(--accent); }
+  .pos-grid button:hover::after{ opacity:.7; background:var(--accent); }
+  .pos-grid button.active{ background:var(--accent); border-color:var(--accent); }
+  .pos-grid button.active::after{ background:#fff; opacity:1; }
+  .box-card{ background:var(--field); border:1px solid var(--line); border-radius:12px; padding:12px; margin-bottom:10px; }
+  .box-card:last-of-type{ margin-bottom:0; }
+  .box-card.collapsed{ padding:10px 12px; }
+  .box-card.collapsed .box-head{ margin-bottom:0; }
+  .box-head{ display:flex; align-items:center; gap:10px; margin-bottom:10px; flex-wrap:wrap; }
+  .box-title{ font-size:.76rem; font-weight:700; letter-spacing:.06em; text-transform:uppercase; color:var(--accent-d); flex:1; }
+  .box-head-btns{ display:flex; gap:3px; }
+  .fl-row{ display:flex; gap:6px; align-items:center; flex-wrap:wrap; }
+  .fl-mini{ margin:0; font-size:.7rem; }
+  .contact-list{ display:flex; flex-direction:column; gap:8px; }
+  .cli{ display:grid; grid-template-columns:34px 1fr auto; gap:8px; align-items:center; background:#fff; border:1px solid var(--line); border-radius:10px; padding:8px 10px; }
+  .cli-ic{ width:26px; height:26px; display:inline-flex; align-items:center; justify-content:center; color:var(--accent-d); background:#fff7f1; border:1px solid var(--line); border-radius:7px; flex:none; font-size:.62rem; font-weight:700; letter-spacing:.04em; text-transform:uppercase; }
+  .cli-input{ width:100%; font-family:inherit; font-size:.92rem; color:var(--ink); background:transparent; border:none; padding:6px 0; outline:none; min-width:0; box-shadow:none; }
+  .cli-btns{ display:flex; gap:3px; }
+  .cli-btn{ width:28px; height:28px; padding:0; border:1px solid var(--line); background:var(--field); color:var(--muted); border-radius:6px; font-size:.85rem; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; transition:.12s; font-family:inherit; }
+  .cli-btn:hover{ border-color:var(--accent); color:var(--accent-d); }
+  .cli-btn:disabled{ opacity:.3; cursor:not-allowed; }
+  .cli-btn.danger:hover{ border-color:#b14545; color:#b14545; }
+  .cli-btn.active{ background:var(--accent); border-color:var(--accent); color:#fff; }
+  .cli .fl-row{ grid-column:1 / -1; }
+  .type-chips{ display:flex; flex-wrap:wrap; gap:6px; margin-top:9px; align-items:center; }
+  .type-chip{ font-family:inherit; font-size:.78rem; font-weight:600; color:var(--accent-d); background:#fff7f1; border:1px dashed var(--accent); border-radius:999px; padding:6px 11px; cursor:pointer; transition:.13s; }
+  .type-chip:hover{ background:var(--accent); color:#fff; border-style:solid; }
+  .add-contact{ width:100%; margin-top:10px; border:1.5px dashed var(--accent); background:#fff7f1; color:var(--accent-d); border-radius:11px; padding:9px; cursor:pointer; font-family:inherit; font-size:.86rem; font-weight:600; transition:.15s; }
+  .add-contact:hover{ background:var(--accent); color:#fff; }
+
+  /* On the front card, the inner area is split into a 3×3 grid so each text box sits in its chosen cell */
+  .lc-front-grid{ position:absolute; inset:0; display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr) minmax(0,1fr); grid-template-rows:minmax(0,1fr) minmax(0,1fr) minmax(0,1fr); padding:var(--lc-pad,22px); gap:6px; }
+  .fb-box{ min-width:0; display:flex; }
+  .fb-box.layout-stack{ flex-direction:column; gap:var(--box-gap,6px); }
+  .fb-box.layout-row{ flex-direction:row; flex-wrap:nowrap; gap:var(--box-gap,6px); align-items:baseline; }
+  .fb-box.al-left{ text-align:left; align-items:flex-start; } .fb-box.al-center{ text-align:center; align-items:center; } .fb-box.al-right{ text-align:right; align-items:flex-end; }
+  .fb-box.pos-top-left{ grid-row:1; grid-column:1; align-self:start; justify-self:start; }
+  .fb-box.pos-top-center{ grid-row:1; grid-column:2; align-self:start; justify-self:center; }
+  .fb-box.pos-top-right{ grid-row:1; grid-column:3; align-self:start; justify-self:end; }
+  .fb-box.pos-middle-left{ grid-row:2; grid-column:1; align-self:center; justify-self:start; }
+  .fb-box.pos-middle-center{ grid-row:2; grid-column:2; align-self:center; justify-self:center; }
+  .fb-box.pos-middle-right{ grid-row:2; grid-column:3; align-self:center; justify-self:end; }
+  .fb-box.pos-bottom-left{ grid-row:3; grid-column:1; align-self:end; justify-self:start; }
+  .fb-box.pos-bottom-center{ grid-row:3; grid-column:2; align-self:end; justify-self:center; }
+  .fb-box.pos-bottom-right{ grid-row:3; grid-column:3; align-self:end; justify-self:end; }
+  .fb-line-group{ display:flex; flex-direction:row; flex-wrap:nowrap; align-items:baseline; width:100%; }
+
+  /* ---------- Footer note ---------- */
+  .footer{ text-align:center; color:var(--muted); font-size:.82rem; padding:0 20px 30px; max-width:760px; margin:0 auto; }
+
+  @media (max-width:700px){
+    .topbar{ padding:10px 14px 6px; flex-wrap:wrap; align-items:center; gap:6px 10px; }
+    .topbar .brand{ flex:1; gap:8px; }
+    .topbar .brand h1{ font-size:1.15rem; }
+    .topbar .brand p{ display:none; }
+    .home-link{ width:36px; height:36px; margin-top:0; font-size:1rem; }
+    .lang-sel{ padding:5px 24px 5px 8px; font-size:.82rem; }
+
+    .app{ display:flex; flex-direction:column; padding:0 0 28px; }
+
+    .stage{
+      order:-1; position:sticky; top:0; z-index:20;
+      width:100%; min-width:0;
+      margin:0; border-radius:0;
+      padding:8px 14px 10px;
+      background:var(--bg);
+      border-bottom:1px solid var(--line);
+      box-shadow:0 8px 16px rgba(60,45,25,.07);
+      gap:8px;
+    }
+    .side-switch-mobile{ display:flex; gap:6px; width:100%; padding:0; margin:0; background:none; border:none; border-radius:0; }
+    .side-switch-mobile button{
+      flex:1; text-align:center; font-family:'Jost',sans-serif; font-weight:600;
+      font-size:.86rem; color:var(--ink); padding:9px 6px; border-radius:999px;
+      border:1px solid var(--line); background:#fff; cursor:pointer; transition:all .15s;
+    }
+    .side-switch-mobile button.active{ background:var(--ink); color:#fff; border-color:var(--ink); }
+    .side-switch-mobile button:disabled{ opacity:.4; cursor:not-allowed; }
+
+    .bc-wrap{ width:100%; display:none !important; align-items:center; justify-content:center; padding:0; }
+    body[data-mside="front"] .bc-wrap[data-side="front"]{ display:flex !important; }
+    body[data-mside="back"].back-enabled .bc-wrap[data-side="back"]{ display:flex !important; }
+    .bc-side-lbl{ display:none; }
+
+    .editor{ margin:8px 12px 0; padding:14px; border-radius:14px; }
+    .field, select, input, textarea{ font-size:16px; }
+    .seg-btn{ padding:10px 5px; }
+    .btn{ padding:13px 14px; }
+  }
+
+  @media (min-width:701px) and (max-width:1080px){
+    .app{ grid-template-columns:minmax(280px,340px) 1fr; gap:18px; padding-left:18px; padding-right:18px; }
+    .topbar{ padding-left:18px; padding-right:18px; }
+    .stage{ padding:14px 6px 6px; gap:20px; }
+  }
+
+  @media print{
+    .topbar, .editor, .side-switch-mobile, .footer{ display:none !important; }
+    .app{ display:block; padding:0; }
+    .stage{ position:static; padding:0; gap:30px; }
+    .card{ box-shadow:none; }
+  }
+</style>
+</head>
+<body data-mside="front" class="back-enabled">
+
+  <div class="topbar">
+    <a class="home-link" href="/" title="Lusidio">←</a>
+    <div class="brand">
+      <h1 data-i18n="brandH1">Klippekort</h1><span class="dot"></span>
+      <p data-i18n="intro">Lav et klippekort til din café eller butik — vælg antal felter, stil og farver, og hent et printklart kort.</p>
+    </div>
+    <select id="langSel" class="lang-sel" aria-label="Language / Sprog">
+      <option value="da">Dansk</option>
+      <option value="en">English</option>
+      <option value="tr">Türkçe</option>
+      <option value="uk">Українська</option>
+    </select>
+  </div>
+
+  <div class="app">
+    <!-- ============ EDITOR ============ -->
+    <div class="editor">
+
+      <!-- Library -->
+      <div class="block">
+        <p class="label" style="margin-bottom:9px;"><span data-i18n="myCards">Mine klippekort</span> <span class="tag" data-i18n-title="autosaveTitle" title="Gemmes automatisk">●</span></p>
+        <div class="save-actions">
+          <button class="btn-mini" type="button" id="saveAsBtn" data-i18n="saveAs">Gem som…</button>
+          <button class="btn-mini" type="button" id="exportBtn" data-i18n="exportBtn">Eksportér</button>
+          <button class="btn-mini" type="button" id="importBtn" data-i18n="importBtn">Importér</button>
+          <input type="file" id="importInput" accept="application/json,.json" style="display:none;">
+        </div>
+        <div id="libraryList" class="library"></div>
+        <p class="save-note" id="saveStatus" style="margin-top:4px;"></p>
+      </div>
+
+      <!-- Design -->
+      <div class="block">
+        <p class="label" data-i18n="customize">Tilpas design</p>
+        <details class="adv">
+          <summary><span data-i18n="grpColors">Farver &amp; skrift</span> <span class="chev">▾</span></summary>
+          <div class="adv-body">
+            <div class="ctl2">
+              <label class="ctl"><span data-i18n="accent">Accent</span><input type="color" id="cAccent"></label>
+              <label class="ctl"><span data-i18n="paperColor">Papir</span><input type="color" id="cPaper"></label>
+            </div>
+            <label class="ctl" style="margin-top:8px;"><span data-i18n="textColor">Tekst</span><input type="color" id="cInk"></label>
+            <label class="mini-label" style="margin-top:11px;" data-i18n="titleFontL">Titel-skrifttype</label>
+            <select class="field" id="selTitleFont"></select>
+            <label class="mini-label" style="margin-top:9px;" data-i18n="bodyFontL">Brødtekst-skrifttype</label>
+            <select class="field" id="selBodyFont"></select>
+          </div>
+        </details>
+        <details class="adv">
+          <summary><span data-i18n="grpStampColor">Felternes farve</span> <span class="chev">▾</span></summary>
+          <div class="adv-body">
+            <label class="mini-label" data-i18n="stampColorLabel">Kant på felter</label>
+            <div class="seg" id="segStampColor" data-key="stampColor">
+              <button class="seg-btn" type="button" data-val="accent" data-i18n="scAccent">Accent</button>
+              <button class="seg-btn" type="button" data-val="ink" data-i18n="scInk">Tekst</button>
+            </div>
+          </div>
+        </details>
+      </div>
+
+      <!-- Style presets -->
+      <div class="block">
+        <p class="label" data-i18n="styleLabel">Stil</p>
+        <div class="seg" id="segStyle" data-key="style">
+          <button class="seg-btn" type="button" data-val="elegant" data-i18n="stElegant">Elegant</button>
+          <button class="seg-btn" type="button" data-val="modern" data-i18n="stModern">Moderne</button>
+          <button class="seg-btn" type="button" data-val="minimal" data-i18n="stMinimal">Minimal</button>
+          <button class="seg-btn" type="button" data-val="dark" data-i18n="stDark">Mørk</button>
+        </div>
+      </div>
+
+      <!-- Orientation -->
+      <div class="block">
+        <p class="label" data-i18n="orientLabel">Retning</p>
+        <div class="seg" id="segOrient" data-key="orientation">
+          <button class="seg-btn" type="button" data-val="landscape" data-i18n="orientH">Liggende</button>
+          <button class="seg-btn" type="button" data-val="portrait" data-i18n="orientV">Stående</button>
+        </div>
+
+        <label class="mini-label" style="margin-top:11px;" data-i18n="cornersLabel">Hjørner på kortet</label>
+        <div class="seg" id="segCorners" data-key="corners">
+          <button class="seg-btn" type="button" data-val="sharp" data-i18n="cornSharp">Skarpe</button>
+          <button class="seg-btn" type="button" data-val="soft" data-i18n="cornSoft">Bløde</button>
+          <button class="seg-btn" type="button" data-val="round" data-i18n="cornRound">Runde</button>
+        </div>
+      </div>
+
+      <!-- The reward / stamps — the heart of the tool -->
+      <div class="block">
+        <p class="label" data-i18n="rewardSec">Belønning &amp; felter</p>
+
+        <label class="mini-label" data-i18n="headlineLabel">Overskrift</label>
+        <input type="text" id="inHeadline" data-i18n-ph="phHeadline" placeholder="Saml 10 — få den 10. gratis">
+
+        <label class="mini-label" style="margin-top:11px;" data-i18n="countLabel">Antal felter</label>
+        <div class="seg" id="segCount" data-key="count">
+          <button class="seg-btn" type="button" data-val="6">6</button>
+          <button class="seg-btn" type="button" data-val="8">8</button>
+          <button class="seg-btn" type="button" data-val="10">10</button>
+          <button class="seg-btn" type="button" data-val="12">12</button>
+        </div>
+
+        <label class="mini-label" style="margin-top:11px;" data-i18n="layoutLabel">Opstilling</label>
+        <div class="seg" id="segLayout" data-key="layout">
+          <button class="seg-btn" type="button" data-val="auto" data-i18n="layoutAuto">Auto</button>
+          <button class="seg-btn" type="button" data-val="compact" data-i18n="layoutCompact">Færre rækker</button>
+          <button class="seg-btn" type="button" data-val="spread" data-i18n="layoutSpread">Flere rækker</button>
+        </div>
+        <p class="mini-hint" id="layoutHint" data-i18n="layoutHintAuto">Auto vælger den bedste opstilling til kortets retning.</p>
+
+        <label class="mini-label" data-i18n="fillLabel">Felter</label>
+        <div class="seg" id="segFill" data-key="fill">
+          <button class="seg-btn" type="button" data-val="empty" data-i18n="fillEmpty">Tomme</button>
+          <button class="seg-btn" type="button" data-val="number" data-i18n="fillNumber">Nummererede</button>
+        </div>
+        <p class="mini-hint" data-i18n="fillHint">Tomme felter er til et fysisk stempel. Nummererede viser 1, 2, 3 …</p>
+
+        <label class="mini-label" data-i18n="shapeLabel">Form på felter</label>
+        <div class="seg" id="segShape" data-key="shape">
+          <button class="seg-btn" type="button" data-val="circle" data-i18n="shapeCircle">Cirkel</button>
+          <button class="seg-btn" type="button" data-val="rounded" data-i18n="shapeRounded">Blød</button>
+          <button class="seg-btn" type="button" data-val="square" data-i18n="shapeSquare">Firkant</button>
+        </div>
+
+        <label class="check"><input type="checkbox" id="chkReward"><span data-i18n="rewardMarkLabel">Marker det sidste felt som gevinst</span></label>
+        <div id="rewardIcoWrap" style="margin-top:8px;">
+          <label class="mini-label" data-i18n="rewardIcoLabel">Gevinst-symbol</label>
+          <div class="seg" id="segRewardIco" data-key="rewardIco">
+            <button class="seg-btn" type="button" data-val="star" data-i18n="rewardStar">Stjerne</button>
+            <button class="seg-btn" type="button" data-val="gift" data-i18n="rewardGift">Gave</button>
+            <button class="seg-btn" type="button" data-val="cup" data-i18n="rewardCup">Kop</button>
+            <button class="seg-btn" type="button" data-val="heart" data-i18n="rewardHeart">Hjerte</button>
+            <button class="seg-btn" type="button" data-val="free" data-i18n="rewardFree">GRATIS</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Text content (front: etiket-style box editor; back: just terms) -->
+      <div class="block">
+        <p class="label" data-i18n="textSec">Tekst</p>
+        <p class="mini-hint" style="margin-top:0;margin-bottom:10px;" data-i18n="frontPlaceHint">Forsidens tekst er tekstbokse — tilføj linjer, vælg størrelse og skrift, og placér hver boks med 3×3-gitteret.</p>
+        <div id="freeBoxWrap"></div>
+        <button type="button" class="add-contact" id="freeAddBox" data-i18n="flAddBox">+ Tilføj tekstboks</button>
+
+        <label class="mini-label" style="margin-top:14px;" data-i18n="termsLabel">Vilkår (bagside, lille tekst)</label>
+        <textarea id="inTerms" data-i18n-ph="phTerms" placeholder="Gælder kun ved køb af kaffe. Kan ikke ombyttes til kontanter."></textarea>
+      </div>
+
+      <!-- Payment -->
+      <div class="block">
+        <p class="label" data-i18n="downloadSec">Hent kort</p>
+        <p class="hint" data-i18n="payNote" style="margin-top:0;margin-bottom:10px;">Det første kort er gratis. Herefter koster en download 49 kr.</p>
+        <div class="code-row" style="margin-bottom:9px;">
+          <input class="field" type="text" id="codeInput" data-i18n-ph="codePh" placeholder="Har du en kode?">
+          <button class="btn-tiny" type="button" id="codeBtn" data-i18n="useCode">Brug kode</button>
+        </div>
+        <div class="dl-actions">
+          <button class="btn btn-primary" type="button" id="pdfBtn" data-i18n="payPdf">Betal &amp; hent PDF — 49 kr.</button>
+          <button class="btn btn-outline" type="button" id="pngBtn" data-i18n="payImg">Betal &amp; hent som billede — 49 kr.</button>
+          <button class="btn btn-outline" type="button" id="freeBtn" data-i18n="freeDl">Hent gratis prøve — PDF med vandmærke</button>
+        </div>
+        <p class="hint" id="payStatus"></p>
+        <button class="btn btn-ghost" type="button" id="resetBtn" data-i18n="resetAll" style="margin-top:14px;">Ryd alt og start forfra</button>
+      </div>
+
+    </div>
+
+    <!-- ============ STAGE / PREVIEW ============ -->
+    <div class="stage" id="stage">
+      <div class="side-switch-mobile" id="sideSwitchMobile">
+        <button type="button" data-side="front" class="active" data-i18n="frontLbl">Forside</button>
+        <button type="button" data-side="back" data-i18n="backLbl">Bagside</button>
+      </div>
+      <div class="bc-wrap" data-side="front">
+        <span class="bc-side-lbl" data-i18n="frontLbl">Forside</span>
+        <div class="bc-fit" id="fitFront">
+          <div class="card" id="cardFront"><div class="card-inner" id="innerFront"></div></div>
+        </div>
+      </div>
+      <div class="bc-wrap" data-side="back">
+        <span class="bc-side-lbl" data-i18n="backLbl">Bagside</span>
+        <div class="bc-fit" id="fitBack">
+          <div class="card" id="cardBack"><div class="card-inner" id="innerBack"></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <p class="footer" data-i18n="footerHtml">Lusidio · klippekort på minutter — printklart, uden grafiker.</p>
+
+<script>
+  const byId = id => document.getElementById(id);
+
+  // ---------- i18n ----------
+  const I18N = {
+    da:{
+      brandH1:'Klippekort',
+      intro:'Lav et klippekort til din café eller butik — vælg antal felter, stil og farver, og hent et printklart kort.',
+      myCards:'Mine klippekort', autosaveTitle:'Gemmes automatisk', saveAs:'Gem som…', exportBtn:'Eksportér', importBtn:'Importér',
+      saveAsPrompt:'Giv kortet et navn:', libOpen:'Åbn', libDelete:'Slet', libConfirmDelete:'Slet dette kort?',
+      libConfirmReplace:'Erstat det gemte kort med samme navn?', libNone:'Ingen gemte kort endnu — tryk “Gem som…”.',
+      saveStatusSaved:'Gemt', saveStatusDeleted:'Slettet', saveStatusExported:'Eksporteret', saveStatusImported:'Importeret',
+      saveStatusImportFail:'Kunne ikke læse filen', saveStatusInit:'Dine ændringer gemmes automatisk i denne browser.', saveStatusReset:'Alt nulstillet.', resetAll:'Ryd alt og start forfra', confirmReset:'Slet alt indhold og start forfra?',
+      styleLabel:'Stil', stElegant:'Elegant', stModern:'Moderne', stMinimal:'Minimal', stDark:'Mørk',
+      orientLabel:'Retning', orientH:'Liggende', orientV:'Stående',
+      rewardSec:'Belønning & felter', headlineLabel:'Overskrift', phHeadline:'Saml 10 — få den 10. gratis',
+      countLabel:'Antal felter',
+      layoutLabel:'Opstilling', layoutAuto:'Auto', layoutCompact:'Færre rækker', layoutSpread:'Flere rækker',
+      layoutHintAuto:'Auto vælger den bedste opstilling til kortets retning.', layoutGrid:'Opstilling: {cols} × {rows} felter',
+      fillLabel:'Felter', fillEmpty:'Tomme', fillNumber:'Nummererede',
+      fillHint:'Tomme felter er til et fysisk stempel. Nummererede viser 1, 2, 3 …',
+      shapeLabel:'Form på felter', shapeCircle:'Cirkel', shapeRounded:'Blød', shapeSquare:'Firkant',
+      rewardMarkLabel:'Marker det sidste felt som gevinst', rewardIcoLabel:'Gevinst-symbol',
+      rewardStar:'Stjerne', rewardGift:'Gave', rewardCup:'Kop', rewardHeart:'Hjerte', rewardFree:'GRATIS',
+      textSec:'Tekst', frontPlaceHint:'Forsidens tekst er tekstbokse — tilføj linjer, vælg størrelse og skrift, og placér hver boks med 3×3-gitteret.',
+      flBox:'Tekstboks', flAddBox:'+ Tilføj tekstboks', flPos:'Placering', flLayout:'Linjer', flStack:'Under hinanden', flRow:'På række',
+      flAlign:'Justering', flGap:'Afstand', flSize:'Størrelse', flStyle:'Skrift', flColor:'Farve', flWrap:'Linjebrud',
+      flLs:'Bogstavafstand', flLsN:'Normal', flLsS:'Lidt', flLsW:'Meget', flAdd:'Tilføj linje:', flAddDiv:'Skillelinje',
+      flMoveUp:'Flyt op', flMoveDown:'Flyt ned', flDelete:'Slet', flInline:'Sæt på samme linje som forrige',
+      tName:'Navn', tSubhead:'Underoverskrift', tTagline:'Undertekst', tCustom:'Fri tekst', phBizName:'Annes Bageri',
+      termsLabel:'Vilkår (bagside, lille tekst)', phTerms:'Gælder kun ved køb af kaffe. Kan ikke ombyttes til kontanter.',
+      customize:'Tilpas design', grpColors:'Farver & skrift', accent:'Accent', paperColor:'Papir', textColor:'Tekst',
+      titleFontL:'Titel-skrifttype', bodyFontL:'Brødtekst-skrifttype',
+      cornersLabel:'Hjørner', cornSharp:'Skarpe', cornSoft:'Bløde', cornRound:'Runde',
+      grpStampColor:'Felternes farve', stampColorLabel:'Kant på felter', scAccent:'Accent', scInk:'Tekst',
+      downloadSec:'Hent kort', payNote:'Det første kort er gratis. Herefter koster en download 49 kr.',
+      codePh:'Har du en kode?', useCode:'Brug kode', codeApplied:'Kode godkendt — du kan hente gratis.',
+      codeInvalid:'Ugyldig kode.', codeUsed:'Koden er allerede brugt.',
+      payPdf:'Betal & hent PDF — 49 kr.', payImg:'Betal & hent som billede — 49 kr.', freeDl:'Hent gratis prøve — PDF med vandmærke',
+      stPayStart:'Åbner betaling …', stPayWait:'Henter …', stPayReady:'Klar!', stPayFail:'Kunne ikke åbne betaling. Prøv igen.',
+      stCancel:'Betaling afbrudt.', stDone:'Tak! Dit kort hentes nu.',
+      frontLbl:'Forside', backLbl:'Bagside',
+      footerHtml:'Lusidio · klippekort på minutter — printklart, uden grafiker.'
+    },
+    en:{
+      brandH1:'Loyalty card',
+      intro:'Make a punch card for your café or shop — pick the number of fields, a style and colours, and download a print-ready card.',
+      myCards:'My cards', autosaveTitle:'Saved automatically', saveAs:'Save as…', exportBtn:'Export', importBtn:'Import',
+      saveAsPrompt:'Name this card:', libOpen:'Open', libDelete:'Delete', libConfirmDelete:'Delete this card?',
+      libConfirmReplace:'Replace the saved card with the same name?', libNone:'No saved cards yet — press “Save as…”.',
+      saveStatusSaved:'Saved', saveStatusDeleted:'Deleted', saveStatusExported:'Exported', saveStatusImported:'Imported',
+      saveStatusImportFail:'Could not read the file', saveStatusInit:'Your changes are saved automatically in this browser.', saveStatusReset:'Everything reset.', resetAll:'Clear everything and start over', confirmReset:'Delete all content and start over?',
+      styleLabel:'Style', stElegant:'Elegant', stModern:'Modern', stMinimal:'Minimal', stDark:'Dark',
+      orientLabel:'Orientation', orientH:'Landscape', orientV:'Portrait',
+      rewardSec:'Reward & fields', headlineLabel:'Headline', phHeadline:'Collect 10 — get the 10th free',
+      countLabel:'Number of fields',
+      layoutLabel:'Layout', layoutAuto:'Auto', layoutCompact:'Fewer rows', layoutSpread:'More rows',
+      layoutHintAuto:'Auto picks the best layout for the card orientation.', layoutGrid:'Layout: {cols} × {rows} fields',
+      fillLabel:'Fields', fillEmpty:'Empty', fillNumber:'Numbered',
+      fillHint:'Empty fields are for a physical stamp. Numbered shows 1, 2, 3 …',
+      shapeLabel:'Field shape', shapeCircle:'Circle', shapeRounded:'Soft', shapeSquare:'Square',
+      rewardMarkLabel:'Mark the last field as the reward', rewardIcoLabel:'Reward symbol',
+      rewardStar:'Star', rewardGift:'Gift', rewardCup:'Cup', rewardHeart:'Heart', rewardFree:'FREE',
+      textSec:'Text', frontPlaceHint:'Front text is built from text boxes — add lines, pick size and font, and place each box with the 3×3 grid.',
+      flBox:'Text box', flAddBox:'+ Add text box', flPos:'Position', flLayout:'Lines', flStack:'Stacked', flRow:'In a row',
+      flAlign:'Alignment', flGap:'Spacing', flSize:'Size', flStyle:'Font', flColor:'Color', flWrap:'Line break',
+      flLs:'Letter spacing', flLsN:'Normal', flLsS:'Some', flLsW:'Wide', flAdd:'Add line:', flAddDiv:'Divider',
+      flMoveUp:'Move up', flMoveDown:'Move down', flDelete:'Delete', flInline:'Place on same line as previous',
+      tName:'Name', tSubhead:'Subheading', tTagline:'Tagline', tCustom:'Free text', phBizName:"Anne's Bakery",
+      termsLabel:'Terms (back, small text)', phTerms:'Valid for coffee only. Cannot be exchanged for cash.',
+      customize:'Customise design', grpColors:'Colours & fonts', accent:'Accent', paperColor:'Paper', textColor:'Text',
+      titleFontL:'Title font', bodyFontL:'Body font',
+      cornersLabel:'Corners', cornSharp:'Sharp', cornSoft:'Soft', cornRound:'Round',
+      grpStampColor:'Field colour', stampColorLabel:'Field border', scAccent:'Accent', scInk:'Text',
+      downloadSec:'Download card', payNote:'The first card is free. After that a download costs 49 kr.',
+      codePh:'Have a code?', useCode:'Use code', codeApplied:'Code accepted — you can download for free.',
+      codeInvalid:'Invalid code.', codeUsed:'This code has already been used.',
+      payPdf:'Pay & download PDF — 49 kr.', payImg:'Pay & download as image — 49 kr.', freeDl:'Download free sample — PDF with watermark',
+      stPayStart:'Opening payment …', stPayWait:'Loading …', stPayReady:'Ready!', stPayFail:'Could not open payment. Try again.',
+      stCancel:'Payment cancelled.', stDone:'Thanks! Your card is downloading.',
+      frontLbl:'Front', backLbl:'Back',
+      footerHtml:'Lusidio · loyalty cards in minutes — print-ready, no designer.'
+    },
+    tr:{
+      brandH1:'Sadakat kartı',
+      intro:'Kafeniz veya dükkanınız için bir damga kartı yapın — alan sayısını, stili ve renkleri seçin, baskıya hazır kartı indirin.',
+      myCards:'Kartlarım', autosaveTitle:'Otomatik kaydedilir', saveAs:'Farklı kaydet…', exportBtn:'Dışa aktar', importBtn:'İçe aktar',
+      saveAsPrompt:'Bu karta bir ad verin:', libOpen:'Aç', libDelete:'Sil', libConfirmDelete:'Bu kart silinsin mi?',
+      libConfirmReplace:'Aynı adlı kayıtlı kart değiştirilsin mi?', libNone:'Henüz kayıtlı kart yok — “Farklı kaydet…”e basın.',
+      saveStatusSaved:'Kaydedildi', saveStatusDeleted:'Silindi', saveStatusExported:'Dışa aktarıldı', saveStatusImported:'İçe aktarıldı',
+      saveStatusImportFail:'Dosya okunamadı', saveStatusInit:'Değişiklikleriniz bu tarayıcıda otomatik kaydedilir.', saveStatusReset:'Her şey sıfırlandı.', resetAll:'Her şeyi temizle ve baştan başla', confirmReset:'Tüm içerik silinsin ve baştan başlansın mı?',
+      styleLabel:'Stil', stElegant:'Zarif', stModern:'Modern', stMinimal:'Minimal', stDark:'Koyu',
+      orientLabel:'Yön', orientH:'Yatay', orientV:'Dikey',
+      rewardSec:'Ödül & alanlar', headlineLabel:'Başlık', phHeadline:'10 topla — 10.su bedava',
+      countLabel:'Alan sayısı',
+      layoutLabel:'Düzen', layoutAuto:'Otomatik', layoutCompact:'Daha az satır', layoutSpread:'Daha çok satır',
+      layoutHintAuto:'Otomatik, kartın yönüne en uygun düzeni seçer.', layoutGrid:'Düzen: {cols} × {rows} alan',
+      fillLabel:'Alanlar', fillEmpty:'Boş', fillNumber:'Numaralı',
+      fillHint:'Boş alanlar fiziksel damga içindir. Numaralı 1, 2, 3 … gösterir.',
+      shapeLabel:'Alan şekli', shapeCircle:'Daire', shapeRounded:'Yumuşak', shapeSquare:'Kare',
+      rewardMarkLabel:'Son alanı ödül olarak işaretle', rewardIcoLabel:'Ödül simgesi',
+      rewardStar:'Yıldız', rewardGift:'Hediye', rewardCup:'Fincan', rewardHeart:'Kalp', rewardFree:'BEDAVA',
+      textSec:'Metin', frontPlaceHint:'Ön yüz metni metin kutularından oluşur — satır ekleyin, boyut ve yazı tipi seçin, her kutuyu 3×3 ızgarayla yerleştirin.',
+      flBox:'Metin kutusu', flAddBox:'+ Metin kutusu ekle', flPos:'Konum', flLayout:'Satırlar', flStack:'Alt alta', flRow:'Yan yana',
+      flAlign:'Hizalama', flGap:'Aralık', flSize:'Boyut', flStyle:'Yazı', flColor:'Renk', flWrap:'Satır sonu',
+      flLs:'Harf aralığı', flLsN:'Normal', flLsS:'Biraz', flLsW:'Geniş', flAdd:'Satır ekle:', flAddDiv:'Ayraç çizgisi',
+      flMoveUp:'Yukarı taşı', flMoveDown:'Aşağı taşı', flDelete:'Sil', flInline:'Öncekiyle aynı satıra koy',
+      tName:'Ad', tSubhead:'Alt başlık', tTagline:'Alt metin', tCustom:'Serbest metin', phBizName:'Anne Fırını',
+      termsLabel:'Koşullar (arka yüz, küçük metin)', phTerms:'Yalnızca kahve için geçerlidir. Nakit ile değiştirilemez.',
+      customize:'Tasarımı özelleştir', grpColors:'Renkler & yazı tipi', accent:'Vurgu', paperColor:'Kağıt', textColor:'Metin',
+      titleFontL:'Başlık yazı tipi', bodyFontL:'Gövde yazı tipi',
+      cornersLabel:'Köşeler', cornSharp:'Keskin', cornSoft:'Yumuşak', cornRound:'Yuvarlak',
+      grpStampColor:'Alan rengi', stampColorLabel:'Alan kenarı', scAccent:'Vurgu', scInk:'Metin',
+      downloadSec:'Kartı indir', payNote:'İlk kart ücretsizdir. Sonrasında bir indirme 49 kr.',
+      codePh:'Kodunuz var mı?', useCode:'Kodu kullan', codeApplied:'Kod kabul edildi — ücretsiz indirebilirsiniz.',
+      codeInvalid:'Geçersiz kod.', codeUsed:'Bu kod zaten kullanılmış.',
+      payPdf:'Öde & PDF indir — 49 kr.', payImg:'Öde & resim olarak indir — 49 kr.', freeDl:'Ücretsiz örnek indir — filigranlı PDF',
+      stPayStart:'Ödeme açılıyor …', stPayWait:'Yükleniyor …', stPayReady:'Hazır!', stPayFail:'Ödeme açılamadı. Tekrar deneyin.',
+      stCancel:'Ödeme iptal edildi.', stDone:'Teşekkürler! Kartınız indiriliyor.',
+      frontLbl:'Ön yüz', backLbl:'Arka yüz',
+      footerHtml:'Lusidio · dakikalar içinde sadakat kartı — baskıya hazır, tasarımcı yok.'
+    },
+    uk:{
+      brandH1:'Картка лояльності',
+      intro:'Створіть картку для кафе чи магазину — оберіть кількість полів, стиль і кольори та завантажте готову до друку картку.',
+      myCards:'Мої картки', autosaveTitle:'Зберігається автоматично', saveAs:'Зберегти як…', exportBtn:'Експорт', importBtn:'Імпорт',
+      saveAsPrompt:'Назвіть цю картку:', libOpen:'Відкрити', libDelete:'Видалити', libConfirmDelete:'Видалити цю картку?',
+      libConfirmReplace:'Замінити збережену картку з такою ж назвою?', libNone:'Ще немає збережених карток — натисніть «Зберегти як…».',
+      saveStatusSaved:'Збережено', saveStatusDeleted:'Видалено', saveStatusExported:'Експортовано', saveStatusImported:'Імпортовано',
+      saveStatusImportFail:'Не вдалося прочитати файл', saveStatusInit:'Зміни зберігаються автоматично в цьому браузері.', saveStatusReset:'Усе скинуто.', resetAll:'Очистити все та почати спочатку', confirmReset:'Видалити весь вміст і почати спочатку?',
+      styleLabel:'Стиль', stElegant:'Елегантний', stModern:'Сучасний', stMinimal:'Мінімал', stDark:'Темний',
+      orientLabel:'Орієнтація', orientH:'Горизонтальна', orientV:'Вертикальна',
+      rewardSec:'Винагорода та поля', headlineLabel:'Заголовок', phHeadline:'Збери 10 — 10-та безкоштовно',
+      countLabel:'Кількість полів',
+      layoutLabel:'Розташування', layoutAuto:'Авто', layoutCompact:'Менше рядків', layoutSpread:'Більше рядків',
+      layoutHintAuto:'Авто обирає найкраще розташування для орієнтації картки.', layoutGrid:'Розташування: {cols} × {rows} полів',
+      fillLabel:'Поля', fillEmpty:'Порожні', fillNumber:'Нумеровані',
+      fillHint:'Порожні поля — для фізичного штампа. Нумеровані показують 1, 2, 3 …',
+      shapeLabel:'Форма полів', shapeCircle:'Коло', shapeRounded:'М’яка', shapeSquare:'Квадрат',
+      rewardMarkLabel:'Позначити останнє поле як винагороду', rewardIcoLabel:'Символ винагороди',
+      rewardStar:'Зірка', rewardGift:'Подарунок', rewardCup:'Чашка', rewardHeart:'Серце', rewardFree:'БЕЗКОШТОВНО',
+      textSec:'Текст', frontPlaceHint:'Текст лицьового боку складається з текстових блоків — додайте рядки, виберіть розмір і шрифт, і розмістіть кожен блок за допомогою сітки 3×3.',
+      flBox:'Текстовий блок', flAddBox:'+ Додати блок', flPos:'Розташування', flLayout:'Рядки', flStack:'Один під одним', flRow:'В один ряд',
+      flAlign:'Вирівнювання', flGap:'Відстань', flSize:'Розмір', flStyle:'Шрифт', flColor:'Колір', flWrap:'Перенос рядка',
+      flLs:'Міжлітерний інтервал', flLsN:'Звичайний', flLsS:'Трохи', flLsW:'Широкий', flAdd:'Додати рядок:', flAddDiv:'Розділювач',
+      flMoveUp:'Вгору', flMoveDown:'Вниз', flDelete:'Видалити', flInline:'В один рядок із попереднім',
+      tName:'Назва', tSubhead:'Підзаголовок', tTagline:'Підпис', tCustom:'Вільний текст', phBizName:'Пекарня Анни',
+      termsLabel:'Умови (зворот, дрібний текст)', phTerms:'Дійсно лише для кави. Не обмінюється на готівку.',
+      customize:'Налаштувати дизайн', grpColors:'Кольори та шрифт', accent:'Акцент', paperColor:'Папір', textColor:'Текст',
+      titleFontL:'Шрифт заголовка', bodyFontL:'Основний шрифт',
+      cornersLabel:'Кути', cornSharp:'Гострі', cornSoft:'М’які', cornRound:'Круглі',
+      grpStampColor:'Колір полів', stampColorLabel:'Рамка полів', scAccent:'Акцент', scInk:'Текст',
+      downloadSec:'Завантажити картку', payNote:'Перша картка безкоштовна. Далі завантаження коштує 49 kr.',
+      codePh:'Є код?', useCode:'Застосувати код', codeApplied:'Код прийнято — можна завантажити безкоштовно.',
+      codeInvalid:'Недійсний код.', codeUsed:'Цей код уже використано.',
+      payPdf:'Сплатити та завантажити PDF — 49 kr.', payImg:'Сплатити та завантажити як зображення — 49 kr.', freeDl:'Завантажити безкоштовний зразок — PDF з водяним знаком',
+      stPayStart:'Відкриваємо оплату …', stPayWait:'Завантаження …', stPayReady:'Готово!', stPayFail:'Не вдалося відкрити оплату. Спробуйте ще раз.',
+      stCancel:'Оплату скасовано.', stDone:'Дякуємо! Картка завантажується.',
+      frontLbl:'Лицьовий бік', backLbl:'Зворот',
+      footerHtml:'Lusidio · картки лояльності за хвилини — готові до друку, без дизайнера.'
+    }
+  };
+
+  let lang = 'da';
+  const t = k => (I18N[lang] && I18N[lang][k] != null) ? I18N[lang][k] : (I18N.da[k] != null ? I18N.da[k] : k);
+
+  // ---------- Fonts ----------
+  const FONTS_TITLE = [
+    { name:'Fraunces', css:'Fraunces' }, { name:'Playfair Display', css:'Playfair Display' },
+    { name:'EB Garamond', css:'EB Garamond' }, { name:'Montserrat', css:'Montserrat' },
+    { name:'Bebas Neue', css:'Bebas Neue' }, { name:'Jost', css:'Jost' }
+  ];
+  const FONTS_BODY = [
+    { name:'Jost', css:'Jost' }, { name:'Montserrat', css:'Montserrat' },
+    { name:'EB Garamond', css:'EB Garamond' }, { name:'Fraunces', css:'Fraunces' }
+  ];
+
+  // ---------- Style presets ----------
+  const STYLES = {
+    elegant:{ accent:'#b5542a', paper:'#fbf6ec', ink:'#2c2620', titleFont:'Fraunces',        bodyFont:'EB Garamond', corners:'soft',  shape:'circle'  },
+    modern: { accent:'#1f6f5c', paper:'#f4f1ea', ink:'#22312c', titleFont:'Montserrat',      bodyFont:'Jost',        corners:'round', shape:'rounded' },
+    minimal:{ accent:'#3a352c', paper:'#ffffff', ink:'#26221b', titleFont:'Jost',            bodyFont:'Jost',        corners:'sharp', shape:'square'  },
+    dark:   { accent:'#e8b04b', paper:'#262017', ink:'#f3ead7', titleFont:'Playfair Display',bodyFont:'Montserrat',  corners:'soft',  shape:'circle'  }
+  };
+
+  // ---------- State ----------
+  const DEFAULTS = {
+    style:'elegant', orientation:'landscape',
+    headline:'', terms:'',
+    // Front side uses etiket-style boxes: an array of independently-placed text boxes,
+    // each with multiple text items (lines) that can be sized/styled individually.
+    front:{
+      boxes:[
+        { id:1, pos:'middle-center', align:'center', layout:'stack', gap:6, nextItemId:3, items:[
+          { id:1, type:'name',    value:'', size:1.9, bold:true,  wrap:true },
+          { id:2, type:'tagline', value:'', size:1.0, italic:true, wrap:true }
+        ]}
+      ],
+      nextBoxId:2
+    },
+    count:10, rows:2, layout:'auto', fill:'empty', shape:'circle',
+    rewardMark:true, rewardIco:'star',
+    design:{ accent:'#b5542a', paper:'#fbf6ec', ink:'#2c2620', titleFont:'Fraunces', bodyFont:'EB Garamond', corners:'soft', stampColor:'accent' }
+  };
+  const clone = o => JSON.parse(JSON.stringify(o));
+  let state = clone(DEFAULTS);
+  let unlocked = false, codeActive = false;
+
+  // ---------- Storage ----------
+  const LS_SAVE = 'klippekort_autosave_v1';
+  const LS_LIBRARY = 'klippekort_library_v1';
+  const LS_LANG = 'klippekort_lang_v1';
+  const LS_CODES = 'klippekort_used_codes_v1';
+  const TEMP_CODES = ['1234567'];
+  let storageOK = true;
+  try { localStorage.setItem('__t','1'); localStorage.removeItem('__t'); } catch(e){ storageOK = false; }
+
+  let saveTimer = null;
+  function scheduleSave(){
+    if (!storageOK) return;
+    clearTimeout(saveTimer);
+    saveTimer = setTimeout(() => { try { localStorage.setItem(LS_SAVE, JSON.stringify(state)); } catch(e){} }, 350);
+  }
+
+  function applyData(sv){
+    state = clone(DEFAULTS);
+    if (sv && typeof sv === 'object'){
+      for (const k of ['style','orientation','headline','terms','count','rows','layout','fill','shape','rewardMark','rewardIco']){
+        if (sv[k] != null) state[k] = sv[k];
+      }
+      // migrate old 'rows' saves to the new layout model
+      if (sv.layout == null && sv.rows != null){
+        state.layout = (sv.rows <= 1) ? 'compact' : (sv.rows >= 3 ? 'spread' : 'auto');
+      }
+      if (sv.design && typeof sv.design === 'object') Object.assign(state.design, sv.design);
+      // Front-side boxes: prefer the new model; fall back to migrating old flat fields
+      if (sv.front && Array.isArray(sv.front.boxes)){
+        state.front = clone(sv.front);
+        if (state.front.nextBoxId == null){
+          state.front.nextBoxId = state.front.boxes.reduce((m,b)=>Math.max(m,b.id||0),0) + 1;
+        }
+      } else if (sv.bizName != null || sv.bizTag != null){
+        const items = [];
+        let id = 1;
+        if (sv.bizName) items.push({ id:id++, type:'name',    value:sv.bizName, size:1.9, bold:true,  wrap:true });
+        if (sv.bizTag)  items.push({ id:id++, type:'tagline', value:sv.bizTag,  size:1.0, italic:true, wrap:true });
+        if (items.length) state.front = { boxes:[{ id:1, pos:'middle-center', align:'center', layout:'stack', gap:6, nextItemId:id, items }], nextBoxId:2 };
+      }
+    }
+  }
+  const POS_KEYS = ['top-left','top-center','top-right','middle-left','middle-center','middle-right','bottom-left','bottom-center','bottom-right'];
+  const ITEM_TYPES = ['name','subhead','tagline','custom','line'];
+  function newItem(box, type){
+    const base = { id: box.nextItemId++, type, value:'', wrap:true };
+    if (type === 'name')    Object.assign(base, { size:1.9, bold:true });
+    else if (type === 'subhead') Object.assign(base, { size:1.25, bold:true });
+    else if (type === 'tagline') Object.assign(base, { size:1.0, italic:true });
+    else if (type === 'custom')  Object.assign(base, { size:1.0 });
+    else if (type === 'line')    Object.assign(base, { size:1.0 });
+    return base;
+  }
+
+  // ---------- The card dimensions (credit-card ratio 85.6 × 54 mm) ----------
+  function cardDims(){
+    // base px at "design scale"; landscape 85.6×54, portrait swapped
+    const land = state.orientation !== 'portrait';
+    const W = land ? 520 : 328;
+    const H = land ? 328 : 520;
+    return { W, H, land };
+  }
+
+  // ---------- Render one card face ----------
+  function stampBorderColor(){
+    return state.design.stampColor === 'ink' ? state.design.ink : state.design.accent;
+  }
+
+  function rewardSymbol(){
+    switch(state.rewardIco){
+      case 'gift': return '🎁';
+      case 'cup':  return '☕';
+      case 'heart':return '♥';
+      case 'free': return t('rewardFree');
+      case 'star':
+      default:     return '★';
+    }
+  }
+
+  function itemLiveVal(it){
+    if (it.type === 'name' && !it.value) return t('phBizName');
+    return it.value || '';
+  }
+  function itemFont(it){
+    // name/subhead use the title font; tagline/custom use the body font; line is just a divider
+    return (it.type === 'name' || it.type === 'subhead') ? state.design.titleFont : state.design.bodyFont;
+  }
+  function itemStyleStr(it){
+    const acc = state.design.accent;
+    let weight = 400;
+    if (it.bold) weight = 700; else if (it.thin) weight = 300;
+    const fsty = it.italic ? 'italic' : 'normal';
+    const wr = it.wrap === false ? 'white-space:nowrap;' : 'white-space:normal;';
+    const ls = (it.lspace && it.lspace > 0) ? `letter-spacing:${it.lspace}em;` : '';
+    const co = it.accent ? `color:${acc};` : '';
+    const di = it.dim ? 'opacity:.65;' : '';
+    const ff = `font-family:'${itemFont(it)}',serif;`;
+    return `${ff}font-weight:${weight};font-style:${fsty};${wr}${ls}${co}${di}line-height:1.15;`;
+  }
+
+  function buildFront(){
+    const d = state.design;
+    const inner = byId('innerFront');
+    inner.style.color = d.ink;
+
+    const FONT_BASE = 16; // px — base text size scaled by item.size
+    const rowF = (it) => {
+      if (it.type === 'line'){
+        const w = Math.round(28 * (it.size || 1));
+        return `<div style="width:${w}px;height:2px;background:${d.accent};margin:2px 0;flex:none;"></div>`;
+      }
+      const fpx = Math.max(8, Math.round(FONT_BASE * (it.size || 1)));
+      return `<div style="margin:0;font-size:${fpx}px;${itemStyleStr(it)}">${esc(itemLiveVal(it))}</div>`;
+    };
+    const buildBoxF = (items, align, layout, gap) => {
+      const visible = (items || []).filter(it => it.type === 'line' || itemLiveVal(it).trim());
+      if (!visible.length) return '';
+      if (layout === 'row') return visible.map(rowF).join('');
+      let html = ''; let i2 = 0;
+      while (i2 < visible.length){
+        const grp = [visible[i2]]; let j2 = i2 + 1;
+        while (j2 < visible.length && visible[j2].inline){ grp.push(visible[j2]); j2++; }
+        if (grp.length === 1) html += rowF(grp[0]);
+        else {
+          const just = align === 'center' ? 'center' : (align === 'right' ? 'flex-end' : 'flex-start');
+          html += `<div class="fb-line-group" style="gap:${gap}px;justify-content:${just};">` + grp.map(rowF).join('') + '</div>';
+        }
+        i2 = j2;
+      }
+      return html;
+    };
+
+    let parts = '';
+    (state.front.boxes || []).forEach(box => {
+      const al = box.align || 'center', ly = box.layout || 'stack', g = (box.gap != null ? box.gap : 6);
+      const bi = buildBoxF(box.items, al, ly, g);
+      if (!bi) return;
+      parts += `<div class="fb-box pos-${box.pos || 'middle-center'} al-${al} layout-${ly}" style="--box-gap:${g}px;">${bi}</div>`;
+    });
+    inner.innerHTML = '<div class="lc-front-grid">' + parts + '</div>';
+  }
+
+  function buildBack(){
+    const d = state.design;
+    const inner = byId('innerBack');
+    inner.style.color = d.ink;
+    const headline = state.headline || t('phHeadline');
+    const n = state.count | 0;
+    const { W, H, land } = cardDims();
+    const grid = gridFor(n, state.layout, land);
+    const cols = grid.cols, rows = grid.rows;
+    const border = stampBorderColor();
+
+    let cells = '';
+    for (let i = 0; i < n; i++){
+      const isReward = state.rewardMark && i === n - 1;
+      const cls = 'stamp shape-' + state.shape + (isReward ? ' is-reward' : '');
+      let content = '';
+      if (isReward){
+        // "free" is a word (varies by language: GRATIS / FREE / BEDAVA / БЕЗКОШТОВНО) — needs tighter sizing
+        const isText = state.rewardIco === 'free';
+        const icoCls = 'reward-ico' + (isText ? ' is-text' : '');
+        content = '<span class="' + icoCls + '" style="color:' + d.paper + ';">' + esc(rewardSymbol()) + '</span>';
+      } else if (state.fill === 'number'){
+        content = '<span class="stamp-num">' + (i + 1) + '</span>';
+      }
+      cells += '<div class="' + cls + '" style="' +
+        '--stamp-border:' + border + ';' +
+        (isReward ? '--stamp-reward-bg:' + d.accent + '; border-color:' + d.accent + ';' : '') +
+        'color:' + d.ink + ';">' + content + '</div>';
+    }
+
+    const terms = state.terms || '';
+    const pad = Math.round(Math.min(W, H) * 0.085);
+    const gapPx = land ? 8 : 9;
+    // Vertical budget: card minus padding, headline, terms (if present), and the inter-element gaps
+    const headlineH = land ? 30 : 34, termsH = terms ? 26 : 0, vGaps = 20;
+    const availH = H - pad * 2 - headlineH - termsH - vGaps;
+    const availW = W - pad * 2;
+    const byH = (availH - (rows - 1) * gapPx) / rows;
+    const byW = (availW - (cols - 1) * gapPx) / cols;
+    const stampSize = Math.max(18, Math.floor(Math.min(byH, byW)));
+    const numFont = Math.max(9, Math.round(stampSize * 0.34));
+
+    inner.innerHTML =
+      '<div class="lc-pad" style="gap:' + (land ? 10 : 12) + 'px;">' +
+        '<div style="font-family:\'' + d.titleFont + '\',serif; font-weight:600; font-size:' + (land ? 1.15 : 1.05) + 'rem; line-height:1.15; text-align:center;">' + esc(headline) + '</div>' +
+        '<div class="stamp-grid" style="grid-template-columns:repeat(' + cols + ',' + stampSize + 'px); --stamp-gap:' + gapPx + 'px; --stamp-size:' + stampSize + 'px; font-size:' + numFont + 'px; flex:1;">' + cells + '</div>' +
+        (terms ? '<div style="font-family:\'' + d.bodyFont + '\',serif; font-size:.62rem; line-height:1.3; color:' + d.ink + '; opacity:.75; text-align:center;">' + esc(terms) + '</div>' : '') +
+      '</div>';
+  }
+
+  // ---------- Smart grid: orientation-aware layout ----------
+  // 'auto' picks the grid whose shape best matches the card orientation.
+  // 'compact' = fewer rows than auto; 'spread' = more rows than auto.
+  // The reward cell always lands last. Ragged trailing gaps are penalised.
+  function gridOptions(n){
+    const opts = [];
+    for (let rows = 1; rows <= n; rows++){
+      const cols = Math.ceil(n / rows);
+      const filled = n - (rows - 1) * cols;   // cells in the last row
+      if (filled <= 0) continue;              // this row count can't hold n
+      // skip grids where the last row is less than half full (looks ragged),
+      // unless it's the single-row or single-column extreme
+      if (rows > 1 && cols > 1 && filled < Math.ceil(cols / 2)) continue;
+      opts.push({ rows, cols, ragged: rows * cols - n });
+    }
+    return opts;
+  }
+  function gridFor(n, layout, land){
+    const opts = gridOptions(n);
+    if (!opts.length) return { rows:1, cols:n };
+    const target = land ? 1.9 : 0.55;          // wide vs tall ideal (cols/rows)
+    const score = o => Math.abs(Math.log(o.cols / o.rows) - Math.log(target)) + o.ragged * 0.4;
+    const byScore = opts.slice().sort((a, b) => score(a) - score(b));
+    const auto = byScore[0];
+    if (layout === 'auto') return auto;
+
+    // order all valid options by row count
+    const byRows = opts.slice().sort((a, b) => a.rows - b.rows);
+    const idx = byRows.findIndex(o => o.rows === auto.rows && o.cols === auto.cols);
+    if (layout === 'compact'){
+      // step toward fewer rows (but never the over-wide 1-row extreme unless it's all there is)
+      for (let i = idx - 1; i >= 0; i--){ if (byRows[i].rows < auto.rows){ return byRows[i]; } }
+      return auto;
+    }
+    if (layout === 'spread'){
+      for (let i = idx + 1; i < byRows.length; i++){ if (byRows[i].rows > auto.rows){ return byRows[i]; } }
+      return auto;
+    }
+    return auto;
+  }
+
+  function esc(s){ return String(s).replace(/[&<>"]/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;' }[c])); }
+
+  // ---------- Watermark (preview only, removed when paid/unlocked) ----------
+  function luminance(hex){
+    const m = (hex || '#ffffff').replace('#','');
+    if (m.length < 6) return 1;
+    const r = parseInt(m.substr(0,2),16)/255, g = parseInt(m.substr(2,2),16)/255, b = parseInt(m.substr(4,2),16)/255;
+    return 0.2126*r + 0.7152*g + 0.0722*b;
+  }
+  function buildWM(){
+    let lines = '';
+    for (let i = 0; i < 9; i++) lines += '<div class="lc-wm-line">LUSIDIO · LUSIDIO · LUSIDIO · LUSIDIO</div>';
+    return '<div class="lc-wm"><div class="lc-wm-rot">' + lines + '</div></div>';
+  }
+  function applyWatermark(){
+    const free = unlocked || codeActive;
+    // contrast: light text on dark paper, dark text on light paper
+    const lum = luminance(state.design.paper);
+    const wmColor = lum < 0.45 ? 'rgba(255,250,240,.16)' : 'rgba(120,90,40,.14)';
+    ['cardFront','cardBack'].forEach(id => {
+      const c = byId(id);
+      const old = c.querySelector('.lc-wm');
+      if (old) old.remove();
+      if (!free){
+        c.style.setProperty('--lc-wm', wmColor);
+        c.insertAdjacentHTML('beforeend', buildWM());
+      }
+    });
+  }
+
+  function applyCardChrome(){
+    const d = state.design;
+    const radius = d.corners === 'sharp' ? '0px' : d.corners === 'round' ? '20px' : '10px';
+    const { W, H } = cardDims();
+    ['cardFront','cardBack'].forEach(id => {
+      const c = byId(id);
+      c.style.width = W + 'px';
+      c.style.height = H + 'px';
+      c.style.background = d.paper;
+      c.style.borderRadius = radius;
+      const pad = Math.round(Math.min(W, H) * 0.085);
+      c.style.setProperty('--lc-pad', pad + 'px');
+    });
+  }
+
+  function renderAll(){
+    applyCardChrome();
+    buildFront();
+    buildBack();
+    applyWatermark();
+    applyCardScale();
+    scheduleSave();
+  }
+
+  // ---------- Scale-to-fit (mirrors the business-card tool) ----------
+  function fitCard(fitEl, cardEl){
+    if (!fitEl || !cardEl) return;
+    const stage = document.querySelector('.stage');
+    if (!stage) return;
+    const cw = cardEl.offsetWidth, ch = cardEl.offsetHeight;
+    if (!cw || !ch) return;
+    let sc;
+    const mobile = window.matchMedia('(max-width:700px)').matches;
+    if (mobile){
+      const padX = 28;
+      const availW = Math.max(160, stage.clientWidth - padX);
+      const availH = Math.max(150, Math.round(window.innerHeight * 0.34));
+      sc = Math.min(1, availW / cw, availH / ch);
+    } else {
+      const availW = Math.max(200, Math.min(stage.clientWidth - 16, 560));
+      sc = Math.min(1, availW / cw);
+    }
+    cardEl.style.transformOrigin = 'top left';
+    cardEl.style.transform = 'scale(' + sc + ')';
+    fitEl.style.width = (cw * sc) + 'px';
+    fitEl.style.height = (ch * sc) + 'px';
+  }
+  function applyCardScale(){
+    fitCard(byId('fitFront'), byId('cardFront'));
+    fitCard(byId('fitBack'), byId('cardBack'));
+  }
+  function scheduleCardScale(){
+    applyCardScale();
+    requestAnimationFrame(applyCardScale);
+    setTimeout(applyCardScale, 180);
+    setTimeout(applyCardScale, 450);
+  }
+
+  // ---------- Controls wiring ----------
+  function bindSeg(segId, fn){
+    const seg = byId(segId);
+    if (!seg) return;
+    seg.addEventListener('click', e => {
+      const b = e.target.closest('.seg-btn');
+      if (!b) return;
+      fn(b.dataset.val);
+      syncControls();
+      renderAll();
+    });
+  }
+
+  function applyStyle(name){
+    const s = STYLES[name];
+    if (!s) return;
+    state.style = name;
+    state.shape = s.shape;
+    Object.assign(state.design, { accent:s.accent, paper:s.paper, ink:s.ink, titleFont:s.titleFont, bodyFont:s.bodyFont, corners:s.corners });
+  }
+
+  function setSeg(segId, val){
+    const seg = byId(segId);
+    if (!seg) return;
+    seg.querySelectorAll('.seg-btn').forEach(b => b.classList.toggle('active', b.dataset.val === String(val)));
+  }
+
+  // ---------- Box editor (porteret fra etiket) ----------
+  const collapsedFreeBoxes = {};
+  function posGridHtmlF(currentPos, boxId){
+    return '<div class="pos-grid" data-box-id="' + boxId + '" title="' + esc(t('flPos')) + '">' +
+      POS_KEYS.map(pp => '<button type="button" data-pos="' + pp + '" class="' + (pp === currentPos ? 'active' : '') + '"></button>').join('') + '</div>';
+  }
+  function renderItemRowF(c, i, listLen, layout){
+    const pct = Math.round((c.size || 1) * 100);
+    const sizeRow =
+      '<div class="fl-row"><span class="mini-label fl-mini">' + esc(t('flSize')) + '</span>' +
+      '<button type="button" class="cli-btn ' + (pct === 70 ? 'active' : '') + '" data-act="size-preset" data-val="70">XS</button>' +
+      '<button type="button" class="cli-btn ' + (pct === 100 ? 'active' : '') + '" data-act="size-preset" data-val="100">S</button>' +
+      '<button type="button" class="cli-btn ' + (pct === 150 ? 'active' : '') + '" data-act="size-preset" data-val="150">M</button>' +
+      '<button type="button" class="cli-btn ' + (pct === 220 ? 'active' : '') + '" data-act="size-preset" data-val="220">L</button>' +
+      '<button type="button" class="cli-btn ' + (pct === 320 ? 'active' : '') + '" data-act="size-preset" data-val="320">XL</button>' +
+      '<input type="range" class="range" data-act="size" min="40" max="500" step="5" value="' + pct + '" style="flex:1;min-width:90px;">' +
+      '<span class="mini-label fl-mini" data-size-pct style="min-width:36px;text-align:right;">' + pct + '%</span></div>';
+
+    const styleRows = c.type === 'line' ? '' :
+      '<div class="fl-row">' +
+        '<span class="mini-label fl-mini">' + esc(t('flStyle')) + '</span>' +
+        '<button type="button" class="cli-btn ' + (!c.bold && !c.thin && !c.italic ? 'active' : '') + '" data-act="style-reset">A</button>' +
+        '<button type="button" class="cli-btn ' + (c.bold ? 'active' : '') + '" data-act="style-bold" style="font-weight:700;">B</button>' +
+        '<button type="button" class="cli-btn ' + (c.thin ? 'active' : '') + '" data-act="style-thin" style="font-weight:300;">T</button>' +
+        '<button type="button" class="cli-btn ' + (c.italic ? 'active' : '') + '" data-act="style-italic" style="font-style:italic;">I</button>' +
+        '<span class="mini-label fl-mini" style="margin-left:8px;">' + esc(t('flColor')) + '</span>' +
+        '<button type="button" class="cli-btn ' + (c.accent ? 'active' : '') + '" data-act="style-accent" style="color:var(--accent);">●</button>' +
+        '<button type="button" class="cli-btn ' + (c.dim ? 'active' : '') + '" data-act="style-dim"><span style="opacity:.4;">●</span></button>' +
+        '<span class="mini-label fl-mini" style="margin-left:8px;">' + esc(t('flWrap')) + '</span>' +
+        '<button type="button" class="cli-btn ' + (c.wrap !== false ? 'active' : '') + '" data-act="wrap-yes">↵</button>' +
+        '<button type="button" class="cli-btn ' + (c.wrap === false ? 'active' : '') + '" data-act="wrap-no">→</button>' +
+      '</div>' +
+      '<div class="fl-row"><span class="mini-label fl-mini">' + esc(t('flLs')) + '</span>' +
+        '<button type="button" class="cli-btn ' + (!(c.lspace > 0) ? 'active' : '') + '" data-act="lspace" data-val="0" style="width:auto;padding:6px 9px;font-size:.72rem;">' + esc(t('flLsN')) + '</button>' +
+        '<button type="button" class="cli-btn ' + (c.lspace === 0.12 ? 'active' : '') + '" data-act="lspace" data-val="0.12" style="width:auto;padding:6px 9px;font-size:.72rem;">' + esc(t('flLsS')) + '</button>' +
+        '<button type="button" class="cli-btn ' + (c.lspace === 0.3 ? 'active' : '') + '" data-act="lspace" data-val="0.3" style="width:auto;padding:6px 9px;font-size:.72rem;">' + esc(t('flLsW')) + '</button>' +
+      '</div>';
+
+    const TYPE_LABELS = { name:t('tName'), subhead:t('tSubhead'), tagline:t('tTagline'), custom:t('tCustom'), line:t('flAddDiv') };
+    const typeName = TYPE_LABELS[c.type] || t('tCustom');
+    const iconText = c.type === 'line' ? '—' : esc(typeName.slice(0,2));
+
+    return '<div class="cli" data-id="' + c.id + '">' +
+      '<span class="cli-ic" title="' + esc(typeName) + '">' + iconText + '</span>' +
+      '<input type="text" class="cli-input" data-act="value" value="' + esc(c.value || '') + '" placeholder="' + (c.type === 'line' ? '———' : esc(typeName)) + '" ' + (c.type === 'line' ? 'disabled' : '') + '>' +
+      '<div class="cli-btns">' +
+        (layout === 'stack' && i > 0 && c.type !== 'line' ? '<button type="button" class="cli-btn ' + (c.inline ? 'active' : '') + '" data-act="inline-toggle" title="' + esc(t('flInline')) + '">⇄</button>' : '') +
+        '<button type="button" class="cli-btn" data-act="up" ' + (i === 0 ? 'disabled' : '') + ' title="' + esc(t('flMoveUp')) + '">▲</button>' +
+        '<button type="button" class="cli-btn" data-act="down" ' + (i === listLen - 1 ? 'disabled' : '') + ' title="' + esc(t('flMoveDown')) + '">▼</button>' +
+        '<button type="button" class="cli-btn danger" data-act="del" title="' + esc(t('flDelete')) + '">×</button>' +
+      '</div>' +
+      sizeRow + styleRows +
+      '</div>';
+  }
+
+  function renderFreeList(){
+    const wrap = byId('freeBoxWrap'); if (!wrap) return;
+    const boxes = state.front.boxes || [];
+    wrap.innerHTML = boxes.map((box, bi) => {
+      const layout = box.layout || 'stack', align = box.align || 'center', g = (box.gap != null ? box.gap : 6);
+      const collapsed = !!collapsedFreeBoxes[box.id];
+      const rows = (box.items || []).map((c, i) => renderItemRowF(c, i, box.items.length, layout)).join('');
+      return '<div class="box-card ' + (collapsed ? 'collapsed' : '') + '" data-box-id="' + box.id + '">' +
+        '<div class="box-head">' +
+          '<button type="button" class="cli-btn" data-box-act="toggle" style="width:24px;height:24px;font-size:.7rem;">' + (collapsed ? '▸' : '▾') + '</button>' +
+          '<span class="box-title">' + esc(t('flBox')) + ' ' + (bi + 1) + '</span>' +
+          (collapsed ? '' : posGridHtmlF(box.pos || 'middle-center', box.id)) +
+          '<div class="box-head-btns">' +
+            '<button type="button" class="cli-btn" data-box-act="up" ' + (bi === 0 ? 'disabled' : '') + '>▲</button>' +
+            '<button type="button" class="cli-btn" data-box-act="down" ' + (bi === boxes.length - 1 ? 'disabled' : '') + '>▼</button>' +
+            '<button type="button" class="cli-btn danger" data-box-act="del">×</button>' +
+          '</div>' +
+        '</div>' +
+        '<div class="box-body" ' + (collapsed ? 'style="display:none;"' : '') + '>' +
+          '<div class="fl-row" style="margin-bottom:8px;">' +
+            '<span class="mini-label fl-mini">' + esc(t('flLayout')) + '</span>' +
+            '<button type="button" class="cli-btn ' + (layout === 'stack' ? 'active' : '') + '" data-box-layout="stack" style="width:auto;padding:6px 10px;font-size:.74rem;">' + esc(t('flStack')) + '</button>' +
+            '<button type="button" class="cli-btn ' + (layout === 'row' ? 'active' : '') + '" data-box-layout="row" style="width:auto;padding:6px 10px;font-size:.74rem;">' + esc(t('flRow')) + '</button>' +
+            '<span class="mini-label fl-mini" style="margin-left:8px;">' + esc(t('flAlign')) + '</span>' +
+            '<button type="button" class="cli-btn ' + (align === 'left' ? 'active' : '') + '" data-box-align="left">⇤</button>' +
+            '<button type="button" class="cli-btn ' + (align === 'center' ? 'active' : '') + '" data-box-align="center">⇔</button>' +
+            '<button type="button" class="cli-btn ' + (align === 'right' ? 'active' : '') + '" data-box-align="right">⇥</button>' +
+          '</div>' +
+          '<div class="fl-row" style="margin-bottom:10px;">' +
+            '<span class="mini-label fl-mini" style="white-space:nowrap;">' + esc(t('flGap')) + '</span>' +
+            '<input type="range" class="range" data-box-gap min="-8" max="24" step="1" value="' + g + '" style="flex:1;">' +
+            '<span class="mini-label fl-mini" data-gap-pct style="min-width:36px;text-align:right;">' + g + 'px</span>' +
+          '</div>' +
+          '<div class="contact-list">' + rows + '</div>' +
+          '<div class="type-chips">' +
+            '<span class="mini-label fl-mini" style="width:100%;">' + esc(t('flAdd')) + '</span>' +
+            ITEM_TYPES.map(tt => {
+              const TL = { name:t('tName'), subhead:t('tSubhead'), tagline:t('tTagline'), custom:t('tCustom'), line:t('flAddDiv') };
+              return '<button type="button" class="type-chip" data-add-type="' + tt + '">' + esc(TL[tt]) + '</button>';
+            }).join('') +
+          '</div>' +
+        '</div>' +
+      '</div>';
+    }).join('');
+  }
+
+  function updateLayoutHint(){
+    const el = byId('layoutHint');
+    if (!el) return;
+    const { land } = cardDims();
+    const g = gridFor(state.count | 0, state.layout, land);
+    el.textContent = t('layoutGrid').replace('{cols}', g.cols).replace('{rows}', g.rows);
+  }
+
+  function syncControls(){
+    setSeg('segStyle', state.style);
+    setSeg('segOrient', state.orientation);
+    setSeg('segCount', state.count);
+    setSeg('segLayout', state.layout);
+    setSeg('segFill', state.fill);
+    setSeg('segShape', state.shape);
+    setSeg('segCorners', state.design.corners);
+    setSeg('segStampColor', state.design.stampColor);
+    setSeg('segRewardIco', state.rewardIco);
+    updateLayoutHint();
+    renderFreeList();
+    byId('chkReward').checked = !!state.rewardMark;
+    byId('rewardIcoWrap').style.display = state.rewardMark ? '' : 'none';
+    byId('inHeadline').value = state.headline;
+    byId('inTerms').value = state.terms;
+    byId('cAccent').value = state.design.accent;
+    byId('cPaper').value = state.design.paper;
+    byId('cInk').value = state.design.ink;
+    byId('selTitleFont').value = state.design.titleFont;
+    byId('selBodyFont').value = state.design.bodyFont;
+  }
+
+  function bindText(id, key){
+    byId(id).addEventListener('input', e => { state[key] = e.target.value; renderAll(); });
+  }
+  function bindColor(id, applyFn){
+    byId(id).addEventListener('input', e => { applyFn(e.target.value); renderAll(); });
+  }
+
+  // ---------- Library ----------
+  function loadLib(){ try { return JSON.parse(localStorage.getItem(LS_LIBRARY) || '[]'); } catch(e){ return []; } }
+  function saveLib(a){ try { localStorage.setItem(LS_LIBRARY, JSON.stringify(a)); } catch(e){} }
+  function setSaveStatus(msg){ byId('saveStatus').textContent = msg || ''; }
+  function fmtDate(ts){ try { return new Date(ts).toLocaleDateString(lang, { day:'numeric', month:'short' }); } catch(e){ return ''; } }
+
+  function renderLibrary(){
+    const list = byId('libraryList');
+    const lib = loadLib();
+    if (!lib.length){ list.innerHTML = '<div class="lib-empty">' + esc(t('libNone')) + '</div>'; return; }
+    list.innerHTML = lib.map((entry, i) =>
+      '<div class="lib-item" data-i="' + i + '">' +
+        '<div class="lib-info"><span class="lib-name">' + esc(entry.name) + '</span><span class="lib-date">' + fmtDate(entry.ts) + '</span></div>' +
+        '<div class="lib-btns">' +
+          '<button class="lib-btn" data-act="open" type="button">' + esc(t('libOpen')) + '</button>' +
+          '<button class="lib-btn danger" data-act="del" type="button">' + esc(t('libDelete')) + '</button>' +
+        '</div>' +
+      '</div>').join('');
+  }
+
+  function doSaveAs(){
+    const name = (prompt(t('saveAsPrompt'), state.bizName || '') || '').trim();
+    if (!name) return;
+    const lib = loadLib();
+    const existing = lib.findIndex(e => e.name.toLowerCase() === name.toLowerCase());
+    const entry = { name, ts: Date.now(), data: clone(state) };
+    if (existing >= 0){ if (!confirm(t('libConfirmReplace'))) return; lib[existing] = entry; }
+    else lib.push(entry);
+    saveLib(lib); renderLibrary(); setSaveStatus(t('saveStatusSaved'));
+  }
+
+  function doExport(){
+    const payload = { type:'lusidio-klippekort', version:1, data: clone(state) };
+    const safe = (state.bizName || 'klippekort').replace(/[^a-z0-9æøå\- ]/gi, '').trim().replace(/\s+/g, '-') || 'klippekort';
+    const blob = new Blob([JSON.stringify(payload, null, 2)], { type:'application/json' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob); a.download = 'lusidio-' + safe + '.json';
+    document.body.appendChild(a); a.click(); a.remove();
+    setSaveStatus(t('saveStatusExported'));
+  }
+
+  function doImport(file){
+    const reader = new FileReader();
+    reader.onload = () => {
+      try {
+        const obj = JSON.parse(reader.result);
+        if (!obj || !obj.data) throw new Error('bad');
+        applyData(obj.data); syncControls(); renderAll(); setSaveStatus(t('saveStatusImported'));
+      } catch(e){ setSaveStatus(t('saveStatusImportFail')); }
+    };
+    reader.readAsText(file);
+  }
+
+  // ---------- Language ----------
+  function applyLang(){
+    document.documentElement.lang = lang;
+    document.querySelectorAll('[data-i18n]').forEach(el => { el.textContent = t(el.getAttribute('data-i18n')); });
+    document.querySelectorAll('[data-i18n-ph]').forEach(el => { el.setAttribute('placeholder', t(el.getAttribute('data-i18n-ph'))); });
+    document.querySelectorAll('[data-i18n-title]').forEach(el => { el.setAttribute('title', t(el.getAttribute('data-i18n-title'))); });
+    updatePayLabels();
+    renderLibrary();
+    renderAll();
+  }
+
+  // ---------- Payment ----------
+  function updatePayLabels(){
+    // All three buttons always visible, like etiket: betal PDF, betal PNG, gratis med vandmærke.
+    // No state-dependent hiding — the watermark itself controls what gets baked into the file.
+  }
+  function setStatus(msg){ byId('payStatus').textContent = msg || ''; }
+
+  async function startPaidDownload(kind){
+    // If already unlocked (via code or returned-from-payment), skip checkout and download directly clean.
+    if (unlocked || codeActive){ doDownload(kind); return; }
+    try { localStorage.setItem('klippekort_pending_dl_v1', kind); } catch(e){}
+    setStatus(t('stPayStart'));
+    try {
+      const res = await fetch('/api/create-checkout-session', {
+        method:'POST', headers:{ 'Content-Type':'application/json' },
+        body: JSON.stringify({ product:'klippekort', returnPath: window.location.pathname })
+      });
+      if (!res.ok) throw new Error('server');
+      const data = await res.json();
+      if (data && data.url){ window.location.href = data.url; return; }
+      throw new Error('no url');
+    } catch(e){ setStatus(t('stPayFail')); }
+  }
+
+  function applyCode(){
+    const v = (byId('codeInput').value || '').trim();
+    if (!TEMP_CODES.includes(v)){ setStatus(t('codeInvalid')); return; }
+    let used = [];
+    try { used = JSON.parse(localStorage.getItem(LS_CODES) || '[]'); } catch(e){}
+    if (used.includes(v)){ setStatus(t('codeUsed')); return; }
+    used.push(v);
+    try { localStorage.setItem(LS_CODES, JSON.stringify(used)); } catch(e){}
+    codeActive = true; updatePayLabels(); renderAll(); setStatus(t('codeApplied'));
+  }
+
+  // ---------- Download (PDF / PNG) ----------
+  async function renderFace(cardEl){
+    const prevTransform = cardEl.style.transform;
+    cardEl.style.transform = 'none';
+    // Strip the watermark from the capture ONLY if the user has paid / used a code.
+    // Free downloads should bake the watermark into the file (like etiket).
+    const wm = cardEl.querySelector('.lc-wm');
+    const free = unlocked || codeActive;
+    if (wm && free) wm.style.display = 'none';
+    const canvas = await html2canvas(cardEl, { scale: 3, backgroundColor: null, useCORS: true });
+    if (wm && free) wm.style.display = '';
+    cardEl.style.transform = prevTransform;
+    return canvas;
+  }
+
+  async function downloadPDF(){
+    const { land } = cardDims();
+    const { jsPDF } = window.jspdf;
+    // credit-card 85.6 × 54 mm
+    const w = land ? 85.6 : 54, h = land ? 54 : 85.6;
+    const pdf = new jsPDF({ orientation: land ? 'landscape' : 'portrait', unit:'mm', format:[w, h] });
+    const front = await renderFace(byId('cardFront'));
+    pdf.addImage(front.toDataURL('image/png'), 'PNG', 0, 0, w, h);
+    pdf.addPage([w, h], land ? 'landscape' : 'portrait');
+    const back = await renderFace(byId('cardBack'));
+    pdf.addImage(back.toDataURL('image/png'), 'PNG', 0, 0, w, h);
+    pdf.save('lusidio-klippekort.pdf');
+  }
+
+  async function downloadPNG(){
+    const front = await renderFace(byId('cardFront'));
+    const back = await renderFace(byId('cardBack'));
+    const gap = 24;
+    const cw = Math.max(front.width, back.width);
+    const out = document.createElement('canvas');
+    out.width = cw;
+    out.height = front.height + gap + back.height;
+    const ctx = out.getContext('2d');
+    ctx.drawImage(front, (cw - front.width) / 2, 0);
+    ctx.drawImage(back, (cw - back.width) / 2, front.height + gap);
+    const a = document.createElement('a');
+    a.href = out.toDataURL('image/png'); a.download = 'lusidio-klippekort.png';
+    document.body.appendChild(a); a.click(); a.remove();
+  }
+
+  function relock(){
+    codeActive = false; unlocked = false; updatePayLabels(); renderAll();
+  }
+  function doDownload(kind){
+    const after = () => setTimeout(relock, 600);
+    if (kind === 'png'){ downloadPNG().finally(after); }
+    else { downloadPDF().finally(after); }
+  }
+
+  // ---------- Side switching ----------
+  function setSide(side){
+    document.body.setAttribute('data-mside', side);
+    document.querySelectorAll('.side-switch-mobile button').forEach(b => b.classList.toggle('active', b.dataset.side === side));
+    applyCardScale();
+  }
+
+  // ---------- Init ----------
+  function init(){
+    // Fonts into selects
+    FONTS_TITLE.forEach(f => { const o = document.createElement('option'); o.value = f.css; o.textContent = f.name; byId('selTitleFont').appendChild(o); });
+    FONTS_BODY.forEach(f => { const o = document.createElement('option'); o.value = f.css; o.textContent = f.name; byId('selBodyFont').appendChild(o); });
+
+    // Restore language
+    try { const sl = localStorage.getItem(LS_LANG); if (sl && I18N[sl]) lang = sl; } catch(e){}
+    byId('langSel').value = lang;
+
+    // Restore autosave
+    try { const sv = JSON.parse(localStorage.getItem(LS_SAVE) || 'null'); if (sv) applyData(sv); } catch(e){}
+
+    // Optional template via URL
+    try {
+      const tpl = new URLSearchParams(location.search).get('template');
+      if (tpl && CARD_TEMPLATES[tpl]){ applyData(clone(CARD_TEMPLATES[tpl])); }
+    } catch(e){}
+
+    // Returned-from-payment?
+    try {
+      const qs = new URLSearchParams(location.search);
+      if (qs.get('betalt') || qs.get('paid')){
+        unlocked = true;
+        const pend = localStorage.getItem('klippekort_pending_dl_v1') || 'pdf';
+        updatePayLabels();
+        setStatus(t('stDone'));
+        setTimeout(() => doDownload(pend), 400);
+        history.replaceState(null, '', window.location.pathname);
+      } else if (qs.get('afbrudt') || qs.get('canceled')){
+        setStatus(t('stCancel'));
+        history.replaceState(null, '', window.location.pathname);
+      }
+    } catch(e){}
+
+    // Wire segments
+    bindSeg('segStyle', v => applyStyle(v));
+    bindSeg('segOrient', v => { state.orientation = v; });
+    bindSeg('segCount', v => { state.count = v | 0; });
+    bindSeg('segLayout', v => { state.layout = v; });
+    bindSeg('segFill', v => { state.fill = v; });
+    bindSeg('segShape', v => { state.shape = v; });
+    bindSeg('segCorners', v => { state.design.corners = v; });
+    bindSeg('segStampColor', v => { state.design.stampColor = v; });
+    bindSeg('segRewardIco', v => { state.rewardIco = v; });
+
+    byId('chkReward').addEventListener('change', e => { state.rewardMark = e.target.checked; syncControls(); renderAll(); });
+
+    // Text inputs
+    bindText('inHeadline', 'headline');
+    bindText('inTerms', 'terms');
+
+    // ---------- Box editor handlers (porteret fra etiket) ----------
+    const freeWrap = byId('freeBoxWrap');
+    const findFreeBox = el => {
+      const card = el.closest('[data-box-id]'); if (!card) return null;
+      return (state.front.boxes || []).find(b => b.id === +card.dataset.boxId) || null;
+    };
+    freeWrap.addEventListener('input', e => {
+      const box = findFreeBox(e.target); if (!box) return;
+      if (e.target.matches('[data-box-gap]')){
+        box.gap = +e.target.value;
+        const lbl = e.target.parentElement.querySelector('[data-gap-pct]'); if (lbl) lbl.textContent = box.gap + 'px';
+        buildFront(); applyCardScale(); scheduleSave(); return;
+      }
+      const cli = e.target.closest('.cli'); if (!cli) return;
+      const it = (box.items || []).find(x => x.id === +cli.dataset.id); if (!it) return;
+      const act = e.target.dataset.act;
+      if (act === 'value'){ it.value = e.target.value; buildFront(); applyCardScale(); scheduleSave(); }
+      else if (act === 'size'){
+        it.size = (+e.target.value) / 100;
+        const lbl = cli.querySelector('[data-size-pct]'); if (lbl) lbl.textContent = e.target.value + '%';
+        buildFront(); applyCardScale(); scheduleSave();
+      }
+    });
+    freeWrap.addEventListener('click', e => {
+      const posBtn = e.target.closest('.pos-grid [data-pos]');
+      const box = findFreeBox(e.target);
+      if (posBtn && box){ box.pos = posBtn.dataset.pos; renderFreeList(); renderAll(); return; }
+      if (!box) return;
+      const alignBtn = e.target.closest('[data-box-align]');
+      if (alignBtn){ box.align = alignBtn.dataset.boxAlign; renderFreeList(); renderAll(); return; }
+      const layoutBtn = e.target.closest('[data-box-layout]');
+      if (layoutBtn){ box.layout = layoutBtn.dataset.boxLayout; renderFreeList(); renderAll(); return; }
+      const addType = e.target.closest('[data-add-type]');
+      if (addType){ box.items.push(newItem(box, addType.dataset.addType)); renderFreeList(); renderAll(); return; }
+      const boxAct = e.target.closest('[data-box-act]');
+      if (boxAct){
+        const a = boxAct.dataset.boxAct;
+        const arr = state.front.boxes; const bi = arr.indexOf(box);
+        if (a === 'toggle'){ collapsedFreeBoxes[box.id] = !collapsedFreeBoxes[box.id]; }
+        else if (a === 'up' && bi > 0){ arr.splice(bi, 1); arr.splice(bi - 1, 0, box); }
+        else if (a === 'down' && bi < arr.length - 1){ arr.splice(bi, 1); arr.splice(bi + 1, 0, box); }
+        else if (a === 'del'){ arr.splice(bi, 1); }
+        renderFreeList(); renderAll(); return;
+      }
+      const actBtn = e.target.closest('[data-act]'); if (!actBtn) return;
+      const cli = e.target.closest('.cli'); if (!cli) return;
+      const items = box.items || []; const ii = items.findIndex(x => x.id === +cli.dataset.id);
+      const it = items[ii]; if (!it) return;
+      const act = actBtn.dataset.act;
+      if (act === 'size-preset') it.size = (+actBtn.dataset.val) / 100;
+      else if (act === 'style-reset'){ it.bold = false; it.thin = false; it.italic = false; }
+      else if (act === 'style-bold'){ it.bold = !it.bold; if (it.bold) it.thin = false; }
+      else if (act === 'style-thin'){ it.thin = !it.thin; if (it.thin) it.bold = false; }
+      else if (act === 'style-italic') it.italic = !it.italic;
+      else if (act === 'style-accent'){ it.accent = !it.accent; if (it.accent) it.dim = false; }
+      else if (act === 'style-dim'){ it.dim = !it.dim; if (it.dim) it.accent = false; }
+      else if (act === 'wrap-yes') it.wrap = true;
+      else if (act === 'wrap-no') it.wrap = false;
+      else if (act === 'lspace') it.lspace = +actBtn.dataset.val;
+      else if (act === 'inline-toggle') it.inline = !it.inline;
+      else if (act === 'up' && ii > 0){ items.splice(ii, 1); items.splice(ii - 1, 0, it); }
+      else if (act === 'down' && ii < items.length - 1){ items.splice(ii, 1); items.splice(ii + 1, 0, it); }
+      else if (act === 'del') items.splice(ii, 1);
+      else return;
+      renderFreeList(); renderAll();
+    });
+    byId('freeAddBox').addEventListener('click', () => {
+      state.front.boxes.push({ id: state.front.nextBoxId++, pos:'middle-center', align:'center', layout:'stack', gap:6, nextItemId:1, items:[] });
+      renderFreeList(); renderAll();
+    });
+
+    // Colors
+    bindColor('cAccent', v => state.design.accent = v);
+    bindColor('cPaper', v => state.design.paper = v);
+    bindColor('cInk', v => state.design.ink = v);
+    byId('selTitleFont').addEventListener('change', e => { state.design.titleFont = e.target.value; renderAll(); });
+    byId('selBodyFont').addEventListener('change', e => { state.design.bodyFont = e.target.value; renderAll(); });
+
+    // Library buttons
+    byId('saveAsBtn').addEventListener('click', doSaveAs);
+    byId('exportBtn').addEventListener('click', doExport);
+    byId('importBtn').addEventListener('click', () => byId('importInput').click());
+    byId('libraryList').addEventListener('click', e => {
+      const btn = e.target.closest('.lib-btn'); if (!btn) return;
+      const item = btn.closest('.lib-item'); if (!item) return;
+      const i = +item.dataset.i;
+      const arr = loadLib(); const entry = arr[i]; if (!entry) return;
+      if (btn.dataset.act === 'open'){
+        applyData(entry.data); syncControls(); renderAll(); setSaveStatus('');
+      } else if (btn.dataset.act === 'del'){
+        if (!confirm(t('libConfirmDelete'))) return;
+        arr.splice(i, 1); saveLib(arr); renderLibrary(); setSaveStatus(t('saveStatusDeleted'));
+      }
+    });
+    byId('importInput').addEventListener('change', e => { if (e.target.files[0]) doImport(e.target.files[0]); e.target.value = ''; });
+
+    // Payment buttons
+    byId('pdfBtn').addEventListener('click', () => startPaidDownload('pdf'));
+    byId('pngBtn').addEventListener('click', () => startPaidDownload('png'));
+    byId('freeBtn').addEventListener('click', () => doDownload('pdf'));
+    byId('codeBtn').addEventListener('click', applyCode);
+
+    // Reset all (match etiket: confirm, clear save, reset to defaults)
+    byId('resetBtn').addEventListener('click', () => {
+      if (!confirm(t('confirmReset'))) return;
+      try { localStorage.removeItem(LS_SAVE); } catch(e){}
+      state = clone(DEFAULTS);
+      collapsedFreeBoxes && Object.keys(collapsedFreeBoxes).forEach(k => delete collapsedFreeBoxes[k]);
+      syncControls(); renderAll();
+      setSaveStatus(t('saveStatusReset'));
+    });
+
+    // Side tabs
+    document.querySelectorAll('.side-switch-mobile button').forEach(b => {
+      b.addEventListener('click', () => setSide(b.dataset.side));
+    });
+
+    // Language
+    byId('langSel').addEventListener('change', e => {
+      lang = e.target.value;
+      try { localStorage.setItem(LS_LANG, lang); } catch(ex){}
+      applyLang();
+    });
+
+    // Resize / rotation
+    window.addEventListener('resize', scheduleCardScale);
+    window.addEventListener('orientationchange', scheduleCardScale);
+    if (window.visualViewport) window.visualViewport.addEventListener('resize', scheduleCardScale);
+
+    syncControls();
+    applyLang();
+    updatePayLabels();
+    setSaveStatus(t('saveStatusInit'));
+  }
+
+  // Templates reached via ?template=… from the homepage previews.
+  // Each captures EXACTLY what the homepage preview shows: design colours, fonts,
+  // front-side text boxes, stamp count and reward icon.
+  const CARD_TEMPLATES = {
+    // "Klassisk café" — Annes Bageri / Kaffeklub, terracotta accent, star reward, 10 felter
+    elegant: {
+      style:'elegant', orientation:'landscape',
+      headline:'Saml 10 — få den 10. kaffe gratis',
+      terms:'Gælder kun ved køb af kaffe. Kan ikke ombyttes til kontanter.',
+      count:10, layout:'auto', fill:'empty', shape:'circle',
+      rewardMark:true, rewardIco:'star',
+      design:{ accent:'#b5542a', paper:'#fbf6ec', ink:'#2c2620', titleFont:'Fraunces', bodyFont:'EB Garamond', corners:'soft', stampColor:'accent' },
+      front:{
+        boxes:[
+          { id:1, pos:'middle-center', align:'center', layout:'stack', gap:8, nextItemId:4, items:[
+            { id:1, type:'name',    value:'Annes Bageri', size:1.9, bold:true,  wrap:true },
+            { id:2, type:'line',    value:'', size:1.0 },
+            { id:3, type:'tagline', value:'Kaffeklub',    size:1.0, italic:true, wrap:true }
+          ]}
+        ],
+        nextBoxId:2
+      }
+    },
+    // "Mørk & moderne" — Studio Nord, dark gradient, gold accents, GRATIS reward, 8 felter
+    dark: {
+      style:'dark', orientation:'landscape',
+      headline:'Saml 8 — få den 8. klipning gratis',
+      terms:'Et stempel pr. besøg. Kan ikke ombyttes til kontanter.',
+      count:8, layout:'auto', fill:'empty', shape:'rounded',
+      rewardMark:true, rewardIco:'free',
+      design:{ accent:'#caa15a', paper:'#1f2528', ink:'#f4ead8', titleFont:'Bebas Neue', bodyFont:'Jost', corners:'soft', stampColor:'accent' },
+      front:{
+        boxes:[
+          { id:1, pos:'bottom-left', align:'left', layout:'stack', gap:4, nextItemId:3, items:[
+            { id:1, type:'tagline', value:'Frisør · Salon', size:.7, lspace:.18, wrap:true, accent:true },
+            { id:2, type:'name',    value:'Studio Nord',    size:2.0, bold:true,  wrap:true }
+          ]}
+        ],
+        nextBoxId:2
+      }
+    },
+    // "Moderne & minimal" — Kage & Co., creme, hjerte reward, 6 felter
+    modern: {
+      style:'modern', orientation:'landscape',
+      headline:'Saml 6 — få den 6. på huset',
+      terms:'Et stempel pr. besøg.',
+      count:6, layout:'auto', fill:'empty', shape:'square',
+      rewardMark:true, rewardIco:'heart',
+      design:{ accent:'#1a1a1a', paper:'#fdf9f0', ink:'#1a1a1a', titleFont:'Jost', bodyFont:'Jost', corners:'soft', stampColor:'ink' },
+      front:{
+        boxes:[
+          { id:1, pos:'middle-left', align:'left', layout:'stack', gap:4, nextItemId:4, items:[
+            { id:1, type:'tagline', value:'Loyalitet',  size:.55, lspace:.3, wrap:true, dim:true },
+            { id:2, type:'name',    value:'Kage & Co.', size:1.5, thin:true, wrap:true },
+            { id:3, type:'tagline', value:'Saml 6 stempler · få en på huset', size:.7, wrap:true, dim:true }
+          ]}
+        ],
+        nextBoxId:2
+      }
+    }
+  };
+
+  document.addEventListener('DOMContentLoaded', init);
+</script>
+</body>
+</html>
