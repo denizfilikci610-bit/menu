@@ -1,0 +1,3806 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lusidio – professionelle menukort, visitkort og etiketter på minutter</title>
+<meta name="description" content="Lusidio lader dig lave flotte menukort, visitkort og fødevareetiketter på få minutter — uden grafiker og uden designprogrammer. Skriv dine oplysninger, vælg en stil, og hent en printklar PDF.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,600;1,400;1,600&family=Jost:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Bebas+Neue&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#ece3d2; --panel:#fbf7ef; --ink:#2c2620; --muted:#8c8275;
+    --line:#e2d8c6; --accent:#b5542a; --accent-d:#963f1f; --field:#fffdf8;
+  }
+  *{ box-sizing:border-box; }
+  html,body{ margin:0; padding:0; }
+  body{
+    font-family:'Jost',sans-serif; color:var(--ink); min-height:100vh;
+    line-height:1.55; -webkit-font-smoothing:antialiased;
+    background:var(--bg);
+    overflow-x:hidden; /* beskyttelse mod horisontal overflow */
+  }
+  button{ -webkit-tap-highlight-color:transparent; font-family:inherit; }
+
+  /* ====== Smart wrapping — undgår ord-orphans ====== */
+  .hero-title-v2, .hero-lead-v2,
+  .how-title, .how-sub,
+  .why-title, .why-sub,
+  .about-title, .about-text,
+  .faq-title, .faq-q,
+  .final-title, .final-sub,
+  .how-step-title, .how-step-desc,
+  .stat-label,
+  .section-title, .section-sub{
+    text-wrap:balance;
+  }
+  .hero-lead-v2, .how-step-desc, .about-text, .final-sub{
+    text-wrap:pretty; /* bedre til længere tekster — undgår enlige sidste-linje ord */
+  }
+  /* Hold "hjemmelavet ud?" sammen så ud? aldrig ender alene */
+  .nobr{ white-space:nowrap; }
+
+  .lang-bar{ position:absolute; top:22px; right:24px; display:flex; gap:4px; z-index:10; }
+  .lang-btn{
+    border:1px solid var(--line); background:var(--field); color:var(--muted);
+    font-size:.78rem; font-weight:600; letter-spacing:.03em;
+    padding:6px 10px; border-radius:8px; cursor:pointer; transition:all .15s;
+  }
+  .lang-btn:hover{ color:var(--ink); border-color:var(--accent); }
+  .lang-btn.active{ background:var(--accent); color:#fff; border-color:var(--accent); }
+
+  .wrap{ max-width:1100px; margin:0 auto; padding:60px 24px 80px; text-align:center; }
+
+  .brand{ display:inline-flex; align-items:center; gap:10px; margin-bottom:32px; }
+  .brand-name{ font-family:'Fraunces',serif; font-weight:600; font-style:italic; font-size:1.85rem; color:var(--ink); }
+  .brand-dot{ width:10px; height:10px; border-radius:50%; background:var(--accent); }
+
+  .hero-title{ font-family:'Fraunces',serif; font-weight:600; font-size:3rem; line-height:1.1; color:var(--ink); margin:0 0 20px; max-width:780px; margin-left:auto; margin-right:auto; }
+  .hero-lead{ font-size:1.15rem; line-height:1.55; color:var(--muted); margin:0 auto 14px; max-width:620px; }
+  .quick-nav{ display:flex; justify-content:center; gap:14px; flex-wrap:wrap; margin:0 auto 50px; }
+  .qn-btn{
+    display:inline-block; padding:13px 32px; border-radius:999px;
+    background:var(--accent); color:#fff; text-decoration:none;
+    font-family:'Jost',sans-serif; font-weight:600; font-size:1.02rem; letter-spacing:.02em;
+    box-shadow:0 8px 20px rgba(181,84,42,.22); transition:all .18s;
+  }
+  .qn-btn:hover{ background:var(--accent-d); transform:translateY(-2px); box-shadow:0 14px 28px rgba(181,84,42,.3); }
+
+  /* Product section */
+  .product-section{ margin-bottom:62px; }
+  .section-head{ display:flex; flex-direction:column; align-items:center; gap:8px; margin-bottom:30px; }
+  .section-title{ font-family:'Fraunces',serif; font-weight:600; font-size:1.95rem; color:var(--ink); margin:0; }
+  .section-sub{ font-size:1rem; color:var(--muted); margin:0; max-width:560px; }
+  .section-price{
+    margin-top:6px; font-size:.84rem; font-weight:600; color:var(--accent-d);
+    background:#fff7f1; border:1px solid rgba(181,84,42,.25);
+    padding:5px 13px; border-radius:999px;
+  }
+
+  /* Template grid */
+  .templates{
+    display:grid; grid-template-columns:repeat(3, minmax(0, 1fr)); gap:22px;
+    width:100%; max-width:980px; margin:0 auto;
+  }
+  .template{
+    background:linear-gradient(170deg, #fffdf8 0%, var(--panel) 100%);
+    border:1px solid rgba(255,255,255,.6);
+    border-radius:22px;
+    padding:20px; cursor:pointer;
+    transition:transform .4s cubic-bezier(.22,.61,.36,1), box-shadow .4s cubic-bezier(.22,.61,.36,1), border-color .25s;
+    display:flex; flex-direction:column; gap:15px;
+    text-decoration:none; color:inherit;
+    box-shadow:0 4px 14px rgba(60,40,22,.06), inset 0 1px 0 rgba(255,255,255,.7);
+  }
+  .template:hover{
+    border-color:rgba(181,84,42,.3);
+    box-shadow:0 16px 40px -18px rgba(60,40,22,.20), inset 0 1px 0 rgba(255,255,255,.8);
+  }
+  .template-preview{
+    width:100%; aspect-ratio:16/10; border-radius:13px; overflow:hidden;
+    background:#fff; position:relative;
+    box-shadow:
+      0 1px 2px rgba(60,40,22,.10),
+      0 8px 20px -6px rgba(60,40,22,.22),
+      inset 0 0 0 1px rgba(0,0,0,.05);
+    transition:box-shadow .4s cubic-bezier(.22,.61,.36,1), transform .4s cubic-bezier(.22,.61,.36,1);
+  }
+  /* Subtil diagonal glans henover papiret */
+  .template-preview::after{
+    content:''; position:absolute; inset:0; z-index:3;
+    background:linear-gradient(115deg, transparent 0%, transparent 38%, rgba(255,255,255,.16) 48%, transparent 58%, transparent 100%);
+    background-size:250% 250%;
+    background-position:100% 100%;
+    opacity:0; pointer-events:none;
+    transition:opacity .4s, background-position .8s cubic-bezier(.22,.61,.36,1);
+  }
+  .template:hover .template-preview{
+    transform:translateY(-2px) scale(1.012);
+    box-shadow:
+      0 2px 4px rgba(60,40,22,.12),
+      0 22px 44px -10px rgba(60,40,22,.34),
+      inset 0 0 0 1px rgba(0,0,0,.05);
+  }
+  .template:hover .template-preview::after{
+    opacity:1; background-position:0% 0%;
+  }
+  /* Visitkort preview er ca. 1.55:1 (85x55mm) */
+  .template-preview.bcard{ aspect-ratio:1.55/1; }
+  .template-name{ font-family:'Fraunces',serif; font-weight:600; font-size:1.18rem; color:var(--ink); margin:0; text-align:center; transition:color .25s; }
+  .template:hover .template-name{ color:var(--accent-d); }
+  .template-desc{ font-size:.86rem; color:var(--muted); margin:0; text-align:center; line-height:1.4; }
+  .template-cta{ margin-top:auto; font-size:.88rem; font-weight:600; color:var(--accent); text-align:center; padding-top:4px; transition:transform .25s cubic-bezier(.22,.61,.36,1); }
+  .template:hover .template-cta{ color:var(--accent-d); transform:translateX(3px); }
+
+  /* === Menu card previews === */
+  .mp{ width:100%; height:100%; padding:14px 16px; display:flex; flex-direction:column; gap:6px; overflow:hidden; }
+  /* Klassisk café (cream + brun) */
+  .mp.classic-cafe{ background:#fbf6ec; color:#3a2a1c; font-family:'Fraunces',serif; }
+  .mp.classic-cafe .h{ font-size:.78rem; font-style:italic; font-weight:600; letter-spacing:.08em; text-transform:uppercase; color:#b5542a; text-align:center; }
+  .mp.classic-cafe .t{ font-size:1.25rem; font-weight:600; text-align:center; margin:2px 0 6px; }
+  .mp.classic-cafe .ln{ display:flex; justify-content:space-between; align-items:baseline; font-size:.55rem; gap:8px; font-family:'Jost',sans-serif; }
+  .mp.classic-cafe .ln b{ font-weight:600; font-family:'Fraunces',serif; }
+  .mp.classic-cafe .ln .dots{ flex:1; border-bottom:1.2px dotted #b5542a; transform:translateY(-3px); opacity:.6; }
+  .mp.classic-cafe .ln .price{ font-weight:600; color:#b5542a; }
+
+  /* Moderne minimalistisk (hvid + sort, sans) */
+  .mp.modern-min{ background:#ffffff; color:#1a1a1a; font-family:'Jost',sans-serif; padding:18px 18px; }
+  .mp.modern-min .h{ font-size:.6rem; font-weight:500; letter-spacing:.32em; text-transform:uppercase; color:#888; text-align:left; }
+  .mp.modern-min .t{ font-size:1.55rem; font-weight:300; letter-spacing:.01em; text-align:left; margin:4px 0 10px; line-height:1; }
+  .mp.modern-min .grid2{ display:grid; grid-template-columns:1fr 1fr; gap:10px 14px; }
+  .mp.modern-min .it{ display:flex; flex-direction:column; gap:1px; }
+  .mp.modern-min .it .nm{ font-size:.58rem; font-weight:500; }
+  .mp.modern-min .it .pr{ font-size:.55rem; color:#888; font-weight:400; }
+
+  /* Mørk & fancy (mørk baggrund + guld) */
+  .mp.dark-fancy{ background:linear-gradient(135deg,#1d1612 0%, #2a1f17 100%); color:#f4e6cc; font-family:'Playfair Display',serif; padding:14px 18px; }
+  .mp.dark-fancy .h{ font-size:.62rem; letter-spacing:.3em; text-transform:uppercase; color:#caa15a; text-align:center; font-family:'Jost',sans-serif; font-weight:500; }
+  .mp.dark-fancy .t{ font-size:1.32rem; font-weight:400; font-style:italic; text-align:center; margin:0 0 4px; color:#f6e3b9; }
+  .mp.dark-fancy .div{ width:30px; height:1px; background:#caa15a; margin:2px auto 6px; opacity:.7; }
+  .mp.dark-fancy .ln{ display:flex; justify-content:space-between; align-items:baseline; font-size:.6rem; font-family:'Jost',sans-serif; font-weight:300; }
+  .mp.dark-fancy .ln .price{ color:#caa15a; font-weight:500; }
+
+  /* === Business card previews === */
+  .bp{ width:100%; height:100%; padding:14px 18px; display:flex; overflow:hidden; position:relative; }
+  /* Klassisk (cream + terracotta) */
+  .bp.bc-classic{ background:#fbf6ec; color:#2c2620; font-family:'Fraunces',serif; flex-direction:column; justify-content:center; align-items:flex-start; }
+  .bp.bc-classic .nm{ font-size:1.2rem; font-weight:600; line-height:1; margin-bottom:2px; }
+  .bp.bc-classic .tt{ font-size:.55rem; color:#8c8275; font-style:italic; margin-bottom:6px; font-family:'Jost',sans-serif; font-style:normal; letter-spacing:.04em; }
+  .bp.bc-classic .accent{ width:24px; height:2px; background:#b5542a; margin-bottom:6px; }
+  .bp.bc-classic .co{ font-size:.6rem; color:#b5542a; font-weight:600; letter-spacing:.06em; text-transform:uppercase; font-family:'Jost',sans-serif; }
+  .bc-contact{ display:flex; flex-direction:column; gap:1px; margin-top:8px; font-family:'Jost',sans-serif; font-size:.5rem; color:#8c8275; letter-spacing:.02em; }
+  .bc-contact.craft{ color:#cbd9c8; position:relative; z-index:1; margin-top:7px; }
+
+  /* Moderne sort/hvid */
+  .bp.bc-bold{ background:#0a0a0a; color:#fff; font-family:'Bebas Neue',sans-serif; flex-direction:column; justify-content:space-between; padding:16px 20px; }
+  .bp.bc-bold .top{ font-size:.55rem; letter-spacing:.4em; color:#999; font-family:'Jost',sans-serif; font-weight:500; }
+  .bp.bc-bold .nm{ font-size:1.7rem; line-height:1; letter-spacing:.04em; }
+  .bp.bc-bold .bottom{ font-size:.55rem; color:#aaa; font-family:'Jost',sans-serif; letter-spacing:.04em; font-weight:400; }
+
+  /* Farverig håndværker (terra + grøn-accent) */
+  .bp.bc-craft{ background:linear-gradient(135deg, #2d4a3e 0%, #1f3a2e 100%); color:#fefae0; font-family:'Jost',sans-serif; flex-direction:column; justify-content:center; padding:16px 20px; position:relative; }
+  .bp.bc-craft::before{ content:''; position:absolute; right:0; top:0; bottom:0; width:34%; background:linear-gradient(135deg, #d4a574 0%, #b8895c 100%); clip-path:polygon(100% 0, 100% 100%, 0 100%); }
+  .bp.bc-craft .nm{ font-size:1.05rem; font-weight:700; letter-spacing:.02em; line-height:1.1; margin-bottom:3px; position:relative; z-index:1; }
+  .bp.bc-craft .tt{ font-size:.55rem; color:#cbd9c8; text-transform:uppercase; letter-spacing:.16em; font-weight:500; position:relative; z-index:1; }
+
+  /* === Label previews === */
+  .template-preview.label{ aspect-ratio:1.5/1; }
+  .lp{ width:100%; height:100%; padding:12px 16px; display:flex; flex-direction:column; overflow:hidden; }
+  /* Klassisk glas (creme) */
+  .lp.lb-jam{ background:#fdfaf2; color:#3a2f23; font-family:'Fraunces',serif; align-items:center; justify-content:center; text-align:center; gap:3px; position:relative; }
+  .lp.lb-jam::before{ content:''; position:absolute; inset:9px; border:1px solid rgba(181,84,42,.28); border-radius:7px; pointer-events:none; }
+  .lp.lb-jam .ov{ font-size:.5rem; letter-spacing:.3em; text-transform:uppercase; color:#b5542a; font-family:'Jost',sans-serif; font-weight:600; position:relative; }
+  .lp.lb-jam .nm{ font-size:1.28rem; font-weight:600; line-height:1.1; position:relative; }
+  .lp.lb-jam .tg{ font-size:.62rem; font-style:italic; color:#6b6155; position:relative; }
+  .lp.lb-jam .bt{ margin-top:9px; font-size:.58rem; font-family:'Jost',sans-serif; font-weight:500; position:relative; }
+  .lp.lb-jam .pr{ font-size:.48rem; letter-spacing:.16em; text-transform:uppercase; color:#8a7f6e; font-family:'Jost',sans-serif; position:relative; }
+  /* Mørk & moderne */
+  .lp.lb-dark{ background:linear-gradient(150deg,#2d4a2b,#1d3a1e); color:#f4ead8; font-family:'Jost',sans-serif; align-items:center; justify-content:center; text-align:center; gap:3px; position:relative; }
+  .lp.lb-dark::before{ content:''; position:absolute; inset:9px; border:1px solid rgba(232,176,75,.4); border-radius:7px; pointer-events:none; }
+  .lp.lb-dark .ov{ font-size:.5rem; letter-spacing:.34em; text-transform:uppercase; color:#e8b04b; font-weight:600; position:relative; }
+  .lp.lb-dark .nm{ font-size:1.6rem; font-weight:700; line-height:1; font-family:'Fraunces',serif; position:relative; }
+  .lp.lb-dark .tg{ font-size:.6rem; color:#cfdcc4; position:relative; }
+  .lp.lb-dark .pr{ margin-top:9px; font-size:.5rem; letter-spacing:.14em; text-transform:uppercase; color:#b9c9ad; position:relative; }
+  /* For/bag-flip ved hover */
+  .template-preview.label{ position:relative; }
+  .template-preview.label .side-front,
+  .template-preview.label .side-back{ position:absolute; inset:0; transition:opacity .28s ease; }
+  .template-preview.label .side-back{ opacity:0; }
+  .template:hover .template-preview.label .side-back{ opacity:1; }
+  .template:hover .template-preview.label .side-front{ opacity:0; }
+  .flip-hint{ font-size:.82rem; color:var(--accent-d); margin:8px 0 0; text-align:center; }
+  @media (hover:none){ .flip-hint{ display:none; } }
+  /* Minimal med dobbeltramme (cookies) */
+  .lp.lb-cookie{ background:#fffdf8; color:#3a2f23; font-family:'Fraunces',serif; align-items:center; justify-content:center; text-align:center; gap:3px; border:3px double #3a2f23; }
+  .lp.lb-cookie .ov{ font-size:.48rem; letter-spacing:.3em; text-transform:uppercase; color:#b5542a; font-family:'Jost',sans-serif; font-weight:600; }
+  .lp.lb-cookie .nm{ font-size:1.05rem; font-weight:600; line-height:1.1; }
+  .lp.lb-cookie .acc{ width:22px; height:2px; background:#b5542a; margin:3px 0; }
+  .lp.lb-cookie .tg{ font-size:.6rem; font-style:italic; color:#6b6155; }
+  .lp.lb-cookie .pr{ margin-top:7px; font-size:.5rem; letter-spacing:.14em; text-transform:uppercase; color:#8a7f6e; font-family:'Jost',sans-serif; }
+  /* Deklarations-bagside */
+  .lp.lb-decl{ background:#fbf7ee; color:#2c2620; font-family:'Jost',sans-serif; gap:2px; padding:11px 14px; text-align:left; }
+  .lp.lb-decl .vb{ font-family:'Fraunces',serif; font-weight:600; font-size:.72rem; margin-bottom:1px; }
+  .lp.lb-decl .row{ font-size:.46rem; line-height:1.35; color:#3a342c; }
+  .lp.lb-decl .row b{ font-weight:600; }
+  .lp.lb-decl .nt{ margin-top:4px; font-size:.5rem; font-weight:600; border-bottom:1px solid rgba(44,38,32,.55); padding-bottom:2px; }
+  .lp.lb-decl .nr{ display:flex; justify-content:space-between; font-size:.45rem; border-bottom:1px solid rgba(44,38,32,.16); padding:1.5px 0; }
+
+  /* === Loyalty card previews (klippekort) === */
+  /* Credit-card ratio 85.6×54 mm ≈ 1.58:1 */
+  .template-preview.klip{ aspect-ratio:1.58/1; position:relative; }
+  .template-preview.klip .side-front,
+  .template-preview.klip .side-back{ position:absolute; inset:0; transition:opacity .28s ease; }
+  .template-preview.klip .side-back{ opacity:0; }
+  .template:hover .template-preview.klip .side-back{ opacity:1; }
+  .template:hover .template-preview.klip .side-front{ opacity:0; }
+  .kp{ width:100%; height:100%; padding:14px 18px; display:flex; flex-direction:column; overflow:hidden; }
+
+  /* Forsider */
+  .kp-f.kp-elegant{ background:#fbf6ec; color:#2c2620; font-family:'Fraunces',serif; align-items:center; justify-content:center; text-align:center; gap:6px; }
+  .kp-f.kp-elegant .nm{ font-size:1.55rem; font-weight:600; line-height:1.05; }
+  .kp-f.kp-elegant .acc{ width:30px; height:2px; background:#b5542a; }
+  .kp-f.kp-elegant .tg{ font-size:.7rem; font-family:'Jost',sans-serif; letter-spacing:.06em; color:#6b6155; }
+  .kp-mini-stamps{ display:flex; gap:5px; margin-top:8px; }
+  .ms-dot-k{ width:8px; height:8px; border-radius:50%; border:1.3px solid #b5542a; opacity:.55; }
+  .ms-dot-k.filled{ background:#b5542a; opacity:1; }
+
+  .kp-f.kp-dark{ background:linear-gradient(135deg,#1f2528,#0e1416); color:#f4ead8; font-family:'Bebas Neue',sans-serif; align-items:flex-start; justify-content:flex-end; gap:3px; padding:16px 20px; }
+  .kp-f.kp-dark .nm{ font-size:1.85rem; line-height:1; letter-spacing:.04em; }
+  .kp-f.kp-dark .tg{ font-size:.62rem; font-family:'Jost',sans-serif; letter-spacing:.18em; text-transform:uppercase; color:#caa15a; font-weight:500; }
+
+  .kp-f.kp-modern{ background:#fdf9f0; color:#1a1a1a; font-family:'Jost',sans-serif; align-items:flex-start; justify-content:center; gap:4px; padding:14px 20px; }
+  .kp-f.kp-modern .ov{ font-size:.5rem; letter-spacing:.36em; text-transform:uppercase; color:#999; font-weight:500; }
+  .kp-f.kp-modern .nm{ font-size:1.32rem; font-weight:300; line-height:1; letter-spacing:-.01em; }
+  .kp-f.kp-modern .tg{ font-size:.62rem; color:#8a8275; font-weight:400; margin-top:2px; }
+
+  /* Bagsider — overskrift øverst, stempel-grid i midten */
+  .kp-b{ gap:5px; padding:10px 14px; align-items:center; justify-content:center; }
+  .kp-b .hd{ font-family:'Fraunces',serif; font-weight:600; font-size:.62rem; line-height:1.15; text-align:center; }
+  .kp-b .stamps{ display:grid; grid-template-columns:repeat(5,1fr); gap:4px; flex:1; align-content:center; width:100%; max-width:170px; }
+  .kp-b .st{ aspect-ratio:1/1; border:1.2px solid currentColor; border-radius:50%; }
+  .kp-b .st.reward{ background:var(--rwd, #b5542a); border-color:var(--rwd, #b5542a); display:flex; align-items:center; justify-content:center; color:#fff; font-size:.5rem; font-weight:700; }
+
+  .kp-b.kp-elegant-b{ background:#fbf6ec; color:#b5542a; --rwd:#b5542a; }
+  .kp-b.kp-elegant-b .hd{ color:#2c2620; }
+  .kp-b.kp-dark-b{ background:linear-gradient(135deg,#1f2528,#0e1416); color:#caa15a; --rwd:#caa15a; }
+  .kp-b.kp-dark-b .hd{ color:#f4ead8; font-family:'Bebas Neue',sans-serif; letter-spacing:.06em; font-size:.66rem; font-weight:400; }
+  .kp-b.kp-dark-b .st.reward{ color:#1f2528; }
+  .kp-b.kp-modern-b{ background:#fdf9f0; color:#1a1a1a; --rwd:#1a1a1a; }
+  .kp-b.kp-modern-b .hd{ color:#1a1a1a; font-family:'Jost',sans-serif; font-weight:500; letter-spacing:.04em; }
+  .kp-b.kp-modern-b .st.reward{ color:#fdf9f0; }
+
+  /* ====== Hero V2 (smerte-driven) ====== */
+  .hero{ padding:0 0 24px; }
+  .hero-eyebrow{
+    display:inline-block; font-size:.78rem; font-weight:700; letter-spacing:.18em;
+    text-transform:uppercase; color:var(--accent); margin-bottom:18px;
+  }
+  .hero-title-v2{
+    font-family:'Fraunces',serif; font-weight:600; font-size:3.4rem; line-height:1.06;
+    color:var(--ink); margin:0 0 22px; max-width:820px;
+    margin-left:auto; margin-right:auto; letter-spacing:-.01em;
+  }
+  .hero-title-v2 em{ font-style:italic; color:var(--accent-d); }
+  .hero-lead-v2{
+    font-size:1.18rem; line-height:1.55; color:var(--muted);
+    margin:0 auto 30px; max-width:640px;
+  }
+  .hero-ctas{
+    display:flex; justify-content:center; gap:14px; flex-wrap:wrap; margin-bottom:36px;
+  }
+  .cta-primary{
+    display:inline-block; padding:15px 34px; border-radius:999px;
+    background:var(--accent); color:#fff; text-decoration:none;
+    font-family:'Jost',sans-serif; font-weight:600; font-size:1.04rem; letter-spacing:.02em;
+    box-shadow:0 10px 24px rgba(181,84,42,.26); transition:all .18s;
+    border:none; cursor:pointer;
+  }
+  .cta-primary:hover{ background:var(--accent-d); transform:translateY(-2px); box-shadow:0 16px 32px rgba(181,84,42,.32); }
+  .cta-outline{
+    display:inline-block; padding:15px 30px; border-radius:999px;
+    background:transparent; color:var(--ink); text-decoration:none;
+    font-family:'Jost',sans-serif; font-weight:600; font-size:1.04rem; letter-spacing:.02em;
+    border:1.5px solid var(--line); transition:all .18s; cursor:pointer;
+  }
+  .cta-outline:hover{ border-color:var(--accent); color:var(--accent-d); }
+
+  /* ====== Stats / trust strip ====== */
+  .stats{
+    display:flex; justify-content:center; gap:48px; flex-wrap:wrap;
+    margin:0 auto 60px; padding:22px 30px; max-width:760px;
+    background:var(--panel); border:1px solid var(--line); border-radius:18px;
+  }
+  .stat{ text-align:center; }
+  .stat-num{
+    display:block; font-family:'Fraunces',serif; font-weight:600;
+    font-size:2.1rem; color:var(--accent-d); line-height:1;
+  }
+  .stat-label{
+    display:block; margin-top:6px; font-size:.82rem; color:var(--muted);
+    letter-spacing:.04em;
+  }
+
+  /* ====== "Sådan virker det" — 3 steps ====== */
+  .how-section{ margin:0 auto 70px; max-width:980px; }
+  .how-head{ text-align:center; margin-bottom:38px; }
+  .how-title{
+    font-family:'Fraunces',serif; font-weight:600; font-size:2.1rem;
+    color:var(--ink); margin:0 0 10px;
+  }
+  .how-sub{ font-size:1.02rem; color:var(--muted); margin:0; }
+  .how-steps{
+    display:grid; grid-template-columns:repeat(3, 1fr); gap:22px;
+  }
+  .how-step{
+    background:var(--panel); border:1px solid var(--line); border-radius:18px;
+    padding:28px 24px; text-align:left; position:relative;
+    transition:transform .2s, box-shadow .2s;
+  }
+  .how-step:hover{ transform:translateY(-3px); box-shadow:0 14px 30px rgba(60,40,22,.08); }
+  .how-num{
+    display:inline-flex; align-items:center; justify-content:center;
+    width:38px; height:38px; border-radius:50%;
+    background:var(--accent); color:#fff;
+    font-family:'Fraunces',serif; font-weight:600; font-size:1.15rem;
+    margin-bottom:14px;
+  }
+  .how-step-title{
+    font-family:'Fraunces',serif; font-weight:600; font-size:1.2rem;
+    color:var(--ink); margin:0 0 8px;
+  }
+  .how-step-desc{ font-size:.94rem; line-height:1.5; color:var(--muted); margin:0; }
+
+  /* ====== Why Lusidio comparison ====== */
+  .why-section{ margin:0 auto 70px; max-width:980px; }
+  .why-head{ text-align:center; margin-bottom:36px; }
+  .why-title{
+    font-family:'Fraunces',serif; font-weight:600; font-size:2.1rem;
+    color:var(--ink); margin:0 0 10px;
+  }
+  .why-sub{ font-size:1.02rem; color:var(--muted); margin:0 auto; max-width:560px; }
+  .why-table{
+    background:var(--panel); border:1px solid var(--line); border-radius:20px;
+    overflow:hidden; box-shadow:0 8px 24px rgba(60,40,22,.06);
+  }
+  .why-row{
+    display:grid; grid-template-columns:1.2fr 1fr 1fr 1fr;
+    border-bottom:1px solid var(--line);
+  }
+  .why-row:last-child{ border-bottom:none; }
+  .why-row.head{ background:#f5ecdc; }
+  .why-cell{
+    padding:18px 20px; font-size:.96rem; color:var(--ink); line-height:1.4;
+  }
+  .why-cell.label{ font-weight:600; color:var(--ink); }
+  .why-cell.col-lusidio{
+    background:#fff7ed; font-weight:600; color:var(--accent-d);
+    border-left:1px solid var(--line); border-right:1px solid var(--line);
+  }
+  .why-cell.col-head{
+    font-family:'Fraunces',serif; font-weight:600; font-size:1.02rem;
+    text-align:center; padding-top:16px; padding-bottom:16px;
+  }
+  .why-cell.col-head.col-lusidio{ color:var(--accent-d); font-size:1.08rem; }
+
+  /* ====== WHY SCROLL-REVEAL: metrikker afsløres trin for trin ====== */
+  /* Progress-indikator (Pris / Tid / Resultat / Designerfaring) */
+  .why-progress{
+    display:flex; justify-content:center; gap:10px; flex-wrap:wrap;
+    margin:0 auto 30px; max-width:560px;
+  }
+  .why-progress span{
+    font-size:.78rem; font-weight:600; letter-spacing:.04em;
+    color:var(--muted);
+    padding:6px 14px; border-radius:999px;
+    background:rgba(140,130,117,.1);
+    border:1px solid transparent;
+    transition:all .3s cubic-bezier(.22,.61,.36,1);
+  }
+  .why-progress span.reached{
+    color:var(--accent-d);
+    background:#fff7ed;
+    border-color:rgba(181,84,42,.25);
+  }
+  .why-progress span.current{
+    color:#fff;
+    background:linear-gradient(135deg, var(--accent), var(--accent-d));
+    border-color:transparent;
+    box-shadow:0 6px 16px -4px rgba(181,84,42,.4);
+  }
+
+  /* Metric-rækker: skjult indtil deres step er nået */
+  .cc-row[data-step]{
+    opacity:0; transform:translateY(14px);
+    transition:opacity .5s cubic-bezier(.22,.61,.36,1), transform .5s cubic-bezier(.22,.61,.36,1);
+  }
+  .cc-row[data-step].revealed{ opacity:1; transform:none; }
+  /* Barer fyldes kun når rækken er afsløret */
+  .cc-row[data-step] .cc-meter span{ width:0; }
+  .cc-row[data-step].revealed .cc-meter span{ width:calc(var(--w, 50) * 1%); }
+
+  /* DESKTOP: sticky scroll-reveal */
+  @media (min-width:881px){
+    .why-reveal{ height:340vh; max-width:none; margin:0 0 70px; }
+    .why-sticky{
+      position:sticky; top:0;
+      min-height:100vh;
+      display:flex; flex-direction:column; justify-content:center;
+      max-width:980px; margin:0 auto;
+      padding:40px 30px;
+    }
+    .why-head{ margin-bottom:22px; }
+  }
+
+  /* MOBIL: ingen scroll-jack — alt vises (swiper styrer), progress skjult */
+  @media (max-width:880px){
+    .why-reveal{ height:auto; }
+    .why-sticky{ position:static; }
+    .why-progress{ display:none; }
+    /* På mobil vises metric-swiper, så cc-row reveal er irrelevant — vis dem */
+    .cc-row[data-step]{ opacity:1; transform:none; }
+  }
+
+  /* ====== About / Lavet i Danmark ====== */
+  .about-section{
+    margin:0 auto 70px; max-width:760px;
+    background:var(--panel); border:1px solid var(--line); border-radius:20px;
+    padding:42px 38px; text-align:center;
+  }
+  .about-title{
+    font-family:'Fraunces',serif; font-weight:600; font-style:italic;
+    font-size:1.8rem; color:var(--ink); margin:0 0 18px;
+  }
+  .about-text{
+    font-size:1.02rem; line-height:1.62; color:var(--ink);
+    margin:0 auto 12px; max-width:560px;
+  }
+  .about-text.muted{ color:var(--muted); font-size:.96rem; }
+
+  /* ====== FAQ ====== */
+  .faq-section{ margin:0 auto 70px; max-width:780px; }
+  .faq-head{ text-align:center; margin-bottom:32px; }
+  .faq-title{
+    font-family:'Fraunces',serif; font-weight:600; font-size:2.1rem;
+    color:var(--ink); margin:0;
+  }
+  .faq-item{
+    background:var(--panel); border:1px solid var(--line); border-radius:14px;
+    margin-bottom:12px; overflow:hidden;
+  }
+  .faq-q{
+    display:flex; justify-content:space-between; align-items:center;
+    padding:18px 22px 18px 22px; cursor:pointer; user-select:none;
+    font-family:'Fraunces',serif; font-weight:600; font-size:1.08rem;
+    color:var(--ink); list-style:none;
+    position:relative; padding-right:52px;
+  }
+  .faq-q::-webkit-details-marker{ display:none; }
+  /* (I) To bjælker — vertikal roterer ud når åben → smooth +/− */
+  .faq-q::before, .faq-q::after{
+    content:''; position:absolute; right:22px; top:50%;
+    width:16px; height:2px; background:var(--accent);
+    border-radius:1px; transform:translateY(-50%);
+    transition:transform .35s cubic-bezier(.4,0,.2,1);
+    pointer-events:none;
+  }
+  .faq-q::after{ transform:translate(0,-50%) rotate(90deg); transform-origin:center; }
+  .faq-item[open] .faq-q::after{ transform:translate(0,-50%) rotate(0deg); }
+  .faq-item[open] .faq-q::before{ background:var(--accent-d); }
+  .faq-item[open] .faq-q::after{ background:var(--accent-d); }
+  .faq-a{
+    padding:0 22px 18px; font-size:.98rem; line-height:1.6; color:var(--muted);
+  }
+
+  /* ====== Final CTA ====== */
+  .final-cta{
+    margin:0 auto 24px; max-width:920px;
+    background:linear-gradient(135deg, #b5542a 0%, #963f1f 100%);
+    border-radius:24px; padding:54px 40px; text-align:center;
+    box-shadow:0 18px 40px rgba(181,84,42,.22);
+  }
+  .final-title{
+    font-family:'Fraunces',serif; font-weight:600; font-size:2.2rem;
+    color:#fff; margin:0 0 12px; line-height:1.15;
+  }
+  .final-sub{
+    font-size:1.05rem; color:rgba(255,255,255,.85); margin:0 auto 26px;
+    max-width:520px;
+  }
+  .final-cta .quick-nav{ margin-bottom:0; }
+  .final-cta .qn-btn{
+    background:#fff; color:var(--accent-d);
+    box-shadow:0 8px 20px rgba(0,0,0,.12);
+  }
+  .final-cta .qn-btn:hover{ background:#fff7ed; color:var(--accent-d); }
+
+  /* ====== Section divider — subtil ornament ====== */
+  .section-sep{
+    width:50px; height:2px; background:var(--accent); opacity:.4;
+    margin:0 auto 30px; border-radius:2px;
+  }
+
+  /* ====== SLIDER (én skabelon ad gangen pr. produkt) ====== */
+  .slider{
+    position:relative; max-width:720px; margin:0 auto;
+    padding:0 50px;
+  }
+  .slider-viewport{
+    overflow:hidden; border-radius:18px;
+  }
+  .slider .templates{
+    display:flex !important; grid-template-columns:none !important;
+    width:100%; max-width:none; gap:0;
+    will-change:transform;
+    transition:transform .55s cubic-bezier(.22,.61,.36,1);
+  }
+  .slider .template{
+    flex:0 0 100%; width:100%;
+    transform:none; box-shadow:none; border:1px solid var(--line);
+  }
+  .slider .template:hover{ transform:none; }
+  .slide-arrow{
+    position:absolute; top:50%; transform:translateY(-50%);
+    width:42px; height:42px; border-radius:50%;
+    background:#fff; border:1.5px solid var(--line);
+    color:var(--ink); font-size:1.5rem; font-family:'Jost',sans-serif;
+    cursor:pointer; box-shadow:0 6px 16px rgba(60,40,22,.12);
+    display:flex; align-items:center; justify-content:center;
+    z-index:5; transition:all .18s; padding:0; line-height:1;
+  }
+  .slide-arrow:hover{
+    background:var(--accent); border-color:var(--accent); color:#fff;
+    transform:translateY(-50%) scale(1.08);
+    box-shadow:0 10px 22px rgba(181,84,42,.3);
+  }
+  .slide-arrow:active{ transform:translateY(-50%) scale(.95); }
+  .slide-arrow:focus-visible{ outline:2px solid var(--accent); outline-offset:2px; }
+  .slide-prev{ left:0; }
+  .slide-next{ right:0; }
+  .slide-arrow-glyph{ display:block; margin-top:-3px; }
+  .slide-dots{
+    display:flex; justify-content:center; gap:8px; margin-top:20px;
+  }
+  .slide-dot{
+    width:9px; height:9px; border-radius:50%;
+    background:rgba(140,130,117,.4); border:none; cursor:pointer;
+    transition:all .25s cubic-bezier(.4,0,.2,1); padding:0;
+  }
+  .slide-dot:hover{ background:rgba(140,130,117,.75); }
+  .slide-dot.active{
+    background:var(--accent); width:26px; border-radius:5px;
+  }
+  .slide-dot:focus-visible{ outline:2px solid var(--accent); outline-offset:3px; }
+
+  /* ====== PRODUKT SCROLL-REVEAL ====== */
+  .product-reveals{ margin:0 auto; }
+
+  .pr-section{
+    position:relative;
+  }
+  .pr-sticky{
+    display:flex; align-items:center; justify-content:center;
+    padding:40px 0;
+  }
+  .pr-row{
+    display:grid; grid-template-columns:1fr; gap:34px;
+    max-width:1100px; width:100%; margin:0 auto;
+    padding:0 30px;
+    align-items:center;
+  }
+  .pr-visual{ position:relative; }
+  .pr-stack{ position:relative; }
+  /* Hvert slide ligger oven på hinanden, crossfader */
+  .pr-slide{
+    position:absolute; inset:0;
+    opacity:0; transform:translateY(16px) scale(.98);
+    transition:opacity .55s cubic-bezier(.22,.61,.36,1), transform .55s cubic-bezier(.22,.61,.36,1);
+    pointer-events:none;
+    display:flex; flex-direction:column; gap:14px;
+  }
+  .pr-slide.active{
+    position:relative;
+    opacity:1; transform:none;
+    pointer-events:auto;
+  }
+  /* Forhåndsvisnings-ramme (papir-look) */
+  .pr-slide .template-preview{
+    width:100%; aspect-ratio:16 / 10;
+    position:relative;
+    display:flex; align-items:center; justify-content:center;
+    background:transparent; overflow:visible;
+    border-radius:0; box-shadow:none;
+  }
+  .pr-slide .template-preview::after{ display:none; }
+  .pr-slide .template-preview > .mp,
+  .pr-slide .template-preview > .bp,
+  .pr-slide .template-preview .side-front,
+  .pr-slide .template-preview .side-back{
+    border-radius:14px; overflow:hidden;
+    box-shadow:
+      0 1px 2px rgba(60,40,22,.10),
+      0 14px 36px -10px rgba(60,40,22,.30),
+      inset 0 0 0 1px rgba(0,0,0,.05);
+    transition:box-shadow .4s cubic-bezier(.22,.61,.36,1), transform .4s cubic-bezier(.22,.61,.36,1);
+  }
+  .pr-slide .template-preview > .mp{ width:100%; height:100%; }
+  .pr-slide .template-preview.bcard > .bp{
+    height:100%; width:auto; aspect-ratio:1.55 / 1; max-width:100%;
+  }
+  .pr-slide .template-preview.label .side-front,
+  .pr-slide .template-preview.label .side-back,
+  .pr-slide .template-preview.klip .side-front,
+  .pr-slide .template-preview.klip .side-back{
+    position:absolute; inset:0; width:100%; height:100%;
+  }
+  /* Flip ved hover på selve preview */
+  .pr-slide .template-preview.label .side-back,
+  .pr-slide .template-preview.klip .side-back{ opacity:0; transition:opacity .3s ease; }
+  .pr-slide .template-preview.label:hover .side-back,
+  .pr-slide .template-preview.klip:hover .side-back{ opacity:1; }
+  .pr-slide .template-preview.label:hover .side-front,
+  .pr-slide .template-preview.klip:hover .side-front{ opacity:0; transition:opacity .3s ease; }
+
+  /* Skabelon-navn under preview */
+  .pr-cap{
+    display:flex; flex-direction:column; gap:2px; text-align:center;
+    margin-top:4px;
+  }
+  .pr-cap-name{ font-family:'Fraunces',serif; font-weight:600; font-size:1.05rem; color:var(--ink); }
+  .pr-cap-desc{ font-size:.84rem; color:var(--muted); }
+
+  /* Skabelon-prikker */
+  .pr-dots{
+    display:flex; justify-content:center; gap:8px; margin-top:16px;
+  }
+  .pr-dots span{
+    width:7px; height:7px; border-radius:99px;
+    background:rgba(140,130,117,.3);
+    transition:width .3s, background-color .3s;
+  }
+  .pr-dots span.active{ width:22px; background:var(--accent); }
+
+  .pr-flip-hint{
+    font-size:.82rem; color:var(--accent-d);
+    text-align:center; margin:12px 0 0;
+  }
+  @media (hover:none){ .pr-flip-hint{ display:none; } }
+
+  /* Tekst-kolonne */
+  .pr-text{ text-align:center; }
+  .pr-eyebrow{
+    display:inline-block;
+    font-size:.85rem; font-weight:700; color:var(--accent-d);
+    background:#fff7ed; border:1px solid rgba(181,84,42,.2);
+    padding:5px 14px; border-radius:999px;
+    margin-bottom:16px;
+  }
+  .pr-title{
+    font-family:'Fraunces',serif; font-weight:600;
+    font-size:2.4rem; color:var(--ink); margin:0 0 12px;
+    line-height:1.05;
+  }
+  .pr-lead{
+    font-size:1.05rem; color:var(--muted); line-height:1.6;
+    margin:0 0 24px; max-width:42ch; margin-left:auto; margin-right:auto;
+  }
+  .pr-cta{
+    display:inline-block;
+    background:linear-gradient(135deg, var(--accent), var(--accent-d));
+    color:#fff; text-decoration:none;
+    padding:13px 26px; border-radius:13px;
+    font-weight:600; font-size:1rem;
+    box-shadow:0 12px 30px -8px rgba(181,84,42,.4);
+    transition:transform .25s cubic-bezier(.22,.61,.36,1), box-shadow .25s;
+  }
+  .pr-cta:hover{
+    transform:translateY(-2px);
+    box-shadow:0 18px 38px -10px rgba(181,84,42,.5);
+  }
+
+  /* ====== DESKTOP: sticky scroll-reveal ====== */
+  @media (min-width:881px){
+    .pr-section{ height:230vh; }       /* scroll-strækning pr. produkt */
+    .pr-sticky{
+      position:sticky; top:0;
+      height:100vh;
+      padding:0;
+    }
+    .pr-row{
+      grid-template-columns:1fr 1fr;
+      gap:60px;
+      padding:0 50px;
+      max-width:1180px;
+    }
+    /* Alternér side: data-side=right vender rækkefølgen */
+    .pr-section[data-side="right"] .pr-visual{ order:2; }
+    .pr-section[data-side="right"] .pr-text{ order:1; }
+    .pr-text{ text-align:left; }
+    .pr-section[data-side="right"] .pr-text{ text-align:right; }
+    .pr-section[data-side="right"] .pr-lead{ margin-left:auto; margin-right:0; }
+    .pr-section[data-side="left"] .pr-lead{ margin-left:0; margin-right:auto; }
+    .pr-title{ font-size:2.8rem; }
+    .pr-visual{ max-width:480px; width:100%; }
+    .pr-section[data-side="left"] .pr-visual{ margin-left:auto; }
+    /* Tekst fader/glider blidt ind når sektionen er aktiv */
+    .pr-text > *{
+      opacity:0; transform:translateY(20px);
+      transition:opacity .7s cubic-bezier(.22,.61,.36,1), transform .7s cubic-bezier(.22,.61,.36,1);
+    }
+    .pr-section.pr-active .pr-text > *{ opacity:1; transform:none; }
+    .pr-section.pr-active .pr-text > *:nth-child(1){ transition-delay:.05s; }
+    .pr-section.pr-active .pr-text > *:nth-child(2){ transition-delay:.13s; }
+    .pr-section.pr-active .pr-text > *:nth-child(3){ transition-delay:.21s; }
+    .pr-section.pr-active .pr-text > *:nth-child(4){ transition-delay:.29s; }
+  }
+
+  /* ====== MOBIL/TABLET: SAMME scroll-reveal som desktop (lodret stak) ====== */
+  @media (max-width:880px){
+    /* Hver sektion fylder skærmen og strækkes så man kan scrolle gennem skabelonerne */
+    .pr-section{ height:230vh !important; margin-bottom:0; }
+    .pr-sticky{
+      position:sticky !important; top:0 !important;
+      height:100vh !important;
+      display:flex; align-items:center; justify-content:center;
+      padding:0 !important;
+    }
+    .pr-row{
+      display:flex !important; flex-direction:column;
+      gap:18px; padding:0 16px;
+      width:100%; max-width:560px; margin:0 auto;
+      align-items:stretch;
+    }
+    /* Tekst (titel + undertekst) ØVERST, preview nedenunder — uanset data-side */
+    .pr-section .pr-text{ order:1 !important; text-align:center !important; }
+    .pr-section .pr-visual{
+      order:2 !important; margin:0 auto !important;
+      max-width:100%; width:100%;
+      display:flex; flex-direction:column; align-items:stretch;
+    }
+    .pr-section .pr-stack{ width:100%; }
+    .pr-section .pr-slide{ width:100%; }
+    .pr-section[data-side] .pr-lead{ margin-left:auto !important; margin-right:auto !important; }
+    /* Forhåndsvisningen i fuld størrelse (samme som før) */
+    .pr-slide .template-preview{ width:100%; }
+    /* CTA flyttes ned under preview */
+    .pr-text .pr-cta{ display:none; }
+    .pr-visual .pr-mobile-cta{ display:inline-block; }
+    /* Crossfade-stak ligesom desktop (slides ligger oven på hinanden) */
+    .pr-slide{
+      display:flex; position:absolute; inset:0;
+      opacity:0; transform:translateY(14px) scale(.98);
+      pointer-events:none;
+    }
+    .pr-slide.active{
+      position:relative; opacity:1; transform:none;
+      pointer-events:auto;
+    }
+    .pr-title{ font-size:1.85rem; margin-bottom:8px; }
+    .pr-lead{ font-size:.96rem; margin-bottom:0; }
+    .pr-eyebrow{ margin-bottom:10px; }
+    /* Tekst altid synlig på mobil */
+    .pr-text > *{ opacity:1 !important; transform:none !important; }
+  }
+  /* Mobil-CTA under preview (skjult på desktop) */
+  .pr-mobile-cta{ display:none; }
+  @media (max-width:880px){
+    .pr-mobile-cta{
+      display:inline-block;
+      align-self:center;
+      background:linear-gradient(135deg, var(--accent), var(--accent-d));
+      color:#fff; text-decoration:none;
+      padding:12px 24px; border-radius:13px;
+      font-weight:600; font-size:.98rem;
+      box-shadow:0 12px 30px -8px rgba(181,84,42,.4);
+      margin:14px auto 0; text-align:center;
+    }
+  }
+
+  /* ====== Scroll-triggered fade + blur animations ====== */
+  .reveal{
+    opacity:0; transform:translateY(28px);
+    filter:blur(16px);
+    transition:opacity .85s cubic-bezier(.22,.61,.36,1),
+               transform .85s cubic-bezier(.22,.61,.36,1),
+               filter .85s cubic-bezier(.22,.61,.36,1);
+    will-change:opacity, transform, filter;
+  }
+  .reveal.in{ opacity:1; transform:none; filter:blur(0); will-change:auto; }
+  .reveal-stagger > *{
+    opacity:0; transform:translateY(20px);
+    filter:blur(12px);
+    transition:opacity .7s cubic-bezier(.22,.61,.36,1),
+               transform .7s cubic-bezier(.22,.61,.36,1),
+               filter .7s cubic-bezier(.22,.61,.36,1);
+  }
+  .reveal-stagger.in > *:nth-child(1){ transition-delay:.05s; }
+  .reveal-stagger.in > *:nth-child(2){ transition-delay:.15s; }
+  .reveal-stagger.in > *:nth-child(3){ transition-delay:.25s; }
+  .reveal-stagger.in > *:nth-child(4){ transition-delay:.35s; }
+  .reveal-stagger.in > *{ opacity:1; transform:none; filter:blur(0); }
+
+  /* ====== Hero entrance animation ====== */
+  @keyframes heroFadeUp{
+    0%{ opacity:0; transform:translateY(24px); }
+    100%{ opacity:1; transform:none; }
+  }
+  .hero .hero-eyebrow{ animation:heroFadeUp .7s cubic-bezier(.22,.61,.36,1) .1s both; }
+  .hero .hero-title-v2{ animation:heroFadeUp .8s cubic-bezier(.22,.61,.36,1) .25s both; }
+  .hero .hero-lead-v2{ animation:heroFadeUp .75s cubic-bezier(.22,.61,.36,1) .45s both; }
+  .hero .hero-ctas{ animation:heroFadeUp .7s cubic-bezier(.22,.61,.36,1) .65s both; }
+
+  /* Subtil pulse på primary CTA — kalder opmærksomhed */
+  @keyframes ctaPulse{
+    0%, 100%{ box-shadow:0 10px 24px rgba(181,84,42,.26); }
+    50%{ box-shadow:0 10px 24px rgba(181,84,42,.26), 0 0 0 8px rgba(181,84,42,.08); }
+  }
+  .cta-primary{ animation:ctaPulse 2.8s ease-in-out 1.5s infinite; }
+  .cta-primary:hover{ animation:none; }
+
+  /* Stats: subtil number scale-in når synlig */
+  .stat-num{ display:inline-block; transition:transform .4s cubic-bezier(.34,1.56,.64,1); }
+  .stats.in .stat-num{ transform:scale(1); }
+
+  /* Brand subtil floating */
+  @keyframes brandFloat{
+    0%, 100%{ transform:translateY(0); }
+    50%{ transform:translateY(-2px); }
+  }
+  .brand-dot{ animation:brandFloat 3s ease-in-out infinite; }
+
+  /* Respekt prefers-reduced-motion */
+  @media (prefers-reduced-motion:reduce){
+    *, *::before, *::after{
+      animation-duration:.01s !important;
+      animation-iteration-count:1 !important;
+      transition-duration:.01s !important;
+      scroll-behavior:auto !important;
+    }
+    .reveal, .reveal-stagger > *{ opacity:1 !important; transform:none !important; }
+  }
+
+  /* ====== (H) Glow-effekt på Lusidio-kolonnen i sammenligningstabel ====== */
+  .why-cell.col-lusidio{
+    position:relative;
+    box-shadow:inset 0 0 0 1px rgba(181,84,42,.15);
+  }
+  .why-row.head .why-cell.col-lusidio{
+    box-shadow:inset 0 0 0 1.5px rgba(181,84,42,.3),
+               0 0 0 0 rgba(181,84,42,.25);
+    animation:lusidioGlow 3.6s ease-in-out infinite;
+  }
+  @keyframes lusidioGlow{
+    0%, 100% {
+      box-shadow:inset 0 0 0 1.5px rgba(181,84,42,.3),
+                 0 0 0 0 rgba(181,84,42,.0);
+    }
+    50% {
+      box-shadow:inset 0 0 0 1.5px rgba(181,84,42,.55),
+                 0 0 24px 4px rgba(181,84,42,.18);
+    }
+  }
+
+  /* ====== (J) Letter-by-letter reveal på store overskrifter ====== */
+  .letter-reveal{ display:inline-block; }
+  .letter-reveal .lr-word{
+    display:inline-block; white-space:nowrap;
+  }
+  .letter-reveal .letter{
+    display:inline-block;
+    opacity:0; transform:translateY(.4em) rotateX(-40deg);
+    transform-origin:50% 100%;
+    transition:opacity .5s cubic-bezier(.22,.61,.36,1),
+               transform .55s cubic-bezier(.22,.61,.36,1);
+  }
+  .letter-reveal.in .letter{
+    opacity:1; transform:none;
+  }
+
+  /* ====== (F) 3D tilt context på templates ====== */
+  .slider .templates{ perspective:1100px; }
+  .slider .template{
+    transform-style:preserve-3d;
+    transition:transform .35s cubic-bezier(.22,.61,.36,1), box-shadow .25s;
+  }
+  /* Override base hover så JS-tilt styrer transformen */
+  @media (hover:hover){
+    .slider .template.is-tilting{ transition:transform 0s; }
+    .slider .template.is-tilting:hover{ transform:none; }
+  }
+
+  /* ====== (C) Magnetic hover state — JS sætter --mx/--my ====== */
+  .cta-primary, .cta-outline{
+    transform:translate3d(var(--mx,0), var(--my,0), 0);
+    transition:transform .35s cubic-bezier(.22,.61,.36,1),
+               background-color .18s, color .18s, box-shadow .18s;
+  }
+  .cta-primary:hover{
+    transform:translate3d(var(--mx,0), var(--my,0), 0) translateY(-2px);
+  }
+  .cta-outline:hover{
+    transform:translate3d(var(--mx,0), var(--my,0), 0);
+  }
+  /* CTA pulse holdes — men nulstilles mens magnetic er aktiv */
+  .cta-primary.is-magnet{ animation:none; }
+
+  /* ====== (B) Hero parallax — em flytter sig svagt med musen ====== */
+  .hero-title-v2 em{
+    display:inline-block;
+    transform:translate3d(var(--px,0), var(--py,0), 0);
+    transition:transform .4s cubic-bezier(.22,.61,.36,1);
+    will-change:transform;
+  }
+
+  /* ====== (K) Cursor-glow på final CTA gradient ====== */
+  .final-cta{
+    position:relative; overflow:hidden; isolation:isolate;
+  }
+  .final-cta::before{
+    content:''; position:absolute; inset:0;
+    background:radial-gradient(380px circle at var(--cx,50%) var(--cy,50%),
+                               rgba(255,255,255,.22), transparent 60%);
+    opacity:0; transition:opacity .3s; pointer-events:none; z-index:0;
+  }
+  .final-cta:hover::before{ opacity:1; }
+  .final-cta > *{ position:relative; z-index:1; }
+
+  /* Mobil: ingen tilt/parallax/magnetic (hover-only effekter) */
+  @media (hover:none){
+    .cta-primary, .cta-outline{ transform:none !important; }
+    .hero-title-v2 em{ transform:none !important; }
+    .slider .template{ transform:none !important; }
+  }
+
+  /* ====== iPhone scroll-styret demo ====== */
+  .demo-section{
+    margin:0 auto 70px;
+    width:100%;
+  }
+  .demo-head{
+    text-align:center; max-width:980px;
+    margin:0 auto 30px; padding:0 24px;
+  }
+  .demo-head .how-title{
+    font-family:'Fraunces',serif; font-weight:600;
+    font-size:2.2rem; color:var(--ink);
+    margin:0 0 10px;
+  }
+  .demo-head .how-sub{
+    font-size:1.05rem; color:var(--muted); margin:0;
+  }
+  .demo-stage{
+    position:relative;
+    height:240vh; /* scrollafstand til at gennemløbe alle 3 faser */
+  }
+  .demo-sticky{
+    position:sticky; top:0;
+    height:100vh;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .demo-grid{
+    display:grid; grid-template-columns:1fr 1fr;
+    gap:60px; align-items:center;
+    max-width:1100px; width:100%;
+    padding:0 24px; margin:0 auto;
+  }
+  .demo-text{ position:relative; }
+  .demo-step-indicator{
+    display:flex; align-items:center; gap:14px;
+    margin-bottom:22px;
+  }
+  .dsi-num{
+    font-family:'Fraunces',serif; font-weight:600;
+    font-size:1.05rem; color:var(--accent-d);
+  }
+  .dsi-cur{
+    display:inline-block; min-width:1ch;
+    transition:opacity .3s;
+  }
+  .dsi-dots{ display:flex; gap:6px; }
+  .dsi-dot{
+    width:8px; height:8px; border-radius:50%;
+    background:rgba(140,130,117,.4);
+    transition:all .35s cubic-bezier(.4,0,.2,1);
+  }
+  .dsi-dot.active{
+    background:var(--accent);
+    width:22px; border-radius:4px;
+  }
+  .demo-text-stage{
+    position:relative; min-height:140px;
+  }
+  .demo-text-phase{
+    position:absolute; inset:0;
+    opacity:0; transform:translateY(12px);
+    transition:opacity .55s cubic-bezier(.22,.61,.36,1),
+               transform .55s cubic-bezier(.22,.61,.36,1);
+    pointer-events:none;
+  }
+  .demo-text-phase.active{
+    opacity:1; transform:none; pointer-events:auto;
+  }
+  .dp-title{
+    font-family:'Fraunces',serif; font-weight:600;
+    font-size:2.2rem; color:var(--ink);
+    margin:0 0 12px; line-height:1.15;
+    text-wrap:balance;
+  }
+  .dp-desc{
+    font-size:1.05rem; line-height:1.55;
+    color:var(--muted); margin:0;
+    text-wrap:pretty;
+  }
+  .demo-hint{
+    margin-top:30px; font-size:.85rem; color:var(--muted);
+    display:inline-flex; align-items:center; gap:6px;
+  }
+  .demo-hint::before{
+    content:'↓'; display:inline-block;
+    font-size:1rem; color:var(--accent);
+    animation:bounceDown 1.6s ease-in-out infinite;
+  }
+  @keyframes bounceDown{
+    0%, 100% { transform:translateY(0); }
+    50% { transform:translateY(4px); }
+  }
+
+  /* iPhone-frame — realistisk */
+  .demo-phone-wrap{
+    display:flex; justify-content:center; align-items:center;
+  }
+  .iphone{
+    width:clamp(250px, 30vw, 320px);
+    aspect-ratio:9/19.5;
+    background:linear-gradient(135deg, #3d3d40 0%, #1c1c1e 30%, #2c2c2e 60%, #1a1a1c 100%);
+    border-radius:52px;
+    padding:11px;
+    position:relative;
+    box-shadow:
+      0 60px 120px -40px rgba(0,0,0,.55),
+      0 0 0 2.5px rgba(0,0,0,.5),
+      inset 0 0 0 2px rgba(255,255,255,.07),
+      25px 25px 80px -30px rgba(60,40,22,.25);
+  }
+  /* Sideknapper */
+  .iphone-btn{
+    position:absolute;
+    width:3px;
+    background:linear-gradient(90deg, #0a0a0c 0%, #4a4a4e 50%, #1a1a1c 100%);
+    border-radius:1.5px;
+    z-index:1;
+  }
+  .iphone-btn-silent{ left:-2.5px; top:13%; height:3.2%; border-radius:2px 0 0 2px; }
+  .iphone-btn-volup{ left:-2.5px; top:19%; height:7%; border-radius:2px 0 0 2px; }
+  .iphone-btn-voldn{ left:-2.5px; top:28%; height:7%; border-radius:2px 0 0 2px; }
+  .iphone-btn-power{
+    right:-2.5px; top:22%; height:11%; border-radius:0 2px 2px 0;
+    background:linear-gradient(270deg, #0a0a0c 0%, #4a4a4e 50%, #1a1a1c 100%);
+  }
+  /* Dynamic Island med kamera-dot + sensor */
+  .iphone-notch{
+    position:absolute; top:13px; left:50%;
+    transform:translateX(-50%);
+    width:96px; height:28px;
+    background:#000;
+    border-radius:16px; z-index:10;
+    box-shadow:inset 0 0 0 1px rgba(40,40,45,.7);
+  }
+  .iphone-notch::before{
+    content:''; position:absolute;
+    left:13px; top:50%; transform:translateY(-50%);
+    width:5px; height:5px;
+    background:#080808; border-radius:50%; opacity:.85;
+  }
+  .iphone-notch::after{
+    content:''; position:absolute;
+    right:10px; top:50%; transform:translateY(-50%);
+    width:7px; height:7px;
+    background:radial-gradient(circle at 32% 32%, #1a3a6a 5%, #0a1525 45%, #000 85%);
+    border-radius:50%;
+    box-shadow:inset 0 0 0 .5px rgba(60,80,120,.4);
+  }
+  .iphone-screen{
+    width:100%; height:100%;
+    background:var(--bg);
+    border-radius:42px;
+    overflow:hidden; position:relative;
+  }
+  /* Subtil glas-refleks */
+  .iphone-screen::after{
+    content:''; position:absolute; inset:0;
+    background:linear-gradient(135deg,
+      rgba(255,255,255,.05) 0%,
+      transparent 28%,
+      transparent 72%,
+      rgba(255,255,255,.025) 100%);
+    pointer-events:none; z-index:60;
+    border-radius:42px;
+  }
+  .iphone-statusbar{
+    position:relative; z-index:5;
+    display:flex; justify-content:space-between; align-items:center;
+    padding:14px 26px 6px;
+    font-size:11px; font-weight:600; color:#1a1a1c;
+    height:38px;
+  }
+  .iphone-content{
+    position:relative;
+    height:calc(100% - 38px - 14px);
+    overflow:hidden;
+  }
+  .iphone-homebar{
+    position:absolute; bottom:7px; left:50%;
+    transform:translateX(-50%);
+    width:118px; height:4px;
+    background:rgba(0,0,0,.28); border-radius:2px;
+    z-index:30;
+  }
+
+  /* ===== Etiket-side mockup inde i iPhone ===== */
+  .ep-app-header{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:4px 14px 10px;
+    border-bottom:1px solid var(--line);
+  }
+  .ep-back{
+    color:var(--accent); font-size:1.35rem;
+    font-weight:300; line-height:1; min-width:20px;
+  }
+  .ep-title{
+    font-family:'Fraunces',serif; font-style:italic;
+    font-weight:600; font-size:1rem; color:var(--ink);
+    display:inline-flex; align-items:center; gap:4px;
+  }
+  .ep-brand-dot{
+    width:5px; height:5px; background:var(--accent);
+    border-radius:50%; display:inline-block;
+  }
+  .ep-lang{
+    font-size:.66rem; font-weight:600; color:var(--ink);
+    padding:3px 8px;
+    border:1px solid var(--line); border-radius:5px;
+    background:#fff;
+  }
+  .ep-tabs{
+    display:flex; gap:5px;
+    padding:9px 12px 6px;
+  }
+  .ep-tab{
+    flex:1; padding:6px 0;
+    background:#fff;
+    border:1px solid var(--line); border-radius:999px;
+    font-size:.68rem; font-weight:600; color:var(--ink);
+    cursor:pointer; font-family:'Jost',sans-serif;
+  }
+  .ep-tab.active{
+    background:#2c2520; color:#fff; border-color:#2c2520;
+  }
+
+  /* Preview zone — altid styled (tro kopi af rigtige etiket-side) */
+  .ep-preview-zone{
+    position:relative;
+    margin:6px 12px;
+    height:152px;
+    background:#fbf7ef;
+    border:1px solid #e9ddc4;
+    border-radius:10px;
+    overflow:hidden;
+    display:flex; align-items:center; justify-content:center;
+    /* Lusidio vandmærke i diagonal repeating SVG */
+    background-image:
+      url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='50' viewBox='0 0 160 50'><text x='0' y='34' fill='rgba(140,120,95,0.16)' font-family='Georgia,serif' font-style='italic' font-weight='600' font-size='13' transform='rotate(-22 80 25)'>LUSIDIO • LUSIDIO</text></svg>");
+    background-repeat:repeat;
+    background-size:160px 50px;
+    box-shadow:inset 0 0 0 1px rgba(255,255,255,.4);
+  }
+  .ep-preview-content{
+    position:relative; z-index:2;
+    text-align:center;
+    padding:10px 16px;
+    width:100%;
+  }
+  .ep-preview-content .ov{
+    font-family:'Fraunces',serif; font-style:italic;
+    font-weight:600; font-size:.62rem;
+    color:var(--accent); letter-spacing:.1em;
+    text-transform:uppercase; margin-bottom:5px;
+  }
+  .ep-preview-content .nm{
+    font-family:'Fraunces',serif; font-weight:700;
+    font-size:1.08rem; color:#3a2a1c;
+    line-height:1.1; margin-bottom:4px;
+    letter-spacing:-.01em;
+  }
+  .ep-preview-content .tg{
+    font-family:'Fraunces',serif; font-style:italic;
+    font-size:.66rem; color:#7a6a5a;
+    margin-bottom:14px;
+  }
+  .ep-preview-content .bot{
+    display:flex; justify-content:space-between;
+    width:100%; max-width:170px; margin:0 auto;
+    font-size:.6rem; color:#3a2a1c;
+    border-top:1px dotted var(--accent);
+    padding-top:6px;
+  }
+  .ep-preview-content .br{
+    font-family:'Fraunces',serif; font-weight:600;
+  }
+  .ep-dims{
+    text-align:center;
+    font-size:.6rem; color:var(--muted);
+    margin:3px 12px 7px;
+  }
+  /* Cross-fade phases (kun controls nu — preview er persistent) */
+  .d-phase{
+    position:absolute; inset:0;
+    opacity:0; transform:scale(.99);
+    transition:opacity .5s cubic-bezier(.22,.61,.36,1),
+               transform .5s cubic-bezier(.22,.61,.36,1);
+    pointer-events:none;
+  }
+  .d-phase.active{
+    opacity:1; transform:none; pointer-events:auto;
+  }
+
+  /* Controls zone */
+  .ep-controls-zone{
+    position:relative;
+    margin:0 12px;
+    /* fyld resten af skærmen */
+    flex:1; min-height:185px;
+  }
+  .ep-controls-state{
+    padding:8px 4px;
+  }
+
+  /* Phase 0: form */
+  .ep-form{ display:flex; flex-direction:column; gap:8px; }
+  .ep-field{ display:flex; flex-direction:column; gap:2px; }
+  .ep-field-row{ display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+  .ep-field-label{
+    font-size:.58rem; font-weight:600;
+    color:var(--muted); letter-spacing:.05em;
+    text-transform:uppercase;
+  }
+  .ep-field-input{
+    background:#fff; border:1px solid var(--line);
+    border-radius:7px;
+    padding:5px 8px;
+    font-size:.72rem; color:var(--ink);
+    font-family:'Jost',sans-serif;
+    min-height:26px;
+    display:flex; align-items:center;
+  }
+  .ep-field-input.is-active{
+    border-color:var(--accent);
+    box-shadow:0 0 0 2px rgba(181,84,42,.14);
+  }
+  .caret{
+    display:inline-block; width:1.5px; height:11px;
+    background:var(--accent); margin-left:2px;
+    animation:caretBlink 1.05s steps(2,end) infinite;
+  }
+  @keyframes caretBlink{
+    0%, 50% { opacity:1; }
+    50.01%, 100% { opacity:0; }
+  }
+
+  /* Phase 1: stilkontroller */
+  .ep-style-controls{ display:flex; flex-direction:column; gap:10px; }
+  .ep-ctrl-group{ display:flex; flex-direction:column; gap:3px; }
+  .ep-ctrl-label{
+    font-size:.58rem; font-weight:600;
+    color:var(--muted); letter-spacing:.05em;
+    text-transform:uppercase;
+  }
+  .ep-segment{
+    display:flex; gap:3px;
+    background:#fff; border:1px solid var(--line);
+    border-radius:7px; padding:2px;
+  }
+  .ep-segment button{
+    flex:1; padding:4px 0;
+    background:transparent; border:none;
+    border-radius:5px;
+    font-size:.65rem; font-weight:600;
+    color:var(--muted); cursor:pointer;
+    font-family:'Jost',sans-serif;
+  }
+  .ep-segment button.active{
+    background:var(--accent); color:#fff;
+  }
+  .ep-colors{
+    display:flex; gap:6px; align-items:center;
+  }
+  .ep-color{
+    width:26px; height:22px; border-radius:5px;
+    border:1px solid var(--line);
+  }
+  .ep-color-accent{ background:var(--accent); border-color:var(--accent); }
+  .ep-color-paper{ background:#fbf7ef; }
+  .ep-color-text{ background:#1a1a1c; border-color:#1a1a1c; }
+
+  /* Phase 2: download */
+  .ep-download-phase{
+    display:flex; flex-direction:column;
+    align-items:center; justify-content:center;
+    height:100%; padding:16px 10px; gap:14px; text-align:center;
+  }
+  .ep-download-meta{
+    font-family:'Fraunces',serif; font-weight:600;
+    font-size:.85rem; color:var(--ink);
+    line-height:1.3;
+  }
+  .ep-download-meta span{
+    display:block; font-family:'Jost',sans-serif;
+    font-weight:400; font-size:.7rem;
+    color:var(--muted); margin-top:3px;
+  }
+  .ep-download-btn{
+    background:var(--accent); color:#fff;
+    padding:10px 24px; border:none;
+    border-radius:999px;
+    font-weight:600; font-size:.8rem;
+    font-family:'Jost',sans-serif;
+    box-shadow:0 8px 20px rgba(181,84,42,.32);
+    cursor:pointer;
+    animation:dlPulse 2.4s ease-in-out infinite;
+  }
+  @keyframes dlPulse{
+    0%, 100% { transform:scale(1); box-shadow:0 8px 20px rgba(181,84,42,.32); }
+    50% { transform:scale(1.04); box-shadow:0 10px 28px rgba(181,84,42,.45); }
+  }
+
+  /* Responsive — mobile-tilpasninger */
+  @media (max-width:880px){
+    .demo-stage{ height:200vh; }
+    .demo-grid{
+      grid-template-columns:1fr; gap:32px;
+    }
+    .demo-text{ text-align:center; order:2; }
+    .demo-phone-wrap{ order:1; }
+    .demo-step-indicator{ justify-content:center; }
+    .dp-title{ font-size:1.5rem; }
+    .demo-text-stage{ min-height:120px; }
+    .iphone{ width:clamp(260px, 68vw, 300px); }
+    .ep-preview-zone{ height:138px; }
+    .ep-preview-content .nm{ font-size:.95rem; }
+    .ep-preview-content .tg{ margin-bottom:11px; }
+  }
+
+  /* ====== POPUP MODE — kun på telefon (<760px) ====== */
+  @media (max-width:760px){
+    .demo-grid{ gap:0; }
+    /* Tekst bliver til en flydende popup-bar nederst */
+    .demo-text{
+      position:fixed !important;
+      bottom:14px; left:14px; right:14px;
+      background:rgba(252, 247, 237, 0.92);
+      -webkit-backdrop-filter:saturate(1.4) blur(18px);
+              backdrop-filter:saturate(1.4) blur(18px);
+      border:1px solid rgba(140, 130, 117, 0.28);
+      border-radius:18px;
+      padding:13px 18px 14px;
+      box-shadow:0 12px 36px rgba(60, 40, 22, 0.22),
+                 0 2px 6px rgba(60, 40, 22, 0.08);
+      z-index:100;
+      text-align:center;
+      margin:0;
+      width:auto; max-width:none;
+      opacity:0;
+      transform:translateY(20px);
+      pointer-events:none;
+      /* Hurtigere transition, så popup forsvinder straks når man scroller videre */
+      transition:opacity .22s cubic-bezier(.22,.61,.36,1),
+                 transform .22s cubic-bezier(.22,.61,.36,1);
+    }
+    /* Synlig kun når demo-section er i viewport */
+    .demo-section.demo-in-view .demo-text{
+      opacity:1; transform:none; pointer-events:auto;
+    }
+    /* Kompakt popup-indhold */
+    .demo-text .demo-step-indicator{ margin-bottom:7px; }
+    .demo-text .dsi-num{ font-size:.85rem; }
+    .demo-text .dsi-dots{ gap:5px; }
+    .demo-text .dsi-dot{ width:6px; height:6px; }
+    .demo-text .dsi-dot.active{ width:18px; height:6px; }
+    .demo-text .dp-title{ font-size:1.05rem !important; margin:0 0 3px; line-height:1.2; }
+    .demo-text .dp-desc{ font-size:.78rem; line-height:1.4; margin:0; }
+    .demo-text .demo-hint{ display:none; }
+    .demo-text-stage{ min-height:72px; }
+    /* Lidt mindre iPhone så popup ikke overlapper kritisk indhold */
+    .iphone{ width:clamp(245px, 65vw, 285px); }
+  }
+
+  @media (max-width:580px){
+    .demo-stage{ height:220vh; }
+    .iphone{ width:clamp(230px, 70vw, 270px); }
+    .dp-title{ font-size:1.35rem; }
+    .demo-hint{ display:none; }
+    .ep-preview-zone{ height:120px; }
+    .ep-preview-content{ padding:8px 10px; }
+    .ep-preview-content .nm{ font-size:.85rem; }
+    .ep-preview-content .ov{ font-size:.55rem; margin-bottom:3px; }
+    .ep-preview-content .tg{ font-size:.6rem; margin-bottom:8px; }
+    .ep-preview-content .bot{ font-size:.55rem; max-width:140px; }
+    /* Mere kompakt form så alle 4 felter passer */
+    .ep-form{ gap:6px; }
+    .ep-field{ gap:1px; }
+    .ep-field-input{ min-height:24px; padding:4px 8px; font-size:.7rem; }
+    .ep-field-label{ font-size:.55rem; }
+    /* Endnu mere kompakt popup: skjul beskrivelse på små skærme */
+    .demo-text{
+      padding:10px 16px 11px;
+      bottom:12px; left:12px; right:12px;
+      border-radius:14px;
+    }
+    .demo-text .dp-desc{ display:none; }
+    .demo-text .dp-title{ font-size:.98rem !important; margin:0; }
+    .demo-text .demo-step-indicator{ margin-bottom:5px; }
+    .demo-text-stage{ min-height:auto; height:auto; }
+    .demo-text-phase{ position:relative; }
+    .demo-text-phase:not(.active){ display:none; }
+  }
+
+  /* ============ NYE WOW-ANIMATIONER ============ */
+
+  /* 1. Scroll progress bar — fast bjælke øverst der fyldes mens man scroller */
+  .scroll-progress{
+    position:fixed; top:0; left:0; right:0;
+    height:3px; pointer-events:none; z-index:1000;
+    background:rgba(140, 130, 117, 0.08);
+  }
+  .scroll-progress span{
+    display:block; height:100%; width:0%;
+    background:linear-gradient(90deg, var(--accent) 0%, #e0975c 50%, var(--accent-d) 100%);
+    box-shadow:0 0 14px rgba(181, 84, 42, .45);
+    transform-origin:left;
+    transition:width .08s linear;
+  }
+
+  /* 2. Hero title shine — diagonal lys-stribe glider hen over <em> */
+  .hero-title-v2 em{
+    position:relative;
+    background:linear-gradient(
+      100deg,
+      var(--accent-d) 0%,
+      var(--accent-d) 42%,
+      #f4a86f 50%,
+      var(--accent-d) 58%,
+      var(--accent-d) 100%);
+    background-size:250% 100%;
+    background-position:100% 0;
+    -webkit-background-clip:text;
+            background-clip:text;
+    -webkit-text-fill-color:transparent;
+    color:transparent;
+    animation:heroShine 6.5s ease-in-out infinite;
+    animation-delay:1.5s;
+  }
+  @keyframes heroShine{
+    0%, 18% { background-position:100% 0; }
+    50%, 68% { background-position:-100% 0; }
+    100% { background-position:-100% 0; }
+  }
+
+  /* 5. CTA shimmer sweep — periodisk lys-stribe på primær knap */
+  .cta-primary{ position:relative; overflow:hidden; }
+  .cta-primary::after{
+    content:''; position:absolute;
+    top:0; left:-150%;
+    width:60%; height:100%;
+    background:linear-gradient(100deg,
+      transparent 0%,
+      rgba(255,255,255,.32) 50%,
+      transparent 100%);
+    pointer-events:none;
+    animation:ctaShine 5.5s ease-in-out infinite;
+    animation-delay:3s;
+  }
+  @keyframes ctaShine{
+    0%, 10% { left:-150%; }
+    35%, 100% { left:150%; }
+  }
+
+  /* 6. Section-sep draw-in — separator-streg tegnes når den scrolles ind */
+  .section-sep{
+    transform:scaleX(0);
+    transform-origin:center;
+    transition:transform 1s cubic-bezier(.22,.61,.36,1) .15s;
+  }
+  .reveal.in .section-sep,
+  .in > .section-sep{
+    transform:scaleX(1);
+  }
+  /* Demo-section og final-cta er ikke .reveal — tilføj separat */
+  .demo-section.demo-in-view .section-sep,
+  .demo-head .section-sep{
+    transform:scaleX(1);
+  }
+
+  /* 7. Template card hover — løft op + dybere skygge på hover */
+  .slider .template{
+    transition:transform .35s cubic-bezier(.22,.61,.36,1),
+               box-shadow .35s cubic-bezier(.22,.61,.36,1);
+  }
+  .slider .template:hover{
+    box-shadow:0 28px 56px -22px rgba(60, 40, 22, .35),
+               0 6px 14px rgba(60, 40, 22, .08);
+  }
+
+  /* 8. Confetti partikler ved hover på Final CTA */
+  .confetti-particle{
+    position:fixed;
+    width:8px; height:8px; border-radius:50%;
+    background:#fff;
+    pointer-events:none;
+    z-index:9999;
+    will-change:transform, opacity;
+    animation:confettiFly 1.1s cubic-bezier(.22,.61,.36,1) forwards;
+  }
+  .confetti-particle.c1{ background:#f4a86f; }
+  .confetti-particle.c2{ background:#e0975c; }
+  .confetti-particle.c3{ background:#fff; }
+  .confetti-particle.c4{ background:var(--accent); }
+  @keyframes confettiFly{
+    0% { transform:translate(0, 0) scale(1) rotate(0deg); opacity:1; }
+    100% { transform:translate(var(--tx), var(--ty)) scale(0) rotate(var(--rot)); opacity:0; }
+  }
+
+  /* 9. Section-price med rolling count-up effect */
+  .section-price{
+    transition:transform .3s, color .3s;
+  }
+  .reveal.in .section-price{
+    animation:pricePop .8s cubic-bezier(.34, 1.56, .64, 1) .3s both;
+  }
+  @keyframes pricePop{
+    0% { transform:scale(0.5); opacity:0; }
+    60% { transform:scale(1.1); opacity:1; }
+    100% { transform:scale(1); opacity:1; }
+  }
+
+  /* 10. Subtil "live" cursor-følger lys-effekt på Final CTA quick-nav buttons */
+  .qn-btn{
+    position:relative; overflow:hidden;
+    transition:transform .25s cubic-bezier(.22,.61,.36,1),
+               box-shadow .25s,
+               background-color .25s,
+               color .25s;
+  }
+  .qn-btn::before{
+    content:''; position:absolute;
+    width:80px; height:80px;
+    border-radius:50%;
+    top:var(--ny, 50%); left:var(--nx, 50%);
+    transform:translate(-50%, -50%) scale(0);
+    background:radial-gradient(circle, rgba(255,255,255,.35) 0%, transparent 70%);
+    transition:transform .35s cubic-bezier(.22,.61,.36,1);
+    pointer-events:none;
+  }
+  .qn-btn:hover{
+    transform:translateY(-3px) scale(1.04);
+    box-shadow:0 12px 28px rgba(60, 40, 22, .25);
+  }
+  .qn-btn:hover::before{
+    transform:translate(-50%, -50%) scale(1.4);
+  }
+
+  /* 11. Page-enter animation — alt i hero fade-in når siden indlæses */
+  @keyframes pageEnter{
+    from { opacity:0; transform:translateY(8px); }
+    to { opacity:1; transform:none; }
+  }
+  .hero-eyebrow{ animation:pageEnter .7s cubic-bezier(.22,.61,.36,1) both; }
+  .hero-lead-v2{ animation:pageEnter .7s cubic-bezier(.22,.61,.36,1) .35s both; }
+  .hero-ctas{ animation:pageEnter .7s cubic-bezier(.22,.61,.36,1) .5s both; }
+
+  /* Reduced motion: deaktiver dekorative animationer */
+  @media (prefers-reduced-motion: reduce){
+    .hero-title-v2 em,
+    .cta-primary::after{ animation:none !important; }
+    .scroll-progress span{ transition:none !important; }
+    .hero-title-v2 em{
+      -webkit-text-fill-color:var(--accent-d);
+      color:var(--accent-d);
+      background:none;
+    }
+  }
+
+  /* ============ COMPARE CARDS (Hvorfor Lusidio) ============ */
+  .compare-cards{
+    display:grid;
+    grid-template-columns:minmax(0,1fr) minmax(0,1fr) minmax(0,1fr);
+    gap:24px;
+    max-width:1100px;
+    margin:50px auto 0;
+    align-items:start;
+    padding:14px 0 4px;
+  }
+  .cc-card{
+    position:relative;
+    background:#fbf7ef;
+    border:1px solid var(--line);
+    border-radius:22px;
+    padding:30px 24px 24px;
+    display:flex; flex-direction:column;
+    gap:22px;
+    box-shadow:0 4px 14px rgba(60,40,22,.06);
+    transition:transform .4s cubic-bezier(.22,.61,.36,1),
+               box-shadow .4s cubic-bezier(.22,.61,.36,1),
+               border-color .25s;
+    min-width:0;
+    opacity:0;
+    transform:translateY(28px);
+  }
+  .why-section.in .cc-card{
+    opacity:1; transform:none;
+    transition:opacity .7s cubic-bezier(.22,.61,.36,1),
+               transform .7s cubic-bezier(.22,.61,.36,1),
+               box-shadow .4s, border-color .25s;
+  }
+  .why-section.in .cc-card:nth-child(1){ transition-delay:.05s, .05s, 0s, 0s; }
+  .why-section.in .cc-card:nth-child(2){ transition-delay:.2s, .2s, 0s, 0s; }
+  .why-section.in .cc-card:nth-child(3){ transition-delay:.35s, .35s, 0s, 0s; }
+  .cc-card:hover{
+    transform:translateY(-8px);
+    box-shadow:0 28px 60px -22px rgba(60,40,22,.25),
+               0 4px 12px rgba(60,40,22,.05);
+    border-color:rgba(140,130,117,.4);
+  }
+  /* Featured Lusidio kort */
+  .cc-card.featured{
+    background:linear-gradient(170deg, #fff8ec 0%, #fbeed6 60%, #f5e3c3 100%);
+    border:2px solid var(--accent);
+    box-shadow:0 14px 42px -10px rgba(181,84,42,.28),
+               0 0 0 4px rgba(181,84,42,.06);
+    transform:translateY(28px) scale(1.04);
+    z-index:2;
+  }
+  .why-section.in .cc-card.featured{
+    transform:scale(1.04);
+  }
+  .cc-card.featured:hover{
+    transform:scale(1.05) translateY(-8px);
+    box-shadow:0 30px 64px -18px rgba(181,84,42,.38),
+               0 0 0 4px rgba(181,84,42,.1);
+  }
+  /* Crown badge */
+  .cc-crown{
+    position:absolute; top:-16px; left:50%;
+    transform:translateX(-50%);
+    background:linear-gradient(135deg, var(--accent), var(--accent-d));
+    color:#fff;
+    padding:7px 16px;
+    border-radius:999px;
+    font-size:.72rem; font-weight:700;
+    letter-spacing:.06em;
+    text-transform:uppercase;
+    box-shadow:0 8px 18px rgba(181,84,42,.42);
+    white-space:nowrap;
+    display:inline-flex; align-items:center; gap:6px;
+  }
+  .cc-crown::before{
+    content:'★'; font-size:.9rem; color:#ffe4b8;
+  }
+  /* Top section */
+  .cc-top{
+    display:flex; flex-direction:column;
+    align-items:center; gap:6px;
+    text-align:center;
+  }
+  .cc-rank{
+    font-size:.7rem; font-weight:700;
+    color:var(--muted);
+    letter-spacing:.1em;
+  }
+  .cc-card.featured .cc-rank{ color:var(--accent); }
+  .cc-name{
+    font-family:'Fraunces', serif;
+    font-weight:600; font-size:1.55rem;
+    color:var(--ink);
+    margin:0; line-height:1.1;
+  }
+  .cc-tagline{
+    font-size:.78rem; color:var(--muted);
+    letter-spacing:.02em;
+  }
+  /* Metrics list */
+  .cc-metrics{
+    list-style:none; padding:0; margin:0;
+    display:flex; flex-direction:column; gap:18px;
+  }
+  .cc-row{
+    display:grid;
+    grid-template-columns:34px 1fr;
+    grid-template-rows:auto auto;
+    column-gap:12px; row-gap:8px;
+    align-items:start;
+    padding:8px 6px;
+    border-radius:10px;
+    transition:background-color .25s;
+  }
+  .cc-card:hover .cc-row:hover{
+    background:rgba(140,130,117,.06);
+  }
+  .cc-icon{
+    grid-row:1; grid-column:1;
+    width:30px; height:30px;
+    display:flex; align-items:center; justify-content:center;
+    background:rgba(140,130,117,.1);
+    border-radius:9px;
+    color:var(--ink);
+    transition:background-color .25s, color .25s;
+  }
+  .cc-card.featured .cc-icon{
+    background:rgba(181,84,42,.14);
+    color:var(--accent);
+  }
+  .cc-content{
+    grid-row:1; grid-column:2;
+    display:flex; flex-direction:column; gap:2px;
+    min-width:0;
+  }
+  .cc-mlabel{
+    font-size:.62rem; font-weight:700;
+    color:var(--muted);
+    letter-spacing:.08em;
+    text-transform:uppercase;
+  }
+  .cc-mvalue{
+    font-size:.95rem; font-weight:600;
+    color:var(--ink);
+    line-height:1.3;
+  }
+  /* Meter bar */
+  .cc-meter{
+    grid-row:2; grid-column:1 / -1;
+    height:5px;
+    background:rgba(140,130,117,.16);
+    border-radius:99px;
+    overflow:hidden;
+    position:relative;
+  }
+  .cc-meter span{
+    display:block; height:100%;
+    width:0;
+    background:linear-gradient(90deg, #c4805e, #a96242);
+    border-radius:99px;
+    transform-origin:left;
+    transition:width 1.4s cubic-bezier(.22,.61,.36,1) var(--mdel, .2s);
+  }
+  .cc-card.featured .cc-meter span{
+    background:linear-gradient(90deg, var(--accent), #e0975c);
+    box-shadow:0 1px 6px rgba(181,84,42,.3);
+  }
+  @media (max-width:880px){
+    .why-section.in .cc-meter span{
+      width:calc(var(--w, 50) * 1%);
+    }
+  }
+  /* Footer score */
+  .cc-bottom{
+    display:flex; align-items:center; justify-content:center;
+    padding-top:16px;
+    margin-top:auto;
+    border-top:1px solid var(--line);
+  }
+  .cc-card.featured .cc-bottom{
+    border-top-color:rgba(181,84,42,.18);
+  }
+  .cc-score{
+    font-family:'Fraunces', serif;
+    font-weight:700; font-size:1.85rem;
+    color:var(--ink);
+    display:flex; align-items:baseline;
+    line-height:1;
+  }
+  .cc-card.featured .cc-score{ color:var(--accent); }
+  .cc-score-of{
+    font-size:.9rem; opacity:.45;
+    margin-left:3px;
+    font-weight:600;
+  }
+  /* ============ METRIC-SWIPER (kun telefon) ============ */
+  .metric-swiper{ display:none; }  /* skjult på desktop som default */
+
+  /* Mobile */
+  @media (max-width:880px){
+    /* Skjul de 3 firma-kort, vis metric-swiper i stedet */
+    .compare-cards{ display:none; }
+
+    .metric-swiper{
+      display:block;
+      margin-top:30px;
+    }
+    .ms-track{
+      display:flex;
+      gap:14px;
+      overflow-x:auto;
+      scroll-snap-type:x mandatory;
+      -webkit-overflow-scrolling:touch;
+      scrollbar-width:none;
+      padding:6px 0 4px;
+      /* peek af nabokort: padding på siderne så et kort centreres med kig til naboerne */
+      scroll-padding-left:7.5vw;
+    }
+    .ms-track::-webkit-scrollbar{ display:none; }
+    .ms-card{
+      scroll-snap-align:center;
+      flex:0 0 85vw;
+      max-width:360px;
+      background:#fbf7ef;
+      border:1px solid var(--line);
+      border-radius:20px;
+      padding:24px 22px 26px;
+      box-shadow:0 4px 14px rgba(60,40,22,.06);
+    }
+    .ms-card:first-child{ margin-left:7.5vw; }
+    .ms-card:last-child{ margin-right:7.5vw; }
+    .ms-head{
+      display:flex; align-items:center; gap:11px;
+      margin-bottom:22px;
+    }
+    .ms-icon{
+      width:38px; height:38px;
+      display:flex; align-items:center; justify-content:center;
+      background:rgba(181,84,42,.12);
+      color:var(--accent);
+      border-radius:11px;
+      flex-shrink:0;
+    }
+    .ms-title{
+      font-family:'Fraunces', serif;
+      font-weight:600; font-size:1.4rem;
+      color:var(--ink); margin:0;
+    }
+    .ms-rows{
+      list-style:none; padding:0; margin:0;
+      display:flex; flex-direction:column; gap:18px;
+    }
+    .ms-line{
+      display:flex; flex-direction:column; gap:7px;
+    }
+    .ms-line-head{
+      display:flex; align-items:baseline; justify-content:space-between;
+      gap:10px;
+    }
+    .ms-name{
+      font-size:.8rem; font-weight:600;
+      color:var(--muted);
+      flex-shrink:0;
+    }
+    .ms-val{
+      font-size:.92rem; font-weight:600;
+      color:var(--ink);
+      text-align:right;
+      line-height:1.25;
+    }
+    .ms-bar{
+      height:6px;
+      background:rgba(140,130,117,.16);
+      border-radius:99px;
+      overflow:hidden;
+    }
+    .ms-bar span{
+      display:block; height:100%; width:0;
+      background:linear-gradient(90deg, #c4805e, #a96242);
+      border-radius:99px;
+      transition:width 1s cubic-bezier(.22,.61,.36,1) var(--mdel, .1s);
+    }
+    /* Vinder-linjen (Lusidio) fremhævet */
+    .ms-line.winner .ms-name{ color:var(--accent); font-weight:700; }
+    .ms-line.winner .ms-val{ color:var(--accent-d); }
+    .ms-line.winner .ms-bar{ background:rgba(181,84,42,.14); }
+    .ms-line.winner .ms-bar span{
+      background:linear-gradient(90deg, var(--accent), #e0975c);
+      box-shadow:0 1px 6px rgba(181,84,42,.3);
+    }
+    .why-section.in .ms-bar span{ width:calc(var(--w, 50) * 1%); }
+    /* Dots */
+    .ms-dots{
+      display:flex; justify-content:center; gap:9px;
+      margin-top:20px;
+    }
+    .ms-dot{
+      width:8px; height:8px; padding:0;
+      border:none; border-radius:99px;
+      background:rgba(140,130,117,.3);
+      cursor:pointer;
+      transition:width .3s, background-color .3s;
+    }
+    .ms-dot.active{
+      width:24px;
+      background:var(--accent);
+    }
+  }
+
+  /* Mobile — compare-cards justering (gælder ikke længere da skjult, men bevaret hvis nogen viewport falder mellem) */
+  @media (max-width:880px){
+    .cc-card{ padding:26px 22px 22px; }
+    .cc-card.featured{
+      transform:translateY(28px) scale(1);
+      order:-1;
+    }
+    .why-section.in .cc-card.featured{ transform:none; }
+    .cc-card.featured:hover{ transform:translateY(-8px); }
+    .cc-name{ font-size:1.45rem; }
+    .cc-score{ font-size:1.7rem; }
+  }
+
+  /* Reduced motion */
+  @media (prefers-reduced-motion: reduce){
+    .cc-card{ opacity:1 !important; transform:none !important; transition:none !important; }
+    .cc-card.featured{ transform:scale(1.04) !important; }
+    .cc-meter span{ transition:none !important; }
+    .ms-bar span{ transition:none !important; }
+    .ms-track{ scroll-behavior:auto !important; }
+  }
+
+  .footer{ margin-top:54px; font-size:.85rem; color:var(--muted); text-align:center; }
+  .footer a{ color:var(--accent-d); text-decoration:none; }
+  .footer a:hover{ text-decoration:underline; }
+
+  @media (max-width:880px){
+    .templates{ grid-template-columns:1fr 1fr; }
+    .how-steps{ grid-template-columns:1fr; gap:14px; }
+    .why-row{ grid-template-columns:1fr 1fr 1fr 1fr; }
+  }
+  @media (max-width:580px){
+    .wrap{ padding:54px 16px 60px; }
+    .lang-bar{ top:14px; right:14px; gap:6px; }
+    .lang-btn{ padding:9px 13px; font-size:.82rem; min-width:44px; min-height:36px; }
+    .hero-title{ font-size:2.1rem; }
+    .hero-lead{ font-size:1.02rem; }
+    .hero-title-v2{ font-size:2.05rem; line-height:1.1; }
+    .hero-lead-v2{ font-size:1rem; }
+    .hero-eyebrow{ font-size:.72rem; letter-spacing:.14em; }
+    .hero-ctas{ gap:10px; }
+    .cta-primary, .cta-outline{ padding:13px 22px; font-size:.95rem; }
+    .quick-nav{ margin-bottom:34px; gap:10px; }
+    .qn-btn{ padding:11px 20px; font-size:.95rem; }
+    .section-title{ font-size:1.55rem; }
+    .templates{ grid-template-columns:1fr; gap:16px; }
+    .template{ padding:14px; }
+    .product-section{ margin-bottom:46px; }
+
+    /* Stats: tæt 3-kolonne grid (uden wrap) */
+    .stats{
+      display:grid; grid-template-columns:1fr 1fr 1fr;
+      gap:14px; padding:16px 14px; max-width:none;
+      margin-bottom:46px;
+    }
+    .stat-num{ font-size:1.45rem; }
+    .stat-label{ font-size:.72rem; margin-top:4px; line-height:1.3; }
+
+    /* How-steps padding mindre */
+    .how-section{ margin-bottom:50px; }
+    .how-step{ padding:22px 20px; }
+    .how-step-title{ font-size:1.12rem; }
+    .how-step-desc{ font-size:.92rem; }
+
+    /* Why-tabel: 3-kolonne (Lusidio | Canva | Grafiker), label spænder bredt */
+    .why-section{ margin-bottom:50px; }
+    .why-row{ grid-template-columns:1fr 1fr 1fr; }
+    .why-row.head{ background:#f5ecdc; }
+    .why-row.head .why-cell.label{ display:none; }
+    .why-row:not(.head) .why-cell.label{
+      display:block; grid-column:1 / -1;
+      background:#f5ecdc; font-weight:700; text-align:center;
+      padding:11px 12px; font-size:.78rem;
+      text-transform:uppercase; letter-spacing:.06em;
+      color:var(--ink);
+    }
+    .why-cell{
+      padding:14px 8px; font-size:.84rem; text-align:center;
+      line-height:1.35; word-break:break-word;
+    }
+    .why-cell.col-head{ font-size:.92rem; padding:14px 6px; }
+    .why-cell.col-head.col-lusidio{ font-size:.96rem; }
+    .why-cell.col-lusidio{ font-size:.84rem; border-left:1px solid var(--line); border-right:1px solid var(--line); }
+
+    /* About */
+    .about-section{ padding:28px 22px; margin-bottom:50px; }
+    .about-title{ font-size:1.55rem; }
+    .about-text{ font-size:.98rem; }
+    .about-text.muted{ font-size:.92rem; }
+
+    /* FAQ */
+    .faq-section{ margin-bottom:50px; }
+    .faq-q{ padding:16px 18px; font-size:1rem; }
+    .faq-q::after{ font-size:1.4rem; }
+    .faq-a{ padding:0 18px 16px; font-size:.94rem; }
+
+    /* Final CTA */
+    .final-cta{ padding:36px 22px; }
+    .final-title{ font-size:1.65rem; }
+    .final-sub{ font-size:.98rem; }
+    .final-cta .qn-btn{ padding:11px 18px; font-size:.92rem; }
+
+    /* Slider mobil — strammere padding så preview bliver bredere */
+    .slider{ padding:0 40px; }
+    .slide-arrow{ width:36px; height:36px; font-size:1.3rem; }
+    .slide-prev{ left:-4px; }
+    .slide-next{ right:-4px; }
+    .slide-dots{ margin-top:16px; }
+
+    /* Section divider */
+    .section-sep{ margin-bottom:22px; }
+  }
+  @media (max-width:380px){
+    /* Ekstra smalle telefoner (iPhone SE etc.) */
+    .hero-title-v2{ font-size:1.85rem; }
+    .stats{ gap:10px; padding:14px 10px; }
+    .stat-num{ font-size:1.3rem; }
+    .why-cell{ padding:12px 6px; font-size:.78rem; }
+    .why-cell.col-head{ font-size:.85rem; }
+    .why-cell.col-head.col-lusidio{ font-size:.9rem; }
+    .final-cta .qn-btn{ padding:10px 14px; font-size:.88rem; }
+    .slider{ padding:0 34px; }
+    .slide-arrow{ width:32px; height:32px; font-size:1.2rem; }
+  }
+</style>
+</head>
+<body>
+  <!-- Scroll progress bar -->
+  <div class="scroll-progress" aria-hidden="true"><span></span></div>
+
+  <div class="lang-bar">
+    <button class="lang-btn" data-lang="da" type="button">DA</button>
+    <button class="lang-btn" data-lang="en" type="button">EN</button>
+    <button class="lang-btn" data-lang="tr" type="button">TR</button>
+    <button class="lang-btn" data-lang="uk" type="button">UK</button>
+  </div>
+
+  <div class="wrap">
+
+    <div class="brand">
+      <span class="brand-name">Lusidio</span>
+      <span class="brand-dot"></span>
+    </div>
+
+    <!-- ============ HERO V2 ============ -->
+    <section class="hero">
+      <span class="hero-eyebrow" data-i18n="heroEyebrow">Engangs-køb · ingen abonnement</span>
+      <h1 class="hero-title-v2" data-i18n-html="heroTitleHtml">Træt af at se <span class="nobr"><em>hjemmelavet</em> ud?</span></h1>
+      <p class="hero-lead-v2" data-i18n="heroLeadV2">Lusidio laver smukke menukort, klippekort, etiketter og visitkort på 5 minutter — uden Canva-frustration og uden designer-regning.</p>
+    </section>
+
+    <!-- ============ FINAL CTA ============ -->
+    <section class="final-cta reveal">
+      <h2 class="final-title letter-reveal" data-i18n="finalTitle">Klar til at lave dit første kort?</h2>
+      <p class="final-sub" data-i18n="finalSub">Vælg et værktøj og kom i gang — første kort er gratis så du kan prøve det.</p>
+      <div class="quick-nav">
+        <a class="qn-btn" href="/menukort.html" data-i18n="qnMenu">Menukort</a>
+        <a class="qn-btn" href="/visitkort.html" data-i18n="qnVisit">Visitkort</a>
+        <a class="qn-btn" href="/etiket.html" data-i18n="qnLabel">Etiket</a>
+        <a class="qn-btn" href="/klippekort.html" data-i18n="qnKlip">Klippekort</a>
+      </div>
+    </section>
+
+    <!-- ============ SÅDAN VIRKER DET (scroll-styret iPhone-demo) ============ -->
+    <section class="demo-section" id="hvordan">
+      <div class="demo-head">
+        <div class="section-sep"></div>
+        <h2 class="how-title letter-reveal" data-i18n="howTitle">Sådan virker det</h2>
+        <p class="how-sub" data-i18n="howSub">Tre trin fra blankt ark til printklar PDF.</p>
+      </div>
+      <div class="demo-stage">
+        <div class="demo-sticky">
+          <div class="demo-grid">
+            <!-- Tekst pr. fase -->
+            <div class="demo-text">
+              <div class="demo-step-indicator">
+                <span class="dsi-num"><span class="dsi-cur">1</span> / 3</span>
+                <div class="dsi-dots">
+                  <span class="dsi-dot active"></span>
+                  <span class="dsi-dot"></span>
+                  <span class="dsi-dot"></span>
+                </div>
+              </div>
+              <div class="demo-text-stage">
+                <div class="demo-text-phase active" data-phase="0">
+                  <h3 class="dp-title" data-i18n="howStep1Title">Skriv dine oplysninger</h3>
+                  <p class="dp-desc" data-i18n="howStep1Desc">Udfyld felterne — virksomhedsnavn, retter, priser, kontakt. Du behøver ikke at vide noget om design.</p>
+                </div>
+                <div class="demo-text-phase" data-phase="1">
+                  <h3 class="dp-title" data-i18n="howStep2Title">Vælg en stil</h3>
+                  <p class="dp-desc" data-i18n="howStep2Desc">Klik mellem færdige designs der allerede er gennemtænkte. Farver, fonts og layout matcher — du kan ikke ødelægge det.</p>
+                </div>
+                <div class="demo-text-phase" data-phase="2">
+                  <h3 class="dp-title" data-i18n="howStep3Title">Hent som PDF</h3>
+                  <p class="dp-desc" data-i18n="howStep3Desc">Betal én gang. Hent en printklar PDF — send til trykkeriet, print selv, eller del digitalt. Filen er din.</p>
+                </div>
+              </div>
+              <div class="demo-hint" data-i18n="demoHint">Scroll for at se hvordan</div>
+            </div>
+            <!-- iPhone med etiket-side mockup -->
+            <div class="demo-phone-wrap">
+              <div class="iphone">
+                <span class="iphone-btn iphone-btn-silent"></span>
+                <span class="iphone-btn iphone-btn-volup"></span>
+                <span class="iphone-btn iphone-btn-voldn"></span>
+                <span class="iphone-btn iphone-btn-power"></span>
+                <div class="iphone-notch"></div>
+                <div class="iphone-screen">
+                  <div class="iphone-statusbar">
+                    <span class="sb-time">9:41</span>
+                    <span class="sb-icons">●●●&nbsp;&nbsp;▴&nbsp;&nbsp;◼</span>
+                  </div>
+
+                  <div class="iphone-content">
+                    <!-- Persistent app header med Lusidio-brand -->
+                    <div class="ep-app-header">
+                      <span class="ep-back">‹</span>
+                      <span class="ep-title">Etiket<span class="ep-brand-dot"></span></span>
+                      <span class="ep-lang">DA</span>
+                    </div>
+
+                    <!-- Front/Back tabs -->
+                    <div class="ep-tabs">
+                      <button class="ep-tab active" type="button">Forside</button>
+                      <button class="ep-tab" type="button">Bagside</button>
+                    </div>
+
+                    <!-- Preview — altid styled etiket (som rigtige side) -->
+                    <div class="ep-preview-zone">
+                      <div class="ep-preview-content">
+                        <div class="ov">Hjemmelavet</div>
+                        <div class="nm">Jordbærmarmelade</div>
+                        <div class="tg">med vanilje · 2026</div>
+                        <div class="bot">
+                          <span class="wg">450 g</span>
+                          <span class="br">Annes Køkken</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="ep-dims">90 × 60 mm · A4 · 8 etiketter</div>
+
+                    <!-- Controls zone — krydsfader pr. fase -->
+                    <div class="ep-controls-zone">
+                      <!-- Fase 0: form -->
+                      <div class="d-phase ep-controls-state active" data-phase="0">
+                        <div class="ep-form">
+                          <div class="ep-field">
+                            <div class="ep-field-label">Produkt</div>
+                            <div class="ep-field-input is-active">Jordbærmarmelade<span class="caret"></span></div>
+                          </div>
+                          <div class="ep-field">
+                            <div class="ep-field-label">Undertekst</div>
+                            <div class="ep-field-input">med vanilje · 2026</div>
+                          </div>
+                          <div class="ep-field-row">
+                            <div class="ep-field">
+                              <div class="ep-field-label">Vægt</div>
+                              <div class="ep-field-input">450 g</div>
+                            </div>
+                            <div class="ep-field">
+                              <div class="ep-field-label">Brand</div>
+                              <div class="ep-field-input">Annes Køkken</div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <!-- Fase 1: stil-kontroller -->
+                      <div class="d-phase ep-controls-state" data-phase="1">
+                        <div class="ep-style-controls">
+                          <div class="ep-ctrl-group">
+                            <div class="ep-ctrl-label">Hjørner</div>
+                            <div class="ep-segment">
+                              <button type="button">Skarp</button>
+                              <button type="button" class="active">Bløde</button>
+                              <button type="button">Runde</button>
+                            </div>
+                          </div>
+                          <div class="ep-ctrl-group">
+                            <div class="ep-ctrl-label">Orientering</div>
+                            <div class="ep-segment">
+                              <button type="button" class="active">Landskab</button>
+                              <button type="button">Portræt</button>
+                            </div>
+                          </div>
+                          <div class="ep-ctrl-group">
+                            <div class="ep-ctrl-label">Farver</div>
+                            <div class="ep-colors">
+                              <div class="ep-color ep-color-accent"></div>
+                              <div class="ep-color ep-color-paper"></div>
+                              <div class="ep-color ep-color-text"></div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <!-- Fase 2: download -->
+                      <div class="d-phase ep-controls-state" data-phase="2">
+                        <div class="ep-download-phase">
+                          <div class="ep-download-meta">Klar til print<br><span>send til trykkeriet eller print selv</span></div>
+                          <button type="button" class="ep-download-btn">Hent som PDF&nbsp;↓</button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="iphone-homebar"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Anchor for "Se produkter"-knappen -->
+    <div id="produkter"></div>
+
+    <!-- ============ PRODUKTER (2x2 grid på desktop) ============ -->
+    <div class="product-reveals">
+
+    <!-- ============ MENUKORT (preview venstre / tekst højre) ============ -->
+    <section class="pr-section" data-product="menu" data-side="left">
+      <div class="pr-sticky">
+        <div class="pr-row">
+          <div class="pr-visual">
+            <div class="pr-stack">
+              <div class="pr-slide active" data-i="0">
+                <div class="template-preview">
+                  <div class="mp classic-cafe">
+                    <div class="h" data-i18n="mpClassicHead">Café Solsikken</div>
+                    <div class="t" data-i18n="mpClassicTitle">Menu</div>
+                    <div class="ln"><b>Espresso</b><span class="dots"></span><span class="price">30</span></div>
+                    <div class="ln"><b>Latte</b><span class="dots"></span><span class="price">42</span></div>
+                    <div class="ln"><b>Cappuccino</b><span class="dots"></span><span class="price">42</span></div>
+                    <div class="ln"><b>Croissant</b><span class="dots"></span><span class="price">28</span></div>
+                    <div class="ln"><b>Wienerbrød</b><span class="dots"></span><span class="price">32</span></div>
+                  </div>
+                </div>
+                <div class="pr-cap"><span class="pr-cap-name" data-i18n="mtClassicName">Klassisk café</span><span class="pr-cap-desc" data-i18n="mtClassicDesc">Varm cremebaggrund med terracotta-accent</span></div>
+              </div>
+              <div class="pr-slide" data-i="1">
+                <div class="template-preview">
+                  <div class="mp modern-min">
+                    <div class="h" data-i18n="mpModernHead">DRIKKEKORT</div>
+                    <div class="t" data-i18n="mpModernTitle">Onsdag</div>
+                    <div class="grid2">
+                      <div class="it"><span class="nm">Pinot Noir</span><span class="pr">95 kr</span></div>
+                      <div class="it"><span class="nm">Chardonnay</span><span class="pr">85 kr</span></div>
+                      <div class="it"><span class="nm">Aperol Spritz</span><span class="pr">75 kr</span></div>
+                      <div class="it"><span class="nm">Negroni</span><span class="pr">95 kr</span></div>
+                      <div class="it"><span class="nm">Carlsberg</span><span class="pr">45 kr</span></div>
+                      <div class="it"><span class="nm">IPA fadøl</span><span class="pr">55 kr</span></div>
+                    </div>
+                  </div>
+                </div>
+                <div class="pr-cap"><span class="pr-cap-name" data-i18n="mtModernName">Moderne minimalistisk</span><span class="pr-cap-desc" data-i18n="mtModernDesc">Lyst, rent og luftigt — to kolonner</span></div>
+              </div>
+              <div class="pr-slide" data-i="2">
+                <div class="template-preview">
+                  <div class="mp dark-fancy">
+                    <div class="h" data-i18n="mpDarkHead">Restaurant</div>
+                    <div class="t" data-i18n="mpDarkTitle">Aftensmenu</div>
+                    <div class="div"></div>
+                    <div class="ln"><span>Tatar af oksefilet</span><span class="price">185</span></div>
+                    <div class="ln"><span>Pighvar, beurre blanc</span><span class="price">245</span></div>
+                    <div class="ln"><span>Confiteret andelår</span><span class="price">215</span></div>
+                    <div class="ln"><span>Chokoladefondant</span><span class="price">95</span></div>
+                  </div>
+                </div>
+                <div class="pr-cap"><span class="pr-cap-name" data-i18n="mtDarkName">Mørk og elegant</span><span class="pr-cap-desc" data-i18n="mtDarkDesc">Mørk baggrund med guld-detaljer</span></div>
+              </div>
+            </div>
+            <div class="pr-dots" aria-hidden="true"><span class="active"></span><span></span><span></span></div>
+            <a class="pr-mobile-cta" href="/menukort.html" data-i18n="prCta">Lav dit menukort →</a>
+          </div>
+          <div class="pr-text">
+            <span class="pr-eyebrow" data-i18n="menuPrice">99 kr.</span>
+            <h2 class="pr-title" data-i18n="menuSecTitle">Menukort</h2>
+            <p class="pr-lead" data-i18n="menuSecSub">Vælg en stil at starte fra — eller byg dit eget fra bunden</p>
+            <a class="pr-cta" href="/menukort.html" data-i18n="prCta">Lav dit menukort →</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ VISITKORT (preview højre / tekst venstre) ============ -->
+    <section class="pr-section" data-product="visit" data-side="right">
+      <div class="pr-sticky">
+        <div class="pr-row">
+          <div class="pr-visual">
+            <div class="pr-stack">
+              <div class="pr-slide active" data-i="0">
+                <div class="template-preview bcard">
+                  <div class="bp bc-classic">
+                    <div class="nm" data-i18n="bcClassicName">Anna Jensen</div>
+                    <div class="tt" data-i18n="bcClassicTitle">Ejer & barista</div>
+                    <div class="accent"></div>
+                    <div class="co" data-i18n="bcClassicCompany">Café Solsikken</div>
+                    <div class="bc-contact"><span data-i18n="bcClassicPhone">+45 31 42 53 64</span><span data-i18n="bcClassicMail">anna@solsikken.dk</span></div>
+                  </div>
+                </div>
+                <div class="pr-cap"><span class="pr-cap-name" data-i18n="btClassicName">Klassisk</span><span class="pr-cap-desc" data-i18n="btClassicDesc">Cremebaggrund med terracotta-streg</span></div>
+              </div>
+              <div class="pr-slide" data-i="1">
+                <div class="template-preview bcard">
+                  <div class="bp bc-bold">
+                    <div class="top" data-i18n="bcBoldTop">DESIGNER · KØBENHAVN</div>
+                    <div class="nm" data-i18n="bcBoldName">MARTIN KOFOED</div>
+                    <div class="bottom" data-i18n="bcBoldBottom">martin@studio.dk · +45 22 33 44 55</div>
+                  </div>
+                </div>
+                <div class="pr-cap"><span class="pr-cap-name" data-i18n="btBoldName">Moderne sort</span><span class="pr-cap-desc" data-i18n="btBoldDesc">Stærk og minimalistisk i sort-hvid</span></div>
+              </div>
+              <div class="pr-slide" data-i="2">
+                <div class="template-preview bcard">
+                  <div class="bp bc-craft">
+                    <div class="nm" data-i18n="bcCraftName">Peter Sørensen</div>
+                    <div class="tt" data-i18n="bcCraftTitle">Tømrermester</div>
+                    <div class="bc-contact craft"><span data-i18n="bcCraftPhone">+45 40 12 34 56</span><span data-i18n="bcCraftMail">peter@traesnedker.dk</span></div>
+                  </div>
+                </div>
+                <div class="pr-cap"><span class="pr-cap-name" data-i18n="btCraftName">Naturlig & farverig</span><span class="pr-cap-desc" data-i18n="btCraftDesc">Skovgrøn med varm sand-accent</span></div>
+              </div>
+            </div>
+            <div class="pr-dots" aria-hidden="true"><span class="active"></span><span></span><span></span></div>
+            <a class="pr-mobile-cta" href="/visitkort.html" data-i18n="prCtaVisit">Lav dit visitkort →</a>
+          </div>
+          <div class="pr-text">
+            <span class="pr-eyebrow" data-i18n="visitPrice">49 kr.</span>
+            <h2 class="pr-title" data-i18n="visitSecTitle">Visitkort</h2>
+            <p class="pr-lead" data-i18n="visitSecSub">Vælg en stil at starte fra — eller byg dit eget fra bunden</p>
+            <a class="pr-cta" href="/visitkort.html" data-i18n="prCtaVisit">Lav dit visitkort →</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ ETIKETTER (preview venstre / tekst højre) ============ -->
+    <section class="pr-section" data-product="label" data-side="left">
+      <div class="pr-sticky">
+        <div class="pr-row">
+          <div class="pr-visual">
+            <div class="pr-stack">
+              <div class="pr-slide active" data-i="0">
+                <div class="template-preview label">
+                  <div class="lp lb-jam side-front">
+                    <div class="ov" data-i18n="lpJamOv">Hjemmelavet</div>
+                    <div class="nm" data-i18n="lpJamName">Jordbærmarmelade</div>
+                    <div class="tg" data-i18n="lpJamTag">med vanilje · 2026</div>
+                    <div class="bt">450 g</div>
+                    <div class="pr" data-i18n="lpJamPr">Annes Køkken</div>
+                  </div>
+                  <div class="lp lb-decl side-back">
+                    <div class="vb" data-i18n="lpJamVb">Jordbærmarmelade</div>
+                    <div class="row" data-i18n-html="lpJamIngHtml"><b>Ingredienser:</b> Jordbær (55&nbsp;%), sukker, citronsaft, geleringsmiddel (pektin)</div>
+                    <div class="row" data-i18n-html="lpJamNetHtml"><b>Nettovægt:</b> 450&nbsp;g</div>
+                    <div class="nt" data-i18n="lpDeclNut">Næringsindhold pr. 100 g</div>
+                    <div class="nr"><span data-i18n="lpDeclE">Energi</span><span>682 kJ / 163 kcal</span></div>
+                    <div class="nr"><span data-i18n="lpDeclFat">Fedt</span><span>0,1 g</span></div>
+                    <div class="nr"><span data-i18n="lpDeclCarb">Kulhydrat</span><span>40 g</span></div>
+                  </div>
+                </div>
+                <div class="pr-cap"><span class="pr-cap-name" data-i18n="ltJamName">Klassisk glas</span><span class="pr-cap-desc" data-i18n="ltJamDesc">Varm creme med terracotta-overskrift</span></div>
+              </div>
+              <div class="pr-slide" data-i="1">
+                <div class="template-preview label">
+                  <div class="lp lb-dark side-front">
+                    <div class="ov" data-i18n="lpDarkOv">Håndlavet</div>
+                    <div class="nm" data-i18n="lpDarkName">Granola</div>
+                    <div class="tg" data-i18n="lpDarkSub">med mandler &amp; honning</div>
+                    <div class="pr" data-i18n="lpDarkPr">400 g · Brødladen</div>
+                  </div>
+                  <div class="lp lb-decl side-back">
+                    <div class="vb" data-i18n="lpDarkVb">Granola — ristet müsli med mandler og honning</div>
+                    <div class="row" data-i18n-html="lpDarkIngHtml"><b>Ingredienser:</b> Havregryn (45&nbsp;%), mandler (15&nbsp;%), honning, rapsolie, havsalt</div>
+                    <div class="row" data-i18n-html="lpDarkNetHtml"><b>Nettovægt:</b> 400&nbsp;g</div>
+                    <div class="nt" data-i18n="lpDeclNut">Næringsindhold pr. 100 g</div>
+                    <div class="nr"><span data-i18n="lpDeclE">Energi</span><span>1895 kJ / 452 kcal</span></div>
+                    <div class="nr"><span data-i18n="lpDeclFat">Fedt</span><span>18 g</span></div>
+                    <div class="nr"><span data-i18n="lpDeclCarb">Kulhydrat</span><span>58 g</span></div>
+                  </div>
+                </div>
+                <div class="pr-cap"><span class="pr-cap-name" data-i18n="ltDarkName">Mørk &amp; moderne</span><span class="pr-cap-desc" data-i18n="ltDarkDesc">Dyb grøn forside med lys bagside</span></div>
+              </div>
+              <div class="pr-slide" data-i="2">
+                <div class="template-preview label">
+                  <div class="lp lb-cookie side-front">
+                    <div class="ov" data-i18n="lpCookieOv">Bagt i hånden</div>
+                    <div class="nm" data-i18n="lpCookieName">Chokolade-cookies</div>
+                    <div class="acc"></div>
+                    <div class="tg" data-i18n="lpCookieTag">med hasselnødder</div>
+                    <div class="pr" data-i18n="lpCookiePr">250 g · Kagehuset</div>
+                  </div>
+                  <div class="lp lb-decl side-back">
+                    <div class="vb" data-i18n="lpCookieVb">Småkager med chokolade og hasselnødder</div>
+                    <div class="row" data-i18n-html="lpCookieIngHtml"><b>Ingredienser:</b> Hvedemel, smør, sukker, chokolade (20&nbsp;%), hasselnødder (10&nbsp;%), æg, havsalt</div>
+                    <div class="row" data-i18n-html="lpCookieNetHtml"><b>Nettovægt:</b> 250&nbsp;g</div>
+                    <div class="nt" data-i18n="lpDeclNut">Næringsindhold pr. 100 g</div>
+                    <div class="nr"><span data-i18n="lpDeclE">Energi</span><span>2105 kJ / 503 kcal</span></div>
+                    <div class="nr"><span data-i18n="lpDeclFat">Fedt</span><span>27 g</span></div>
+                    <div class="nr"><span data-i18n="lpDeclCarb">Kulhydrat</span><span>58 g</span></div>
+                  </div>
+                </div>
+                <div class="pr-cap"><span class="pr-cap-name" data-i18n="ltCookieName">Minimal med ramme</span><span class="pr-cap-desc" data-i18n="ltCookieDesc">Ren hvid med klassisk dobbeltramme</span></div>
+              </div>
+            </div>
+            <div class="pr-dots" aria-hidden="true"><span class="active"></span><span></span><span></span></div>
+            <p class="pr-flip-hint" data-i18n="labelFlipHint">Hold musen over et kort for at se bagsiden</p>
+            <a class="pr-mobile-cta" href="/etiket.html" data-i18n="prCtaLabel">Lav din etiket →</a>
+          </div>
+          <div class="pr-text">
+            <span class="pr-eyebrow" data-i18n="labelPrice">49 kr.</span>
+            <h2 class="pr-title" data-i18n="labelSecTitle">Etiketter</h2>
+            <p class="pr-lead" data-i18n="labelSecSub">Fødevareetiketter med lovpligtig deklaration på bagsiden — klar til glas, poser og flasker</p>
+            <a class="pr-cta" href="/etiket.html" data-i18n="prCtaLabel">Lav din etiket →</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ KLIPPEKORT (preview højre / tekst venstre) ============ -->
+    <section class="pr-section" data-product="klip" data-side="right">
+      <div class="pr-sticky">
+        <div class="pr-row">
+          <div class="pr-visual">
+            <div class="pr-stack">
+              <div class="pr-slide active" data-i="0">
+                <div class="template-preview klip">
+                  <div class="kp kp-f kp-elegant side-front">
+                    <div class="nm" data-i18n="kpElegantName">Annes Bageri</div>
+                    <div class="acc"></div>
+                    <div class="tg" data-i18n="kpElegantTag">Kaffeklub</div>
+                    <div class="kp-mini-stamps"><span class="ms-dot-k filled"></span><span class="ms-dot-k filled"></span><span class="ms-dot-k filled"></span><span class="ms-dot-k"></span><span class="ms-dot-k"></span></div>
+                  </div>
+                  <div class="kp kp-b kp-elegant-b side-back">
+                    <div class="hd" data-i18n="kpHeadlineCoffee">Saml 10 — få den 10. kaffe gratis</div>
+                    <div class="stamps">
+                      <div class="st"></div><div class="st"></div><div class="st"></div><div class="st"></div><div class="st"></div>
+                      <div class="st"></div><div class="st"></div><div class="st"></div><div class="st"></div><div class="st reward">★</div>
+                    </div>
+                  </div>
+                </div>
+                <div class="pr-cap"><span class="pr-cap-name" data-i18n="ktElegantName">Klassisk café</span><span class="pr-cap-desc" data-i18n="ktElegantDesc">Varm creme med terracotta-accent</span></div>
+              </div>
+              <div class="pr-slide" data-i="1">
+                <div class="template-preview klip">
+                  <div class="kp kp-f kp-dark side-front">
+                    <div class="tg" data-i18n="kpDarkTag">Frisør · Salon</div>
+                    <div class="nm" data-i18n="kpDarkName">Studio Nord</div>
+                  </div>
+                  <div class="kp kp-b kp-dark-b side-back">
+                    <div class="hd" data-i18n="kpHeadlineCut">Saml 8 — få den 8. klipning gratis</div>
+                    <div class="stamps" style="grid-template-columns:repeat(4,1fr); max-width:140px;">
+                      <div class="st"></div><div class="st"></div><div class="st"></div><div class="st"></div>
+                      <div class="st"></div><div class="st"></div><div class="st"></div><div class="st reward">GRATIS</div>
+                    </div>
+                  </div>
+                </div>
+                <div class="pr-cap"><span class="pr-cap-name" data-i18n="ktDarkName">Mørk &amp; moderne</span><span class="pr-cap-desc" data-i18n="ktDarkDesc">Sort med guld-detaljer</span></div>
+              </div>
+              <div class="pr-slide" data-i="2">
+                <div class="template-preview klip">
+                  <div class="kp kp-f kp-modern side-front">
+                    <div class="ov" data-i18n="kpModernOv">Loyalitet</div>
+                    <div class="nm" data-i18n="kpModernName">Kage &amp; Co.</div>
+                    <div class="tg" data-i18n="kpModernTag">Saml 6 stempler · få en på huset</div>
+                  </div>
+                  <div class="kp kp-b kp-modern-b side-back">
+                    <div class="hd" data-i18n="kpHeadlineTreat">Saml 6 — få den 6. på huset</div>
+                    <div class="stamps" style="grid-template-columns:repeat(3,1fr); max-width:110px;">
+                      <div class="st"></div><div class="st"></div><div class="st"></div>
+                      <div class="st"></div><div class="st"></div><div class="st reward">♥</div>
+                    </div>
+                  </div>
+                </div>
+                <div class="pr-cap"><span class="pr-cap-name" data-i18n="ktModernName">Moderne &amp; minimal</span><span class="pr-cap-desc" data-i18n="ktModernDesc">Ren creme med tynde linjer</span></div>
+              </div>
+            </div>
+            <div class="pr-dots" aria-hidden="true"><span class="active"></span><span></span><span></span></div>
+            <p class="pr-flip-hint" data-i18n="klipFlipHint">Hold musen over et kort for at se bagsiden</p>
+            <a class="pr-mobile-cta" href="/klippekort.html" data-i18n="prCtaKlip">Lav dit klippekort →</a>
+          </div>
+          <div class="pr-text">
+            <span class="pr-eyebrow" data-i18n="klipPrice">49 kr.</span>
+            <h2 class="pr-title" data-i18n="klipSecTitle">Klippekort</h2>
+            <p class="pr-lead" data-i18n="klipSecSub">Loyalitetskort til café, salon eller butik — saml stempler, fang gengangskunder</p>
+            <a class="pr-cta" href="/klippekort.html" data-i18n="prCtaKlip">Lav dit klippekort →</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    </div><!-- /.product-reveals -->
+
+    <!-- ============ HVORFOR LUSIDIO? (scroll-reveal metrikker) ============ -->
+    <section class="why-section why-reveal reveal">
+      <div class="why-sticky">
+      <div class="why-head">
+        <div class="section-sep"></div>
+        <h2 class="why-title letter-reveal" data-i18n="whyTitle">Hvorfor Lusidio?</h2>
+        <p class="why-sub" data-i18n="whySub">Den nemmeste vej til professionelle resultater — uden designprogram-bøvl og uden designerregning.</p>
+      </div>
+      <div class="why-progress" aria-hidden="true">
+        <span data-step="0" data-i18n="whyRowPrice">Pris</span>
+        <span data-step="1" data-i18n="whyRowTime">Tid</span>
+        <span data-step="2" data-i18n="whyRowResult">Resultat</span>
+        <span data-step="3" data-i18n="whyRowSkill">Designerfaring</span>
+      </div>
+      <div class="compare-cards">
+        <!-- Designprogram -->
+        <article class="cc-card" data-place="canva">
+          <header class="cc-top">
+            <span class="cc-rank">#2</span>
+            <h3 class="cc-name" data-i18n="whyColCanva">Designprogram</h3>
+            <span class="cc-tagline" data-i18n="whyCanTagline">Photoshop · Figma</span>
+          </header>
+          <ul class="cc-metrics">
+            <li class="cc-row" data-step="0">
+              <span class="cc-icon" aria-hidden="true">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8"/><path d="M12 18V6"/></svg>
+              </span>
+              <div class="cc-content">
+                <div class="cc-mlabel" data-i18n="whyRowPrice">Pris</div>
+                <div class="cc-mvalue" data-i18n="whyCanPrice">Gratis–lav · din tid</div>
+              </div>
+              <div class="cc-meter" data-w="35"><span></span></div>
+            </li>
+            <li class="cc-row" data-step="1">
+              <span class="cc-icon" aria-hidden="true">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+              </span>
+              <div class="cc-content">
+                <div class="cc-mlabel" data-i18n="whyRowTime">Tid</div>
+                <div class="cc-mvalue" data-i18n="whyCanTime">2–4 timer</div>
+              </div>
+              <div class="cc-meter" data-w="50"><span></span></div>
+            </li>
+            <li class="cc-row" data-step="2">
+              <span class="cc-icon" aria-hidden="true">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+              </span>
+              <div class="cc-content">
+                <div class="cc-mlabel" data-i18n="whyRowResult">Resultat</div>
+                <div class="cc-mvalue" data-i18n="whyCanResult">Afhænger af dig</div>
+              </div>
+              <div class="cc-meter" data-w="55"><span></span></div>
+            </li>
+            <li class="cc-row" data-step="3">
+              <span class="cc-icon" aria-hidden="true">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
+              </span>
+              <div class="cc-content">
+                <div class="cc-mlabel" data-i18n="whyRowSkill">Designerfaring</div>
+                <div class="cc-mvalue" data-i18n="whyCanSkill">Du skal selv kunne det</div>
+              </div>
+              <div class="cc-meter" data-w="50"><span></span></div>
+            </li>
+          </ul>
+          <footer class="cc-bottom">
+            <div class="cc-score" data-target="6"><span class="cc-score-num">0</span><span class="cc-score-of">/10</span></div>
+          </footer>
+        </article>
+
+        <!-- Lusidio - featured -->
+        <article class="cc-card featured" data-place="lusidio">
+          <div class="cc-crown"><span data-i18n="whyCrown">Bedste valg</span></div>
+          <header class="cc-top">
+            <span class="cc-rank">#1</span>
+            <h3 class="cc-name" data-i18n="whyColLusidio">Lusidio</h3>
+            <span class="cc-tagline" data-i18n="whyLusTagline">Engangs-køb</span>
+          </header>
+          <ul class="cc-metrics">
+            <li class="cc-row" data-step="0">
+              <span class="cc-icon" aria-hidden="true">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8"/><path d="M12 18V6"/></svg>
+              </span>
+              <div class="cc-content">
+                <div class="cc-mlabel" data-i18n="whyRowPrice">Pris</div>
+                <div class="cc-mvalue" data-i18n="whyLusPrice">49–99 kr · engangs</div>
+              </div>
+              <div class="cc-meter" data-w="100"><span></span></div>
+            </li>
+            <li class="cc-row" data-step="1">
+              <span class="cc-icon" aria-hidden="true">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+              </span>
+              <div class="cc-content">
+                <div class="cc-mlabel" data-i18n="whyRowTime">Tid</div>
+                <div class="cc-mvalue" data-i18n="whyLusTime">5 minutter</div>
+              </div>
+              <div class="cc-meter" data-w="100"><span></span></div>
+            </li>
+            <li class="cc-row" data-step="2">
+              <span class="cc-icon" aria-hidden="true">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+              </span>
+              <div class="cc-content">
+                <div class="cc-mlabel" data-i18n="whyRowResult">Resultat</div>
+                <div class="cc-mvalue" data-i18n="whyLusResult">Konsekvent professionelt</div>
+              </div>
+              <div class="cc-meter" data-w="95"><span></span></div>
+            </li>
+            <li class="cc-row" data-step="3">
+              <span class="cc-icon" aria-hidden="true">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
+              </span>
+              <div class="cc-content">
+                <div class="cc-mlabel" data-i18n="whyRowSkill">Designerfaring</div>
+                <div class="cc-mvalue" data-i18n="whyLusSkill">Ingen krævet</div>
+              </div>
+              <div class="cc-meter" data-w="100"><span></span></div>
+            </li>
+          </ul>
+          <footer class="cc-bottom">
+            <div class="cc-score" data-target="10"><span class="cc-score-num">0</span><span class="cc-score-of">/10</span></div>
+          </footer>
+        </article>
+
+        <!-- Grafiker -->
+        <article class="cc-card" data-place="designer">
+          <header class="cc-top">
+            <span class="cc-rank">#3</span>
+            <h3 class="cc-name" data-i18n="whyColDesigner">Grafiker</h3>
+            <span class="cc-tagline" data-i18n="whyDesTagline">Pr. opgave</span>
+          </header>
+          <ul class="cc-metrics">
+            <li class="cc-row" data-step="0">
+              <span class="cc-icon" aria-hidden="true">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8"/><path d="M12 18V6"/></svg>
+              </span>
+              <div class="cc-content">
+                <div class="cc-mlabel" data-i18n="whyRowPrice">Pris</div>
+                <div class="cc-mvalue" data-i18n="whyDesPrice">500–2.000 kr</div>
+              </div>
+              <div class="cc-meter" data-w="25"><span></span></div>
+            </li>
+            <li class="cc-row" data-step="1">
+              <span class="cc-icon" aria-hidden="true">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+              </span>
+              <div class="cc-content">
+                <div class="cc-mlabel" data-i18n="whyRowTime">Tid</div>
+                <div class="cc-mvalue" data-i18n="whyDesTime">1–3 dage</div>
+              </div>
+              <div class="cc-meter" data-w="20"><span></span></div>
+            </li>
+            <li class="cc-row" data-step="2">
+              <span class="cc-icon" aria-hidden="true">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+              </span>
+              <div class="cc-content">
+                <div class="cc-mlabel" data-i18n="whyRowResult">Resultat</div>
+                <div class="cc-mvalue" data-i18n="whyDesResult">Professionelt</div>
+              </div>
+              <div class="cc-meter" data-w="90"><span></span></div>
+            </li>
+            <li class="cc-row" data-step="3">
+              <span class="cc-icon" aria-hidden="true">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
+              </span>
+              <div class="cc-content">
+                <div class="cc-mlabel" data-i18n="whyRowSkill">Designerfaring</div>
+                <div class="cc-mvalue" data-i18n="whyDesSkill">Designeren har det</div>
+              </div>
+              <div class="cc-meter" data-w="30"><span></span></div>
+            </li>
+          </ul>
+          <footer class="cc-bottom">
+            <div class="cc-score" data-target="7"><span class="cc-score-num">0</span><span class="cc-score-of">/10</span></div>
+          </footer>
+        </article>
+      </div>
+
+      <!-- Metric-swiper — vises kun på telefon (≤880px). Hvert kort = én metric, alle 3 firmaer side om side -->
+      <div class="metric-swiper" aria-label="Sammenligning pr. kriterie">
+        <div class="ms-track">
+
+          <!-- PRIS -->
+          <article class="ms-card" data-metric="price">
+            <div class="ms-head">
+              <span class="ms-icon" aria-hidden="true">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8"/><path d="M12 18V6"/></svg>
+              </span>
+              <h3 class="ms-title" data-i18n="whyRowPrice">Pris</h3>
+            </div>
+            <ul class="ms-rows">
+              <li class="ms-line winner" data-w="100">
+                <div class="ms-line-head"><span class="ms-name" data-i18n="whyColLusidio">Lusidio</span><span class="ms-val" data-i18n="whyLusPrice">49–99 kr · engangs</span></div>
+                <div class="ms-bar"><span></span></div>
+              </li>
+              <li class="ms-line" data-w="35">
+                <div class="ms-line-head"><span class="ms-name" data-i18n="whyColCanva">Designprogram</span><span class="ms-val" data-i18n="whyCanPrice">Gratis–lav · din tid</span></div>
+                <div class="ms-bar"><span></span></div>
+              </li>
+              <li class="ms-line" data-w="25">
+                <div class="ms-line-head"><span class="ms-name" data-i18n="whyColDesigner">Grafiker</span><span class="ms-val" data-i18n="whyDesPrice">500–2.000 kr</span></div>
+                <div class="ms-bar"><span></span></div>
+              </li>
+            </ul>
+          </article>
+
+          <!-- TID -->
+          <article class="ms-card" data-metric="time">
+            <div class="ms-head">
+              <span class="ms-icon" aria-hidden="true">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+              </span>
+              <h3 class="ms-title" data-i18n="whyRowTime">Tid</h3>
+            </div>
+            <ul class="ms-rows">
+              <li class="ms-line winner" data-w="100">
+                <div class="ms-line-head"><span class="ms-name" data-i18n="whyColLusidio">Lusidio</span><span class="ms-val" data-i18n="whyLusTime">5 minutter</span></div>
+                <div class="ms-bar"><span></span></div>
+              </li>
+              <li class="ms-line" data-w="50">
+                <div class="ms-line-head"><span class="ms-name" data-i18n="whyColCanva">Designprogram</span><span class="ms-val" data-i18n="whyCanTime">2–4 timer</span></div>
+                <div class="ms-bar"><span></span></div>
+              </li>
+              <li class="ms-line" data-w="20">
+                <div class="ms-line-head"><span class="ms-name" data-i18n="whyColDesigner">Grafiker</span><span class="ms-val" data-i18n="whyDesTime">1–3 dage</span></div>
+                <div class="ms-bar"><span></span></div>
+              </li>
+            </ul>
+          </article>
+
+          <!-- RESULTAT -->
+          <article class="ms-card" data-metric="result">
+            <div class="ms-head">
+              <span class="ms-icon" aria-hidden="true">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+              </span>
+              <h3 class="ms-title" data-i18n="whyRowResult">Resultat</h3>
+            </div>
+            <ul class="ms-rows">
+              <li class="ms-line winner" data-w="95">
+                <div class="ms-line-head"><span class="ms-name" data-i18n="whyColLusidio">Lusidio</span><span class="ms-val" data-i18n="whyLusResult">Konsekvent professionelt</span></div>
+                <div class="ms-bar"><span></span></div>
+              </li>
+              <li class="ms-line" data-w="55">
+                <div class="ms-line-head"><span class="ms-name" data-i18n="whyColCanva">Designprogram</span><span class="ms-val" data-i18n="whyCanResult">Afhænger af dig</span></div>
+                <div class="ms-bar"><span></span></div>
+              </li>
+              <li class="ms-line" data-w="90">
+                <div class="ms-line-head"><span class="ms-name" data-i18n="whyColDesigner">Grafiker</span><span class="ms-val" data-i18n="whyDesResult">Professionelt</span></div>
+                <div class="ms-bar"><span></span></div>
+              </li>
+            </ul>
+          </article>
+
+          <!-- DESIGNERFARING -->
+          <article class="ms-card" data-metric="skill">
+            <div class="ms-head">
+              <span class="ms-icon" aria-hidden="true">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
+              </span>
+              <h3 class="ms-title" data-i18n="whyRowSkill">Designerfaring</h3>
+            </div>
+            <ul class="ms-rows">
+              <li class="ms-line winner" data-w="100">
+                <div class="ms-line-head"><span class="ms-name" data-i18n="whyColLusidio">Lusidio</span><span class="ms-val" data-i18n="whyLusSkill">Ingen krævet</span></div>
+                <div class="ms-bar"><span></span></div>
+              </li>
+              <li class="ms-line" data-w="50">
+                <div class="ms-line-head"><span class="ms-name" data-i18n="whyColCanva">Designprogram</span><span class="ms-val" data-i18n="whyCanSkill">Du skal selv kunne det</span></div>
+                <div class="ms-bar"><span></span></div>
+              </li>
+              <li class="ms-line" data-w="30">
+                <div class="ms-line-head"><span class="ms-name" data-i18n="whyColDesigner">Grafiker</span><span class="ms-val" data-i18n="whyDesSkill">Designeren har det</span></div>
+                <div class="ms-bar"><span></span></div>
+              </li>
+            </ul>
+          </article>
+
+        </div>
+        <div class="ms-dots" role="tablist" aria-label="Kriterier">
+          <button class="ms-dot active" type="button" aria-label="Pris"></button>
+          <button class="ms-dot" type="button" aria-label="Tid"></button>
+          <button class="ms-dot" type="button" aria-label="Resultat"></button>
+          <button class="ms-dot" type="button" aria-label="Designerfaring"></button>
+        </div>
+      </div>
+      </div><!-- /.why-sticky -->
+    </section>
+    <section class="about-section reveal">
+      <h2 class="about-title letter-reveal" data-i18n="aboutTitle">Lavet i Danmark</h2>
+      <p class="about-text" data-i18n="aboutP1">Lusidio er bygget i Danmark — fordi små virksomheder fortjener at se professionelle ud uden at betale 89 kr om måneden for et abonnement de næsten ikke bruger.</p>
+      <p class="about-text muted" data-i18n="aboutP2">Hver skabelon er kurateret. Du kan ikke gå galt med fonts, farver eller layout — det er allerede ordnet. Du skriver bare dine ord ind og henter resultatet.</p>
+    </section>
+
+    <!-- ============ FAQ ============ -->
+    <section class="faq-section reveal">
+      <div class="faq-head">
+        <div class="section-sep"></div>
+        <h2 class="faq-title letter-reveal" data-i18n="faqTitle">Almindelige spørgsmål</h2>
+      </div>
+      <details class="faq-item">
+        <summary class="faq-q" data-i18n="faq1Q">Hvad betaler jeg for præcist?</summary>
+        <p class="faq-a" data-i18n="faq1A">Du betaler én gang for at hente det færdige design som printklar PDF uden vandmærke. Filen er din — du kan printe så mange du vil, og bruge den hvor du vil. Ingen abonnement, ingen skjulte gebyrer.</p>
+      </details>
+      <details class="faq-item">
+        <summary class="faq-q" data-i18n="faq2Q">Kan jeg ikke bare bruge Canva gratis?</summary>
+        <p class="faq-a" data-i18n="faq2A">Jo. Men Canva giver dig et blankt lærred og 50.000 skabeloner — du skal selv vide hvad der ser professionelt ud. Lusidio er omvendt: vi har gennemtænkt design, fonts og farver. Du udfylder bare felter. Det er forskellen.</p>
+      </details>
+      <details class="faq-item">
+        <summary class="faq-q" data-i18n="faq3Q">Hvad hvis jeg vil ændre noget bagefter?</summary>
+        <p class="faq-a" data-i18n="faq3A">Du kan altid vende tilbage, ændre dine oplysninger og hente en ny PDF. Du betaler igen for det nye download, men selve værktøjet bliver bedre over tid, og du har stadig din oprindelige fil.</p>
+      </details>
+      <details class="faq-item">
+        <summary class="faq-q" data-i18n="faq4Q">Lever det op til danske krav (allergener, mv.)?</summary>
+        <p class="faq-a" data-i18n="faq4A">Etiket-værktøjet har felter til de 14 allergener og næringsdeklaration som påkrævet af Fødevarestyrelsen. Du er stadig selv ansvarlig for at indholdet er korrekt — Lusidio leverer designet, du leverer oplysningerne.</p>
+      </details>
+      <details class="faq-item">
+        <summary class="faq-q" data-i18n="faq5Q">Hvilke sprog fungerer det på?</summary>
+        <p class="faq-a" data-i18n="faq5A">Lusidio kan bruges på dansk, engelsk, tyrkisk og ukrainsk. Selve dit menukort eller visitkort kan naturligvis være på et hvilket som helst sprog — du skriver bare teksten ind selv.</p>
+      </details>
+    </section>
+
+    <p class="footer" data-i18n-html="footerHtml">Spørgsmål? Skriv til <a href="mailto:hej@lusidio.com">hej@lusidio.com</a></p>
+
+  </div>
+
+<script>
+  const MENU_HREF   = '/menukort.html';
+  const VISIT_HREF  = '/visitkort.html';
+  const ETIKET_HREF = '/etiket.html';
+  const KLIP_HREF   = '/klippekort.html';
+
+  // ====== Slider-state pr. produkt ======
+  // Markér når en swipe lige er sket, så det efterfølgende klik ikke navigerer væk.
+  const sliderState = new WeakMap();
+
+  document.querySelectorAll('.slider').forEach(slider => {
+    const track  = slider.querySelector('.templates');
+    const slides = slider.querySelectorAll('.template');
+    const prev   = slider.querySelector('.slide-prev');
+    const next   = slider.querySelector('.slide-next');
+    const dots   = slider.querySelectorAll('.slide-dot');
+    const n      = slides.length;
+    let cur      = 0;
+    const state  = { swiping:false, justSwiped:false };
+    sliderState.set(slider, state);
+
+    function go(i, smooth=true){
+      cur = ((i % n) + n) % n;
+      track.style.transition = smooth ? '' : 'none';
+      track.style.transform = 'translateX(-' + (cur * 100) + '%)';
+      dots.forEach((d, di) => d.classList.toggle('active', di === cur));
+      slider.dataset.current = cur;
+    }
+    // Initial position
+    go(0, false);
+
+    prev.addEventListener('click', () => go(cur - 1));
+    next.addEventListener('click', () => go(cur + 1));
+    dots.forEach((d, di) => d.addEventListener('click', () => go(di)));
+
+    // Tastaturnavigation (←/→) når slider eller dens børn er i fokus
+    slider.addEventListener('keydown', e => {
+      if (e.key === 'ArrowLeft')  { e.preventDefault(); go(cur - 1); }
+      if (e.key === 'ArrowRight') { e.preventDefault(); go(cur + 1); }
+    });
+
+    // Touch swipe
+    let startX = 0, startY = 0, deltaX = 0;
+    slider.addEventListener('touchstart', e => {
+      const t = e.touches[0];
+      startX = t.clientX; startY = t.clientY; deltaX = 0;
+      state.swiping = false;
+    }, { passive:true });
+    slider.addEventListener('touchmove', e => {
+      const t = e.touches[0];
+      deltaX = t.clientX - startX;
+      const deltaY = t.clientY - startY;
+      // Kun horisontal swipe — ignorer hvis det mere er vertikal scroll
+      if (Math.abs(deltaX) > 10 && Math.abs(deltaX) > Math.abs(deltaY)) {
+        state.swiping = true;
+      }
+    }, { passive:true });
+    slider.addEventListener('touchend', () => {
+      if (state.swiping && Math.abs(deltaX) > 40){
+        go(cur + (deltaX < 0 ? 1 : -1));
+        state.justSwiped = true;
+        setTimeout(() => { state.justSwiped = false; }, 350);
+      }
+      state.swiping = false;
+    });
+  });
+
+  // ====== Klik på template → editor (med swipe-guard) ======
+  document.querySelectorAll('.template').forEach(el => {
+    el.addEventListener('click', e => {
+      e.preventDefault();
+      // Hvis brugeren lige har swipet, ignorer klikket
+      const slider = el.closest('.slider');
+      const state = slider && sliderState.get(slider);
+      if (state && state.justSwiped) return;
+      const product = el.dataset.product;
+      const tpl = el.dataset.template;
+      const base = product === 'menu' ? MENU_HREF
+                 : product === 'visit' ? VISIT_HREF
+                 : product === 'klip' ? KLIP_HREF
+                 : ETIKET_HREF;
+      window.location.href = tpl ? base + '?template=' + encodeURIComponent(tpl) : base;
+    });
+  });
+
+  // ====== Scroll-triggered reveal animations ======
+  if ('IntersectionObserver' in window){
+    const io = new IntersectionObserver((entries, observer) => {
+      entries.forEach(e => {
+        if (e.isIntersecting){
+          e.target.classList.add('in');
+          observer.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.12, rootMargin: '0px 0px -60px 0px' });
+    document.querySelectorAll('.reveal, .reveal-stagger').forEach(el => io.observe(el));
+  } else {
+    // Ingen observer-støtte → vis alt med det samme
+    document.querySelectorAll('.reveal, .reveal-stagger').forEach(el => el.classList.add('in'));
+  }
+
+  // ====== Feature-flags: respektér prefers-reduced-motion + touch ======
+  const REDUCED = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const TOUCH   = window.matchMedia && window.matchMedia('(hover: none)').matches;
+  const RICH    = !REDUCED && !TOUCH;
+
+  // ====== (J) Letter-by-letter reveal på .letter-reveal overskrifter ======
+  function splitToLetters(el){
+    if (el.dataset.split === '1') return;
+    el.dataset.split = '1';
+    const orig = el.textContent || '';
+    el.dataset.orig = orig;
+    const frag = document.createDocumentFragment();
+    let delay = 0;
+    // Split på ord-grænser så browseren ikke bryder inde i et ord
+    const parts = orig.split(' ');
+    parts.forEach((word, i) => {
+      if (word.length > 0){
+        const wordSpan = document.createElement('span');
+        wordSpan.className = 'lr-word';
+        for (const ch of word){
+          const s = document.createElement('span');
+          s.className = 'letter';
+          s.style.transitionDelay = delay + 'ms';
+          s.textContent = ch;
+          wordSpan.appendChild(s);
+          delay += 28;
+        }
+        frag.appendChild(wordSpan);
+      }
+      if (i < parts.length - 1){
+        frag.appendChild(document.createTextNode(' '));
+      }
+    });
+    el.textContent = '';
+    el.appendChild(frag);
+  }
+  function restoreLetters(el){
+    if (!el.dataset.orig) return;
+    el.textContent = el.dataset.orig;
+    el.dataset.split = '';
+  }
+  if ('IntersectionObserver' in window){
+    const letterIo = new IntersectionObserver((entries, observer) => {
+      entries.forEach(e => {
+        if (e.isIntersecting){
+          splitToLetters(e.target);
+          // Lille forsinkelse så split-letterne er i DOM før transitionen starter
+          requestAnimationFrame(() => requestAnimationFrame(() => e.target.classList.add('in')));
+          observer.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.4, rootMargin: '0px 0px -40px 0px' });
+    document.querySelectorAll('.letter-reveal').forEach(el => {
+      if (REDUCED){ el.classList.add('in'); return; }
+      letterIo.observe(el);
+    });
+  }
+  // Når sproget skifter skal vi resette letter-reveal (i18n overskriver textContent)
+  window.__resetLetterReveal = function(){
+    document.querySelectorAll('.letter-reveal').forEach(el => {
+      restoreLetters(el);
+      el.classList.remove('in');
+    });
+  };
+
+  // ====== (D) Count-up animation for stats-tal ======
+  function countUp(el, target, duration){
+    if (REDUCED){ el.textContent = target; return; }
+    const startTs = performance.now();
+    const start = 0;
+    const suffix = (el.dataset.suffix || '');
+    function frame(now){
+      const t = Math.min(1, (now - startTs) / duration);
+      const eased = 1 - Math.pow(1 - t, 3); // ease-out cubic
+      const val = Math.round(start + (target - start) * eased);
+      el.textContent = val + suffix;
+      if (t < 1) requestAnimationFrame(frame);
+      else el.textContent = target + suffix;
+    }
+    requestAnimationFrame(frame);
+  }
+  if ('IntersectionObserver' in window){
+    const statIo = new IntersectionObserver((entries, observer) => {
+      entries.forEach(e => {
+        if (!e.isIntersecting) return;
+        e.target.querySelectorAll('.stat-num').forEach(num => {
+          const raw = (num.textContent || '').trim();
+          // Match tal + optional suffix (fx '49 kr')
+          const m = raw.match(/^(\d+)(.*)$/);
+          if (!m) return;
+          const target = parseInt(m[1], 10);
+          const suffix = m[2] || '';
+          num.dataset.suffix = suffix;
+          num.dataset.target = target;
+          countUp(num, target, 1100 + Math.random()*300);
+        });
+        observer.unobserve(e.target);
+      });
+    }, { threshold: 0.6 });
+    document.querySelectorAll('.stats').forEach(el => statIo.observe(el));
+  }
+
+  // ====== (B) Mouse-parallax på hero em ======
+  if (RICH){
+    const hero = document.querySelector('.hero');
+    if (hero){
+      hero.addEventListener('mousemove', e => {
+        // Re-query em hver gang, da i18n's innerHTML-opdatering erstatter elementet
+        const em = hero.querySelector('.hero-title-v2 em');
+        if (!em) return;
+        const r = hero.getBoundingClientRect();
+        const dx = ((e.clientX - r.left) / r.width  - 0.5) * 12;
+        const dy = ((e.clientY - r.top)  / r.height - 0.5) * 8;
+        em.style.setProperty('--px', (-dx).toFixed(1) + 'px');
+        em.style.setProperty('--py', (-dy).toFixed(1) + 'px');
+      });
+      hero.addEventListener('mouseleave', () => {
+        const em = hero.querySelector('.hero-title-v2 em');
+        if (em){
+          em.style.setProperty('--px', '0px');
+          em.style.setProperty('--py', '0px');
+        }
+      });
+    }
+  }
+
+  // ====== (C) Magnetic hover på CTA-knapperne ======
+  if (RICH){
+    document.querySelectorAll('.cta-primary, .cta-outline').forEach(btn => {
+      btn.addEventListener('mouseenter', () => btn.classList.add('is-magnet'));
+      btn.addEventListener('mousemove', e => {
+        const r = btn.getBoundingClientRect();
+        const dx = ((e.clientX - r.left) / r.width  - 0.5) * 18;
+        const dy = ((e.clientY - r.top)  / r.height - 0.5) * 12;
+        btn.style.setProperty('--mx', dx.toFixed(1) + 'px');
+        btn.style.setProperty('--my', dy.toFixed(1) + 'px');
+      });
+      btn.addEventListener('mouseleave', () => {
+        btn.classList.remove('is-magnet');
+        btn.style.setProperty('--mx', '0px');
+        btn.style.setProperty('--my', '0px');
+      });
+    });
+  }
+
+  // ====== (F) 3D tilt på templates — fjernet efter ønske (kortet skal stå i ro) ======
+
+  // ====== (E) Auto-rotation på slider når musen hviler ======
+  if (!REDUCED){
+    document.querySelectorAll('.slider').forEach(slider => {
+      let intId = null;
+      function start(){
+        if (intId) return;
+        intId = setInterval(() => {
+          const next = slider.querySelector('.slide-next');
+          if (next) next.click();
+        }, 3200);
+      }
+      function stop(){
+        if (intId){ clearInterval(intId); intId = null; }
+      }
+      // Kun start når musen er over slideren OG ikke i bevægelse over arrows/dots
+      slider.addEventListener('mouseenter', () => {
+        // Vent 1s før auto-rotation starter
+        slider._startTo = setTimeout(start, 1000);
+      });
+      slider.addEventListener('mouseleave', () => {
+        if (slider._startTo){ clearTimeout(slider._startTo); slider._startTo = null; }
+        stop();
+      });
+      // Stop ved brugerinteraktion (klik, swipe)
+      slider.addEventListener('click', stop, true);
+      slider.addEventListener('touchstart', stop, { passive:true, capture:true });
+    });
+  }
+
+  // ====== (K) Cursor-glow på final CTA ======
+  if (RICH){
+    const finalCta = document.querySelector('.final-cta');
+    if (finalCta){
+      finalCta.addEventListener('mousemove', e => {
+        const r = finalCta.getBoundingClientRect();
+        finalCta.style.setProperty('--cx', (e.clientX - r.left) + 'px');
+        finalCta.style.setProperty('--cy', (e.clientY - r.top)  + 'px');
+      });
+    }
+  }
+
+  // ====== iPhone scroll-styret demo ======
+  (function initDemo(){
+    const stage = document.querySelector('.demo-stage');
+    if (!stage) return;
+    const section = document.querySelector('.demo-section');
+    const phases = stage.querySelectorAll('.d-phase');
+    const textPhases = stage.querySelectorAll('.demo-text-phase');
+    const dots = stage.querySelectorAll('.dsi-dot');
+    const numEl = stage.querySelector('.dsi-cur');
+    const TOTAL = 3; // tre faser (flere d-phase elementer pr. fase: preview + controls)
+    if (!phases.length) return;
+    let curPhase = -1;
+    let curInView = null;
+    let scheduled = false;
+
+    function update(){
+      scheduled = false;
+      const rect = stage.getBoundingClientRect();
+      const sectionH = rect.height;
+      const vh = window.innerHeight;
+      const scrollable = Math.max(1, sectionH - vh);
+      const scrolled = -rect.top;
+      const progress = Math.max(0, Math.min(0.9999, scrolled / scrollable));
+
+      // Popup synlig kun mens iPhone er sticky:
+      // rect.top <= 0 (vi har nået demo) OG rect.bottom > vh (demo-stage er ikke ved at scrolle ud).
+      // Så snart bunden af demo-stage rammer bunden af viewport, forsvinder popup straks.
+      const inView = rect.top <= 0 && rect.bottom > vh + 1;
+      if (inView !== curInView){
+        curInView = inView;
+        if (section) section.classList.toggle('demo-in-view', inView);
+      }
+
+      const newPhase = Math.floor(progress * TOTAL);
+      if (newPhase !== curPhase){
+        curPhase = newPhase;
+        // Match via data-phase — der er flere d-phase elementer (preview + controls)
+        phases.forEach(p => {
+          p.classList.toggle('active', parseInt(p.dataset.phase, 10) === newPhase);
+        });
+        textPhases.forEach(p => {
+          p.classList.toggle('active', parseInt(p.dataset.phase, 10) === newPhase);
+        });
+        dots.forEach((d, i) => d.classList.toggle('active', i === newPhase));
+        if (numEl) numEl.textContent = String(newPhase + 1);
+      }
+    }
+    function onScroll(){
+      if (scheduled) return;
+      scheduled = true;
+      requestAnimationFrame(update);
+    }
+    window.addEventListener('scroll', onScroll, { passive:true });
+    window.addEventListener('resize', onScroll, { passive:true });
+    // Initial run
+    update();
+  })();
+
+  // ====== Nye wow-effekter ======
+
+  // Scroll progress bar
+  (function initScrollProgress(){
+    const bar = document.querySelector('.scroll-progress span');
+    if (!bar) return;
+    let scheduled = false;
+    function update(){
+      scheduled = false;
+      const h = document.documentElement.scrollHeight - window.innerHeight;
+      const pct = h > 0 ? (window.scrollY / h) * 100 : 0;
+      bar.style.width = Math.max(0, Math.min(100, pct)) + '%';
+    }
+    window.addEventListener('scroll', () => {
+      if (scheduled) return;
+      scheduled = true;
+      requestAnimationFrame(update);
+    }, { passive:true });
+    update();
+  })();
+
+  // Confetti burst på hover af Final CTA (debounced — kun én gang pr. mouseenter)
+  (function initConfetti(){
+    if (REDUCED) return;
+    const cta = document.querySelector('.final-cta');
+    if (!cta) return;
+    let cooldown = false;
+    function spawn(x, y){
+      if (cooldown) return;
+      cooldown = true;
+      setTimeout(() => cooldown = false, 900);
+      const count = 16;
+      for (let i = 0; i < count; i++){
+        const p = document.createElement('span');
+        p.className = 'confetti-particle c' + (1 + (i % 4));
+        p.style.left = x + 'px';
+        p.style.top = y + 'px';
+        const angle = (Math.PI * 2 * i) / count + (Math.random() - 0.5) * 0.5;
+        const dist = 60 + Math.random() * 80;
+        p.style.setProperty('--tx', Math.cos(angle) * dist + 'px');
+        p.style.setProperty('--ty', (Math.sin(angle) * dist - 30) + 'px');
+        p.style.setProperty('--rot', (Math.random() * 720 - 360) + 'deg');
+        p.style.animationDelay = (Math.random() * 80) + 'ms';
+        document.body.appendChild(p);
+        setTimeout(() => p.remove(), 1300);
+      }
+    }
+    cta.addEventListener('mouseenter', (e) => {
+      const r = cta.getBoundingClientRect();
+      spawn(r.left + r.width/2, r.top + r.height/2);
+    });
+    // Også når man hover quick-nav buttons
+    cta.querySelectorAll('.qn-btn').forEach(btn => {
+      btn.addEventListener('mouseenter', (e) => {
+        const r = btn.getBoundingClientRect();
+        spawn(r.left + r.width/2, r.top + r.height/2);
+      });
+    });
+  })();
+
+  // Cursor-tracking på quick-nav knapper (radial highlight følger musen)
+  (function initQnBtn(){
+    document.querySelectorAll('.qn-btn').forEach(btn => {
+      btn.addEventListener('mousemove', (e) => {
+        const r = btn.getBoundingClientRect();
+        btn.style.setProperty('--nx', (e.clientX - r.left) + 'px');
+        btn.style.setProperty('--ny', (e.clientY - r.top) + 'px');
+      });
+    });
+  })();
+
+  // Compare cards — sæt --w på meter-bars + count score op når sektionen ses
+  (function initCompareCards(){
+    // 1. Sæt CSS-variabel --w fra data-w attribut (så bars animerer til korrekt bredde)
+    document.querySelectorAll('.cc-meter').forEach(m => {
+      const w = m.dataset.w;
+      if (w) m.style.setProperty('--w', w);
+      // Stagger bar-delays inden for hvert kort
+      const row = m.closest('.cc-row');
+      if (row){
+        const idx = Array.from(row.parentElement.children).indexOf(row);
+        const span = m.querySelector('span');
+        if (span) span.style.transitionDelay = (0.15 + idx * 0.1) + 's';
+      }
+    });
+    // 1b. Metric-swiper bars (telefon): sæt --w + stagger pr. linje
+    document.querySelectorAll('.ms-line').forEach(line => {
+      const w = line.dataset.w;
+      if (w) line.querySelector('.ms-bar')?.style.setProperty('--w', w);
+      const idx = Array.from(line.parentElement.children).indexOf(line);
+      const span = line.querySelector('.ms-bar span');
+      if (span) span.style.transitionDelay = (0.1 + idx * 0.12) + 's';
+    });
+    // 2. Count score-tal op når why-section er i view (kun én gang)
+    const why = document.querySelector('.why-section');
+    if (!why) return;
+    let counted = false;
+    function runCountUp(){
+      if (counted) return;
+      counted = true;
+      document.querySelectorAll('.cc-score').forEach((score, i) => {
+        const target = parseInt(score.dataset.target, 10) || 0;
+        const numEl = score.querySelector('.cc-score-num');
+        if (!numEl) return;
+        if (REDUCED){ numEl.textContent = target; return; }
+        const startTs = performance.now();
+        const dur = 1200;
+        const startDelay = i * 150;
+        function frame(now){
+          const elapsed = now - startTs - startDelay;
+          if (elapsed < 0){ requestAnimationFrame(frame); return; }
+          const t = Math.min(1, elapsed / dur);
+          const eased = 1 - Math.pow(1 - t, 3);
+          numEl.textContent = Math.round(target * eased);
+          if (t < 1) requestAnimationFrame(frame);
+        }
+        requestAnimationFrame(frame);
+      });
+    }
+
+    const rows = Array.from(document.querySelectorAll('.cc-row[data-step]'));
+    const progressTags = Array.from(document.querySelectorAll('.why-progress span'));
+    const TOTAL_STEPS = 4;
+
+    function revealUpTo(step){
+      // Afslør alle rækker til og med 'step'
+      rows.forEach(r => {
+        const s = parseInt(r.dataset.step, 10);
+        r.classList.toggle('revealed', s <= step);
+      });
+      // Opdater progress-indikator
+      progressTags.forEach(tag => {
+        const s = parseInt(tag.dataset.step, 10);
+        tag.classList.toggle('reached', s < step);
+        tag.classList.toggle('current', s === step);
+      });
+      // Når sidste step er nået → tæl score op
+      if (step >= TOTAL_STEPS - 1) runCountUp();
+    }
+
+    const isDesktop = () => window.matchMedia('(min-width:881px)').matches;
+
+    function updateWhy(){
+      if (!isDesktop()){
+        // Mobil: vis alt + tæl op når i view (håndteres af IO nedenfor)
+        return;
+      }
+      const rect = why.getBoundingClientRect();
+      const vh = window.innerHeight;
+      const scrollable = Math.max(1, rect.height - vh);
+      const scrolled = -rect.top;
+      const progress = Math.max(0, Math.min(1, scrolled / scrollable));
+      // Map progress → step. Første ~12% er "intro", resten deles i 4
+      const stepF = (progress - 0.08) / 0.86 * TOTAL_STEPS;
+      const step = Math.max(0, Math.min(TOTAL_STEPS - 1, Math.floor(stepF)));
+      revealUpTo(step);
+    }
+
+    if ('IntersectionObserver' in window){
+      const io = new IntersectionObserver((entries) => {
+        entries.forEach(e => {
+          if (e.isIntersecting && !isDesktop()){
+            // Mobil: afslør alt + count up
+            revealUpTo(TOTAL_STEPS - 1);
+          }
+        });
+      }, { threshold: 0.25 });
+      io.observe(why);
+    }
+
+    let scheduled = false;
+    function onScroll(){
+      if (scheduled) return;
+      scheduled = true;
+      requestAnimationFrame(() => { scheduled = false; updateWhy(); });
+    }
+    window.addEventListener('scroll', onScroll, { passive:true });
+    window.addEventListener('resize', onScroll, { passive:true });
+    // Init: hvis mobil, vis alt
+    if (!isDesktop()) revealUpTo(TOTAL_STEPS - 1);
+    else updateWhy();
+  })();
+
+  // Metric-swiper: synkroniser dots med scroll-position + klik-navigation
+  (function initMetricSwiper(){
+    const track = document.querySelector('.ms-track');
+    const dots = Array.from(document.querySelectorAll('.ms-dot'));
+    if (!track || !dots.length) return;
+    const cards = Array.from(track.querySelectorAll('.ms-card'));
+
+    function activeIndex(){
+      // Find det kort hvis centrum er tættest på track-centrum
+      const trackRect = track.getBoundingClientRect();
+      const center = trackRect.left + trackRect.width / 2;
+      let best = 0, bestDist = Infinity;
+      cards.forEach((c, i) => {
+        const r = c.getBoundingClientRect();
+        const dist = Math.abs((r.left + r.width / 2) - center);
+        if (dist < bestDist){ bestDist = dist; best = i; }
+      });
+      return best;
+    }
+    function syncDots(){
+      const idx = activeIndex();
+      dots.forEach((d, i) => d.classList.toggle('active', i === idx));
+    }
+    let scheduled = false;
+    track.addEventListener('scroll', () => {
+      if (scheduled) return;
+      scheduled = true;
+      requestAnimationFrame(() => { scheduled = false; syncDots(); });
+    }, { passive:true });
+
+    dots.forEach((dot, i) => {
+      dot.addEventListener('click', () => {
+        const card = cards[i];
+        if (!card) return;
+        const target = card.offsetLeft - (track.clientWidth - card.clientWidth) / 2;
+        track.scrollTo({ left: target, behavior: REDUCED ? 'auto' : 'smooth' });
+      });
+    });
+    syncDots();
+  })();
+
+  // ====== Produkt scroll-reveal: skift skabelon ved scroll + alternér tekst ======
+  (function initProductReveals(){
+    const sections = Array.from(document.querySelectorAll('.pr-section'));
+    if (!sections.length) return;
+
+    sections.forEach(section => {
+      const slides = Array.from(section.querySelectorAll('.pr-slide'));
+      const dots = Array.from(section.querySelectorAll('.pr-dots span'));
+      const total = slides.length;
+      let cur = 0;
+
+      function setActive(idx){
+        idx = Math.max(0, Math.min(total - 1, idx));
+        if (idx === cur) return;
+        cur = idx;
+        slides.forEach((s, i) => s.classList.toggle('active', i === idx));
+        dots.forEach((d, i) => d.classList.toggle('active', i === idx));
+      }
+
+      // Scroll-styret skabelon-skift (gælder BÅDE desktop og mobil — sektionen er sticky begge steder)
+      section._update = function(){
+        const rect = section.getBoundingClientRect();
+        const vh = window.innerHeight;
+        const scrollable = Math.max(1, rect.height - vh);
+        const scrolled = -rect.top;
+        const progress = Math.max(0, Math.min(0.999, scrolled / scrollable));
+        // Aktiv når sektionen er sticky (top <= 0 og stadig i view)
+        const active = rect.top <= 5 && rect.bottom > vh;
+        section.classList.toggle('pr-active', active || (rect.top > 0 && rect.top < vh*0.6));
+        // Del scroll-strækningen i 'total' lige store dele
+        setActive(Math.floor(progress * total));
+      };
+
+      // Prikker: klik for at hoppe (manuel styring)
+      dots.forEach((d, i) => {
+        d.style.cursor = 'pointer';
+        d.addEventListener('click', () => setActive(i));
+      });
+    });
+
+    let scheduled = false;
+    function onScroll(){
+      if (scheduled) return;
+      scheduled = true;
+      requestAnimationFrame(() => {
+        scheduled = false;
+        sections.forEach(s => s._update && s._update());
+      });
+    }
+    window.addEventListener('scroll', onScroll, { passive:true });
+    window.addEventListener('resize', onScroll, { passive:true });
+    onScroll();
+  })();
+
+  // ====== i18n ======
+  const I18N = {
+    da:{
+      heroTitle:'Professionelle menukort, visitkort og etiketter på minutter',
+      heroLead:'Skriv dine oplysninger, vælg en stil, og hent et færdigt design som PDF — uden grafiker og uden designprogrammer.',
+      qnMenu:'Menukort', qnVisit:'Visitkort', qnLabel:'Etiket', qnKlip:'Klippekort',
+            menuSecTitle:'Menukort', menuSecSub:'Vælg en stil at starte fra — eller byg dit eget fra bunden', menuPrice:'99 kr.',
+      visitSecTitle:'Visitkort', visitSecSub:'Vælg en stil at starte fra — eller byg dit eget fra bunden', visitPrice:'49 kr.',
+      useTemplate:'Brug denne →',
+      mtClassicName:'Klassisk café', mtClassicDesc:'Varm cremebaggrund med terracotta-accent',
+      mtModernName:'Moderne minimalistisk', mtModernDesc:'Lyst, rent og luftigt — to kolonner',
+      mtDarkName:'Mørk og elegant', mtDarkDesc:'Mørk baggrund med guld-detaljer',
+      btClassicName:'Klassisk', btClassicDesc:'Cremebaggrund med terracotta-streg',
+      btBoldName:'Moderne sort', btBoldDesc:'Stærk og minimalistisk i sort-hvid',
+      btCraftName:'Naturlig & farverig', btCraftDesc:'Skovgrøn med varm sand-accent',
+      mpClassicHead:'Café Solsikken', mpClassicTitle:'Menu',
+      mpModernHead:'DRIKKEKORT', mpModernTitle:'Onsdag',
+      mpDarkHead:'Restaurant', mpDarkTitle:'Aftensmenu',
+      bcClassicName:'Anna Jensen', bcClassicTitle:'Ejer & barista', bcClassicCompany:'Café Solsikken',
+      bcClassicPhone:'+45 31 42 53 64', bcClassicMail:'anna@solsikken.dk', bcCraftPhone:'+45 40 12 34 56', bcCraftMail:'peter@traesnedker.dk',
+      bcBoldTop:'DESIGNER · KØBENHAVN', bcBoldName:'MARTIN KOFOED', bcBoldBottom:'martin@studio.dk · +45 22 33 44 55',
+      bcCraftName:'Peter Sørensen', bcCraftTitle:'Tømrermester',
+      labelSecTitle:'Etiketter', labelSecSub:'Fødevareetiketter med lovpligtig deklaration på bagsiden — klar til glas, poser og flasker', labelPrice:'49 kr.',
+      ltJamName:'Klassisk glas', ltJamDesc:'Varm creme med terracotta-overskrift',
+      ltDarkName:'Mørk & moderne', ltDarkDesc:'Dyb grøn forside med lys bagside',
+            lpJamOv:'Hjemmelavet', lpJamName:'Jordbærmarmelade', lpJamTag:'med vanilje · 2026', lpJamPr:'Annes Køkken',
+      lpDarkOv:'Håndlavet', lpDarkName:'Granola', lpDarkSub:'med mandler & honning', lpDarkPr:'400 g · Brødladen',
+                        lpDeclNut:'Næringsindhold pr. 100 g', lpDeclE:'Energi', lpDeclFat:'Fedt', lpDeclCarb:'Kulhydrat',
+      labelFlipHint:'Hold musen over et kort for at se bagsiden',
+      ltCookieName:'Minimal med ramme', ltCookieDesc:'Ren hvid med klassisk dobbeltramme',
+      klipSecTitle:'Klippekort', klipSecSub:'Loyalitetskort til café, salon eller butik — saml stempler, fang gengangskunder', klipPrice:'49 kr.',
+      klipFlipHint:'Hold musen over et kort for at se bagsiden',
+      prCta:'Lav dit menukort →', prCtaVisit:'Lav dit visitkort →', prCtaLabel:'Lav din etiket →', prCtaKlip:'Lav dit klippekort →',
+      kpElegantName:'Annes Bageri', kpElegantTag:'Kaffeklub',
+      kpDarkTag:'Frisør · Salon', kpDarkName:'Studio Nord',
+      kpModernOv:'Loyalitet', kpModernName:'Kage & Co.', kpModernTag:'Saml 6 stempler · få en på huset',
+      kpHeadlineCoffee:'Saml 10 — få den 10. kaffe gratis',
+      kpHeadlineCut:'Saml 8 — få den 8. klipning gratis',
+      kpHeadlineTreat:'Saml 6 — få den 6. på huset',
+      ktElegantName:'Klassisk café', ktElegantDesc:'Varm creme med terracotta-accent',
+      ktDarkName:'Mørk & moderne', ktDarkDesc:'Sort med guld-detaljer',
+      ktModernName:'Moderne & minimal', ktModernDesc:'Ren creme med tynde linjer',
+      lpJamVb:'Jordbærmarmelade', lpJamIngHtml:'<b>Ingredienser:</b> Jordbær (55&nbsp;%), sukker, citronsaft, geleringsmiddel (pektin)', lpJamNetHtml:'<b>Nettovægt:</b> 450&nbsp;g',
+      lpDarkVb:'Granola — ristet müsli med mandler og honning', lpDarkIngHtml:'<b>Ingredienser:</b> Havregryn (45&nbsp;%), mandler (15&nbsp;%), honning, rapsolie, havsalt', lpDarkNetHtml:'<b>Nettovægt:</b> 400&nbsp;g',
+      lpCookieOv:'Bagt i hånden', lpCookieName:'Chokolade-cookies', lpCookieTag:'med hasselnødder', lpCookiePr:'250 g · Kagehuset',
+      lpCookieVb:'Småkager med chokolade og hasselnødder', lpCookieIngHtml:'<b>Ingredienser:</b> Hvedemel, smør, sukker, chokolade (20&nbsp;%), hasselnødder (10&nbsp;%), æg, havsalt', lpCookieNetHtml:'<b>Nettovægt:</b> 250&nbsp;g',
+      heroEyebrow:'Engangs-køb · ingen abonnement',
+      heroTitleHtml:'Træt af at se <span class="nobr"><em>hjemmelavet</em>\u00a0ud?</span>',
+      heroLeadV2:'Lusidio laver smukke menukort, klippekort, etiketter og visitkort på 5 minutter — uden Canva-frustration og uden designer-regning.',
+      demoHint:'Scroll for at se hvordan',
+      ctaPrimary:'Se produkter', ctaSecondary:'Sådan virker det',
+      statTools:'Værktøjer klar nu', statLangsNum:'4', statLangs:'DA · EN · TR · UK', statPrice:'Engangs — ikke abonnement',
+      howTitle:'Sådan virker det', howSub:'Tre trin fra blankt ark til printklar PDF.',
+      howStep1Title:'Skriv dine oplysninger', howStep1Desc:'Udfyld felterne — virksomhedsnavn, retter, priser, kontakt. Du behøver ikke at vide noget om design.',
+      howStep2Title:'Vælg en stil', howStep2Desc:'Klik mellem færdige designs der allerede er gennemtænkte. Farver, fonts og layout matcher — du kan ikke ødelægge det.',
+      howStep3Title:'Hent som PDF', howStep3Desc:'Betal én gang. Hent en printklar PDF — send til trykkeriet, print selv, eller del digitalt. Filen er din.',
+      whyTitle:'Hvorfor Lusidio?', whySub:'Den nemmeste vej til professionelle resultater — uden designprogram-bøvl og uden designerregning.',
+      whyColLusidio:'Lusidio', whyColCanva:'Designprogram', whyColDesigner:'Grafiker',
+      whyRowPrice:'Pris', whyRowTime:'Tid', whyRowResult:'Resultat', whyRowSkill:'Designerfaring',
+      whyLusPrice:'49–99 kr · engangs', whyLusTime:'5 minutter', whyLusResult:'Konsekvent professionelt', whyLusSkill:'Ingen krævet',
+      whyCanPrice:'Gratis–lav · din tid', whyCanTime:'2–4 timer', whyCanResult:'Afhænger af dig', whyCanSkill:'Du skal selv kunne det',
+      whyDesPrice:'500–2.000 kr', whyDesTime:'1–3 dage', whyDesResult:'Professionelt', whyDesSkill:'Designeren har det',
+      whyLusTagline:'Engangs-køb', whyCanTagline:'Photoshop · Figma', whyDesTagline:'Pr. opgave', whyCrown:'Bedste valg',
+      aboutTitle:'Lavet i Danmark',
+      aboutP1:'Lusidio er bygget i Danmark — fordi små virksomheder fortjener at se professionelle ud uden at betale 89 kr om måneden for et abonnement de næsten ikke bruger.',
+      aboutP2:'Hver skabelon er kurateret. Du kan ikke gå galt med fonts, farver eller layout — det er allerede ordnet. Du skriver bare dine ord ind og henter resultatet.',
+      faqTitle:'Almindelige spørgsmål',
+      faq1Q:'Hvad betaler jeg for præcist?', faq1A:'Du betaler én gang for at hente det færdige design som printklar PDF uden vandmærke. Filen er din — du kan printe så mange du vil, og bruge den hvor du vil. Ingen abonnement, ingen skjulte gebyrer.',
+      faq2Q:'Kan jeg ikke bare bruge Canva gratis?', faq2A:'Jo. Men Canva giver dig et blankt lærred og 50.000 skabeloner — du skal selv vide hvad der ser professionelt ud. Lusidio er omvendt: vi har gennemtænkt design, fonts og farver. Du udfylder bare felter. Det er forskellen.',
+      faq3Q:'Hvad hvis jeg vil ændre noget bagefter?', faq3A:'Du kan altid vende tilbage, ændre dine oplysninger og hente en ny PDF. Du betaler igen for det nye download, men selve værktøjet bliver bedre over tid, og du har stadig din oprindelige fil.',
+      faq4Q:'Lever det op til danske krav (allergener, mv.)?', faq4A:'Etiket-værktøjet har felter til de 14 allergener og næringsdeklaration som påkrævet af Fødevarestyrelsen. Du er stadig selv ansvarlig for at indholdet er korrekt — Lusidio leverer designet, du leverer oplysningerne.',
+      faq5Q:'Hvilke sprog fungerer det på?', faq5A:'Lusidio kan bruges på dansk, engelsk, tyrkisk og ukrainsk. Selve dit menukort eller visitkort kan naturligvis være på et hvilket som helst sprog — du skriver bare teksten ind selv.',
+      finalTitle:'Klar til at lave dit første kort?', finalSub:'Vælg et værktøj og kom i gang — første kort er gratis så du kan prøve det.',
+      footerHtml:'Spørgsmål? Skriv til <a href="mailto:hej@lusidio.com">hej@lusidio.com</a>'
+    },
+    en:{
+      heroTitle:'Professional menu cards, business cards and labels in minutes',
+      heroLead:'Type your details, pick a style, and download a finished design as a PDF — no designer, no design software.',
+      qnMenu:'Menu cards', qnVisit:'Business cards', qnLabel:'Labels', qnKlip:'Loyalty cards',
+            menuSecTitle:'Menu cards', menuSecSub:'Pick a style to start from — or build your own from scratch', menuPrice:'99 kr.',
+      visitSecTitle:'Business cards', visitSecSub:'Pick a style to start from — or build your own from scratch', visitPrice:'49 kr.',
+      useTemplate:'Use this →',
+      mtClassicName:'Classic café', mtClassicDesc:'Warm cream background with terracotta accents',
+      mtModernName:'Modern minimal', mtModernDesc:'Light, clean and airy — two columns',
+      mtDarkName:'Dark and elegant', mtDarkDesc:'Dark background with gold details',
+      btClassicName:'Classic', btClassicDesc:'Cream background with terracotta line',
+      btBoldName:'Modern black', btBoldDesc:'Strong and minimalist in black & white',
+      btCraftName:'Natural & colorful', btCraftDesc:'Forest green with warm sand accent',
+      mpClassicHead:'Café Solsikken', mpClassicTitle:'Menu',
+      mpModernHead:'DRINKS', mpModernTitle:'Wednesday',
+      mpDarkHead:'Restaurant', mpDarkTitle:'Dinner menu',
+      bcClassicName:'Anna Jensen', bcClassicTitle:'Owner & barista', bcClassicCompany:'Café Solsikken',
+      bcClassicPhone:'+45 31 42 53 64', bcClassicMail:'anna@solsikken.dk', bcCraftPhone:'+45 40 12 34 56', bcCraftMail:'peter@traesnedker.dk',
+      bcBoldTop:'DESIGNER · COPENHAGEN', bcBoldName:'MARTIN KOFOED', bcBoldBottom:'martin@studio.dk · +45 22 33 44 55',
+      bcCraftName:'Peter Sørensen', bcCraftTitle:'Carpenter',
+      labelSecTitle:'Labels', labelSecSub:'Food labels with the legally required declaration on the back — ready for jars, bags and bottles', labelPrice:'49 kr.',
+      ltJamName:'Classic jar', ltJamDesc:'Warm cream with terracotta overline',
+      ltDarkName:'Dark & modern', ltDarkDesc:'Deep green front with a light back',
+            lpJamOv:'Homemade', lpJamName:'Strawberry jam', lpJamTag:'with vanilla · 2026', lpJamPr:'Annes Køkken',
+      lpDarkOv:'Handmade', lpDarkName:'Granola', lpDarkSub:'with almonds & honey', lpDarkPr:'400 g · Brødladen',
+                        lpDeclNut:'Nutrition per 100 g', lpDeclE:'Energy', lpDeclFat:'Fat', lpDeclCarb:'Carbohydrate',
+      labelFlipHint:'Hover over a card to see the back',
+      ltCookieName:'Minimal with frame', ltCookieDesc:'Clean white with a classic double frame',
+      klipSecTitle:'Loyalty cards', klipSecSub:'Punch cards for cafés, salons and shops — collect stamps, bring customers back', klipPrice:'49 kr.',
+      klipFlipHint:'Hover over a card to see the back',
+      prCta:'Make your menu →', prCtaVisit:'Make your card →', prCtaLabel:'Make your label →', prCtaKlip:'Make your loyalty card →',
+      kpElegantName:'Annes Bakery', kpElegantTag:'Coffee Club',
+      kpDarkTag:'Barber · Salon', kpDarkName:'Studio Nord',
+      kpModernOv:'Loyalty', kpModernName:'Cake & Co.', kpModernTag:'Collect 6 stamps · get one on the house',
+      kpHeadlineCoffee:'Collect 10 — get the 10th coffee free',
+      kpHeadlineCut:'Collect 8 — get the 8th cut free',
+      kpHeadlineTreat:'Collect 6 — get the 6th on the house',
+      ktElegantName:'Classic café', ktElegantDesc:'Warm cream with a terracotta accent',
+      ktDarkName:'Dark & modern', ktDarkDesc:'Black with gold details',
+      ktModernName:'Modern & minimal', ktModernDesc:'Clean cream with thin lines',
+      lpJamVb:'Strawberry jam', lpJamIngHtml:'<b>Ingredients:</b> Strawberries (55&nbsp;%), sugar, lemon juice, gelling agent (pectin)', lpJamNetHtml:'<b>Net weight:</b> 450&nbsp;g',
+      lpDarkVb:'Granola — toasted muesli with almonds and honey', lpDarkIngHtml:'<b>Ingredients:</b> Oats (45&nbsp;%), almonds (15&nbsp;%), honey, rapeseed oil, sea salt', lpDarkNetHtml:'<b>Net weight:</b> 400&nbsp;g',
+      lpCookieOv:'Baked by hand', lpCookieName:'Chocolate cookies', lpCookieTag:'with hazelnuts', lpCookiePr:'250 g · Kagehuset',
+      lpCookieVb:'Cookies with chocolate and hazelnuts', lpCookieIngHtml:'<b>Ingredients:</b> Wheat flour, butter, sugar, chocolate (20&nbsp;%), hazelnuts (10&nbsp;%), egg, sea salt', lpCookieNetHtml:'<b>Net weight:</b> 250&nbsp;g',
+      heroEyebrow:'One-time purchase · no subscription',
+      heroTitleHtml:'Tired of <span class="nobr">looking\u00a0<em>homemade</em>?</span>',
+      heroLeadV2:'Lusidio creates beautiful menus, loyalty cards, labels and business cards in 5 minutes — without the Canva frustration and without paying a designer.',
+      demoHint:'Scroll to see how',
+      ctaPrimary:'See products', ctaSecondary:'How it works',
+      statTools:'Tools ready now', statLangsNum:'4', statLangs:'DA · EN · TR · UK', statPrice:'One-time — not a subscription',
+      howTitle:'How it works', howSub:'Three steps from blank to print-ready PDF.',
+      howStep1Title:'Type your details', howStep1Desc:'Fill in the fields — business name, dishes, prices, contact. You don\u2019t need to know anything about design.',
+      howStep2Title:'Pick a style', howStep2Desc:'Choose between finished designs that are already thought through. Colors, fonts and layout match — you can\u2019t break it.',
+      howStep3Title:'Download as PDF', howStep3Desc:'Pay once. Get a print-ready PDF — send to a print shop, print yourself, or share digitally. The file is yours.',
+      whyTitle:'Why Lusidio?', whySub:'The simplest path to professional results — without design-software hassle and without a designer invoice.',
+      whyColLusidio:'Lusidio', whyColCanva:'Design software', whyColDesigner:'Designer',
+      whyRowPrice:'Price', whyRowTime:'Time', whyRowResult:'Result', whyRowSkill:'Design experience',
+      whyLusPrice:'49–99 kr · one-time', whyLusTime:'5 minutes', whyLusResult:'Consistently professional', whyLusSkill:'None needed',
+      whyCanPrice:'Free–low · your time', whyCanTime:'2–4 hours', whyCanResult:'Depends on you', whyCanSkill:'You need the skill',
+      whyDesPrice:'500–2,000 kr', whyDesTime:'1–3 days', whyDesResult:'Professional', whyDesSkill:'Designer brings it',
+      whyLusTagline:'One-time', whyCanTagline:'Photoshop · Figma', whyDesTagline:'Per project', whyCrown:'Best choice',
+      aboutTitle:'Made in Denmark',
+      aboutP1:'Lusidio is built in Denmark — because small businesses deserve to look professional without paying 89 kr a month for a subscription they barely use.',
+      aboutP2:'Every template is curated. You can\u2019t go wrong with fonts, colors or layout — that\u2019s already handled. You just type in your words and download the result.',
+      faqTitle:'Common questions',
+      faq1Q:'What am I paying for exactly?', faq1A:'You pay once to download the finished design as a print-ready PDF without watermark. The file is yours — print as many as you want, use it wherever you want. No subscription, no hidden fees.',
+      faq2Q:'Can\u2019t I just use Canva for free?', faq2A:'Yes. But Canva gives you a blank canvas and 50,000 templates — you still need to know what looks professional. Lusidio is the opposite: we\u2019ve thought through the design, fonts and colors. You just fill in fields. That\u2019s the difference.',
+      faq3Q:'What if I want to change something later?', faq3A:'You can always come back, change your information and download a new PDF. You pay again for the new download, but the tool keeps getting better, and you still have your original file.',
+      faq4Q:'Does it meet Danish requirements (allergens, etc.)?', faq4A:'The Labels tool has fields for the 14 allergens and nutrition declaration as required by the Danish Food Authority. You are still responsible for the content being correct — Lusidio provides the design, you provide the information.',
+      faq5Q:'What languages does it work in?', faq5A:'Lusidio is available in Danish, English, Turkish and Ukrainian. The actual menu or business card can of course be in any language — you type the text yourself.',
+      finalTitle:'Ready to make your first card?', finalSub:'Pick a tool and get started — the first card is free so you can try it.',
+      footerHtml:'Questions? Write to <a href="mailto:hej@lusidio.com">hej@lusidio.com</a>'
+    },
+    tr:{
+      heroTitle:'Dakikalar içinde profesyonel menü, kartvizit ve etiketler',
+      heroLead:'Bilgilerinizi yazın, bir stil seçin ve hazır tasarımı PDF olarak indirin — tasarımcı ve tasarım programı olmadan.',
+      qnMenu:'Menüler', qnVisit:'Kartvizitler', qnLabel:'Etiketler', qnKlip:'Sadakat kartı',
+            menuSecTitle:'Menüler', menuSecSub:'Başlamak için bir stil seçin — veya sıfırdan kendi tasarımınızı yapın', menuPrice:'99 kr.',
+      visitSecTitle:'Kartvizitler', visitSecSub:'Başlamak için bir stil seçin — veya sıfırdan kendi tasarımınızı yapın', visitPrice:'49 kr.',
+      useTemplate:'Bunu kullan →',
+      mtClassicName:'Klasik kafe', mtClassicDesc:'Sıcak krem zemin, terracotta vurgular',
+      mtModernName:'Modern minimal', mtModernDesc:'Aydınlık, temiz ve havadar — iki sütun',
+      mtDarkName:'Koyu ve şık', mtDarkDesc:'Altın detaylı koyu zemin',
+      btClassicName:'Klasik', btClassicDesc:'Krem zemin, terracotta çizgi',
+      btBoldName:'Modern siyah', btBoldDesc:'Siyah-beyazda güçlü ve minimal',
+      btCraftName:'Doğal & renkli', btCraftDesc:'Orman yeşili, sıcak kum vurgusu',
+      mpClassicHead:'Café Solsikken', mpClassicTitle:'Menü',
+      mpModernHead:'İÇECEKLER', mpModernTitle:'Çarşamba',
+      mpDarkHead:'Restoran', mpDarkTitle:'Akşam menüsü',
+      bcClassicName:'Anna Jensen', bcClassicTitle:'Sahip & barista', bcClassicCompany:'Café Solsikken',
+      bcClassicPhone:'+45 31 42 53 64', bcClassicMail:'anna@solsikken.dk', bcCraftPhone:'+45 40 12 34 56', bcCraftMail:'peter@traesnedker.dk',
+      bcBoldTop:'TASARIMCI · KOPENHAG', bcBoldName:'MARTIN KOFOED', bcBoldBottom:'martin@studio.dk · +45 22 33 44 55',
+      bcCraftName:'Peter Sørensen', bcCraftTitle:'Marangoz',
+      labelSecTitle:'Etiketler', labelSecSub:'Arka yüzünde yasal beyan bulunan gıda etiketleri — kavanoz, poşet ve şişeler için hazır', labelPrice:'49 kr.',
+      ltJamName:'Klasik kavanoz', ltJamDesc:'Terracotta üst başlıklı sıcak krem',
+      ltDarkName:'Koyu & modern', ltDarkDesc:'Koyu yeşil ön yüz, açık arka yüz',
+            lpJamOv:'Ev yapımı', lpJamName:'Çilek reçeli', lpJamTag:'vanilyalı · 2026', lpJamPr:'Annes Køkken',
+      lpDarkOv:'El yapımı', lpDarkName:'Granola', lpDarkSub:'badem & ballı', lpDarkPr:'400 g · Brødladen',
+                        lpDeclNut:'100 g başına besin değeri', lpDeclE:'Enerji', lpDeclFat:'Yağ', lpDeclCarb:'Karbonhidrat',
+      labelFlipHint:'Arka yüzü görmek için kartın üzerine gelin',
+      ltCookieName:'Çerçeveli minimal', ltCookieDesc:'Klasik çift çerçeveli saf beyaz',
+      klipSecTitle:'Sadakat kartları', klipSecSub:'Kafe, kuaför ve dükkânlar için damga kartları — damga toplayın, müşterileri geri getirin', klipPrice:'49 kr.',
+      klipFlipHint:'Arka yüzü görmek için kartın üzerine gelin',
+      prCta:'Menünü oluştur →', prCtaVisit:'Kartını oluştur →', prCtaLabel:'Etiketini oluştur →', prCtaKlip:'Sadakat kartını oluştur →',
+      kpElegantName:'Anne Fırını', kpElegantTag:'Kahve Kulübü',
+      kpDarkTag:'Berber · Salon', kpDarkName:'Studio Nord',
+      kpModernOv:'Sadakat', kpModernName:'Pasta & Co.', kpModernTag:'6 damga topla · biri bizden',
+      kpHeadlineCoffee:'10 topla — 10. kahve bedava',
+      kpHeadlineCut:'8 topla — 8. saç kesimi bedava',
+      kpHeadlineTreat:'6 topla — 6. ikram bizden',
+      ktElegantName:'Klasik kafe', ktElegantDesc:'Terracotta vurgulu sıcak krem',
+      ktDarkName:'Koyu & modern', ktDarkDesc:'Altın detaylı siyah',
+      ktModernName:'Modern & minimal', ktModernDesc:'İnce çizgili temiz krem',
+      lpJamVb:'Çilek reçeli', lpJamIngHtml:'<b>İçindekiler:</b> Çilek (%55), şeker, limon suyu, jelleştirici (pektin)', lpJamNetHtml:'<b>Net ağırlık:</b> 450&nbsp;g',
+      lpDarkVb:'Granola — badem ve ballı kavrulmuş müsli', lpDarkIngHtml:'<b>İçindekiler:</b> Yulaf (%45), badem (%15), bal, kanola yağı, deniz tuzu', lpDarkNetHtml:'<b>Net ağırlık:</b> 400&nbsp;g',
+      lpCookieOv:'Elde pişirildi', lpCookieName:'Çikolatalı kurabiye', lpCookieTag:'fındıklı', lpCookiePr:'250 g · Kagehuset',
+      lpCookieVb:'Çikolatalı ve fındıklı kurabiye', lpCookieIngHtml:'<b>İçindekiler:</b> Buğday unu, tereyağı, şeker, çikolata (%20), fındık (%10), yumurta, deniz tuzu', lpCookieNetHtml:'<b>Net ağırlık:</b> 250&nbsp;g',
+      heroEyebrow:'Tek seferlik ödeme · abonelik yok',
+      heroTitleHtml:'<span class="nobr"><em>Ev\u00a0yapımı</em></span> görünmekten yoruldunuz mu?',
+      heroLeadV2:'Lusidio 5 dakikada güzel menüler, sadakat kartları, etiketler ve kartvizitler hazırlar — Canva karmaşası ve tasarımcı faturası olmadan.',
+      demoHint:'Nasıl olduğunu görmek için kaydır',
+      ctaPrimary:'Ürünleri gör', ctaSecondary:'Nasıl çalışır',
+      statTools:'Hazır araçlar', statLangsNum:'4', statLangs:'DA · EN · TR · UK', statPrice:'Tek seferlik — abonelik değil',
+      howTitle:'Nasıl çalışır', howSub:'Boş sayfadan baskıya hazır PDF\u2019e üç adım.',
+      howStep1Title:'Bilgilerinizi yazın', howStep1Desc:'Alanları doldurun — işletme adı, ürünler, fiyatlar, iletişim. Tasarım hakkında bilgi sahibi olmanıza gerek yok.',
+      howStep2Title:'Bir stil seçin', howStep2Desc:'Önceden düşünülmüş hazır tasarımlar arasından tıklayın. Renkler, yazı tipleri ve düzen uyumlu — bozamazsınız.',
+      howStep3Title:'PDF olarak indir', howStep3Desc:'Bir kez ödeyin. Baskıya hazır PDF\u2019i indirin — matbaaya gönderin, kendiniz yazdırın veya dijital paylaşın. Dosya sizindir.',
+      whyTitle:'Neden Lusidio?', whySub:'Profesyonel sonuçlara en kolay yol — tasarım programı zahmeti ve tasarımcı faturası olmadan.',
+      whyColLusidio:'Lusidio', whyColCanva:'Tasarım programı', whyColDesigner:'Tasarımcı',
+      whyRowPrice:'Fiyat', whyRowTime:'Süre', whyRowResult:'Sonuç', whyRowSkill:'Tasarım deneyimi',
+      whyLusPrice:'49–99 kr · tek seferlik', whyLusTime:'5 dakika', whyLusResult:'Tutarlı şekilde profesyonel', whyLusSkill:'Gerekmez',
+      whyCanPrice:'Ücretsiz–düşük · zamanın', whyCanTime:'2–4 saat', whyCanResult:'Size bağlı', whyCanSkill:'Beceri gerekir',
+      whyDesPrice:'500–2.000 kr', whyDesTime:'1–3 gün', whyDesResult:'Profesyonel', whyDesSkill:'Tasarımcı sağlar',
+      whyLusTagline:'Tek seferlik', whyCanTagline:'Photoshop · Figma', whyDesTagline:'Proje başına', whyCrown:'En iyi seçim',
+      aboutTitle:'Danimarka\u2019da yapıldı',
+      aboutP1:'Lusidio Danimarka\u2019da geliştirildi — çünkü küçük işletmeler neredeyse kullanmadıkları bir abonelik için ayda 89 kr ödemeden profesyonel görünmeyi hak ediyor.',
+      aboutP2:'Her şablon özenle seçildi. Yazı tipleri, renkler ve düzenle yanlış gidemezsiniz — hepsi halledildi. Sadece kelimelerinizi yazıp sonucu indirirsiniz.',
+      faqTitle:'Sık sorulan sorular',
+      faq1Q:'Tam olarak ne için ödüyorum?', faq1A:'Bitmiş tasarımı filigransız, baskıya hazır PDF olarak indirmek için bir kez ödüyorsunuz. Dosya sizindir — istediğiniz kadar yazdırabilir, istediğiniz yerde kullanabilirsiniz. Abonelik yok, gizli ücret yok.',
+      faq2Q:'Canva\u2019yı ücretsiz kullansam olmaz mı?', faq2A:'Olur. Ama Canva size boş bir tuval ve 50.000 şablon verir — neyin profesyonel göründüğünü yine de bilmeniz gerekir. Lusidio tam tersi: tasarımı, yazı tiplerini ve renkleri biz düşündük. Siz sadece alanları doldurursunuz. Fark budur.',
+      faq3Q:'Sonradan bir şey değiştirmek istersem ne olur?', faq3A:'Her zaman geri dönüp bilgilerinizi değiştirebilir ve yeni bir PDF indirebilirsiniz. Yeni indirme için tekrar ödersiniz, ama araç sürekli daha iyi oluyor ve orijinal dosyanız da sizde kalır.',
+      faq4Q:'Danimarka gerekliliklerini (alerjenler vb.) karşılıyor mu?', faq4A:'Etiket aracında, Danimarka Gıda Kurumu\u2019nun gerektirdiği 14 alerjen ve besin değeri beyanı için alanlar var. İçeriğin doğru olmasından siz sorumlusunuz — Lusidio tasarımı, siz bilgileri sağlarsınız.',
+      faq5Q:'Hangi dillerde çalışır?', faq5A:'Lusidio Danca, İngilizce, Türkçe ve Ukraynaca olarak kullanılabilir. Menü veya kartvizitin kendisi tabii ki herhangi bir dilde olabilir — metni siz yazarsınız.',
+      finalTitle:'İlk kartınızı yapmaya hazır mısınız?', finalSub:'Bir araç seçin ve başlayın — ilk kart denemeniz için ücretsizdir.',
+      footerHtml:'Sorularınız mı var? <a href="mailto:hej@lusidio.com">hej@lusidio.com</a> adresine yazın'
+    },
+    uk:{
+      heroTitle:'Професійні меню, візитівки та етикетки за лічені хвилини',
+      heroLead:'Впишіть свої дані, оберіть стиль і завантажте готовий дизайн у форматі PDF — без дизайнера та програм для дизайну.',
+      qnMenu:'Меню', qnVisit:'Візитівки', qnLabel:'Етикетки', qnKlip:'Картки лояльності',
+            menuSecTitle:'Меню', menuSecSub:'Оберіть стиль для старту — або створіть власний з нуля', menuPrice:'99 kr.',
+      visitSecTitle:'Візитівки', visitSecSub:'Оберіть стиль для старту — або створіть власний з нуля', visitPrice:'49 kr.',
+      useTemplate:'Обрати →',
+      mtClassicName:'Класичне кафе', mtClassicDesc:'Тепле кремове тло з акцентом теракота',
+      mtModernName:'Сучасний мінімалізм', mtModernDesc:'Світло, чисто й повітряно — дві колонки',
+      mtDarkName:'Темний і елегантний', mtDarkDesc:'Темне тло з золотими деталями',
+      btClassicName:'Класичний', btClassicDesc:'Кремове тло з теракотовою лінією',
+      btBoldName:'Сучасний чорний', btBoldDesc:'Сильний і мінімальний у чорно-білому',
+      btCraftName:'Природний і яскравий', btCraftDesc:'Лісовий зелений із теплим піщаним акцентом',
+      mpClassicHead:'Café Solsikken', mpClassicTitle:'Меню',
+      mpModernHead:'НАПОЇ', mpModernTitle:'Середа',
+      mpDarkHead:'Ресторан', mpDarkTitle:'Вечеря',
+      bcClassicName:'Anna Jensen', bcClassicTitle:'Власник & бариста', bcClassicCompany:'Café Solsikken',
+      bcClassicPhone:'+45 31 42 53 64', bcClassicMail:'anna@solsikken.dk', bcCraftPhone:'+45 40 12 34 56', bcCraftMail:'peter@traesnedker.dk',
+      bcBoldTop:'ДИЗАЙНЕР · КОПЕНГАГЕН', bcBoldName:'MARTIN KOFOED', bcBoldBottom:'martin@studio.dk · +45 22 33 44 55',
+      bcCraftName:'Peter Sørensen', bcCraftTitle:'Тесля',
+      labelSecTitle:'Етикетки', labelSecSub:'Харчові етикетки з обов\u2019язковою декларацією на звороті — для банок, пакетів і пляшок', labelPrice:'49 kr.',
+      ltJamName:'Класична банка', ltJamDesc:'Теплий крем із теракотовим надзаголовком',
+      ltDarkName:'Темна & сучасна', ltDarkDesc:'Глибокий зелений лицьовий бік зі світлим зворотом',
+            lpJamOv:'Домашнє', lpJamName:'Полуничне варення', lpJamTag:'з ваніллю · 2026', lpJamPr:'Annes Køkken',
+      lpDarkOv:'Ручна робота', lpDarkName:'Гранола', lpDarkSub:'з мигдалем і медом', lpDarkPr:'400 g · Brødladen',
+                        lpDeclNut:'Поживна цінність на 100 г', lpDeclE:'Енергія', lpDeclFat:'Жири', lpDeclCarb:'Вуглеводи',
+      labelFlipHint:'Наведіть курсор на картку, щоб побачити зворот',
+      ltCookieName:'Мінімалізм із рамкою', ltCookieDesc:'Чистий білий із класичною подвійною рамкою',
+      klipSecTitle:'Картки лояльності', klipSecSub:'Картки для кав\u2019ярень, салонів і крамниць — збирайте штампи, повертайте клієнтів', klipPrice:'49 kr.',
+      klipFlipHint:'Наведіть курсор на картку, щоб побачити зворот',
+      prCta:'Створити меню →', prCtaVisit:'Створити візитку →', prCtaLabel:'Створити етикетку →', prCtaKlip:'Створити картку →',
+      kpElegantName:'Пекарня Анни', kpElegantTag:'Кавовий клуб',
+      kpDarkTag:'Перукарня · Салон', kpDarkName:'Studio Nord',
+      kpModernOv:'Лояльність', kpModernName:'Торт & Ко.', kpModernTag:'Збери 6 штампів · отримай безкоштовно',
+      kpHeadlineCoffee:'Збери 10 — 10-та кава безкоштовно',
+      kpHeadlineCut:'Збери 8 — 8-ма стрижка безкоштовно',
+      kpHeadlineTreat:'Збери 6 — 6-те за рахунок закладу',
+      ktElegantName:'Класична кав\u2019ярня', ktElegantDesc:'Тепла кремова з терракотовим акцентом',
+      ktDarkName:'Темна & сучасна', ktDarkDesc:'Чорна із золотими деталями',
+      ktModernName:'Сучасна & мінімалістична', ktModernDesc:'Чиста кремова з тонкими лініями',
+      lpJamVb:'Полуничне варення', lpJamIngHtml:'<b>Інгредієнти:</b> полуниця (55&nbsp;%), цукор, лимонний сік, желюючий агент (пектин)', lpJamNetHtml:'<b>Нетто:</b> 450&nbsp;g',
+      lpDarkVb:'Гранола — запечені мюслі з мигдалем і медом', lpDarkIngHtml:'<b>Інгредієнти:</b> вівсяні пластівці (45&nbsp;%), мигдаль (15&nbsp;%), мед, ріпакова олія, морська сіль', lpDarkNetHtml:'<b>Нетто:</b> 400&nbsp;g',
+      lpCookieOv:'Випечено вручну', lpCookieName:'Шоколадне печиво', lpCookieTag:'з фундуком', lpCookiePr:'250 g · Kagehuset',
+      lpCookieVb:'Печиво з шоколадом і фундуком', lpCookieIngHtml:'<b>Інгредієнти:</b> пшеничне борошно, масло, цукор, шоколад (20&nbsp;%), фундук (10&nbsp;%), яйце, морська сіль', lpCookieNetHtml:'<b>Нетто:</b> 250&nbsp;g',
+      heroEyebrow:'Разова покупка · без підписки',
+      heroTitleHtml:'Втомилися <span class="nobr">виглядати\u00a0<em>саморобно</em>?</span>',
+      heroLeadV2:'Lusidio створює красиві меню, картки лояльності, етикетки та візитівки за 5 хвилин — без Canva-фрустрації та без рахунку від дизайнера.',
+      demoHint:'Гортайте, щоб побачити як',
+      ctaPrimary:'Переглянути продукти', ctaSecondary:'Як це працює',
+      statTools:'Готові інструменти', statLangsNum:'4', statLangs:'DA · EN · TR · UK', statPrice:'Разово — не підписка',
+      howTitle:'Як це працює', howSub:'Три кроки від чистого аркуша до готового до друку PDF.',
+      howStep1Title:'Впишіть свої дані', howStep1Desc:'Заповніть поля — назва бізнесу, страви, ціни, контакти. Не потрібно нічого знати про дизайн.',
+      howStep2Title:'Оберіть стиль', howStep2Desc:'Натисніть на готові дизайни, які вже продумані. Кольори, шрифти та макет узгоджені — зіпсувати не вийде.',
+      howStep3Title:'Завантажте PDF', howStep3Desc:'Заплатіть один раз. Отримайте готовий до друку PDF — надішліть до друкарні, надрукуйте самі або поділіться цифровим способом. Файл ваш.',
+      whyTitle:'Чому Lusidio?', whySub:'Найпростіший шлях до професійних результатів — без мороки з дизайн-програмами та без рахунку дизайнера.',
+      whyColLusidio:'Lusidio', whyColCanva:'Дизайн-програма', whyColDesigner:'Дизайнер',
+      whyRowPrice:'Ціна', whyRowTime:'Час', whyRowResult:'Результат', whyRowSkill:'Дизайнерський досвід',
+      whyLusPrice:'49–99 kr · разово', whyLusTime:'5 хвилин', whyLusResult:'Послідовно професійно', whyLusSkill:'Не потрібен',
+      whyCanPrice:'Безкоштовно–дешево · ваш час', whyCanTime:'2–4 години', whyCanResult:'Залежить від вас', whyCanSkill:'Потрібні навички',
+      whyDesPrice:'500–2 000 kr', whyDesTime:'1–3 дні', whyDesResult:'Професійно', whyDesSkill:'Має дизайнер',
+      whyLusTagline:'Разова покупка', whyCanTagline:'Photoshop · Figma', whyDesTagline:'За проект', whyCrown:'Найкращий вибір',
+      aboutTitle:'Зроблено в Данії',
+      aboutP1:'Lusidio створено в Данії — тому що малий бізнес заслуговує виглядати професійно, не платячи 89 kr на місяць за підписку, якою майже не користується.',
+      aboutP2:'Кожен шаблон підібрано вручну. Ви не помилитесь зі шрифтами, кольорами чи макетом — це вже зроблено. Ви просто вписуєте свої слова й завантажуєте результат.',
+      faqTitle:'Поширені запитання',
+      faq1Q:'За що саме я плачу?', faq1A:'Ви платите один раз, щоб завантажити готовий дизайн у вигляді PDF без водяного знака, готового до друку. Файл ваш — друкуйте скільки завгодно, використовуйте де завгодно. Без підписки, без прихованих платежів.',
+      faq2Q:'Чи не можу я просто користуватися Canva безкоштовно?', faq2A:'Можете. Але Canva дає вам порожнє полотно і 50 000 шаблонів — вам усе одно треба знати, що виглядає професійно. Lusidio навпаки: ми продумали дизайн, шрифти й кольори. Ви просто заповнюєте поля. У цьому різниця.',
+      faq3Q:'А якщо я захочу щось змінити пізніше?', faq3A:'Ви завжди можете повернутися, змінити дані й завантажити новий PDF. За нове завантаження платите знову, але інструмент постійно вдосконалюється, а ваш оригінальний файл залишається у вас.',
+      faq4Q:'Чи відповідає це данським вимогам (алергени тощо)?', faq4A:'Інструмент Етикетки має поля для 14 алергенів і декларації харчової цінності, як того вимагає Данська служба з питань харчування. Ви відповідаєте за коректність вмісту — Lusidio надає дизайн, ви надаєте інформацію.',
+      faq5Q:'Якими мовами це працює?', faq5A:'Lusidio доступне данською, англійською, турецькою та українською. Саме меню чи візитівка, звісно, можуть бути будь-якою мовою — текст ви вписуєте самі.',
+      finalTitle:'Готові створити свою першу картку?', finalSub:'Оберіть інструмент і починайте — перша картка безкоштовна, щоб ви могли спробувати.',
+      footerHtml:'Питання? Пишіть на <a href="mailto:hej@lusidio.com">hej@lusidio.com</a>'
+    }
+  };
+
+  const LS_LANG = 'lusidio_lang_v1';
+  let LANG = 'da';
+  try { LANG = localStorage.getItem(LS_LANG) || ((navigator.language || 'da').slice(0,2)); } catch(e){}
+  if (!I18N[LANG]) LANG = 'da';
+
+  function t(k){ return (I18N[LANG] && I18N[LANG][k]) || I18N.da[k] || k; }
+  function apply(){
+    document.documentElement.lang = LANG;
+    document.querySelectorAll('[data-i18n]').forEach(el => { el.textContent = t(el.getAttribute('data-i18n')); });
+    document.querySelectorAll('[data-i18n-html]').forEach(el => { el.innerHTML = t(el.getAttribute('data-i18n-html')); });
+    document.querySelectorAll('.lang-btn').forEach(b => b.classList.toggle('active', b.dataset.lang === LANG));
+  }
+  document.querySelectorAll('.lang-btn').forEach(b => {
+    b.addEventListener('click', () => {
+      LANG = b.dataset.lang;
+      try { localStorage.setItem(LS_LANG, LANG); } catch(e){}
+      // Nulstil letter-reveal før i18n overskriver textContent
+      document.querySelectorAll('.letter-reveal').forEach(el => {
+        el.classList.remove('in');
+        el.dataset.split = '';
+      });
+      apply();
+      // Re-trigger letter-reveal for synlige overskrifter med ny tekst
+      if (!REDUCED){
+        document.querySelectorAll('.letter-reveal').forEach(el => {
+          const r = el.getBoundingClientRect();
+          const inView = r.top < window.innerHeight && r.bottom > 0;
+          if (inView){
+            splitToLetters(el);
+            requestAnimationFrame(() => requestAnimationFrame(() => el.classList.add('in')));
+          }
+        });
+      } else {
+        document.querySelectorAll('.letter-reveal').forEach(el => el.classList.add('in'));
+      }
+    });
+  });
+  apply();
+</script>
+
+<!-- Vercel Web Analytics -->
+<script>
+  window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
+</script>
+<script defer src="/_vercel/insights/script.js"></script>
+</body>
+</html>
