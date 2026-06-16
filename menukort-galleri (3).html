@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<!-- Lusidio galleri · cache-fri forhåndsvisning (henter altid friske menukort.html) -->
+<html lang="da">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Galleri · Lusidio — forhåndsvisninger til alle værktøjer</title>
+<meta name="description" content="Færdige forhåndsvisninger til alt, vi laver: menukort, visitkort, etiketter, klippekort og gavekort. Vælg et design og tilpas det frit.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,500;1,9..144,600&family=Jost:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#f1eadd; --bg2:#ece2d1; --card:#fffdf8;
+    --ink:#2a2018; --muted:#8a7960; --faint:#b3a387;
+    --accent:#a8481f; --accent2:#c4683a;
+    --line:#e7ddc9; --line2:#dccfb5;
+    --shadow-rest:0 1px 3px rgba(60,40,22,.05);
+    --shadow-hover:0 20px 44px rgba(70,45,22,.18);
+    --ph:340px;
+  }
+  @media (max-width:600px){ :root{ --ph:268px; } }
+  *{ box-sizing:border-box; }
+  html,body{ margin:0; padding:0; }
+  html{ scroll-behavior:smooth; }
+  body{
+    position:relative; overflow-x:hidden;
+    background:linear-gradient(180deg,#f6f0e5 0%, var(--bg) 42%, var(--bg2) 100%);
+    background-attachment:fixed;
+    color:var(--ink);
+    font-family:'Jost', system-ui, -apple-system, sans-serif;
+    line-height:1.55; -webkit-font-smoothing:antialiased;
+    min-height:100vh;
+  }
+  .edge{ height:3px; background:linear-gradient(90deg,var(--accent),var(--accent2)); position:relative; z-index:2; }
+  a{ color:inherit; }
+
+  /* ---- Ambient glow ---- */
+  .aurora{ position:absolute; inset:-120px 0 auto 0; height:600px; z-index:0; pointer-events:none; overflow:hidden; }
+  .aurora::before,.aurora::after{ content:""; position:absolute; border-radius:50%; filter:blur(64px); }
+  .aurora::before{ width:540px; height:440px; left:16%; top:-50px; background:radial-gradient(circle, rgba(196,104,58,.28), transparent 70%); animation:float1 17s ease-in-out infinite alternate; }
+  .aurora::after{ width:480px; height:380px; right:14%; top:10px; background:radial-gradient(circle, rgba(214,162,92,.24), transparent 70%); animation:float2 21s ease-in-out infinite alternate; }
+  @keyframes float1{ to{ transform:translate(46px,28px) scale(1.14); } }
+  @keyframes float2{ to{ transform:translate(-40px,22px) scale(1.1); } }
+
+  .top,.hero,.jump,.wrap,footer{ position:relative; z-index:1; }
+
+  /* ---- Top bar ---- */
+  .top{ max-width:1180px; margin:0 auto; padding:22px 28px 0; display:flex; align-items:center; justify-content:space-between; gap:14px; }
+  .brand{ display:flex; align-items:baseline; gap:10px; }
+  .brand .logo{ font-family:'Fraunces', serif; font-style:italic; font-weight:600; font-size:1.45rem; color:var(--ink); text-decoration:none; letter-spacing:-.01em; }
+  .brand .tag{ font-size:.66rem; letter-spacing:.22em; text-transform:uppercase; color:var(--muted); font-weight:600; }
+  .home{ display:inline-flex; align-items:center; gap:8px; text-decoration:none; color:var(--ink); font-weight:500; font-size:.86rem; padding:8px 16px; border:1px solid var(--line2); border-radius:999px; background:rgba(255,253,248,.6); transition:.18s ease; white-space:nowrap; }
+  .home:hover{ border-color:var(--accent); color:var(--accent); background:var(--card); transform:translateY(-1px); }
+  @media (max-width:480px){ .brand .tag{ display:none; } .home{ font-size:.8rem; padding:8px 14px; } .top{ padding-top:18px; } }
+
+  /* ---- Hero ---- */
+  .hero{ max-width:780px; margin:0 auto; padding:54px 28px 22px; text-align:center; }
+  .eyebrow{ font-size:.7rem; letter-spacing:.28em; text-transform:uppercase; color:var(--accent); font-weight:600; margin:0 0 18px; }
+  .hero h1{ font-family:'Fraunces', serif; font-weight:600; font-size:clamp(2.2rem, 5.4vw, 3.5rem); line-height:1.04; margin:0; letter-spacing:-.015em; color:var(--ink); }
+  .hero h1 em{ font-style:italic; font-weight:500; color:var(--accent); }
+  .hero p{ font-size:1.05rem; color:var(--muted); margin:18px auto 0; max-width:580px; line-height:1.6; }
+
+  /* ---- Sticky jump nav ---- */
+  #navTop{ position:relative; height:1px; }
+  .jump{ position:sticky; top:0; z-index:30; display:flex; flex-wrap:wrap; align-items:center; justify-content:center; gap:8px; padding:16px 0; margin:0; transition:background .28s ease, box-shadow .28s ease, padding .28s ease; }
+  .jump.stuck{ padding:11px 0; background:rgba(244,238,228,.85); -webkit-backdrop-filter:blur(12px); backdrop-filter:blur(12px); box-shadow:0 6px 22px rgba(70,45,22,.09); border-bottom:1px solid var(--line); }
+  .jump a{ font-size:.78rem; font-weight:600; letter-spacing:.02em; color:var(--muted); text-decoration:none; padding:7px 15px; border:1px solid var(--line2); border-radius:999px; background:rgba(255,253,248,.55); transition:color .16s ease, background .16s ease, border-color .16s ease, transform .16s ease; }
+  .jump a:hover{ color:var(--accent); border-color:var(--accent); background:var(--card); transform:translateY(-1px); }
+  .jump a.active{ color:#fff; background:var(--accent); border-color:var(--accent); }
+  @media (max-width:600px){
+    .jump{ flex-wrap:nowrap; justify-content:flex-start; overflow-x:auto; padding-inline:20px; scrollbar-width:none; -ms-overflow-style:none; }
+    .jump::-webkit-scrollbar{ display:none; }
+    .jump a{ flex:0 0 auto; }
+  }
+
+  /* ---- Sections ---- */
+  .wrap{ max-width:1180px; margin:0 auto; padding:8px 0 70px; }
+  .sec{ scroll-margin-top:74px; padding:34px 0 8px; }
+  .sec-head{ display:flex; align-items:flex-end; justify-content:space-between; gap:16px; padding:0 28px; margin-bottom:18px; }
+  .sec-title h2{ font-family:'Fraunces', serif; font-weight:600; font-size:1.7rem; margin:0; color:var(--ink); letter-spacing:-.01em; }
+  .sec-title .sec-sub{ font-size:.86rem; color:var(--muted); margin:5px 0 0; }
+  .sec-link{ flex:none; font-size:.82rem; font-weight:600; color:var(--accent); text-decoration:none; white-space:nowrap; padding-bottom:3px; transition:transform .16s ease; }
+  .sec-link:hover{ text-decoration:underline; transform:translateX(2px); }
+  .sec + .sec{ border-top:1px solid var(--line); }
+
+  /* ---- Slider ---- */
+  .slider-wrap{ position:relative; }
+  .slider{
+    display:flex; gap:22px; overflow-x:auto; overflow-y:hidden;
+    scroll-snap-type:x mandatory; scroll-padding-inline:28px; -webkit-overflow-scrolling:touch;
+    padding:12px 28px 24px;
+    scrollbar-width:none; -ms-overflow-style:none;
+  }
+  .slider::-webkit-scrollbar{ display:none; }
+
+  .slide{ flex:0 0 auto; scroll-snap-align:start; }
+  .slide.portrait{ width:calc(var(--ph) / 1.414); }
+  .slide.landscape{ width:calc(var(--ph) * 1.414); }
+  .slide.square{ width:var(--ph); }
+  .slide.dl{ width:calc(var(--ph) / 2); }
+  .slide.aspectcard{ /* bredde sættes inline ud fra kortets sideforhold */ }
+  #visitkort .slider{ --ph:250px; }
+  @media (max-width:600px){ #visitkort .slider{ --ph:194px; } }
+
+  .card{
+    display:block; text-decoration:none; color:inherit; position:relative;
+    transition:transform .26s cubic-bezier(.2,.7,.3,1);
+  }
+  .card:hover{ transform:translateY(-8px); }
+  .card:focus-visible{ outline:2.5px solid var(--accent); outline-offset:4px; border-radius:20px; }
+
+  .frame{ position:relative; width:100%; height:var(--ph); background:transparent; overflow:hidden; border-radius:18px; box-shadow:0 8px 24px rgba(70,45,22,.12); transition:box-shadow .26s ease, transform .26s ease; }
+  .card:hover .frame{ box-shadow:0 24px 50px rgba(70,45,22,.2); }
+  .frame iframe{ position:absolute; inset:0; width:100%; height:100%; border:0; border-radius:18px; pointer-events:none; background:transparent; transition:transform .4s ease; }
+  .card:hover .frame iframe{ transform:scale(1.02); }
+  .frame .ph{ position:absolute; inset:0; display:flex; align-items:center; justify-content:center; color:#b7a98c; font-size:.66rem; letter-spacing:.2em; text-transform:uppercase; font-weight:600; text-align:center; padding:0 12px; }
+  /* hover-skær */
+  .frame::after{ content:""; position:absolute; inset:0; background:linear-gradient(115deg, rgba(255,255,255,.22), transparent 42%); opacity:0; transition:opacity .3s ease; pointer-events:none; }
+  .card:hover .frame::after{ opacity:1; }
+
+  .cap{ display:flex; align-items:center; justify-content:space-between; gap:10px; padding:13px 4px 2px; }
+  .cap .info{ display:flex; flex-direction:column; min-width:0; }
+  .cap .t{ display:block; font-family:'Fraunces', serif; font-weight:600; font-size:1.05rem; color:var(--ink); line-height:1.2; }
+  .cap .meta{ display:block; font-size:.62rem; letter-spacing:.12em; text-transform:uppercase; color:var(--muted); margin-top:6px; font-weight:500; line-height:1.45; }
+  .cap .go{ flex:none; font-size:.76rem; font-weight:600; color:var(--accent); white-space:nowrap; opacity:0; transform:translateX(-6px); transition:opacity .22s ease, transform .22s ease; }
+  .card:hover .cap .go{ opacity:1; transform:translateX(0); }
+  @media (hover:none){ .cap .go{ opacity:.85; transform:none; } }
+
+  /* ---- Slider arrows ---- */
+  .arrow{
+    position:absolute; top:calc(12px + var(--ph)/2); transform:translateY(-50%);
+    width:44px; height:44px; border-radius:50%; cursor:pointer; z-index:3;
+    background:var(--card); border:1px solid var(--line2); color:var(--ink);
+    font-size:1.4rem; line-height:1; display:flex; align-items:center; justify-content:center;
+    box-shadow:0 6px 18px rgba(70,45,22,.18); transition:color .16s ease, border-color .16s ease, transform .18s ease, opacity .22s ease;
+  }
+  .arrow:hover{ color:var(--accent); border-color:var(--accent); transform:translateY(-50%) scale(1.09); }
+  .arrow:active{ transform:translateY(-50%) scale(.96); }
+  .arrow.prev{ left:12px; } .arrow.next{ right:12px; }
+  .arrow.hidden{ opacity:0; pointer-events:none; }
+  @media (max-width:760px){ .arrow{ display:none; } }
+
+  /* ---- Empty (kommer snart) ---- */
+  .empty{ margin:0 28px 8px; }
+  .empty-inner{
+    display:flex; flex-direction:column; align-items:center; justify-content:center; gap:12px;
+    min-height:240px; padding:30px; text-align:center;
+    border:1.5px dashed var(--line2); border-radius:16px;
+    background:repeating-linear-gradient(135deg, rgba(255,253,248,.5), rgba(255,253,248,.5) 14px, rgba(240,232,216,.4) 14px, rgba(240,232,216,.4) 28px);
+  }
+  .empty-badge{ font-size:.7rem; letter-spacing:.2em; text-transform:uppercase; font-weight:600; color:var(--accent); background:var(--card); border:1px solid var(--line2); border-radius:999px; padding:7px 16px; }
+  .empty-inner p{ margin:0; color:var(--muted); font-size:.92rem; max-width:360px; line-height:1.55; }
+
+  footer{ text-align:center; color:var(--muted); font-size:.82rem; padding:30px 24px 56px; border-top:1px solid var(--line); margin-top:20px; }
+  footer a{ color:var(--accent); text-decoration:none; }
+  footer a:hover{ text-decoration:underline; }
+
+  /* ---- Animations: entrance + scroll reveal ---- */
+  @keyframes rise{ from{ opacity:0; transform:translateY(20px); } to{ opacity:1; transform:none; } }
+  .hero .eyebrow,.hero h1,.hero p,.jump{ opacity:0; animation:rise .7s cubic-bezier(.2,.7,.3,1) forwards; }
+  .hero .eyebrow{ animation-delay:.06s; }
+  .hero h1{ animation-delay:.18s; }
+  .hero p{ animation-delay:.3s; }
+  .jump{ animation-delay:.42s; }
+
+  .sec{ opacity:0; transform:translateY(26px); transition:opacity .7s ease, transform .7s cubic-bezier(.2,.7,.3,1); }
+  .sec.revealed{ opacity:1; transform:none; }
+  .slide{ opacity:0; transform:translateY(24px); transition:opacity .55s ease, transform .55s cubic-bezier(.2,.7,.3,1); }
+  .sec.revealed .slide, .sec.revealed .empty{ opacity:1; transform:none; }
+  .empty{ opacity:0; transform:translateY(24px); transition:opacity .6s ease, transform .6s cubic-bezier(.2,.7,.3,1); }
+
+  @media (prefers-reduced-motion:reduce){
+    html{ scroll-behavior:auto; }
+    *{ animation-duration:.001s !important; animation-delay:0s !important; }
+    .hero .eyebrow,.hero h1,.hero p,.jump,.sec,.slide,.empty{ opacity:1 !important; transform:none !important; transition:none !important; }
+    .aurora::before,.aurora::after{ animation:none !important; }
+    .card,.frame iframe,.cap .go{ transition:none !important; }
+    .card:hover{ transform:none; }
+  }
+</style>
+</head>
+<body>
+  <div class="edge"></div>
+  <div class="aurora" aria-hidden="true"></div>
+
+  <div class="top">
+    <div class="brand">
+      <a class="logo" href="/">Lusidio</a>
+      <span class="tag">Galleri</span>
+    </div>
+    <a class="home" href="/">← Forside</a>
+  </div>
+
+  <header class="hero">
+    <p class="eyebrow">Lusidio · Galleri</p>
+    <h1>Find dit <em>design</em></h1>
+    <p>Færdige forhåndsvisninger til alt, vi laver. Vælg et design, og tilpas det frit i editoren.</p>
+  </header>
+
+  <div id="navTop"></div>
+  <nav class="jump" id="jump"></nav>
+
+  <main class="wrap" id="main"></main>
+
+  <footer>
+    Lavet med <a href="/">Lusidio</a> · alle designs kan tilpasses helt frit
+  </footer>
+
+<script>
+  // Forhåndsvisninger til menukort — synkroniseret med SHOWCASE i menukort-editoren
+  const MENUKORT = [
+    { i:0,  t:'Aftenmenu',        s:'Elegant · A4 stående',     shape:'portrait'  },
+    { i:1,  t:'Bistro à la carte', s:'Bistro · 2 spalter',       shape:'portrait'  },
+    { i:2,  t:'Alt på dagen',     s:'Café · liggende · 3 spalter', shape:'landscape' },
+    { i:3,  t:'Vinkort',          s:'Vin · A5 · glas + flaske',  shape:'portrait'  },
+    { i:4,  t:'Cocktails',        s:'Mørk · barkort',            shape:'portrait'  },
+    { i:5,  t:'Weekendbrunch',    s:'Frisk · liggende',          shape:'landscape' },
+    { i:6,  t:'Dessertkort',      s:'Elegant · kvadratisk',      shape:'square'    },
+    { i:7,  t:'Smagsmenu',        s:'Minimal · nummereret',      shape:'portrait'  },
+    { i:8,  t:'Kaffebar',         s:'Café · A5 · liggende',      shape:'landscape' },
+    { i:9,  t:'Pizzakort',        s:'Rustik · nummereret',       shape:'portrait'  },
+    { i:10, t:'Drinks',           s:'Moderne · DL smal',         shape:'dl'        },
+    { i:11, t:'Stor cafémenu',    s:'Café · 3 spalter',          shape:'portrait'  },
+    { i:12, t:'Burgerbar',        s:'Moderne · liggende · 3 spalter', shape:'landscape' },
+    { i:13, t:'Børnemenu',        s:'Legende · håndskrift',      shape:'portrait'  },
+    { i:14, t:'Fisk & skaldyr',   s:'Elegant · havblå',          shape:'portrait'  },
+    { i:15, t:'Tapas',            s:'Varm · 2 spalter',          shape:'portrait'  },
+    { i:16, t:'3-retters menu',   s:'Elegant · faste menuer',    shape:'portrait'  },
+    { i:17, t:'Grill & BBQ',      s:'Mørk · liggende',           shape:'landscape' },
+    { i:18, t:'Plantebaseret',    s:'Moderne · grøn',            shape:'portrait'  },
+    { i:19, t:'Julefrokost',      s:'Traditionel · 2 spalter',   shape:'portrait'  },
+  ];
+
+  // Visitkort-forhåndsvisninger — sideforhold = kortets (så forsiden fylder feltet)
+  const VISITKORT = [
+    { i:0,  t:'Café · barista',     s:'Elegant · liggende',  aspect:1.5455 },
+    { i:1,  t:'Designstudie',       s:'Minimal · sort',      aspect:1.5455 },
+    { i:2,  t:'Tømrermester',       s:'Mørk · grøn',         aspect:1.5455 },
+    { i:3,  t:'Fotograf',           s:'Moderne · stående',   aspect:0.6471 },
+    { i:4,  t:'Frisørsalon',        s:'Elegant · rund',      aspect:1.5455 },
+    { i:5,  t:'Konsulent',          s:'Minimal · 90×50',     aspect:1.8    },
+    { i:6,  t:'Yoga & wellness',    s:'Moderne · stående',   aspect:0.6471 },
+    { i:7,  t:'Restaurant',         s:'Mørk · guld',         aspect:1.6667 },
+    { i:8,  t:'Advokat',            s:'Elegant · formel',    aspect:1.5741 },
+    { i:9,  t:'Florist',            s:'Moderne · stående',   aspect:0.6471 },
+    { i:10, t:'IT-udvikler',        s:'Minimal · mørk',      aspect:1.8    },
+    { i:11, t:'Makeup artist',      s:'Moderne · stående',   aspect:0.6471 },
+    { i:12, t:'Ejendomsmægler',     s:'Moderne · navy',      aspect:1.5455 },
+    { i:13, t:'Bageri',             s:'Elegant · varm',      aspect:1.5455 },
+    { i:14, t:'Personlig træner',   s:'Mørk · lime',         aspect:1.5741 },
+    { i:15, t:'Tandklinik',         s:'Minimal · teal',      aspect:1.5741 },
+    { i:16, t:'Kunstner',           s:'Moderne · stående',   aspect:0.6471 },
+    { i:17, t:'Musiker / DJ',       s:'Mørk · lilla',        aspect:1.5455 },
+    { i:18, t:'Bryllupsplanlægger', s:'Elegant · stående',   aspect:0.6471 },
+    { i:19, t:'Coach',              s:'Moderne · 90×54',     aspect:1.6667 }
+  ];
+
+  // Alle produkter. items:null = tom sektion (forhåndsvisninger kommer senere)
+  const PRODUCTS = [
+    { id:'menukort',   name:'Menukort',   sub:'20 færdige menukort i fuld variation', editor:'menukort.html',   items:MENUKORT },
+    { id:'visitkort',  name:'Visitkort',  sub:'20 færdige visitkort i fuld variation', editor:'visitkort.html',  items:VISITKORT },
+    { id:'etiket',     name:'Etiketter',  sub:'Forhåndsvisninger på vej',             editor:'etiket.html',     items:null },
+    { id:'klippekort', name:'Klippekort', sub:'Forhåndsvisninger på vej',             editor:'klippekort.html', items:null },
+    { id:'gavekort',   name:'Gavekort',   sub:'Forhåndsvisninger på vej',             editor:'gavekort.html',   items:null },
+  ];
+
+  const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+  const CB = Date.now(); // tving frisk hentning af editoren hver gang (ingen cache)
+
+  const slideCard = (it, p) => {
+    const ed = p.editor;
+    const cls = it.shape ? it.shape : 'aspectcard';
+    const w = it.aspect ? ` style="width:calc(var(--ph) * ${it.aspect})"` : '';
+    return `
+    <div class="slide ${cls}"${w}>
+      <a class="card" href="${ed}?demo=${it.i}&cb=${CB}" aria-label="Åbn ${esc(it.t)} i editoren">
+        <div class="frame">
+          <span class="ph">${esc(it.t)}</span>
+          <iframe loading="lazy" src="${ed}?showcase=${it.i}&cb=${CB}" title="${esc(it.t)} forhåndsvisning" tabindex="-1"></iframe>
+        </div>
+        <div class="cap">
+          <span class="info"><span class="t">${esc(it.t)}</span><span class="meta">${esc(it.s)}</span></span>
+          <span class="go">Åbn →</span>
+        </div>
+      </a>
+    </div>`;
+  };
+
+  const sectionHTML = (p) => {
+    const body = p.items
+      ? `<div class="slider-wrap">
+           <button class="arrow prev hidden" type="button" aria-label="Forrige">&#8249;</button>
+           <div class="slider">${p.items.map(it => slideCard(it, p)).join('')}</div>
+           <button class="arrow next" type="button" aria-label="Næste">&#8250;</button>
+         </div>`
+      : `<div class="empty"><div class="empty-inner">
+           <span class="empty-badge">Kommer snart</span>
+           <p>Vi laver færdige ${esc(p.name.toLowerCase())}-forhåndsvisninger her snart — på samme måde som menukortene ovenfor.</p>
+         </div></div>`;
+    return `<section class="sec" id="${p.id}">
+      <div class="sec-head">
+        <div class="sec-title"><h2>${esc(p.name)}</h2><p class="sec-sub">${esc(p.sub)}</p></div>
+        <a class="sec-link" href="${p.editor}">Åbn editor →</a>
+      </div>
+      ${body}
+    </section>`;
+  };
+
+  document.getElementById('main').innerHTML = PRODUCTS.map(sectionHTML).join('');
+  document.getElementById('jump').innerHTML = PRODUCTS.map(p => `<a href="#${p.id}">${esc(p.name)}</a>`).join('');
+
+  const reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const hasIO = 'IntersectionObserver' in window;
+
+  // Skjul "indlæser"-pladsholder når en forhåndsvisning er hentet
+  document.querySelectorAll('.slider iframe').forEach(f => {
+    f.addEventListener('load', () => { const ph = f.parentElement.querySelector('.ph'); if (ph) ph.style.display = 'none'; });
+  });
+
+  // Stagger på slide-kort
+  document.querySelectorAll('.slider').forEach(sl => {
+    [...sl.querySelectorAll('.slide')].forEach((sd, i) => { sd.style.transitionDelay = Math.min(i, 7) * 70 + 'ms'; });
+  });
+
+  // Scroll-reveal af sektioner
+  const sections = [...document.querySelectorAll('.sec')];
+  if (hasIO && !reduce) {
+    const revealIO = new IntersectionObserver((entries) => {
+      entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('revealed'); revealIO.unobserve(e.target); } });
+    }, { threshold:0.12, rootMargin:'0px 0px -8% 0px' });
+    sections.forEach(s => revealIO.observe(s));
+  } else {
+    sections.forEach(s => s.classList.add('revealed'));
+  }
+
+  // Sticky-nav: "stuck"-tilstand + scroll-spy (aktiv sektion)
+  const jump = document.getElementById('jump');
+  const navTop = document.getElementById('navTop');
+  const links = {};
+  jump.querySelectorAll('a').forEach(a => { links[a.getAttribute('href').slice(1)] = a; });
+
+  if (hasIO) {
+    new IntersectionObserver(([e]) => { jump.classList.toggle('stuck', !e.isIntersecting); }, { threshold:0 })
+      .observe(navTop);
+
+    const spy = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          Object.values(links).forEach(l => l.classList.remove('active'));
+          if (links[e.target.id]) links[e.target.id].classList.add('active');
+        }
+      });
+    }, { rootMargin:'-42% 0px -52% 0px', threshold:0 });
+    sections.forEach(s => spy.observe(s));
+  }
+
+  // Slider-pile (prev/next) + skjul ved start/slut
+  document.querySelectorAll('.slider-wrap').forEach(wrap => {
+    const slider = wrap.querySelector('.slider');
+    const prev = wrap.querySelector('.arrow.prev');
+    const next = wrap.querySelector('.arrow.next');
+    if (!slider) return;
+    const amount = () => Math.max(280, slider.clientWidth * 0.8);
+    prev && prev.addEventListener('click', () => slider.scrollBy({ left:-amount(), behavior:'smooth' }));
+    next && next.addEventListener('click', () => slider.scrollBy({ left: amount(), behavior:'smooth' }));
+    const update = () => {
+      const max = slider.scrollWidth - slider.clientWidth;
+      if (prev) prev.classList.toggle('hidden', slider.scrollLeft <= 6);
+      if (next) next.classList.toggle('hidden', slider.scrollLeft >= max - 6);
+    };
+    slider.addEventListener('scroll', update, { passive:true });
+    window.addEventListener('resize', update);
+    update(); requestAnimationFrame(update); window.addEventListener('load', update);
+  });
+</script>
+</body>
+</html>
