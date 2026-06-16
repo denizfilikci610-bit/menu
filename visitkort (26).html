@@ -1,0 +1,2653 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lusidio – lav professionelle visitkort online</title>
+<meta name="description" content="Lav et professionelt visitkort på minutter. Vælg stil, skriv dine oplysninger, og hent en printklar PDF — uden grafiker.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,600;1,400;1,600&family=Jost:wght@300;400;500;600;700&family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=Montserrat:wght@400;500;600;700&family=Bebas+Neue&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+  :root{
+    --bg:#f1ece1; --panel:#fbf7ef; --panel-2:#f4ecdc; --ink:#2c2620; --muted:#8c8275;
+    --line:#e2d8c6; --accent:#b5542a; --accent-d:#963f1f; --field:#fffdf8;
+    --shadow:0 22px 60px rgba(60,40,22,.18);
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  button{ -webkit-tap-highlight-color:transparent; }
+  body{
+    font-family:'Jost',sans-serif; color:var(--ink);
+    background:var(--bg);
+    min-height:100vh; line-height:1.5; -webkit-font-smoothing:antialiased;
+  }
+
+  /* ---------- Header ---------- */
+  .topbar{ max-width:1240px; margin:0 auto; padding:28px 30px 6px; display:flex; align-items:flex-start; justify-content:space-between; gap:16px; }
+  .home-link{
+    flex:none; display:inline-flex; align-items:center; justify-content:center;
+    width:42px; height:42px; margin-top:2px; text-decoration:none;
+    border:1px solid var(--line); border-radius:11px; background:var(--field);
+    color:var(--ink); font-size:1.15rem; line-height:1; transition:all .15s;
+  }
+  .home-link:hover{ border-color:var(--accent); color:var(--accent); }
+  .brand{ display:flex; align-items:baseline; gap:14px; flex-wrap:wrap; flex:1; }
+  .brand h1{ font-family:'Fraunces',serif; font-weight:600; font-style:italic; font-size:2rem; margin:0; color:var(--ink); }
+  .brand .dot{ width:9px; height:9px; border-radius:50%; background:var(--accent); display:inline-block; margin-bottom:5px; }
+  .brand p{ margin:0; color:var(--muted); font-size:.95rem; }
+  .lang-sel{ flex:none; margin-top:4px; padding:7px 30px 7px 11px; border:1px solid var(--line); border-radius:8px; background:var(--field); color:var(--ink); font-size:.9rem; font-family:inherit; cursor:pointer; -webkit-appearance:none; appearance:none; background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23998f7d' stroke-width='2.5'><path d='M6 9l6 6 6-6'/></svg>"); background-repeat:no-repeat; background-position:right 10px center; }
+
+  /* ---------- Layout ---------- */
+  .app{ max-width:1240px; margin:0 auto; padding:18px 30px 60px; display:grid; grid-template-columns:minmax(330px,400px) 1fr; gap:30px; align-items:start; }
+  .editor{ background:var(--panel); border:1px solid var(--line); border-radius:18px; padding:22px; box-shadow:0 8px 28px rgba(60,40,22,.07); }
+  .block{ margin-bottom:20px; }
+  .label{ display:block; font-size:.72rem; font-weight:600; letter-spacing:.09em; text-transform:uppercase; color:var(--accent-d); margin-bottom:9px; }
+  .mini-label{ display:block; font-size:.8rem; color:var(--muted); margin-bottom:6px; }
+  .field{ width:100%; font-family:inherit; font-size:.95rem; color:var(--ink); background:var(--field); border:1px solid var(--line); border-radius:10px; padding:10px 12px; outline:none; transition:border .15s; }
+  .field:focus{ border-color:var(--accent); }
+  .row2{ display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+
+  /* segmented controls */
+  .seg{ display:flex; background:var(--field); border:1px solid var(--line); border-radius:10px; overflow:hidden; }
+  .seg-btn{ flex:1; border:none; background:none; font-family:inherit; font-size:.88rem; padding:9px 6px; color:var(--muted); cursor:pointer; transition:all .14s; }
+  .seg-btn.active{ background:var(--accent); color:#fff; font-weight:600; }
+
+  /* style cards */
+  .styles{ display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+  .style-card{ border:1.5px solid var(--line); background:var(--field); border-radius:13px; padding:13px 12px; cursor:pointer; text-align:left; transition:all .15s; font-family:inherit; }
+  .style-card:hover{ border-color:rgba(181,84,42,.5); }
+  .style-card.active{ border-color:var(--accent); box-shadow:0 0 0 3px rgba(181,84,42,.13); }
+  .style-card .sc-name{ display:block; font-size:.95rem; font-weight:600; color:var(--ink); }
+  .style-card .sc-demo{ display:block; margin-top:3px; font-size:1.05rem; }
+
+  /* side tabs */
+  .side-tabs{ display:flex; gap:8px; margin-bottom:13px; }
+  .side-tab{ flex:1; border:1.5px solid var(--line); background:var(--field); border-radius:11px; font-family:inherit; font-size:.92rem; font-weight:600; color:var(--muted); padding:10px; cursor:pointer; transition:all .15s; }
+  .side-tab.active{ border-color:var(--accent); color:var(--accent-d); background:#fff7f1; }
+  .check{ display:flex; align-items:center; gap:9px; font-size:.92rem; color:var(--ink); cursor:pointer; user-select:none; }
+  .check input{ width:17px; height:17px; accent-color:var(--accent); cursor:pointer; }
+
+  /* customize panel */
+  .adv{ border:1px solid var(--line); border-radius:14px; background:var(--panel-2); padding:15px; }
+  .adv summary{ cursor:pointer; font-size:.72rem; font-weight:600; letter-spacing:.09em; text-transform:uppercase; color:var(--accent-d); list-style:none; display:flex; justify-content:space-between; align-items:center; }
+  .adv summary::-webkit-details-marker{ display:none; }
+  .adv summary::after{ content:'▾'; color:var(--muted); }
+  .adv[open] summary::after{ content:'▴'; }
+  .adv .inner{ margin-top:14px; display:grid; gap:13px; }
+  .ctl-row{ display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px; }
+  .ctl{ display:flex; flex-direction:column; gap:5px; }
+  .ctl input[type=color]{ width:100%; height:38px; border:1px solid var(--line); border-radius:9px; background:var(--field); padding:3px; cursor:pointer; }
+  .range{ width:100%; accent-color:var(--accent); }
+  select.field{ -webkit-appearance:none; appearance:none; background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23998f7d' stroke-width='2.5'><path d='M6 9l6 6 6-6'/></svg>"); background-repeat:no-repeat; background-position:right 10px center; padding-right:30px; }
+  .file-in{ font-size:.85rem; color:var(--muted); }
+  .file-in::file-selector-button{ font-family:inherit; font-size:.85rem; border:1px solid var(--line); background:var(--field); color:var(--ink); border-radius:9px; padding:8px 12px; margin-right:10px; cursor:pointer; }
+  .btn-tiny{ font-family:inherit; font-size:.8rem; border:1px solid var(--line); background:var(--field); color:var(--ink); border-radius:8px; padding:7px 11px; cursor:pointer; }
+  .btn-tiny:hover{ border-color:var(--accent); color:var(--accent-d); }
+
+  /* save / library */
+  .save-actions{ display:flex; gap:7px; flex-wrap:wrap; }
+  .btn-mini{ flex:1; min-width:84px; font-family:inherit; font-size:.8rem; font-weight:600; color:var(--accent-d); background:var(--field); border:1px solid var(--line); border-radius:9px; padding:9px 8px; cursor:pointer; transition:.15s; }
+  .btn-mini:hover{ border-color:var(--accent); background:#fff6ef; }
+  .tag{ font-size:.6rem; color:#cabfae; vertical-align:middle; margin-left:4px; }
+  .tag.on{ color:#6fa86b; }
+  .library{ margin-top:11px; display:flex; flex-direction:column; gap:7px; }
+  .lib-empty{ font-size:.8rem; color:var(--muted); margin:6px 2px; line-height:1.4; }
+  .lib-item{ display:flex; align-items:center; gap:8px; background:var(--field); border:1px solid var(--line); border-radius:10px; padding:8px 10px; }
+  .lib-info{ flex:1; min-width:0; display:flex; flex-direction:column; }
+  .lib-name{ font-weight:600; font-size:.88rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .lib-date{ font-size:.7rem; color:var(--muted); }
+  .lib-btns{ display:flex; gap:5px; }
+  .lib-btn{ font-family:inherit; font-size:.78rem; border:1px solid var(--line); background:var(--field); color:var(--ink); border-radius:7px; padding:5px 10px; cursor:pointer; }
+  .lib-btn:hover{ border-color:var(--accent); color:var(--accent-d); }
+  .lib-btn.danger:hover{ border-color:#b14545; color:#b14545; }
+
+  /* Contact list editor (back-side fleksible kontaktlinjer) */
+  .contact-list{ display:flex; flex-direction:column; gap:8px; }
+  .cli{ display:grid; grid-template-columns:34px 1fr auto; gap:8px; align-items:center; background:var(--field); border:1px solid var(--line); border-radius:10px; padding:8px 10px; }
+  .cli-ic{ width:26px; height:26px; display:inline-flex; align-items:center; justify-content:center; color:var(--accent-d); background:#fff7f1; border:1px solid var(--line); border-radius:7px; flex:none; cursor:pointer; transition:.15s; }
+  .cli-ic:hover{ border-color:var(--accent); }
+  .cli-ic.off{ color:var(--muted); background:transparent; opacity:.5; }
+  .cli-ic svg{ width:14px; height:14px; display:block; }
+  .cli-input{ width:100%; font-family:inherit; font-size:.92rem; color:var(--ink); background:transparent; border:none; padding:6px 0; outline:none; min-width:0; }
+  .cli-input:focus{ box-shadow:none; }
+  .cli-btns{ display:flex; gap:3px; }
+  .cli-btn{ width:28px; height:28px; padding:0; border:1px solid var(--line); background:var(--field); color:var(--muted); border-radius:6px; font-size:.85rem; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; transition:.12s; font-family:inherit; }
+  .cli-btn:hover{ border-color:var(--accent); color:var(--accent-d); }
+  .cli-btn:disabled{ opacity:.3; cursor:not-allowed; }
+  .cli-btn.danger:hover{ border-color:#b14545; color:#b14545; }
+  .cli-size{ width:100%; margin-top:5px; grid-column:1 / -1; }
+  .add-contact{ width:100%; border:1.5px dashed var(--accent); background:#fff7f1; color:var(--accent-d); border-radius:11px; padding:11px; cursor:pointer; font-family:inherit; font-size:.92rem; font-weight:600; transition:.15s; margin-top:6px; }
+  .add-contact:hover{ background:var(--accent); color:#fff; }
+  .add-contact-menu{ display:none; position:absolute; z-index:10; background:var(--field); border:1px solid var(--line); border-radius:11px; padding:6px; box-shadow:0 12px 30px rgba(60,40,22,.18); margin-top:4px; min-width:200px; }
+  .add-contact-menu.open{ display:flex; flex-direction:column; gap:2px; }
+  .add-contact-menu button{ display:flex; align-items:center; gap:9px; font-family:inherit; font-size:.92rem; color:var(--ink); background:transparent; border:none; border-radius:7px; padding:8px 10px; cursor:pointer; text-align:left; }
+  .add-contact-menu button:hover{ background:#fff7f1; color:var(--accent-d); }
+  .add-contact-menu button svg{ width:15px; height:15px; flex:none; }
+  /* Contact items on the actual card */
+  .bc-contact-row{ display:inline-flex; align-items:center; gap:8px; }
+  .bc-contact-row.no-ic{ gap:0; }
+  .bc-contact-row svg{ width:1em; height:1em; flex:none; }
+  /* In a row-layout box, contact rows shouldn't grow; they sit beside their neighbours */
+  .bc-box.layout-row .bc-contact-row{ display:inline-flex; }
+  /* Collapsed box card */
+  .box-card.collapsed{ padding:10px 12px; }
+  .box-card.collapsed .box-head{ margin-bottom:0; }
+  .box-collapse-btn{ flex:none; }
+  /* Active inline-toggle button shown more clearly */
+  .cli-btn[data-act="inline-toggle"].active{ background:var(--accent); color:#fff; border-color:var(--accent); }
+  /* A "group" of inline rows: side-by-side on one line */
+  .bc-line-group{ display:flex; flex-wrap:wrap; gap:14px; align-items:baseline; width:100%; }
+  .bc-line-group.al-left  { justify-content:flex-start; }
+  .bc-line-group.al-center{ justify-content:center; }
+  .bc-line-group.al-right { justify-content:flex-end; }
+  /* Per-line alignment mini-buttons in the editor */
+  .cli-align{ display:inline-flex; gap:2px; }
+  .cli-align .cli-btn{ width:24px; height:24px; font-size:.78rem; }
+  .cli-align .cli-btn.active{ background:var(--accent); color:#fff; border-color:var(--accent); }
+  .cli-inline-btn{ width:28px; height:28px; padding:0; border:1px solid var(--line); background:var(--field); color:var(--muted); border-radius:6px; font-size:.95rem; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; transition:.12s; font-family:inherit; }
+  .cli-inline-btn:hover{ border-color:var(--accent); color:var(--accent-d); }
+  .cli-inline-btn.active{ background:var(--accent); color:#fff; border-color:var(--accent); }
+  /* Visual hint that a line is "inline with previous" — indent slightly */
+  .cli.inline-with-prev{ margin-left:18px; border-left:3px solid var(--accent); border-top-left-radius:4px; border-bottom-left-radius:4px; }
+  /* Front-side lines have different sizing — name is bigger by default */
+  .cli .cli-input{ font-size:.95rem; }
+
+  /* Box editor — collapsible sections in the editor side */
+  .box-card{ background:var(--panel-2); border:1px solid var(--line); border-radius:13px; padding:12px; margin-bottom:12px; }
+  .box-head{ display:flex; align-items:center; gap:8px; margin-bottom:10px; flex-wrap:wrap; }
+  .box-title{ font-size:.74rem; font-weight:600; letter-spacing:.09em; text-transform:uppercase; color:var(--accent-d); flex:1; min-width:0; }
+  .box-head-btns{ display:flex; gap:4px; }
+  /* 3x3 position picker */
+  .pos-grid{ display:grid; grid-template-columns:repeat(3,28px); grid-template-rows:repeat(3,22px); gap:3px; flex:none; }
+  .pos-grid button{ border:1px solid var(--line); background:var(--field); border-radius:5px; cursor:pointer; padding:0; transition:.12s; position:relative; }
+  .pos-grid button:hover{ border-color:var(--accent); }
+  .pos-grid button.active{ background:var(--accent); border-color:var(--accent); }
+  .pos-grid button.active::after{ content:''; position:absolute; inset:6px; background:#fff; border-radius:2px; }
+  .pos-grid button::after{ content:''; position:absolute; inset:6px; background:var(--muted); border-radius:2px; opacity:.35; transition:.12s; }
+  .pos-grid button:hover::after{ opacity:.7; background:var(--accent); }
+  .add-box{ width:100%; border:1.5px dashed var(--accent); background:#fff7f1; color:var(--accent-d); border-radius:11px; padding:11px; cursor:pointer; font-family:inherit; font-size:.92rem; font-weight:600; transition:.15s; margin-top:6px; margin-bottom:14px; }
+  .add-box:hover{ background:var(--accent); color:#fff; }
+
+  /* download */
+  .actions{ display:grid; gap:10px; }
+  .btn{ width:100%; border:none; border-radius:12px; font-family:inherit; font-size:.98rem; font-weight:600; padding:13px 14px; cursor:pointer; transition:all .15s; }
+  .btn-primary{ background:var(--accent); color:#fff; box-shadow:0 8px 20px rgba(181,84,42,.25); }
+  .btn-primary:hover{ background:var(--accent-d); }
+  .btn-outline{ background:var(--field); color:var(--accent-d); border:1.5px solid var(--accent); }
+  .btn-outline:hover{ background:#fff7f1; }
+  .pay-note{ font-size:.82rem; color:var(--muted); line-height:1.45; }
+  .code-row{ display:flex; gap:8px; }
+  .code-row .field{ flex:1; }
+  .status{ font-size:.86rem; color:var(--accent-d); min-height:1.2em; }
+  .save-note{ font-size:.78rem; color:var(--muted); }
+
+  /* ---------- Preview ---------- */
+  .stage{ position:sticky; top:18px; padding:18px 8px 8px; display:flex; flex-direction:column; align-items:center; gap:26px; }
+  .bc-wrap{ width:100%; display:flex; flex-direction:column; align-items:center; gap:8px; }
+  /* Hide the back-side wrapper when the back side is disabled (controlled by body class set in JS) */
+  body:not(.back-enabled) #wrapBack{ display:none !important; }
+  .bc-side-lbl{ font-size:.72rem; font-weight:600; letter-spacing:.1em; text-transform:uppercase; color:var(--muted); }
+
+  /* Mobile-only side switcher — shown inside the preview area on phones */
+  .side-switch-mobile{ display:none; }
+  .bc-fit{ position:relative; transform-origin:top left; }
+  .bc-card{
+    position:relative; overflow:hidden; border-radius:10px;
+    box-shadow:0 14px 40px rgba(50,35,18,.22), 0 2px 8px rgba(50,35,18,.10);
+  }
+  .bc-card{ width:var(--cw,510px); height:var(--ch,330px); }
+  /* Card body uses a 3x3 grid so text boxes can land in any of nine positions */
+  /* Card body uses a 3x3 grid so text boxes can land in any of nine positions.
+     minmax(0,1fr) locks each cell to exactly 1/3 — boxes that grow can't push other boxes around. */
+  .bc-inner{ position:absolute; inset:0; display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr) minmax(0,1fr); grid-template-rows:minmax(0,1fr) minmax(0,1fr) minmax(0,1fr); padding:24px 28px; gap:8px; }
+  .bc-box{ min-width:0; }
+  .bc-box.pos-top-left      { grid-row:1; grid-column:1; align-self:start;  justify-self:start;  }
+  .bc-box.pos-top-center    { grid-row:1; grid-column:2; align-self:start;  justify-self:center; }
+  .bc-box.pos-top-right     { grid-row:1; grid-column:3; align-self:start;  justify-self:end;    }
+  .bc-box.pos-middle-left   { grid-row:2; grid-column:1; align-self:center; justify-self:start;  }
+  .bc-box.pos-middle-center { grid-row:2; grid-column:2; align-self:center; justify-self:center; }
+  .bc-box.pos-middle-right  { grid-row:2; grid-column:3; align-self:center; justify-self:end;    }
+  .bc-box.pos-bottom-left   { grid-row:3; grid-column:1; align-self:end;    justify-self:start;  }
+  .bc-box.pos-bottom-center { grid-row:3; grid-column:2; align-self:end;    justify-self:center; }
+  .bc-box.pos-bottom-right  { grid-row:3; grid-column:3; align-self:end;    justify-self:end;    }
+
+  /* LAYOUT — controls direction inside the box. Specific & hard-overriding. */
+  .bc-box.layout-stack{
+    display:flex !important;
+    flex-direction:column !important;
+    flex-wrap:nowrap !important;
+    gap:var(--box-gap,6px) !important;
+  }
+  .bc-box.layout-row{
+    display:flex !important;
+    flex-direction:row !important;
+    flex-wrap:nowrap !important;
+    gap:var(--box-gap,6px) !important;
+    align-items:baseline !important;
+  }
+  /* HORIZONTAL ALIGNMENT — controls where the box's children sit on the cross-axis (column) or main-axis (row) */
+  .bc-box.layout-stack.al-left  { align-items:flex-start !important; text-align:left; }
+  .bc-box.layout-stack.al-center{ align-items:center     !important; text-align:center; }
+  .bc-box.layout-stack.al-right { align-items:flex-end   !important; text-align:right; }
+  .bc-box.layout-row.al-left  { justify-content:flex-start !important; }
+  .bc-box.layout-row.al-center{ justify-content:center     !important; }
+  .bc-box.layout-row.al-right { justify-content:flex-end   !important; }
+
+  /* Each line item: fixed to its content size. white-space is set per-line by the renderer. */
+  .bc-box.layout-row > *{ flex:0 0 auto; }
+  .bc-box.layout-stack > *{ flex:0 0 auto; max-width:100%; }
+  .bc-logo-free{ position:absolute; transform:translate(-50%,-50%); object-fit:contain; cursor:grab; touch-action:none; }
+  .bc-card.dragging .bc-logo-free{ cursor:grabbing; }
+  .bc-grid{
+    position:absolute; inset:0; pointer-events:none; opacity:0; transition:opacity .15s;
+    background-image:linear-gradient(to right, rgba(255,255,255,.55) 1px, transparent 1px),
+                     linear-gradient(to bottom, rgba(255,255,255,.55) 1px, transparent 1px);
+    background-size:10% 10%; mix-blend-mode:difference;
+  }
+  body.show-grid .bc-grid, .bc-card.dragging .bc-grid{ opacity:1; }
+  .bc-accentline{ width:36px; height:3px; border-radius:2px; margin:10px 0 12px; }
+  .bc-name{ font-weight:600; line-height:1.12; margin:0; }
+  .bc-title{ margin:5px 0 0; opacity:.85; }
+  .bc-company{ margin:3px 0 0; opacity:.7; letter-spacing:.04em; }
+  .bc-tagline{ margin:10px 0 0; font-style:italic; opacity:.75; }
+  .bc-contact{ display:grid; gap:7px; margin:0; padding:0; list-style:none; }
+  .bc-contact li{ line-height:1.35; }
+  /* watermark */
+  .bc-wm{ position:absolute; inset:0; overflow:hidden; pointer-events:none; }
+  .bc-wm-rot{ position:absolute; top:50%; left:50%; width:220%; height:220%; transform:translate(-50%,-50%) rotate(-26deg); display:flex; flex-direction:column; justify-content:center; gap:13px; }
+  .bc-wm-line{ white-space:nowrap; text-align:center; font-family:'Jost',sans-serif; font-weight:700; font-size:17px; letter-spacing:.22em; color:var(--bc-wm, rgba(120,90,40,.14)); user-select:none; }
+
+  /* ---------- Responsive ---------- */
+  /* ===== Mobile: preview fixed on top, editor scrolls below ===== */
+  /* PHONE: under 700px wide — compact, single-column, fixed preview on top */
+  @media (max-width:700px){
+    .topbar{ padding:10px 14px 6px; flex-wrap:wrap; align-items:center; gap:6px 10px; }
+    .topbar .brand{ flex:1; gap:8px; }
+    .topbar .brand h1{ font-size:1.15rem; }
+    .topbar .brand p{ display:none; }
+    .home-link{ width:36px; height:36px; margin-top:0; font-size:1rem; }
+    .lang-sel{ padding:5px 24px 5px 8px; font-size:.82rem; }
+
+    .app{ display:flex; flex-direction:column; padding:0 0 28px; }
+
+    /* The preview sticks below the topbar — sized like the label tool. */
+    .stage{
+      order:-1; position:sticky; top:0; z-index:20;
+      width:100%; min-width:0;
+      margin:0; border-radius:0;
+      padding:8px 14px 10px;
+      background:var(--bg);
+      border-bottom:1px solid var(--line);
+      box-shadow:0 8px 16px rgba(60,45,25,.07);
+      gap:8px;
+    }
+
+    /* Mobile side switcher inside the preview */
+    .side-switch-mobile{ display:flex; gap:6px; width:100%; padding:0; margin:0; background:none; border:none; border-radius:0; }
+    .side-switch-mobile button{
+      flex:1; text-align:center; font-family:'Jost',sans-serif; font-weight:600;
+      font-size:.86rem; color:var(--ink); padding:9px 6px; border-radius:999px;
+      border:1px solid var(--line); background:#fff; cursor:pointer;
+      transition:all .15s;
+    }
+    .side-switch-mobile button.active{ background:var(--ink); color:#fff; border-color:var(--ink); }
+    .side-switch-mobile button:disabled{ opacity:.4; cursor:not-allowed; }
+
+    /* Show only the active side, perfectly centered */
+    .bc-wrap{
+      width:100%; display:none !important;
+      align-items:center; justify-content:center; padding:0;
+    }
+    body[data-mside="front"] .bc-wrap[data-side="front"]{ display:flex !important; }
+    body[data-mside="back"].back-enabled .bc-wrap[data-side="back"]{ display:flex !important; }
+    .bc-side-lbl{ display:none; }
+    /* The .bc-fit container is sized by JS to match the scaled card,
+       so this is just a robust fallback. */
+    .bc-fit{ display:block; }
+
+    /* Editor below the fixed preview */
+    .editor{ margin:8px 12px 0; padding:14px; border-radius:14px; }
+
+    /* Hide the editor's side-tabs on mobile — the preview switcher does the job */
+    .side-tabs{ display:none; }
+
+    .field, select, input{ font-size:16px; }
+    .seg-btn{ padding:10px 5px; }
+    .btn{ padding:13px 14px; }
+  }
+
+  /* TABLET: 701-1080px — two columns, smaller editor, preview is not fixed */
+  @media (min-width:701px) and (max-width:1080px){
+    .app{ grid-template-columns:minmax(280px,340px) 1fr; gap:18px; padding-left:18px; padding-right:18px; }
+    .topbar{ padding-left:18px; padding-right:18px; }
+    .stage{ padding:14px 6px 6px; gap:20px; }
+    .field, select, input{ font-size:16px; }
+  }
+
+  /* Very small phones */
+  @media (max-width:480px){
+    .topbar .brand h1{ font-size:1.05rem; }
+    .editor{ padding:13px; margin:8px 10px 0; }
+    .row2{ grid-template-columns:1fr; }
+    .ctl-row{ grid-template-columns:1fr 1fr; }
+  }
+
+  /* ===== Showcase-tilstand til galleriets iframes: vis KUN forsiden af kortet, fyld feltet, gennemsigtig ===== */
+  body.vk-showcase{ background:transparent !important; overflow:hidden; }
+  body.vk-showcase .topbar,
+  body.vk-showcase .editor,
+  body.vk-showcase .side-switch-mobile,
+  body.vk-showcase .bc-side-lbl,
+  body.vk-showcase #wrapBack{ display:none !important; }
+  body.vk-showcase .app{ display:block !important; padding:0 !important; margin:0 !important; max-width:none !important; gap:0 !important; background:transparent !important; }
+  body.vk-showcase .stage{ position:static !important; top:auto !important; height:100vh !important; min-height:100vh !important; padding:0 !important; margin:0 !important; display:flex !important; align-items:center !important; justify-content:center !important; gap:0 !important; background:transparent !important; }
+  body.vk-showcase .bc-wrap{ width:auto !important; gap:0 !important; margin:0 !important; }
+  body.vk-showcase .bc-fit{ margin:0 !important; }
+  body.vk-showcase .bc-card{ pointer-events:none; border-radius:0 !important; box-shadow:none !important; }
+  body.vk-showcase .bc-wm{ display:none !important; }
+</style>
+</head>
+<body data-mside="front">
+
+  <div class="topbar">
+    <a class="home-link" href="/" title="Lusidio">←</a>
+    <div class="brand">
+      <h1 data-i18n="brandH1">Visitkort</h1><span class="dot"></span>
+      <p data-i18n="tagline">Skriv dine oplysninger, vælg en stil — og hent et printklart visitkort.</p>
+    </div>
+    <select id="langSel" class="lang-sel" aria-label="Language / Sprog">
+      <option value="da">Dansk</option>
+      <option value="en">English</option>
+      <option value="tr">Türkçe</option>
+      <option value="uk">Українська</option>
+    </select>
+  </div>
+
+  <div class="app">
+
+    <!-- ============ EDITOR ============ -->
+    <div class="editor">
+
+      <div class="block">
+        <p class="label" style="margin-bottom:9px;"><span data-i18n="myCards">Mine visitkort</span> <span id="autosaveTag" class="tag" data-i18n-title="autosaveTitle" title="Gemmes automatisk">●</span></p>
+        <div class="save-actions">
+          <button class="btn-mini" id="saveAsBtn" data-i18n="saveAs" type="button">Gem som…</button>
+          <button class="btn-mini" id="exportBtn" data-i18n="exportBtn" type="button">Eksportér</button>
+          <button class="btn-mini" id="importBtn" data-i18n="importBtn" type="button">Importér</button>
+          <input type="file" id="importInput" accept="application/json,.json" style="display:none;">
+        </div>
+        <div id="libraryList" class="library"></div>
+        <p class="save-note" id="saveStatus" style="margin-top:4px;"></p>
+      </div>
+
+      <div class="block">
+        <span class="label" data-i18n="styleLabel">Stil</span>
+        <div class="styles" id="styleCards">
+          <button class="style-card" data-style="elegant" type="button"><span class="sc-name" data-i18n="stElegant">Elegant</span><span class="sc-demo" style="font-family:'Fraunces',serif;font-style:italic;color:#b5542a;">Aa</span></button>
+          <button class="style-card" data-style="moderne" type="button"><span class="sc-name" data-i18n="stModern">Moderne</span><span class="sc-demo" style="font-family:'Montserrat',sans-serif;font-weight:700;color:#1f5f5b;">Aa</span></button>
+          <button class="style-card" data-style="minimal" type="button"><span class="sc-name" data-i18n="stMinimal">Minimal</span><span class="sc-demo" style="font-family:'Jost',sans-serif;color:#111;">Aa</span></button>
+          <button class="style-card" data-style="moerk" type="button"><span class="sc-name" data-i18n="stDark">Mørk</span><span class="sc-demo" style="font-family:'Fraunces',serif;color:#d4a256;background:#201d1a;border-radius:5px;padding:0 7px;">Aa</span></button>
+        </div>
+      </div>
+
+      <div class="block">
+        <span class="label" data-i18n="orientLabel">Retning</span>
+        <div class="seg" id="segOrient">
+          <button class="seg-btn" data-val="landscape" data-i18n="orientH" type="button">Vandret</button>
+          <button class="seg-btn" data-val="portrait" data-i18n="orientV" type="button">Lodret</button>
+        </div>
+      </div>
+
+      <div class="block">
+        <span class="label" data-i18n="sidesLabel">Sider</span>
+        <div class="side-tabs">
+          <button class="side-tab" data-side="front" data-i18n="sideFront" type="button">Forside</button>
+          <button class="side-tab" data-side="back" id="backTab" data-i18n="sideBack" type="button">Bagside</button>
+        </div>
+        <label class="check"><input type="checkbox" id="chkUseBack"><span data-i18n="useBack">Brug bagside</span></label>
+      </div>
+
+      <!-- FRONT fields -->
+      <div class="block side-fields" id="fieldsFront">
+        <span class="label" data-i18n="secContent">Indhold</span>
+        <p class="save-note" data-i18n="boxHint" style="margin:0 0 8px;">Hver boks kan placeres et bestemt sted på kortet med 3×3-vælgeren. Tilføj linjer i boksen, eller opret en ny boks for tekst, der skal stå et andet sted.</p>
+        <div id="frontBoxes"></div>
+        <button class="add-box" id="addFrontBoxBtn" type="button" data-i18n="addBox">+ Ny tekstboks</button>
+      </div>
+
+      <!-- BACK fields -->
+      <div class="block side-fields" id="fieldsBack" style="display:none;">
+        <span class="label" data-i18n="secContent">Indhold</span>
+        <p class="save-note" data-i18n="boxHint" style="margin:0 0 8px;">Hver boks kan placeres et bestemt sted på kortet med 3×3-vælgeren. Tilføj linjer i boksen, eller opret en ny boks for tekst, der skal stå et andet sted.</p>
+        <div id="backBoxes"></div>
+        <button class="add-box" id="addBackBoxBtn" type="button" data-i18n="addBox">+ Ny tekstboks</button>
+      </div>
+
+
+      <div class="block">
+        <span class="label" data-i18n="logoLabel">Logo eller billede (valgfri)</span>
+        <input type="file" id="logoIn" class="file-in" accept="image/*">
+        <button class="btn-tiny" id="logoRemove" style="display:none;margin-top:8px;" data-i18n="logoRemove" type="button">Fjern logo</button>
+        <div style="margin-top:10px;">
+          <span class="mini-label" data-i18n="logoSize">Logo/billede-størrelse</span>
+          <input type="range" id="rngLogoSize" min="8" max="100" value="28" class="range">
+        </div>
+        <label class="check" style="margin-top:8px;"><input type="checkbox" id="chkGrid"><span data-i18n="showGrid">Vis gitter</span></label>
+        <p class="pay-note" style="margin:8px 0 0;" data-i18n="dragHint">Træk logoet eller billedet direkte på kortet for at placere det præcist.</p>
+      </div>
+
+      <details class="adv" open>
+        <summary data-i18n="customize">Tilpas design</summary>
+        <div class="inner">
+          <div>
+            <span class="mini-label" data-i18n="sizeLabel">Størrelse</span>
+            <select class="field" id="selSize"></select>
+          </div>
+          <div>
+            <span class="mini-label" data-i18n="titleFontL">Navne-skrifttype</span>
+            <select class="field" id="selTitleFont"></select>
+          </div>
+          <div>
+            <span class="mini-label" data-i18n="bodyFontL">Tekst-skrifttype</span>
+            <select class="field" id="selBodyFont"></select>
+          </div>
+          <div>
+            <span class="mini-label" data-i18n="cornersLabel">Hjørner</span>
+            <div class="seg" id="segCorners">
+              <button class="seg-btn" data-val="0" data-i18n="cornSharp" type="button">Skarpe</button>
+              <button class="seg-btn" data-val="10" data-i18n="cornSoft" type="button">Bløde</button>
+              <button class="seg-btn" data-val="22" data-i18n="cornRound" type="button">Runde</button>
+            </div>
+          </div>
+          <label class="check"><input type="checkbox" id="chkAccentLine"><span data-i18n="accentLine">Accentstreg</span></label>
+
+          <div style="height:8px;border-top:1px dashed var(--line);margin-top:4px;"></div>
+
+          <!-- Per-side colors -->
+          <div>
+            <span class="mini-label" data-i18n="sideColors">Farver — denne side</span>
+            <div class="seg" id="segBgMode" style="margin-top:6px;">
+              <button class="seg-btn" data-val="solid" data-i18n="bgSolid" type="button">Ensfarvet</button>
+              <button class="seg-btn" data-val="grad" data-i18n="bgFade" type="button">Fade</button>
+            </div>
+          </div>
+          <div class="ctl-row" style="grid-template-columns:1fr 1fr 1fr;">
+            <div class="ctl"><span class="mini-label" data-i18n="col1">Farve 1</span><input type="color" id="colC1"></div>
+            <div class="ctl" id="c2Wrap"><span class="mini-label" data-i18n="col2">Farve 2</span><input type="color" id="colC2"></div>
+            <div class="ctl"><span class="mini-label" data-i18n="sideInkL">Tekst</span><input type="color" id="colSideInk"></div>
+          </div>
+          <div id="dirWrap">
+            <span class="mini-label" data-i18n="dirLabel">Fade-retning</span>
+            <div class="seg" id="segDir">
+              <button class="seg-btn" data-val="to right" type="button">→</button>
+              <button class="seg-btn" data-val="to bottom" type="button">↓</button>
+              <button class="seg-btn" data-val="to bottom right" type="button">↘</button>
+            </div>
+          </div>
+          <div>
+            <span class="mini-label" data-i18n="decoLabel">Pynt — denne side</span>
+            <div class="seg" id="segDeco" style="margin-top:6px;">
+              <button class="seg-btn" data-val="none" data-i18n="decoNone" type="button">Ingen</button>
+              <button class="seg-btn" data-val="corner" data-i18n="decoCorner" type="button">Hjørne</button>
+              <button class="seg-btn" data-val="panel" data-i18n="decoPanel" type="button">Panel</button>
+              <button class="seg-btn" data-val="stripe" data-i18n="decoStripe" type="button">Stribe</button>
+            </div>
+            <div class="ctl" id="decoColorWrap" style="margin-top:8px;display:none;"><span class="mini-label" data-i18n="decoColor">Pyntefarve</span><input type="color" id="colDeco"></div>
+          </div>
+
+          <div style="height:8px;border-top:1px dashed var(--line);margin-top:4px;"></div>
+
+
+        </div>
+      </details>
+
+      <div style="height:18px;"></div>
+
+      <div class="block actions">
+        <p class="pay-note" data-i18n-html="payNote">Forhåndsvisningen har vandmærke. Når du betaler, fjernes vandmærket, og du får en ren fil.</p>
+        <div class="code-row">
+          <input class="field" id="codeInput" data-i18n-ph="codePh" placeholder="Har du en kode?">
+          <button class="btn-tiny" id="useCodeBtn" data-i18n="useCode" type="button">Brug kode</button>
+        </div>
+        <button class="btn btn-primary" id="pdfBtn" data-i18n="payPdf" type="button">Hent PDF — 49 kr.</button>
+        <button class="btn btn-outline" id="pngBtn" data-i18n="payImg" type="button">Hent billede — 49 kr.</button>
+        <button class="btn btn-outline" id="freeBtn" data-i18n="freeDl" type="button">Hent gratis prøve — PDF med vandmærke</button>
+        <button class="btn btn-primary" id="getFileBtn" style="display:none;" type="button">Hent din fil</button>
+        <div class="status" id="payStatus"></div>
+        <div class="save-note" id="saveNote" data-i18n="saveAuto">Gemmes automatisk i denne browser.</div>
+      </div>
+
+    </div>
+
+    <!-- ============ PREVIEW ============ -->
+    <div class="stage" id="stage">
+      <div class="side-switch-mobile" id="sideSwitchMobile">
+        <button data-side="front" type="button" data-i18n="sideFront">Forside</button>
+        <button data-side="back" type="button" data-i18n="sideBack">Bagside</button>
+      </div>
+      <div class="bc-wrap" data-side="front">
+        <span class="bc-side-lbl" data-i18n="frontLbl">Forside</span>
+        <div class="bc-fit" id="fitFront"><div class="bc-card" id="cardFront"></div></div>
+      </div>
+      <div class="bc-wrap" id="wrapBack" data-side="back">
+        <span class="bc-side-lbl" data-i18n="backLbl">Bagside</span>
+        <div class="bc-fit" id="fitBack"><div class="bc-card" id="cardBack"></div></div>
+      </div>
+    </div>
+
+  </div>
+
+<script>
+  // ---------- Helpers ----------
+  const byId = id => document.getElementById(id);
+  const esc = s => (s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+
+  // ---------- i18n ----------
+  const LS_LANG = 'visitkort_lang_v1';
+  const I18N = {
+    da:{
+      brandH1:'Visitkort',
+      myCards:'Mine visitkort', autosaveTitle:'Gemmes automatisk',
+      saveAs:'Gem som…', exportBtn:'Eksportér', importBtn:'Importér',
+      saveAsPrompt:'Giv dit visitkort et navn:', libOpen:'Åbn', libDelete:'Slet',
+      libConfirmDelete:'Slet dette visitkort?', libConfirmReplace:'Et visitkort med dette navn findes — overskriv?',
+      libNone:'Ingen gemte visitkort endnu — tryk "Gem som…".',
+      saveStatusSaved:'Gemt: ', saveStatusDeleted:'Slettet: ', saveStatusExported:'Visitkort eksporteret.',
+      saveStatusImported:'Visitkort importeret.', saveStatusImportFail:'Filen kunne ikke læses.',
+      saveStatusInit:'Dine ændringer gemmes automatisk i denne browser.',
+      saveStatusInitOff:'Lagring virker ikke her — åbn filen i din browser.',
+      tagline:'Skriv dine oplysninger, vælg en stil — og hent et printklart visitkort.',
+      styleLabel:'Stil', stElegant:'Elegant', stModern:'Moderne', stMinimal:'Minimal', stDark:'Mørk',
+      orientLabel:'Retning', orientH:'Vandret', orientV:'Lodret',
+      sidesLabel:'Sider', sideFront:'Forside', sideBack:'Bagside', useBack:'Brug bagside',
+      secContent:'Indhold',
+      fName:'Navn', fTitle:'Titel / stilling', fCompany:'Firma', fTagline:'Slogan (valgfri)',
+      fPhone:'Telefon', fEmail:'E-mail', fWeb:'Hjemmeside', fAddress:'Adresse',
+      boxHint:'Hver boks kan placeres et bestemt sted på kortet med 3×3-vælgeren. Tilføj linjer i boksen, eller opret en ny boks for tekst, der skal stå et andet sted.',
+      addBox:'+ Ny tekstboks', boxLabel:'Boks', boxDelete:'Slet boks', boxMoveUp:'Flyt boks op', boxMoveDown:'Flyt boks ned', boxPos:'Placering på kortet',
+      cliInline2:'Samme linje', cliInlineNo:'Ny linje', boxCollapseLabel:'Fold sammen', boxExpandLabel:'Fold ud',
+      sizeLabel2:'Størrelse:', styleLabel2:'Skrift:', stNormal:'Normal', stBold:'Fed', stThin:'Tynd', stItalic:'Kursiv', stAccent:'Accentfarve', stDim:'Dæmpet', lineColorLabel:'Farve:', wrapLabel:'Linjebrud:', wrapBreak:'Bryd', wrapNo:'Stikker ud', boxAlignLabel:'Justering:', boxAlignL:'Venstre', boxAlignC:'Midt', boxAlignR:'Højre',
+      lsLabel:'Bogstavafstand:', lsNormal:'Normal', lsSome:'Lidt', lsWide:'Meget',
+      decoLabel:'Pynt — denne side', decoNone:'Ingen', decoCorner:'Hjørne', decoPanel:'Panel', decoStripe:'Stribe', decoColor:'Pyntefarve',
+      freeDl:'Hent gratis prøve — PDF med vandmærke',
+      boxLayoutLabel:'Layout:', boxLinesLabel:'Linjer:', boxGapLabel:'Mellemrum:', boxLayoutStack:'Under hinanden', boxLayoutRow:'Ved siden af hinanden',
+      posTopLeft:'Top venstre', posTopCenter:'Top midt', posTopRight:'Top højre',
+      posMiddleLeft:'Midt venstre', posMiddleCenter:'Midt midt', posMiddleRight:'Midt højre',
+      posBottomLeft:'Bund venstre', posBottomCenter:'Bund midt', posBottomRight:'Bund højre',
+      frontHint:'Træk linjer op eller ned med pilene. Tryk på ⇄ for at sætte en linje ved siden af ovenstående. Slå justering venstre/midt/højre på første linje i hver gruppe.',
+      addFrontLine:'+ Tilføj linje',
+      ftName:'Navn', ftTitle:'Titel', ftCompany:'Firma', ftTagline:'Slogan', ftCustom:'Fri tekst', ftLine:'Streg', ctLine:'Streg',
+      cliInline:'Ved siden af ovenstående', cliAlignL:'Venstre', cliAlignC:'Midt', cliAlignR:'Højre',
+      contactHint:'Træk linjer op eller ned med pilene. Tryk på ikonet for at slå det fra på en linje. Tryk på ⇄ for at sætte en linje ved siden af ovenstående.',
+      addContact:'+ Tilføj kontaktlinje',
+      ctPhone:'Telefon', ctEmail:'E-mail', ctWeb:'Hjemmeside', ctAddress:'Adresse',
+      ctInstagram:'Instagram', ctFacebook:'Facebook', ctTiktok:'TikTok', ctLinkedin:'LinkedIn', ctCustom:'Brugerdefineret',
+      cliMoveUp:'Flyt op', cliMoveDown:'Flyt ned', cliDelete:'Slet', cliToggleIcon:'Slå ikon til/fra',
+      placement:'Placering', alignLabel:'Justering', alignL:'Venstre', alignC:'Midt', alignR:'Højre',
+      valignLabel:'Lodret placering', valignT:'Top', valignM:'Midt', valignB:'Bund',
+      logoLabel:'Logo eller billede (valgfri)', logoRemove:'Fjern logo',
+      sizeLabel:'Størrelse', sizeStd55:'8,5 × 5,5 cm — Standard DK', sizeStd54:'8,5 × 5,4 cm — Standard EU', sizeUS5:'9 × 5 cm — Amerikansk', sizeUS54:'9 × 5,4 cm — Amerikansk', sizeFold55Land:'8,5 × 5,5 cm — Foldet (vandret)', sizeFold55Port:'8,5 × 5,5 cm — Foldet (lodret)',
+      textSizes:'Tekststørrelser — denne side', textGap:'Mellemrum mellem tekster',
+      tfName:'Navn', tfTitle:'Titel', tfCompany:'Firma', tfTagline:'Slogan', tfPhone:'Telefon', tfEmail:'E-mail', tfWeb:'Hjemmeside', tfAddress:'Adresse',
+      cornersLabel:'Hjørner', cornSharp:'Skarpe', cornSoft:'Bløde', cornRound:'Runde',
+      sideColors:'Farver — denne side', bgLabel:'Baggrund', bgSolid:'Ensfarvet', bgFade:'Fade',
+      col1:'Farve 1', col2:'Farve 2', dirLabel:'Fade-retning', sideInkL:'Tekstfarve',
+      logoSize:'Logo/billede-størrelse', showGrid:'Vis gitter', dragHint:'Træk logoet eller billedet direkte på kortet for at placere det præcist.',
+      customize:'Tilpas design', titleFontL:'Navne-skrifttype', bodyFontL:'Tekst-skrifttype', accentLine:'Accentstreg',
+      frontLbl:'Forside', backLbl:'Bagside',
+      payNote:'Forhåndsvisningen har vandmærke. Når du betaler, fjernes vandmærket, og du får en ren fil uden vandmærke.',
+      codePh:'Har du en kode?', useCode:'Brug kode',
+      codeApplied:'Koden er aktiveret — din download er gratis.', codeInvalid:'Ugyldig kode.', codeUsed:'Koden er allerede brugt i denne browser.',
+      payPdf:'Hent PDF — 49 kr.', payImg:'Hent billede — 49 kr.', payPdfFree:'Hent PDF gratis', payImgFree:'Hent billede gratis',
+      getPdf:'Hent din PDF', getImg:'Hent dit billede',
+      stPayStart:'Sender dig til betaling…', stPayWait:'Bekræfter betaling…', stPayReady:'Betaling modtaget — hent din fil herunder.',
+      stPayFail:'Betalingen kunne ikke bekræftes.', stCancel:'Betalingen blev afbrudt.', stDone:'Filen er hentet. God fornøjelse!',
+      saveAuto:'Gemmes automatisk i denne browser.',
+      phNameEx:'Fx Anna Jensen', phTitleEx:'Fx Ejer & barista', phCompanyEx:'Fx Café Solsikken', phTaglineEx:'Fx Kaffe med omtanke',
+      phPhoneEx:'Fx +45 12 34 56 78', phEmailEx:'Fx anna@cafe.dk', phWebEx:'Fx www.cafe.dk', phAddressEx:'Fx Hovedgaden 1, Hillerød'
+    },
+    en:{
+      brandH1:'Business Card',
+      myCards:'My business cards', autosaveTitle:'Saved automatically',
+      saveAs:'Save as…', exportBtn:'Export', importBtn:'Import',
+      saveAsPrompt:'Give your card a name:', libOpen:'Open', libDelete:'Delete',
+      libConfirmDelete:'Delete this card?', libConfirmReplace:'A card with this name already exists — overwrite?',
+      libNone:'No saved cards yet — press "Save as…".',
+      saveStatusSaved:'Saved: ', saveStatusDeleted:'Deleted: ', saveStatusExported:'Card exported.',
+      saveStatusImported:'Card imported.', saveStatusImportFail:'The file could not be read.',
+      saveStatusInit:'Your changes are saved automatically in this browser.',
+      saveStatusInitOff:'Storage is unavailable — open the file in your browser.',
+      tagline:'Type your details, pick a style — and download a print-ready business card.',
+      styleLabel:'Style', stElegant:'Elegant', stModern:'Modern', stMinimal:'Minimal', stDark:'Dark',
+      orientLabel:'Orientation', orientH:'Landscape', orientV:'Portrait',
+      sidesLabel:'Sides', sideFront:'Front', sideBack:'Back', useBack:'Use back side',
+      secContent:'Content',
+      fName:'Name', fTitle:'Title / role', fCompany:'Company', fTagline:'Tagline (optional)',
+      fPhone:'Phone', fEmail:'Email', fWeb:'Website', fAddress:'Address',
+      boxHint:'Each box can be placed in a specific spot on the card with the 3×3 picker. Add lines inside the box, or create a new box for text that should sit somewhere else.',
+      addBox:'+ New text box', boxLabel:'Box', boxDelete:'Delete box', boxMoveUp:'Move box up', boxMoveDown:'Move box down', boxPos:'Position on card',
+      cliInline2:'Same line', cliInlineNo:'New line', boxCollapseLabel:'Collapse', boxExpandLabel:'Expand',
+      sizeLabel2:'Size:', styleLabel2:'Style:', stNormal:'Normal', stBold:'Bold', stThin:'Thin', stItalic:'Italic', stAccent:'Accent color', stDim:'Dimmed', lineColorLabel:'Color:', wrapLabel:'Line break:', wrapBreak:'Wrap', wrapNo:'Overflow', boxAlignLabel:'Alignment:', boxAlignL:'Left', boxAlignC:'Center', boxAlignR:'Right',
+      lsLabel:'Letter spacing:', lsNormal:'Normal', lsSome:'Slight', lsWide:'Wide',
+      decoLabel:'Decoration — this side', decoNone:'None', decoCorner:'Corner', decoPanel:'Panel', decoStripe:'Stripe', decoColor:'Decoration color',
+      freeDl:'Free sample — PDF with watermark',
+      boxLayoutLabel:'Layout:', boxLinesLabel:'Lines:', boxGapLabel:'Spacing:', boxLayoutStack:'Stacked', boxLayoutRow:'Side by side',
+      posTopLeft:'Top left', posTopCenter:'Top center', posTopRight:'Top right',
+      posMiddleLeft:'Middle left', posMiddleCenter:'Middle center', posMiddleRight:'Middle right',
+      posBottomLeft:'Bottom left', posBottomCenter:'Bottom center', posBottomRight:'Bottom right',
+      frontHint:'Drag lines up or down with the arrows. Tap ⇄ to place a line next to the one above. Set left/center/right alignment on the first line of each group.',
+      addFrontLine:'+ Add line',
+      ftName:'Name', ftTitle:'Title', ftCompany:'Company', ftTagline:'Tagline', ftCustom:'Free text', ftLine:'Line', ctLine:'Line',
+      cliInline:'Next to the line above', cliAlignL:'Left', cliAlignC:'Center', cliAlignR:'Right',
+      contactHint:'Drag lines up or down with the arrows. Tap the icon to toggle it on a line. Tap ⇄ to place a line next to the one above.',
+      addContact:'+ Add contact line',
+      ctPhone:'Phone', ctEmail:'Email', ctWeb:'Website', ctAddress:'Address',
+      ctInstagram:'Instagram', ctFacebook:'Facebook', ctTiktok:'TikTok', ctLinkedin:'LinkedIn', ctCustom:'Custom',
+      cliMoveUp:'Move up', cliMoveDown:'Move down', cliDelete:'Delete', cliToggleIcon:'Toggle icon',
+      placement:'Placement', alignLabel:'Alignment', alignL:'Left', alignC:'Center', alignR:'Right',
+      valignLabel:'Vertical position', valignT:'Top', valignM:'Middle', valignB:'Bottom',
+      logoLabel:'Logo or image (optional)', logoRemove:'Remove logo',
+      sizeLabel:'Size', sizeStd55:'8.5 × 5.5 cm — Standard DK', sizeStd54:'8.5 × 5.4 cm — Standard EU', sizeUS5:'9 × 5 cm — US', sizeUS54:'9 × 5.4 cm — US', sizeFold55Land:'8.5 × 5.5 cm — Folded (landscape)', sizeFold55Port:'8.5 × 5.5 cm — Folded (portrait)',
+      textSizes:'Text sizes — this side', textGap:'Space between texts',
+      tfName:'Name', tfTitle:'Title', tfCompany:'Company', tfTagline:'Tagline', tfPhone:'Phone', tfEmail:'Email', tfWeb:'Website', tfAddress:'Address',
+      cornersLabel:'Corners', cornSharp:'Sharp', cornSoft:'Soft', cornRound:'Round',
+      sideColors:'Colors — this side', bgLabel:'Background', bgSolid:'Solid', bgFade:'Fade',
+      col1:'Color 1', col2:'Color 2', dirLabel:'Fade direction', sideInkL:'Text color',
+      logoSize:'Logo/image size', showGrid:'Show grid', dragHint:'Drag the logo or image directly on the card to position it precisely.',
+      customize:'Customize design', titleFontL:'Name font', bodyFontL:'Text font', accentLine:'Accent line',
+      frontLbl:'Front', backLbl:'Back',
+      payNote:'The preview has a watermark. When you pay, the watermark is removed and you get a clean file.',
+      codePh:'Have a code?', useCode:'Use code',
+      codeApplied:'Code applied — your download is free.', codeInvalid:'Invalid code.', codeUsed:'This code has already been used in this browser.',
+      payPdf:'Get PDF — 49 kr.', payImg:'Get image — 49 kr.', payPdfFree:'Get PDF free', payImgFree:'Get image free',
+      getPdf:'Download your PDF', getImg:'Download your image',
+      stPayStart:'Taking you to payment…', stPayWait:'Confirming payment…', stPayReady:'Payment received — download your file below.',
+      stPayFail:'The payment could not be confirmed.', stCancel:'The payment was cancelled.', stDone:'File downloaded. Enjoy!',
+      saveAuto:'Saved automatically in this browser.',
+      phNameEx:'E.g. Anna Jensen', phTitleEx:'E.g. Owner & barista', phCompanyEx:'E.g. Café Sunflower', phTaglineEx:'E.g. Coffee with care',
+      phPhoneEx:'E.g. +45 12 34 56 78', phEmailEx:'E.g. anna@cafe.com', phWebEx:'E.g. www.cafe.com', phAddressEx:'E.g. Main Street 1'
+    },
+    tr:{
+      brandH1:'Kartvizit',
+      myCards:'Kartvizitlerim', autosaveTitle:'Otomatik kaydedilir',
+      saveAs:'Farklı kaydet…', exportBtn:'Dışa aktar', importBtn:'İçe aktar',
+      saveAsPrompt:'Kartvizitinize bir ad verin:', libOpen:'Aç', libDelete:'Sil',
+      libConfirmDelete:'Bu kartvizit silinsin mi?', libConfirmReplace:'Bu adda bir kartvizit zaten var — üzerine yazılsın mı?',
+      libNone:'Henüz kayıtlı kartvizit yok — "Farklı kaydet…" düğmesine basın.',
+      saveStatusSaved:'Kaydedildi: ', saveStatusDeleted:'Silindi: ', saveStatusExported:'Kartvizit dışa aktarıldı.',
+      saveStatusImported:'Kartvizit içe aktarıldı.', saveStatusImportFail:'Dosya okunamadı.',
+      saveStatusInit:'Değişiklikleriniz bu tarayıcıya otomatik kaydedilir.',
+      saveStatusInitOff:'Depolama bu görünümde çalışmıyor — dosyayı tarayıcınızda açın.',
+      tagline:'Bilgilerinizi yazın, bir stil seçin — ve baskıya hazır kartviziti indirin.',
+      styleLabel:'Stil', stElegant:'Zarif', stModern:'Modern', stMinimal:'Minimal', stDark:'Koyu',
+      orientLabel:'Yön', orientH:'Yatay', orientV:'Dikey',
+      sidesLabel:'Yüzler', sideFront:'Ön yüz', sideBack:'Arka yüz', useBack:'Arka yüzü kullan',
+      secContent:'İçerik',
+      fName:'Ad', fTitle:'Unvan / görev', fCompany:'Şirket', fTagline:'Slogan (isteğe bağlı)',
+      fPhone:'Telefon', fEmail:'E-posta', fWeb:'Web sitesi', fAddress:'Adres',
+      boxHint:'Her kutu 3×3 seçici ile kartta belirli bir konuma yerleştirilebilir. Kutunun içine satır ekleyin veya farklı bir yerde duracak metin için yeni bir kutu oluşturun.',
+      addBox:'+ Yeni metin kutusu', boxLabel:'Kutu', boxDelete:'Kutuyu sil', boxMoveUp:'Kutuyu yukarı taşı', boxMoveDown:'Kutuyu aşağı taşı', boxPos:'Kart üzerinde konum',
+      cliInline2:'Aynı satır', cliInlineNo:'Yeni satır', boxCollapseLabel:'Daralt', boxExpandLabel:'Genişlet',
+      sizeLabel2:'Boyut:', styleLabel2:'Yazı:', stNormal:'Normal', stBold:'Kalın', stThin:'İnce', stItalic:'Eğik', stAccent:'Vurgu rengi', stDim:'Soluk', lineColorLabel:'Renk:', wrapLabel:'Satır kırma:', wrapBreak:'Kır', wrapNo:'Taşır', boxAlignLabel:'Hizalama:', boxAlignL:'Sol', boxAlignC:'Orta', boxAlignR:'Sağ',
+      lsLabel:'Harf aralığı:', lsNormal:'Normal', lsSome:'Az', lsWide:'Çok',
+      decoLabel:'Süsleme — bu yüz', decoNone:'Yok', decoCorner:'Köşe', decoPanel:'Panel', decoStripe:'Şerit', decoColor:'Süsleme rengi',
+      freeDl:'Ücretsiz örnek — filigranlı PDF',
+      boxLayoutLabel:'Düzen:', boxLinesLabel:'Satırlar:', boxGapLabel:'Aralık:', boxLayoutStack:'Alt alta', boxLayoutRow:'Yan yana',
+      posTopLeft:'Üst sol', posTopCenter:'Üst orta', posTopRight:'Üst sağ',
+      posMiddleLeft:'Orta sol', posMiddleCenter:'Orta', posMiddleRight:'Orta sağ',
+      posBottomLeft:'Alt sol', posBottomCenter:'Alt orta', posBottomRight:'Alt sağ',
+      frontHint:'Satırları oklarla yukarı veya aşağı taşıyın. Bir satırı yukarıdakinin yanına koymak için ⇄ düğmesine dokunun. Her grubun ilk satırında sola/ortaya/sağa hizalama ayarlayın.',
+      addFrontLine:'+ Satır ekle',
+      ftName:'Ad', ftTitle:'Unvan', ftCompany:'Şirket', ftTagline:'Slogan', ftCustom:'Serbest metin', ftLine:'Çizgi', ctLine:'Çizgi',
+      cliInline:'Yukarıdaki satırın yanına', cliAlignL:'Sol', cliAlignC:'Orta', cliAlignR:'Sağ',
+      contactHint:'Satırları oklarla yukarı veya aşağı taşıyın. Bir satırda simgeyi açıp kapatmak için simgeye dokunun. Bir satırı yukarıdakinin yanına koymak için ⇄ düğmesine dokunun.',
+      addContact:'+ İletişim satırı ekle',
+      ctPhone:'Telefon', ctEmail:'E-posta', ctWeb:'Web sitesi', ctAddress:'Adres',
+      ctInstagram:'Instagram', ctFacebook:'Facebook', ctTiktok:'TikTok', ctLinkedin:'LinkedIn', ctCustom:'Özel',
+      cliMoveUp:'Yukarı taşı', cliMoveDown:'Aşağı taşı', cliDelete:'Sil', cliToggleIcon:'Simgeyi aç/kapat',
+      placement:'Yerleşim', alignLabel:'Hizalama', alignL:'Sol', alignC:'Orta', alignR:'Sağ',
+      valignLabel:'Dikey konum', valignT:'Üst', valignM:'Orta', valignB:'Alt',
+      logoLabel:'Logo veya görsel (isteğe bağlı)', logoRemove:'Logoyu kaldır',
+      sizeLabel:'Boyut', sizeStd55:'8,5 × 5,5 cm — Standart DK', sizeStd54:'8,5 × 5,4 cm — Standart EU', sizeUS5:'9 × 5 cm — Amerikan', sizeUS54:'9 × 5,4 cm — Amerikan', sizeFold55Land:'8,5 × 5,5 cm — Katlanır (yatay)', sizeFold55Port:'8,5 × 5,5 cm — Katlanır (dikey)',
+      textSizes:'Metin boyutları — bu yüz', textGap:'Metinler arası boşluk',
+      tfName:'Ad', tfTitle:'Unvan', tfCompany:'Şirket', tfTagline:'Slogan', tfPhone:'Telefon', tfEmail:'E-posta', tfWeb:'Web', tfAddress:'Adres',
+      cornersLabel:'Köşeler', cornSharp:'Keskin', cornSoft:'Yumuşak', cornRound:'Yuvarlak',
+      sideColors:'Renkler — bu yüz', bgLabel:'Arka plan', bgSolid:'Düz renk', bgFade:'Geçiş',
+      col1:'Renk 1', col2:'Renk 2', dirLabel:'Geçiş yönü', sideInkL:'Metin rengi',
+      logoSize:'Logo/görsel boyutu', showGrid:'Izgarayı göster', dragHint:'Logoyu veya görseli kartın üzerinde sürükleyerek tam istediğiniz yere yerleştirin.',
+      customize:'Tasarımı özelleştir', titleFontL:'Ad yazı tipi', bodyFontL:'Metin yazı tipi', accentLine:'Vurgu çizgisi',
+      frontLbl:'Ön yüz', backLbl:'Arka yüz',
+      payNote:'Önizlemede filigran vardır. Ödeme yaptığınızda filigran kaldırılır ve temiz bir dosya alırsınız.',
+      codePh:'Kodunuz var mı?', useCode:'Kodu kullan',
+      codeApplied:'Kod etkinleştirildi — indirme ücretsiz.', codeInvalid:'Geçersiz kod.', codeUsed:'Bu kod bu tarayıcıda zaten kullanıldı.',
+      payPdf:'PDF indir — 49 kr.', payImg:'Görsel indir — 49 kr.', payPdfFree:'PDF ücretsiz indir', payImgFree:'Görsel ücretsiz indir',
+      getPdf:'PDF dosyanı indir', getImg:'Görselini indir',
+      stPayStart:'Ödemeye yönlendiriliyorsunuz…', stPayWait:'Ödeme doğrulanıyor…', stPayReady:'Ödeme alındı — dosyanızı aşağıdan indirin.',
+      stPayFail:'Ödeme doğrulanamadı.', stCancel:'Ödeme iptal edildi.', stDone:'Dosya indirildi. İyi günlerde kullanın!',
+      saveAuto:'Bu tarayıcıda otomatik kaydedilir.',
+      phNameEx:'Örn. Ayşe Yılmaz', phTitleEx:'Örn. Sahip & barista', phCompanyEx:'Örn. Kafe Güneş', phTaglineEx:'Örn. Özenle kahve',
+      phPhoneEx:'Örn. +90 5xx xxx xx xx', phEmailEx:'Örn. ayse@kafe.com', phWebEx:'Örn. www.kafe.com', phAddressEx:'Örn. Ana Cadde 1'
+    },
+    uk:{
+      brandH1:'Візитівка',
+      myCards:'Мої візитівки', autosaveTitle:'Зберігається автоматично',
+      saveAs:'Зберегти як…', exportBtn:'Експорт', importBtn:'Імпорт',
+      saveAsPrompt:'Дайте візитівці назву:', libOpen:'Відкрити', libDelete:'Видалити',
+      libConfirmDelete:'Видалити цю візитівку?', libConfirmReplace:'Візитівка з такою назвою вже існує — перезаписати?',
+      libNone:'Збережених візитівок ще немає — натисніть «Зберегти як…».',
+      saveStatusSaved:'Збережено: ', saveStatusDeleted:'Видалено: ', saveStatusExported:'Візитівку експортовано.',
+      saveStatusImported:'Візитівку імпортовано.', saveStatusImportFail:'Не вдалося прочитати файл.',
+      saveStatusInit:'Ваші зміни зберігаються автоматично в цьому браузері.',
+      saveStatusInitOff:'Сховище недоступне — відкрийте файл у браузері.',
+      tagline:'Впишіть свої дані, оберіть стиль — і завантажте візитівку, готову до друку.',
+      styleLabel:'Стиль', stElegant:'Елегантний', stModern:'Сучасний', stMinimal:'Мінімал', stDark:'Темний',
+      orientLabel:'Орієнтація', orientH:'Горизонтально', orientV:'Вертикально',
+      sidesLabel:'Сторони', sideFront:'Лицьова', sideBack:'Зворотна', useBack:'Використати зворотну сторону',
+      secContent:'Вміст',
+      fName:'Імʼя', fTitle:'Посада', fCompany:'Компанія', fTagline:'Слоган (необовʼязково)',
+      fPhone:'Телефон', fEmail:'Ел. пошта', fWeb:'Сайт', fAddress:'Адреса',
+      boxHint:'Кожен блок можна розмістити в певному місці картки за допомогою сітки 3×3. Додайте рядки всередині блока або створіть новий блок для тексту, який має бути в іншому місці.',
+      addBox:'+ Новий текстовий блок', boxLabel:'Блок', boxDelete:'Видалити блок', boxMoveUp:'Перемістити вгору', boxMoveDown:'Перемістити вниз', boxPos:'Розташування на картці',
+      cliInline2:'Той самий рядок', cliInlineNo:'Новий рядок', boxCollapseLabel:'Згорнути', boxExpandLabel:'Розгорнути',
+      sizeLabel2:'Розмір:', styleLabel2:'Шрифт:', stNormal:'Звичайний', stBold:'Жирний', stThin:'Тонкий', stItalic:'Курсив', stAccent:'Акцентний колір', stDim:'Приглушений', lineColorLabel:'Колір:', wrapLabel:'Перенос:', wrapBreak:'Переносити', wrapNo:'Виходить', boxAlignLabel:'Вирівнювання:', boxAlignL:'Ліво', boxAlignC:'Центр', boxAlignR:'Право',
+      lsLabel:'Інтервал:', lsNormal:'Звичайний', lsSome:'Трохи', lsWide:'Широко',
+      decoLabel:'Декор — цей бік', decoNone:'Немає', decoCorner:'Кут', decoPanel:'Панель', decoStripe:'Смуга', decoColor:'Колір декору',
+      freeDl:'Безкоштовний зразок — PDF з водяним знаком',
+      boxLayoutLabel:'Розкладка:', boxLinesLabel:'Рядки:', boxGapLabel:'Відстань:', boxLayoutStack:'Один під одним', boxLayoutRow:'Поруч',
+      posTopLeft:'Вгорі ліворуч', posTopCenter:'Вгорі по центру', posTopRight:'Вгорі праворуч',
+      posMiddleLeft:'Посередині ліворуч', posMiddleCenter:'Посередині по центру', posMiddleRight:'Посередині праворуч',
+      posBottomLeft:'Знизу ліворуч', posBottomCenter:'Знизу по центру', posBottomRight:'Знизу праворуч',
+      frontHint:'Перетягуйте рядки вгору або вниз стрілками. Натисніть ⇄, щоб поставити рядок поряд із попереднім. Установіть вирівнювання ліво/центр/право в першому рядку кожної групи.',
+      addFrontLine:'+ Додати рядок',
+      ftName:'Імʼя', ftTitle:'Посада', ftCompany:'Компанія', ftTagline:'Слоган', ftCustom:'Вільний текст', ftLine:'Лінія', ctLine:'Лінія',
+      cliInline:'Поряд із попереднім', cliAlignL:'Ліво', cliAlignC:'Центр', cliAlignR:'Право',
+      contactHint:'Перетягуйте рядки вгору або вниз стрілками. Натисніть піктограму, щоб вмикати/вимикати її в рядку. Натисніть ⇄, щоб поставити рядок поряд із попереднім.',
+      addContact:'+ Додати контактний рядок',
+      ctPhone:'Телефон', ctEmail:'Ел. пошта', ctWeb:'Сайт', ctAddress:'Адреса',
+      ctInstagram:'Instagram', ctFacebook:'Facebook', ctTiktok:'TikTok', ctLinkedin:'LinkedIn', ctCustom:'Інше',
+      cliMoveUp:'Вгору', cliMoveDown:'Вниз', cliDelete:'Видалити', cliToggleIcon:'Перемкнути піктограму',
+      placement:'Розташування', alignLabel:'Вирівнювання', alignL:'Ліворуч', alignC:'По центру', alignR:'Праворуч',
+      valignLabel:'Вертикальне положення', valignT:'Згори', valignM:'Посередині', valignB:'Знизу',
+      logoLabel:'Логотип або зображення (необовʼязково)', logoRemove:'Видалити логотип',
+      sizeLabel:'Розмір', sizeStd55:'8,5 × 5,5 см — Стандарт DK', sizeStd54:'8,5 × 5,4 см — Стандарт EU', sizeUS5:'9 × 5 см — США', sizeUS54:'9 × 5,4 см — США', sizeFold55Land:'8,5 × 5,5 см — Складна (горизонтально)', sizeFold55Port:'8,5 × 5,5 см — Складна (вертикально)',
+      textSizes:'Розміри тексту — ця сторона', textGap:'Відстань між текстами',
+      tfName:'Імʼя', tfTitle:'Посада', tfCompany:'Компанія', tfTagline:'Слоган', tfPhone:'Телефон', tfEmail:'Ел. пошта', tfWeb:'Сайт', tfAddress:'Адреса',
+      cornersLabel:'Кути', cornSharp:'Гострі', cornSoft:'Мʼякі', cornRound:'Круглі',
+      sideColors:'Кольори — ця сторона', bgLabel:'Тло', bgSolid:'Однотонне', bgFade:'Градієнт',
+      col1:'Колір 1', col2:'Колір 2', dirLabel:'Напрям градієнта', sideInkL:'Колір тексту',
+      logoSize:'Розмір логотипа/зображення', showGrid:'Показати сітку', dragHint:'Перетягніть логотип або зображення прямо на картці, щоб розмістити його точно.',
+      customize:'Налаштувати дизайн', titleFontL:'Шрифт імені', bodyFontL:'Шрифт тексту', accentLine:'Акцентна лінія',
+      frontLbl:'Лицьова', backLbl:'Зворотна',
+      payNote:'У попередньому перегляді є водяний знак. Після оплати знак зникає, і ви отримуєте чистий файл.',
+      codePh:'Маєте код?', useCode:'Використати код',
+      codeApplied:'Код активовано — завантаження безкоштовне.', codeInvalid:'Недійсний код.', codeUsed:'Цей код уже використано в цьому браузері.',
+      payPdf:'Завантажити PDF — 49 kr.', payImg:'Завантажити зображення — 49 kr.', payPdfFree:'PDF безкоштовно', payImgFree:'Зображення безкоштовно',
+      getPdf:'Завантажити ваш PDF', getImg:'Завантажити ваше зображення',
+      stPayStart:'Переходимо до оплати…', stPayWait:'Підтверджуємо оплату…', stPayReady:'Оплату отримано — завантажте файл нижче.',
+      stPayFail:'Не вдалося підтвердити оплату.', stCancel:'Оплату скасовано.', stDone:'Файл завантажено. Гарного дня!',
+      saveAuto:'Зберігається автоматично в цьому браузері.',
+      phNameEx:'Напр. Анна Коваль', phTitleEx:'Напр. Власниця та бариста', phCompanyEx:'Напр. Кафе Соняшник', phTaglineEx:'Напр. Кава з душею',
+      phPhoneEx:'Напр. +380 xx xxx xx xx', phEmailEx:'Напр. anna@cafe.ua', phWebEx:'Напр. www.cafe.ua', phAddressEx:'Напр. Головна вул. 1'
+    }
+  };
+  let LANG = 'da';
+  try { LANG = localStorage.getItem(LS_LANG) || ((navigator.language || 'da').slice(0,2)); } catch(e){}
+  if (!I18N[LANG]) LANG = 'da';
+  const t = key => (I18N[LANG] && I18N[LANG][key]) || (I18N.da[key] || key);
+
+  function applyStaticI18n(){
+    document.querySelectorAll('[data-i18n]').forEach(el => { el.textContent = t(el.getAttribute('data-i18n')); });
+    document.querySelectorAll('[data-i18n-title]').forEach(el => { el.setAttribute('title', t(el.getAttribute('data-i18n-title'))); });
+    document.querySelectorAll('[data-i18n-html]').forEach(el => { el.innerHTML = t(el.getAttribute('data-i18n-html')); });
+    // example placeholders per field
+    byId('codeInput').placeholder = t('codePh');
+  }
+  function applyLang(lang){
+    if (!I18N[lang]) lang = 'da';
+    LANG = lang;
+    try { localStorage.setItem(LS_LANG, lang); } catch(e){}
+    document.documentElement.lang = lang;
+    applyStaticI18n();
+    if (byId('selSize')) fillSizes();
+    setPayLabels();
+    renderCards();
+    if (byId('libraryList')) renderLibrary();
+    if (byId('contactList')) renderContactList();
+    if (byId('frontList')) renderFrontList();
+  }
+
+  // ---------- State ----------
+  const FONTS_TITLE = ['Fraunces','Playfair Display','Bebas Neue','Montserrat','Jost','EB Garamond'];
+  const FONTS_BODY  = ['Jost','EB Garamond','Montserrat','Fraunces','Playfair Display'];
+  const STYLES = {
+    elegant:{ accent:'#b5542a', paper:'#fbf6ec', ink:'#2c2620', titleFont:'Fraunces', bodyFont:'EB Garamond', accentLine:true },
+    moderne:{ accent:'#1f5f5b', paper:'#ffffff', ink:'#1c1c1c', titleFont:'Montserrat', bodyFont:'Jost', accentLine:true },
+    minimal:{ accent:'#111111', paper:'#ffffff', ink:'#111111', titleFont:'Jost', bodyFont:'Jost', accentLine:false },
+    moerk:{ accent:'#d4a256', paper:'#201d1a', ink:'#f4ead9', titleFont:'Fraunces', bodyFont:'Jost', accentLine:true }
+  };
+  // ---- Card size catalog (mm) ----
+  // Folded variants double the page in the fold direction (4 panels when folded along the middle).
+  const SIZES = {
+    std55:    { w:85, h:55, panels:1, foldDir:null,    labelKey:'sizeStd55' },
+    std54:    { w:85, h:54, panels:1, foldDir:null,    labelKey:'sizeStd54' },
+    us5:      { w:90, h:50, panels:1, foldDir:null,    labelKey:'sizeUS5'   },
+    us54:     { w:90, h:54, panels:1, foldDir:null,    labelKey:'sizeUS54'  },
+    fold55h:  { w:85, h:55, panels:2, foldDir:'horiz', labelKey:'sizeFold55Land' },
+    fold55v:  { w:85, h:55, panels:2, foldDir:'vert',  labelKey:'sizeFold55Port' }
+  };
+  // Default per-field text sizes (multipliers of the base 14px body)
+  const TSZ_FRONT_DEF = { name:2.0, title:1.05, company:.95, tagline:.95 };
+  const TSZ_BACK_DEF  = { phone:1.0, email:1.0, web:1.0, address:1.0, company:1.2 };
+  // ---- Contact types + SVG icons (vectors, scale crisp for any print size, inherit text color via currentColor) ----
+  const CONTACT_ICONS = {
+    phone:    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.12.93.34 1.85.65 2.73a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.35-1.22a2 2 0 0 1 2.11-.45c.88.31 1.8.53 2.73.65A2 2 0 0 1 22 16.92Z"/></svg>',
+    email:    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m2 7 10 6 10-6"/></svg>',
+    web:      '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>',
+    address:  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 7-8 13-8 13s-8-6-8-13a8 8 0 0 1 16 0z"/><circle cx="12" cy="10" r="3"/></svg>',
+    instagram:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>',
+    facebook: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>',
+    tiktok:   '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5.8 20.1a6.34 6.34 0 0 0 10.86-4.43V8.9a8.16 8.16 0 0 0 4.77 1.52V7a4.85 4.85 0 0 1-1.84-.31z"/></svg>',
+    linkedin: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-4 0v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>',
+    custom:   '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>'
+  };
+  const CONTACT_TYPES = ['phone','email','web','address','instagram','facebook','tiktok','linkedin','custom','line'];
+  const FRONT_TYPES = ['name','title','company','tagline','custom','line'];
+  function contactLabel(t){ return ({ phone:'ctPhone', email:'ctEmail', web:'ctWeb', address:'ctAddress', instagram:'ctInstagram', facebook:'ctFacebook', tiktok:'ctTiktok', linkedin:'ctLinkedin', custom:'ctCustom', line:'ctLine' })[t] || 'ctCustom'; }
+  function frontLabel(t){ return ({ name:'ftName', title:'ftTitle', company:'ftCompany', tagline:'ftTagline', custom:'ftCustom', line:'ftLine' })[t] || 'ftCustom'; }
+  function frontPlaceholder(type){
+    const ex = ({ name:'phNameEx', title:'phTitleEx', company:'phCompanyEx', tagline:'phTaglineEx', custom:'…' })[type];
+    return I18N[LANG] && I18N[LANG][ex] ? I18N[LANG][ex] : ex;
+  }
+  // Default visual size per front type (applied when adding a new item)
+  const FRONT_DEFAULT_SIZE = { name:2.0, title:1.05, company:.95, tagline:.95, custom:1.0 };
+  function contactPlaceholder(type){
+    const lang = (I18N[LANG] || I18N.da);
+    const ex = ({ phone:'phPhoneEx', email:'phEmailEx', web:'phWebEx', address:'phAddressEx', instagram:'@brugernavn', facebook:'side.dk/firma', tiktok:'@brugernavn', linkedin:'in/navn', custom:'…' })[type];
+    return I18N[LANG] && I18N[LANG][ex] ? I18N[LANG][ex] : ex;
+  }
+  let state = {
+    style:'elegant',
+    orientation:'landscape',
+    size:'std55',
+    backEnabled:true,
+    design:{ accent:'#b5542a', paper:'#fbf6ec', ink:'#2c2620', titleFont:'Fraunces', bodyFont:'EB Garamond', accentLine:true, radius:10 },
+    front:{ boxes:[
+            { id:1, pos:'middle-left', align:'left', layout:'stack', gap:6, items:[
+              { id:1, type:'name',    value:'', size:2.0 },
+              { id:2, type:'title',   value:'', size:1.05 },
+              { id:3, type:'company', value:'', size:.95 },
+              { id:4, type:'tagline', value:'', size:.95 }
+            ], nextItemId:5 }
+          ], nextBoxId:2,
+          deco:{ shape:'none', color:'#d4a574' },
+          ink:'', bg:{ mode:'solid', c1:'#fbf6ec', c2:'#b5542a', dir:'to right' }, logoX:26, logoY:24, logoSize:26,
+          gap:6 },
+    back:{ boxes:[
+            { id:1, pos:'middle-left', align:'left', layout:'stack', gap:6, items:[
+              { id:1, type:'phone',   value:'', showIcon:true, size:1 },
+              { id:2, type:'email',   value:'', showIcon:true, size:1 },
+              { id:3, type:'web',     value:'', showIcon:true, size:1 },
+              { id:4, type:'address', value:'', showIcon:true, size:1 }
+            ], nextItemId:5 }
+          ], nextBoxId:2,
+          deco:{ shape:'none', color:'#d4a574' },
+          ink:'#fbf6ec', bg:{ mode:'solid', c1:'#b5542a', c2:'#963f1f', dir:'to bottom right' }, logoX:50, logoY:30, logoSize:30,
+          gap:6 }
+  };
+  let activeSide = 'front';
+  let unlocked = false, codeActive = false;
+  function updateFreeBtn(){
+    const b = byId('freeBtn');
+    if (b) b.style.display = (unlocked || codeActive) ? 'none' : '';
+  }
+
+  // ---------- Storage ----------
+  const LS_SAVE = 'visitkort_autosave_v1';
+  const LS_LIBRARY = 'visitkort_library_v1';
+  const LS_PAID = 'visitkort_paid_session_v1';
+  const LS_PENDING = 'visitkort_pending_dl_v1';
+  const LS_CODES = 'visitkort_used_codes_v1';
+  let storageOK = true;
+  try { localStorage.setItem('__t','1'); localStorage.removeItem('__t'); } catch(e){ storageOK = false; }
+
+  let saveTimer = null;
+  function scheduleSave(){
+    if (!storageOK) return;
+    clearTimeout(saveTimer);
+    saveTimer = setTimeout(() => {
+      try { localStorage.setItem(LS_SAVE, JSON.stringify(state)); } catch(e){}
+    }, 350);
+  }
+  function normalize(){
+    // Fill in fields that older saves don't have, and migrate old data
+    const d = state.design;
+    if (d.radius == null) d.radius = 10;
+    // Migrate the old top-level 'logo' field (shared between sides) onto the front side
+    if (typeof state.logo === 'string' && state.logo && !state.front.logo){
+      state.front.logo = state.logo;
+    }
+    delete state.logo;
+    ['front','back'].forEach(side => {
+      if (state[side].logo == null) state[side].logo = '';
+      // Also drop the obsolete showLogo flag if it survived from an old save
+      delete state[side].showLogo;
+      const s = state[side];
+      if (!s.bg){
+        const colored = (side === 'back' && s.accentBg);
+        s.bg = { mode:'solid', c1: colored ? d.accent : d.paper, c2: d.accent, dir:'to bottom right' };
+        if (colored) s.ink = d.paper;
+      }
+      if (s.ink == null) s.ink = '';
+      if (s.logoX == null) s.logoX = side === 'front' ? 26 : 50;
+      if (s.logoY == null) s.logoY = side === 'front' ? 24 : 30;
+      if (s.logoSize == null) s.logoSize = 28;
+      const defs = side === 'front' ? TSZ_FRONT_DEF : TSZ_BACK_DEF;
+      if (!s.sizes) s.sizes = { ...defs };
+      else for (const k in defs) if (s.sizes[k] == null) s.sizes[k] = defs[k];
+      if (s.gap == null) s.gap = 6;
+      delete s.accentBg;
+    });
+    // ---- Migrate any prior state shape into the new boxes[] structure ----
+    function migrateToBoxes(side){
+      const obj = state[side];
+      if (Array.isArray(obj.boxes)) return; // already migrated
+      // Case A: had a flat list under 'items' (front) or 'contacts' (back) — wrap into one box
+      let items = null;
+      if (Array.isArray(obj.items))    { items = obj.items;    delete obj.items; }
+      else if (Array.isArray(obj.contacts)){ items = obj.contacts; delete obj.contacts; }
+      if (items){
+        obj.boxes = [{ id:1, pos:'middle-left', items, nextItemId:(items.reduce((m,x)=>Math.max(m,x.id||0),0)||0)+1 }];
+        obj.nextBoxId = 2;
+        return;
+      }
+      // Case B: very old shape — flat name/title/company/tagline (front) or phone/email/web/address (back)
+      const list = [];
+      let id = 1;
+      if (side === 'front'){
+        const sz = obj.sizes || {}; const al = obj.align || 'left';
+        if (obj.name)    list.push({ id:id++, type:'name',    value:obj.name,    size:sz.name    || 2.0,  align:al, inline:false });
+        if (obj.title)   list.push({ id:id++, type:'title',   value:obj.title,   size:sz.title   || 1.05, align:al, inline:false });
+        if (obj.company) list.push({ id:id++, type:'company', value:obj.company, size:sz.company || .95,  align:al, inline:false });
+        if (obj.tagline) list.push({ id:id++, type:'tagline', value:obj.tagline, size:sz.tagline || .95,  align:al, inline:false });
+        ['name','title','company','tagline','align','sizes'].forEach(k => delete obj[k]);
+      } else {
+        const al = obj.align || 'left';
+        if (obj.phone)   list.push({ id:id++, type:'phone',   value:obj.phone,   showIcon:true, size:1, align:al, inline:false });
+        if (obj.email)   list.push({ id:id++, type:'email',   value:obj.email,   showIcon:true, size:1, align:al, inline:false });
+        if (obj.web)     list.push({ id:id++, type:'web',     value:obj.web,     showIcon:true, size:1, align:al, inline:false });
+        if (obj.address) list.push({ id:id++, type:'address', value:obj.address, showIcon:true, size:1, align:al, inline:false });
+        ['phone','email','web','address','align','sizes'].forEach(k => delete obj[k]);
+      }
+      if (!list.length){
+        // Empty defaults
+        if (side === 'front'){
+          list.push({ id:id++, type:'name',    value:'', size:2.0,  align:'left', inline:false });
+          list.push({ id:id++, type:'title',   value:'', size:1.05, align:'left', inline:false });
+          list.push({ id:id++, type:'company', value:'', size:.95,  align:'left', inline:false });
+          list.push({ id:id++, type:'tagline', value:'', size:.95,  align:'left', inline:false });
+        } else {
+          list.push({ id:id++, type:'phone',   value:'', showIcon:true, size:1, align:'left', inline:false });
+          list.push({ id:id++, type:'email',   value:'', showIcon:true, size:1, align:'left', inline:false });
+          list.push({ id:id++, type:'web',     value:'', showIcon:true, size:1, align:'left', inline:false });
+          list.push({ id:id++, type:'address', value:'', showIcon:true, size:1, align:'left', inline:false });
+        }
+      }
+      obj.boxes = [{ id:1, pos:'middle-left', items:list, nextItemId:id }];
+      obj.nextBoxId = 2;
+    }
+    migrateToBoxes('front');
+    migrateToBoxes('back');
+    // Ensure every box and item has required fields, and fold old per-item align into per-box align
+    ['front','back'].forEach(side => {
+      const o = state[side];
+      o.boxes.forEach(b => {
+        if (!b.pos) b.pos = 'middle-left';
+        if (b.nextItemId == null) b.nextItemId = (b.items.reduce((m,x)=>Math.max(m,x.id||0),0)||0)+1;
+        // If the box doesn't have its own align yet, use the first item's align (legacy data)
+        if (!b.align){
+          const firstAligned = b.items.find(x => x.align);
+          b.align = (firstAligned && firstAligned.align) || 'left';
+        }
+        // If the box doesn't have a layout yet, infer from old per-item inline flags
+        if (!b.layout){
+          const anyInline = b.items.some(x => x.inline);
+          b.layout = anyInline ? 'row' : 'stack';
+        }
+        // Box gap: pull from the legacy per-side gap if present, otherwise default to 6
+        if (b.gap == null) b.gap = (state[side].gap != null ? state[side].gap : 6);
+        if (!b.layout) b.layout = 'stack';
+        b.items.forEach(it => {
+          if (it.size == null) it.size = 1;
+          if (side === 'back' && it.showIcon == null) it.showIcon = true;
+          if (it.bold == null) it.bold = false;
+          if (it.thin == null) it.thin = false;
+          if (it.italic == null) it.italic = false;
+          if (it.wrap == null) it.wrap = true;
+          if (it.inline == null) it.inline = false;
+          if (it.lspace == null) it.lspace = 0;
+          if (it.accent == null) it.accent = false;
+          if (it.dim == null) it.dim = false;
+          delete it.align;
+        });
+      });
+      if (o.nextBoxId == null) o.nextBoxId = (o.boxes.reduce((m,b)=>Math.max(m,b.id||0),0)||0)+1;
+      if (!o.deco) o.deco = { shape:'none', color:'#d4a574' };
+    });
+
+    // (Old single-list migration code below is now harmless — boxes are already in place.)
+    // Migrate old back side from flat fields to a contact list.
+    const b = state.back;
+    if (!Array.isArray(b.contacts)){
+      const list = [];
+      let id = 1;
+      if (b.phone)   list.push({ id:id++, type:'phone',   value:b.phone,   showIcon:true, size:1, align:b.align || 'left', inline:false });
+      if (b.email)   list.push({ id:id++, type:'email',   value:b.email,   showIcon:true, size:1, align:b.align || 'left', inline:false });
+      if (b.web)     list.push({ id:id++, type:'web',     value:b.web,     showIcon:true, size:1, align:b.align || 'left', inline:false });
+      if (b.address) list.push({ id:id++, type:'address', value:b.address, showIcon:true, size:1, align:b.align || 'left', inline:false });
+      if (!list.length){
+        list.push({ id:id++, type:'phone',   value:'', showIcon:true, size:1, align:'left', inline:false });
+        list.push({ id:id++, type:'email',   value:'', showIcon:true, size:1, align:'left', inline:false });
+        list.push({ id:id++, type:'web',     value:'', showIcon:true, size:1, align:'left', inline:false });
+        list.push({ id:id++, type:'address', value:'', showIcon:true, size:1, align:'left', inline:false });
+      }
+      b.contacts = list;
+      b.nextContactId = id;
+      delete b.phone; delete b.email; delete b.web; delete b.address;
+    }
+    if (b.nextContactId == null){
+      b.nextContactId = (b.contacts.reduce((m,c) => Math.max(m, c.id || 0), 0) || 0) + 1;
+    }
+    b.contacts.forEach(c => {
+      if (c.showIcon == null) c.showIcon = true;
+      if (c.size == null) c.size = 1;
+      if (c.align == null) c.align = b.align || 'left';
+      if (c.inline == null) c.inline = false;
+    });
+    delete b.align; delete b.sizes;
+
+    // Migrate old FRONT side from flat fields to an items list.
+    const fr = state.front;
+    if (!Array.isArray(fr.items)){
+      const items = [];
+      let id = 1;
+      const defAlign = fr.align || 'left';
+      const sz = fr.sizes || {};
+      if (fr.name)    items.push({ id:id++, type:'name',    value:fr.name,    size:sz.name    || 2.0,  align:defAlign, inline:false });
+      if (fr.title)   items.push({ id:id++, type:'title',   value:fr.title,   size:sz.title   || 1.05, align:defAlign, inline:false });
+      if (fr.company) items.push({ id:id++, type:'company', value:fr.company, size:sz.company || .95,  align:defAlign, inline:false });
+      if (fr.tagline) items.push({ id:id++, type:'tagline', value:fr.tagline, size:sz.tagline || .95,  align:defAlign, inline:false });
+      if (!items.length){
+        items.push({ id:id++, type:'name',    value:'', size:2.0,  align:'left', inline:false });
+        items.push({ id:id++, type:'title',   value:'', size:1.05, align:'left', inline:false });
+        items.push({ id:id++, type:'company', value:'', size:.95,  align:'left', inline:false });
+        items.push({ id:id++, type:'tagline', value:'', size:.95,  align:'left', inline:false });
+      }
+      fr.items = items;
+      fr.nextItemId = id;
+      delete fr.name; delete fr.title; delete fr.company; delete fr.tagline;
+    }
+    if (fr.nextItemId == null){
+      fr.nextItemId = (fr.items.reduce((m,c) => Math.max(m, c.id || 0), 0) || 0) + 1;
+    }
+    fr.items.forEach(c => {
+      if (c.size == null) c.size = 1;
+      if (c.align == null) c.align = fr.align || 'left';
+      if (c.inline == null) c.inline = false;
+    });
+    delete fr.align; delete fr.sizes;
+    if (!state.size) state.size = 'std55';
+  }
+  function restore(){
+    if (!storageOK){ normalize(); applyTemplateFromURL(); return; }
+    try {
+      const raw = localStorage.getItem(LS_SAVE);
+      if (raw){
+        const s = JSON.parse(raw);
+        if (s && s.front && s.back && s.design) state = s;
+      }
+    } catch(e){}
+    normalize();
+    applyTemplateFromURL();
+  }
+
+  // ---------- Templates (loaded from forside.html via ?template=NAME) ----------
+  const VK_TEMPLATES = {
+    'bc-classic':{
+      design:{ accent:'#b5542a', paper:'#fbf6ec', ink:'#2c2620', titleFont:'Fraunces', bodyFont:'Jost', accentLine:true, radius:8 },
+      style:'elegant',
+      front:{
+        boxes:[{
+          id:1, pos:'middle-left', align:'left', layout:'stack', gap:6, items:[
+            { id:1, type:'name',    value:'Anna Jensen',    size:2.4,  bold:false, thin:false, italic:false, wrap:false },
+            { id:2, type:'title',   value:'Ejer & barista', size:1.05, bold:false, thin:false, italic:false, wrap:true },
+            { id:5, type:'line',    value:'', size:1 },
+            { id:3, type:'company', value:'CAFÉ SOLSIKKEN', size:.95,  bold:false, thin:false, italic:false, wrap:true, accent:true }
+          ], nextItemId:6
+        }], nextBoxId:2,
+        bg:{ mode:'solid', c1:'#fbf6ec', c2:'#b5542a', dir:'to right' }, logoX:26, logoY:24, logoSize:26, gap:6
+      },
+      back:{
+        boxes:[{
+          id:1, pos:'middle-left', align:'left', layout:'stack', gap:6, items:[
+            { id:1, type:'phone',   value:'+45 22 33 44 55',     showIcon:true, size:1, bold:false, thin:false, italic:false, wrap:true },
+            { id:2, type:'email',   value:'anna@cafesolsikken.dk', showIcon:true, size:1, bold:false, thin:false, italic:false, wrap:true },
+            { id:3, type:'web',     value:'cafesolsikken.dk',    showIcon:true, size:1, bold:false, thin:false, italic:false, wrap:true },
+            { id:4, type:'address', value:'Hovedgaden 12, 3400 Hillerød', showIcon:true, size:1, bold:false, thin:false, italic:false, wrap:true }
+          ], nextItemId:5
+        }], nextBoxId:2,
+        ink:'#fbf6ec', bg:{ mode:'solid', c1:'#b5542a', c2:'#963f1f', dir:'to bottom right' }, logoX:50, logoY:30, logoSize:30, gap:6
+      }
+    },
+    'bc-bold':{
+      design:{ accent:'#ffffff', paper:'#0a0a0a', ink:'#ffffff', titleFont:'Bebas Neue', bodyFont:'Jost', accentLine:false, radius:8 },
+      style:'minimal',
+      front:{
+        boxes:[
+          { id:1, pos:'top-left', align:'left', layout:'stack', gap:4, items:[
+            { id:1, type:'custom', value:'DESIGNER · KØBENHAVN', size:.8, bold:false, thin:false, italic:false, wrap:false, lspace:0.3 }
+          ], nextItemId:2 },
+          { id:2, pos:'middle-left', align:'left', layout:'stack', gap:6, items:[
+            { id:1, type:'name', value:'MARTIN KOFOED', size:3.2, bold:false, thin:false, italic:false, wrap:false }
+          ], nextItemId:2 },
+          { id:3, pos:'bottom-left', align:'left', layout:'stack', gap:4, items:[
+            { id:1, type:'custom', value:'martin@studio.dk · +45 22 33 44 55', size:.8, bold:false, thin:false, italic:false, wrap:false, dim:true }
+          ], nextItemId:2 }
+        ], nextBoxId:4,
+        bg:{ mode:'solid', c1:'#0a0a0a', c2:'#222222', dir:'to right' }, logoX:50, logoY:50, logoSize:30, gap:6
+      },
+      back:{
+        boxes:[{
+          id:1, pos:'middle-center', align:'center', layout:'stack', gap:6, items:[
+            { id:1, type:'web',     value:'studio-kofoed.dk',   showIcon:false, size:1.1, bold:false, thin:false, italic:false, wrap:true },
+            { id:2, type:'instagram', value:'@studiokofoed',    showIcon:false, size:.9,  bold:false, thin:true,  italic:false, wrap:true }
+          ], nextItemId:3
+        }], nextBoxId:2,
+        ink:'#ffffff', bg:{ mode:'solid', c1:'#0a0a0a', c2:'#222222', dir:'to bottom right' }, logoX:50, logoY:50, logoSize:30, gap:6
+      }
+    },
+    'bc-craft':{
+      design:{ accent:'#d4a574', paper:'#2d4a3e', ink:'#fefae0', titleFont:'Jost', bodyFont:'Jost', accentLine:false, radius:8 },
+      style:'bold',
+      front:{
+        boxes:[{
+          id:1, pos:'middle-left', align:'left', layout:'stack', gap:6, items:[
+            { id:1, type:'name',  value:'Peter Sørensen', size:1.7, bold:true,  thin:false, italic:false, wrap:false },
+            { id:2, type:'title', value:'TØMRERMESTER',   size:.8,  bold:false, thin:false, italic:false, wrap:false, lspace:0.12, dim:true }
+          ], nextItemId:3
+        }], nextBoxId:2,
+        deco:{ shape:'corner', color:'#c89b6a' },
+        bg:{ mode:'grad', c1:'#2d4a3e', c2:'#1f3a2e', dir:'to bottom right' }, logoX:75, logoY:50, logoSize:30, gap:6
+      },
+      back:{
+        boxes:[{
+          id:1, pos:'middle-left', align:'left', layout:'stack', gap:8, items:[
+            { id:1, type:'phone',   value:'+45 30 20 10 00',   showIcon:true, size:1, bold:false, thin:false, italic:false, wrap:true },
+            { id:2, type:'email',   value:'peter@sorensen.dk', showIcon:true, size:1, bold:false, thin:false, italic:false, wrap:true },
+            { id:3, type:'web',     value:'sorensen-tomrer.dk', showIcon:true, size:1, bold:false, thin:false, italic:false, wrap:true },
+            { id:4, type:'address', value:'Industrivej 7, 3400 Hillerød', showIcon:true, size:1, bold:false, thin:false, italic:false, wrap:true }
+          ], nextItemId:5
+        }], nextBoxId:2,
+        ink:'#fefae0', bg:{ mode:'grad', c1:'#2d4a3e', c2:'#1f3a2e', dir:'to bottom right' }, logoX:50, logoY:30, logoSize:30, gap:6
+      }
+    }
+  };
+
+  // ====== Galleriet: visitkort-forhåndsvisninger (bruger alle funktioner) ======
+  const VK_SHOWCASE = [
+    // 0 — Café barista · Elegant · liggende · varm cremet
+    { style:'elegant', orientation:'landscape', size:'std55',
+      design:{ accent:'#b5542a', paper:'#fbf6ec', ink:'#2c2620', titleFont:'Fraunces', bodyFont:'EB Garamond', accentLine:true, radius:8 },
+      front:{ boxes:[{ id:1, pos:'middle-left', items:[
+        { id:1, type:'name', value:'Anna Jensen', size:2.4 },
+        { id:2, type:'title', value:'Ejer & barista', size:1.05 },
+        { id:3, type:'line', value:'', size:1 },
+        { id:4, type:'company', value:'CAFÉ SOLSIKKEN', size:.95, accent:true, lspace:0.12 }
+      ], nextItemId:5 }], nextBoxId:2,
+        bg:{ mode:'solid', c1:'#fbf6ec', c2:'#b5542a', dir:'to right' }, logoX:26, logoY:24, logoSize:26, gap:7 },
+      back:{ boxes:[{ id:1, pos:'middle-left', gap:8, items:[
+        { id:1, type:'phone', value:'+45 22 33 44 55' },
+        { id:2, type:'email', value:'anna@cafesolsikken.dk' },
+        { id:3, type:'web', value:'cafesolsikken.dk' },
+        { id:4, type:'address', value:'Hovedgaden 12, 3400 Hillerød' }
+      ], nextItemId:5 }], nextBoxId:2,
+        ink:'#fbf6ec', bg:{ mode:'solid', c1:'#b5542a', c2:'#963f1f', dir:'to bottom right' }, logoX:50, logoY:30, logoSize:30, gap:6 } },
+
+    // 1 — Designer studio · Minimal · liggende · sort, Bebas, 3 zoner
+    { style:'minimal', orientation:'landscape', size:'std55',
+      design:{ accent:'#e8e2d4', paper:'#0a0a0a', ink:'#ffffff', titleFont:'Bebas Neue', bodyFont:'Jost', accentLine:false, radius:0 },
+      front:{ boxes:[
+        { id:1, pos:'top-left', gap:4, items:[ { id:1, type:'custom', value:'DESIGNSTUDIE · KØBENHAVN', size:.78, lspace:0.3, dim:true } ], nextItemId:2 },
+        { id:2, pos:'middle-left', items:[ { id:1, type:'name', value:'MARTIN KOFOED', size:3.2 } ], nextItemId:2 },
+        { id:3, pos:'bottom-left', gap:4, items:[ { id:1, type:'custom', value:'martin@studio.dk  ·  +45 22 33 44 55', size:.8, dim:true } ], nextItemId:2 }
+      ], nextBoxId:4,
+        bg:{ mode:'solid', c1:'#0a0a0a', c2:'#222', dir:'to right' }, logoX:50, logoY:50, logoSize:30, gap:6 },
+      back:{ boxes:[{ id:1, pos:'middle-center', align:'center', gap:7, items:[
+        { id:1, type:'web', value:'studio-kofoed.dk', showIcon:false, size:1.15 },
+        { id:2, type:'instagram', value:'@studiokofoed', showIcon:false, size:.92, thin:true }
+      ], nextItemId:3 }], nextBoxId:2,
+        ink:'#ffffff', bg:{ mode:'solid', c1:'#0a0a0a', c2:'#222', dir:'to bottom right' }, logoX:50, logoY:50, logoSize:30, gap:6 } },
+
+    // 2 — Tømrermester · Mørk/bold · liggende · grøn gradient + hjørne-deco
+    { style:'moerk', orientation:'landscape', size:'std55',
+      design:{ accent:'#d4a574', paper:'#2d4a3e', ink:'#fefae0', titleFont:'Jost', bodyFont:'Jost', accentLine:false, radius:6 },
+      front:{ boxes:[{ id:1, pos:'middle-left', gap:5, items:[
+        { id:1, type:'name', value:'Peter Sørensen', size:1.85, bold:true },
+        { id:2, type:'title', value:'TØMRERMESTER', size:.82, lspace:0.2, accent:true }
+      ], nextItemId:3 }], nextBoxId:2,
+        deco:{ shape:'corner', color:'#c89b6a' },
+        bg:{ mode:'grad', c1:'#2d4a3e', c2:'#1f3a2e', dir:'to bottom right' }, logoX:75, logoY:50, logoSize:30, gap:5 },
+      back:{ boxes:[{ id:1, pos:'middle-left', gap:9, items:[
+        { id:1, type:'phone', value:'+45 30 20 10 00' },
+        { id:2, type:'email', value:'peter@sorensen.dk' },
+        { id:3, type:'web', value:'sorensen-tomrer.dk' },
+        { id:4, type:'address', value:'Industrivej 7, 3400 Hillerød' }
+      ], nextItemId:5 }], nextBoxId:2,
+        ink:'#fefae0', bg:{ mode:'grad', c1:'#2d4a3e', c2:'#1f3a2e', dir:'to bottom right' }, logoX:50, logoY:30, logoSize:30, gap:6 } },
+
+    // 3 — Fotograf · Moderne · STÅENDE · lyst, centreret, instagram
+    { style:'moderne', orientation:'portrait', size:'std55',
+      design:{ accent:'#9a7b5a', paper:'#f4f1ea', ink:'#2b2722', titleFont:'Montserrat', bodyFont:'Montserrat', accentLine:false, radius:10 },
+      front:{ boxes:[
+        { id:1, pos:'middle-center', align:'center', gap:5, items:[
+          { id:1, type:'name', value:'Sofia Lind', size:1.9 },
+          { id:2, type:'title', value:'Fotograf', size:.85, lspace:0.25, dim:true }
+        ], nextItemId:3 },
+        { id:2, pos:'bottom-center', align:'center', items:[
+          { id:1, type:'instagram', value:'@sofialind.foto', showIcon:true, size:.82 }
+        ], nextItemId:2 }
+      ], nextBoxId:3,
+        bg:{ mode:'solid', c1:'#f4f1ea', c2:'#9a7b5a', dir:'to bottom' }, logoX:50, logoY:24, logoSize:26, gap:5 },
+      back:{ boxes:[{ id:1, pos:'middle-center', align:'center', gap:8, items:[
+        { id:1, type:'phone', value:'+45 26 14 88 02' },
+        { id:2, type:'email', value:'hej@sofialind.dk' },
+        { id:3, type:'web', value:'sofialind.dk' }
+      ], nextItemId:4 }], nextBoxId:2,
+        ink:'#f4f1ea', bg:{ mode:'grad', c1:'#9a7b5a', c2:'#6f583e', dir:'to bottom right' }, logoX:50, logoY:30, logoSize:30, gap:6 } },
+
+    // 4 — Frisør salon · Elegant · liggende · blush, Playfair, panel-deco, rund
+    { style:'elegant', orientation:'landscape', size:'std55',
+      design:{ accent:'#b07a6e', paper:'#f7ece9', ink:'#3a2c2a', titleFont:'Playfair Display', bodyFont:'EB Garamond', accentLine:true, radius:22 },
+      front:{ boxes:[{ id:1, pos:'middle-center', align:'center', gap:6, items:[
+        { id:1, type:'company', value:'STUDIO LUMI', size:1.0, lspace:0.3, accent:true },
+        { id:2, type:'name', value:'Mette Holm', size:2.2 },
+        { id:3, type:'title', value:'Hairstylist & farvespecialist', size:.92, italic:true }
+      ], nextItemId:4 }], nextBoxId:2,
+        deco:{ shape:'panel', color:'#e3cdc6' },
+        bg:{ mode:'solid', c1:'#f7ece9', c2:'#b07a6e', dir:'to right' }, logoX:50, logoY:24, logoSize:26, gap:6 },
+      back:{ boxes:[{ id:1, pos:'middle-center', align:'center', gap:8, items:[
+        { id:1, type:'phone', value:'+45 31 42 09 77' },
+        { id:2, type:'web', value:'studiolumi.dk' },
+        { id:3, type:'instagram', value:'@studiolumi' },
+        { id:4, type:'address', value:'Slotsgade 4, 3400 Hillerød' }
+      ], nextItemId:5 }], nextBoxId:2,
+        ink:'#f7ece9', bg:{ mode:'grad', c1:'#b07a6e', c2:'#8a5a50', dir:'to bottom right' }, logoX:50, logoY:30, logoSize:30, gap:6 } },
+
+    // 5 — Konsulent · Minimal · liggende · US 90×50 · navy, accentlinje, linkedin
+    { style:'minimal', orientation:'landscape', size:'us5',
+      design:{ accent:'#1f3a5f', paper:'#ffffff', ink:'#1a2230', titleFont:'Montserrat', bodyFont:'Jost', accentLine:true, radius:4 },
+      front:{ boxes:[{ id:1, pos:'middle-left', gap:5, items:[
+        { id:1, type:'name', value:'Jonas Berg', size:1.9 },
+        { id:2, type:'title', value:'Management Consultant', size:.9, dim:true },
+        { id:3, type:'line', value:'', size:1 },
+        { id:4, type:'company', value:'BERG ADVISORY', size:.82, lspace:0.18, accent:true }
+      ], nextItemId:5 }], nextBoxId:2,
+        bg:{ mode:'solid', c1:'#ffffff', c2:'#1f3a5f', dir:'to right' }, logoX:78, logoY:50, logoSize:26, gap:5 },
+      back:{ boxes:[{ id:1, pos:'middle-left', gap:8, items:[
+        { id:1, type:'phone', value:'+45 40 55 21 90' },
+        { id:2, type:'email', value:'jb@bergadvisory.dk' },
+        { id:3, type:'linkedin', value:'in/jonasberg' },
+        { id:4, type:'web', value:'bergadvisory.dk' }
+      ], nextItemId:5 }], nextBoxId:2,
+        ink:'#ffffff', bg:{ mode:'solid', c1:'#1f3a5f', c2:'#13243c', dir:'to bottom right' }, logoX:50, logoY:30, logoSize:30, gap:6 } },
+
+    // 6 — Yoga & wellness · Moderne · STÅENDE · salviegrøn gradient, italic
+    { style:'moderne', orientation:'portrait', size:'std55',
+      design:{ accent:'#5e7355', paper:'#eef0e8', ink:'#33392c', titleFont:'Fraunces', bodyFont:'Jost', accentLine:false, radius:14 },
+      front:{ boxes:[{ id:1, pos:'middle-center', align:'center', gap:6, items:[
+        { id:1, type:'name', value:'Laura Vind', size:1.95 },
+        { id:2, type:'title', value:'Yoga & åndedræt', size:.9, italic:true },
+        { id:3, type:'line', value:'', size:1 },
+        { id:4, type:'tagline', value:'find ro · find styrke', size:.82, lspace:0.15, dim:true }
+      ], nextItemId:5 }], nextBoxId:2,
+        bg:{ mode:'grad', c1:'#eef0e8', c2:'#cdd6c3', dir:'to bottom' }, logoX:50, logoY:22, logoSize:24, gap:6 },
+      back:{ boxes:[{ id:1, pos:'middle-center', align:'center', gap:8, items:[
+        { id:1, type:'web', value:'lauravind.dk' },
+        { id:2, type:'email', value:'namaste@lauravind.dk' },
+        { id:3, type:'instagram', value:'@laura.yoga' }
+      ], nextItemId:4 }], nextBoxId:2,
+        ink:'#eef0e8', bg:{ mode:'grad', c1:'#5e7355', c2:'#42513c', dir:'to bottom right' }, logoX:50, logoY:30, logoSize:30, gap:6 } },
+
+    // 7 — Restaurant / chef · Mørk · liggende · 90×54 · kul + guld, stribe-deco
+    { style:'moerk', orientation:'landscape', size:'us54',
+      design:{ accent:'#c9a44c', paper:'#1a1714', ink:'#f3ecde', titleFont:'Playfair Display', bodyFont:'Jost', accentLine:false, radius:6 },
+      front:{ boxes:[{ id:1, pos:'middle-left', gap:5, items:[
+        { id:1, type:'company', value:'RESTAURANT NÆR', size:.85, lspace:0.25, accent:true },
+        { id:2, type:'name', value:'Frederik Aaby', size:2.0 },
+        { id:3, type:'title', value:'Køkkenchef', size:.92, italic:true, dim:true }
+      ], nextItemId:4 }], nextBoxId:2,
+        deco:{ shape:'stripe', color:'#c9a44c' },
+        bg:{ mode:'grad', c1:'#1a1714', c2:'#000', dir:'to right' }, logoX:78, logoY:50, logoSize:28, gap:5 },
+      back:{ boxes:[{ id:1, pos:'middle-left', gap:8, items:[
+        { id:1, type:'phone', value:'+45 35 12 60 00' },
+        { id:2, type:'web', value:'restaurantnaer.dk' },
+        { id:3, type:'address', value:'Havnegade 21, 3000 Helsingør' }
+      ], nextItemId:4 }], nextBoxId:2,
+        ink:'#f3ecde', bg:{ mode:'grad', c1:'#1a1714', c2:'#000', dir:'to bottom right' }, logoX:50, logoY:30, logoSize:30, gap:6 } },
+
+    // 8 — Advokat · Elegant · liggende · 85×54 · formel navy, accentlinje
+    { style:'elegant', orientation:'landscape', size:'std54',
+      design:{ accent:'#1c3d5a', paper:'#f5f2ec', ink:'#1e2a36', titleFont:'EB Garamond', bodyFont:'Jost', accentLine:true, radius:0 },
+      front:{ boxes:[{ id:1, pos:'middle-left', gap:6, items:[
+        { id:1, type:'name', value:'Henrik Lund', size:2.3 },
+        { id:2, type:'title', value:'Advokat (H)', size:1.0, dim:true },
+        { id:3, type:'line', value:'', size:1 },
+        { id:4, type:'company', value:'LUND & PARTNERE', size:.84, accent:true, lspace:0.18 }
+      ], nextItemId:5 }], nextBoxId:2,
+        bg:{ mode:'solid', c1:'#f5f2ec', c2:'#1c3d5a', dir:'to right' }, logoX:80, logoY:50, logoSize:24, gap:6 },
+      back:{ boxes:[{ id:1, pos:'middle-left', gap:8, items:[
+        { id:1, type:'phone', value:'+45 33 14 22 00' },
+        { id:2, type:'email', value:'hl@lundpartnere.dk' },
+        { id:3, type:'web', value:'lundpartnere.dk' },
+        { id:4, type:'address', value:'Frederiksgade 1, 1265 København K' }
+      ], nextItemId:5 }], nextBoxId:2,
+        ink:'#f5f2ec', bg:{ mode:'solid', c1:'#1c3d5a', c2:'#11283c', dir:'to bottom right' }, logoX:50, logoY:30, logoSize:30, gap:6 } },
+
+    // 9 — Florist · Moderne · STÅENDE · grøn/creme gradient
+    { style:'moderne', orientation:'portrait', size:'std55',
+      design:{ accent:'#6b8e4e', paper:'#f2f4ec', ink:'#34402a', titleFont:'Fraunces', bodyFont:'Jost', accentLine:false, radius:16 },
+      front:{ boxes:[{ id:1, pos:'middle-center', align:'center', gap:6, items:[
+        { id:1, type:'company', value:'BLOMSTER & CO', size:.9, accent:true, lspace:0.25 },
+        { id:2, type:'name', value:'Ida Krogh', size:1.95 },
+        { id:3, type:'tagline', value:'friske buketter · Hillerød', size:.8, italic:true, dim:true }
+      ], nextItemId:4 }], nextBoxId:2,
+        bg:{ mode:'grad', c1:'#f2f4ec', c2:'#dbe3cd', dir:'to bottom' }, logoX:50, logoY:22, logoSize:24, gap:6 },
+      back:{ boxes:[{ id:1, pos:'middle-center', align:'center', gap:8, items:[
+        { id:1, type:'phone', value:'+45 28 90 14 55' },
+        { id:2, type:'instagram', value:'@blomster.og.co' },
+        { id:3, type:'web', value:'blomsterco.dk' }
+      ], nextItemId:4 }], nextBoxId:2,
+        ink:'#f2f4ec', bg:{ mode:'grad', c1:'#6b8e4e', c2:'#4d6938', dir:'to bottom right' }, logoX:50, logoY:30, logoSize:30, gap:6 } },
+
+    // 10 — IT-udvikler · Minimal · liggende · 90×50 · mørk slate + række-layout
+    { style:'minimal', orientation:'landscape', size:'us5',
+      design:{ accent:'#4fd1c5', paper:'#11161c', ink:'#e6edf3', titleFont:'Montserrat', bodyFont:'Jost', accentLine:false, radius:4 },
+      front:{ boxes:[
+        { id:1, pos:'middle-left', gap:5, items:[
+          { id:1, type:'name', value:'Kasper Holm', size:1.85 },
+          { id:2, type:'title', value:'Full-stack udvikler', size:.9, dim:true }
+        ], nextItemId:3 },
+        { id:2, pos:'bottom-left', layout:'row', gap:12, items:[
+          { id:1, type:'custom', value:'React', size:.72, accent:true, lspace:0.1 },
+          { id:2, type:'custom', value:'Node', size:.72, accent:true, lspace:0.1 },
+          { id:3, type:'custom', value:'Cloud', size:.72, accent:true, lspace:0.1 }
+        ], nextItemId:4 }
+      ], nextBoxId:3,
+        bg:{ mode:'solid', c1:'#11161c', c2:'#1c2630', dir:'to right' }, logoX:80, logoY:50, logoSize:26, gap:5 },
+      back:{ boxes:[{ id:1, pos:'middle-left', gap:8, items:[
+        { id:1, type:'web', value:'kasperholm.dev' },
+        { id:2, type:'linkedin', value:'in/kasperholm' },
+        { id:3, type:'custom', value:'github.com/kasperh', showIcon:true }
+      ], nextItemId:4 }], nextBoxId:2,
+        ink:'#e6edf3', bg:{ mode:'solid', c1:'#11161c', c2:'#1c2630', dir:'to bottom right' }, logoX:50, logoY:30, logoSize:30, gap:6 } },
+
+    // 11 — Makeup artist · Moderne · STÅENDE · mauve, rund, tiktok-ikon
+    { style:'moderne', orientation:'portrait', size:'std55',
+      design:{ accent:'#a86b8c', paper:'#f3e9ee', ink:'#3a2630', titleFont:'Playfair Display', bodyFont:'Jost', accentLine:true, radius:22 },
+      front:{ boxes:[{ id:1, pos:'middle-center', align:'center', gap:6, items:[
+        { id:1, type:'name', value:'Camilla Ravn', size:2.0 },
+        { id:2, type:'title', value:'Makeup Artist', size:.88, lspace:0.2, dim:true }
+      ], nextItemId:3 }], nextBoxId:2,
+        bg:{ mode:'solid', c1:'#f3e9ee', c2:'#a86b8c', dir:'to bottom' }, logoX:50, logoY:22, logoSize:24, gap:6 },
+      back:{ boxes:[{ id:1, pos:'middle-center', align:'center', gap:9, items:[
+        { id:1, type:'instagram', value:'@camillaravn.mua' },
+        { id:2, type:'tiktok', value:'@camillaravn' },
+        { id:3, type:'web', value:'camillaravn.dk' }
+      ], nextItemId:4 }], nextBoxId:2,
+        ink:'#f3e9ee', bg:{ mode:'grad', c1:'#a86b8c', c2:'#7d4a66', dir:'to bottom right' }, logoX:50, logoY:30, logoSize:30, gap:6 } },
+
+    // 12 — Ejendomsmægler · Moderne · liggende · navy + guld
+    { style:'moderne', orientation:'landscape', size:'std55',
+      design:{ accent:'#c4a047', paper:'#ffffff', ink:'#1a2433', titleFont:'Montserrat', bodyFont:'Jost', accentLine:true, radius:6 },
+      front:{ boxes:[{ id:1, pos:'middle-left', gap:5, items:[
+        { id:1, type:'company', value:'BOLIG NORD', size:.82, accent:true, lspace:0.22 },
+        { id:2, type:'name', value:'Thomas Bjerg', size:1.95 },
+        { id:3, type:'title', value:'Ejendomsmægler · MDE', size:.86, dim:true }
+      ], nextItemId:4 }], nextBoxId:2,
+        bg:{ mode:'solid', c1:'#ffffff', c2:'#c4a047', dir:'to right' }, logoX:80, logoY:50, logoSize:26, gap:5 },
+      back:{ boxes:[{ id:1, pos:'middle-left', gap:8, items:[
+        { id:1, type:'phone', value:'+45 44 20 88 10' },
+        { id:2, type:'email', value:'tb@bolignord.dk' },
+        { id:3, type:'web', value:'bolignord.dk' },
+        { id:4, type:'address', value:'Torvet 6, 3400 Hillerød' }
+      ], nextItemId:5 }], nextBoxId:2,
+        ink:'#ffffff', bg:{ mode:'grad', c1:'#1a2433', c2:'#0f1721', dir:'to bottom right' }, logoX:50, logoY:30, logoSize:30, gap:6 } },
+
+    // 13 — Bageri · Elegant · liggende · varm brun
+    { style:'elegant', orientation:'landscape', size:'std55',
+      design:{ accent:'#8a5a2b', paper:'#f6ecdc', ink:'#3a2c1c', titleFont:'Fraunces', bodyFont:'EB Garamond', accentLine:false, radius:10 },
+      front:{ boxes:[{ id:1, pos:'middle-center', align:'center', gap:6, items:[
+        { id:1, type:'company', value:'BAGERIET HVEDE', size:.86, accent:true, lspace:0.22 },
+        { id:2, type:'name', value:'Marie Dahl', size:2.0 },
+        { id:3, type:'tagline', value:'surdej siden 2014', size:.82, italic:true }
+      ], nextItemId:4 }], nextBoxId:2,
+        bg:{ mode:'solid', c1:'#f6ecdc', c2:'#8a5a2b', dir:'to right' }, logoX:50, logoY:24, logoSize:26, gap:6 },
+      back:{ boxes:[{ id:1, pos:'middle-center', align:'center', gap:8, items:[
+        { id:1, type:'phone', value:'+45 48 26 14 00' },
+        { id:2, type:'web', value:'bageriethvede.dk' },
+        { id:3, type:'address', value:'Stationsvej 3, 3400 Hillerød' }
+      ], nextItemId:4 }], nextBoxId:2,
+        ink:'#f6ecdc', bg:{ mode:'grad', c1:'#8a5a2b', c2:'#5f3d1c', dir:'to bottom right' }, logoX:50, logoY:30, logoSize:30, gap:6 } },
+
+    // 14 — Personlig træner · Mørk · liggende · 85×54 · sort + lime, Bebas, 3 zoner
+    { style:'moerk', orientation:'landscape', size:'std54',
+      design:{ accent:'#c4f04a', paper:'#0e0e0e', ink:'#f0f0f0', titleFont:'Bebas Neue', bodyFont:'Jost', accentLine:false, radius:4 },
+      front:{ boxes:[
+        { id:1, pos:'top-left', items:[ { id:1, type:'custom', value:'PERSONLIG TRÆNER', size:.78, lspace:0.3, accent:true } ], nextItemId:2 },
+        { id:2, pos:'middle-left', items:[ { id:1, type:'name', value:'MIKKEL STORM', size:2.8 } ], nextItemId:2 },
+        { id:3, pos:'bottom-left', items:[ { id:1, type:'custom', value:'stærkere hver dag', size:.82, italic:true, dim:true } ], nextItemId:2 }
+      ], nextBoxId:4,
+        bg:{ mode:'solid', c1:'#0e0e0e', c2:'#1a1a1a', dir:'to right' }, logoX:80, logoY:50, logoSize:28, gap:6 },
+      back:{ boxes:[{ id:1, pos:'middle-left', gap:9, items:[
+        { id:1, type:'phone', value:'+45 50 30 20 10' },
+        { id:2, type:'instagram', value:'@mikkelstorm.pt' },
+        { id:3, type:'web', value:'stormtraening.dk' }
+      ], nextItemId:4 }], nextBoxId:2,
+        ink:'#f0f0f0', bg:{ mode:'solid', c1:'#0e0e0e', c2:'#1a1a1a', dir:'to bottom right' }, logoX:50, logoY:30, logoSize:30, gap:6 } },
+
+    // 15 — Tandklinik · Minimal · liggende · 85×54 · ren teal, accentlinje
+    { style:'minimal', orientation:'landscape', size:'std54',
+      design:{ accent:'#2a8a8a', paper:'#ffffff', ink:'#1e3535', titleFont:'Montserrat', bodyFont:'Jost', accentLine:true, radius:8 },
+      front:{ boxes:[{ id:1, pos:'middle-left', gap:5, items:[
+        { id:1, type:'company', value:'TANDKLINIK CENTRUM', size:.82, accent:true, lspace:0.15 },
+        { id:2, type:'name', value:'Dr. Line Holm', size:1.85 },
+        { id:3, type:'title', value:'Tandlæge', size:.88, dim:true }
+      ], nextItemId:4 }], nextBoxId:2,
+        bg:{ mode:'solid', c1:'#ffffff', c2:'#2a8a8a', dir:'to right' }, logoX:80, logoY:50, logoSize:26, gap:5 },
+      back:{ boxes:[{ id:1, pos:'middle-left', gap:8, items:[
+        { id:1, type:'phone', value:'+45 48 24 00 24' },
+        { id:2, type:'email', value:'klinik@tandcentrum.dk' },
+        { id:3, type:'web', value:'tandcentrum.dk' },
+        { id:4, type:'address', value:'Møllebro 9, 3400 Hillerød' }
+      ], nextItemId:5 }], nextBoxId:2,
+        ink:'#ffffff', bg:{ mode:'solid', c1:'#2a8a8a', c2:'#1d6363', dir:'to bottom right' }, logoX:50, logoY:30, logoSize:30, gap:6 } },
+
+    // 16 — Kunstner · Moderne · STÅENDE · off-white, italic, minimal
+    { style:'moderne', orientation:'portrait', size:'std55',
+      design:{ accent:'#6a6a6a', paper:'#f7f6f2', ink:'#26241f', titleFont:'Playfair Display', bodyFont:'EB Garamond', accentLine:false, radius:0 },
+      front:{ boxes:[{ id:1, pos:'middle-center', align:'center', gap:7, items:[
+        { id:1, type:'name', value:'Johan Vester', size:2.1, italic:true },
+        { id:2, type:'line', value:'', size:1 },
+        { id:3, type:'tagline', value:'maleri · skulptur', size:.82, lspace:0.25, dim:true }
+      ], nextItemId:4 }], nextBoxId:2,
+        bg:{ mode:'solid', c1:'#f7f6f2', c2:'#6a6a6a', dir:'to bottom' }, logoX:50, logoY:24, logoSize:24, gap:7 },
+      back:{ boxes:[{ id:1, pos:'middle-center', align:'center', gap:8, items:[
+        { id:1, type:'web', value:'johanvester.art' },
+        { id:2, type:'instagram', value:'@johanvester' },
+        { id:3, type:'address', value:'Atelier · Hillerød' }
+      ], nextItemId:4 }], nextBoxId:2,
+        ink:'#f7f6f2', bg:{ mode:'grad', c1:'#3a3a3a', c2:'#1d1d1d', dir:'to bottom right' }, logoX:50, logoY:30, logoSize:30, gap:6 } },
+
+    // 17 — Musiker / DJ · Mørk · liggende · lilla gradient · 3 sociale (instagram/tiktok/facebook)
+    { style:'moerk', orientation:'landscape', size:'std55',
+      design:{ accent:'#c9a8ff', paper:'#1a1030', ink:'#f0ebff', titleFont:'Bebas Neue', bodyFont:'Jost', accentLine:false, radius:8 },
+      front:{ boxes:[{ id:1, pos:'middle-left', gap:4, items:[
+        { id:1, type:'name', value:'DJ NOVA', size:3.0 },
+        { id:2, type:'title', value:'house · techno · events', size:.85, accent:true, lspace:0.2 }
+      ], nextItemId:3 }], nextBoxId:2,
+        bg:{ mode:'grad', c1:'#1a1030', c2:'#3a1860', dir:'to bottom right' }, logoX:80, logoY:50, logoSize:28, gap:4 },
+      back:{ boxes:[{ id:1, pos:'middle-left', gap:9, items:[
+        { id:1, type:'instagram', value:'@djnova' },
+        { id:2, type:'tiktok', value:'@djnova' },
+        { id:3, type:'facebook', value:'facebook.com/djnova' }
+      ], nextItemId:4 }], nextBoxId:2,
+        ink:'#f0ebff', bg:{ mode:'grad', c1:'#1a1030', c2:'#3a1860', dir:'to bottom right' }, logoX:50, logoY:30, logoSize:30, gap:6 } },
+
+    // 18 — Bryllupsplanlægger · Elegant · STÅENDE · blush + guld, rund
+    { style:'elegant', orientation:'portrait', size:'std55',
+      design:{ accent:'#b08d57', paper:'#f7eee8', ink:'#3c2e28', titleFont:'Playfair Display', bodyFont:'EB Garamond', accentLine:true, radius:18 },
+      front:{ boxes:[{ id:1, pos:'middle-center', align:'center', gap:6, items:[
+        { id:1, type:'company', value:'EVIGT JA', size:1.0, accent:true, lspace:0.3 },
+        { id:2, type:'name', value:'Sara Bruun', size:2.0 },
+        { id:3, type:'tagline', value:'bryllupsplanlægning', size:.82, italic:true }
+      ], nextItemId:4 }], nextBoxId:2,
+        bg:{ mode:'solid', c1:'#f7eee8', c2:'#b08d57', dir:'to bottom' }, logoX:50, logoY:22, logoSize:24, gap:6 },
+      back:{ boxes:[{ id:1, pos:'middle-center', align:'center', gap:8, items:[
+        { id:1, type:'phone', value:'+45 22 60 14 90' },
+        { id:2, type:'email', value:'sara@evigtja.dk' },
+        { id:3, type:'instagram', value:'@evigtja' },
+        { id:4, type:'web', value:'evigtja.dk' }
+      ], nextItemId:5 }], nextBoxId:2,
+        ink:'#f7eee8', bg:{ mode:'grad', c1:'#b08d57', c2:'#8a6c40', dir:'to bottom right' }, logoX:50, logoY:30, logoSize:30, gap:6 } },
+
+    // 19 — Coach / foredragsholder · Moderne · liggende · 90×54 · teal, linkedin
+    { style:'moderne', orientation:'landscape', size:'us54',
+      design:{ accent:'#2f6f6a', paper:'#eef2f1', ink:'#233330', titleFont:'Montserrat', bodyFont:'Jost', accentLine:true, radius:6 },
+      front:{ boxes:[{ id:1, pos:'middle-left', gap:5, items:[
+        { id:1, type:'name', value:'Anne Berg', size:1.95 },
+        { id:2, type:'title', value:'Karrierecoach & foredragsholder', size:.84, dim:true },
+        { id:3, type:'line', value:'', size:1 },
+        { id:4, type:'custom', value:'1:1 forløb · workshops', size:.78, accent:true, lspace:0.1 }
+      ], nextItemId:5 }], nextBoxId:2,
+        bg:{ mode:'solid', c1:'#eef2f1', c2:'#2f6f6a', dir:'to right' }, logoX:80, logoY:50, logoSize:26, gap:5 },
+      back:{ boxes:[{ id:1, pos:'middle-left', gap:8, items:[
+        { id:1, type:'linkedin', value:'in/anneberg' },
+        { id:2, type:'web', value:'anneberg.dk' },
+        { id:3, type:'email', value:'hej@anneberg.dk' }
+      ], nextItemId:4 }], nextBoxId:2,
+        ink:'#eef2f1', bg:{ mode:'grad', c1:'#2f6f6a', c2:'#1f4d49', dir:'to bottom right' }, logoX:50, logoY:30, logoSize:30, gap:6 } }
+
+  ];
+  function applyVKPreset(P){
+    if (!P) return;
+    if (P.style) state.style = P.style;
+    if (P.orientation) state.orientation = P.orientation;
+    if (P.size) state.size = P.size;
+    if (P.backEnabled != null) state.backEnabled = P.backEnabled;
+    if (P.design) Object.assign(state.design, P.design);
+    if (P.front) state.front = JSON.parse(JSON.stringify(P.front));
+    if (P.back)  state.back  = JSON.parse(JSON.stringify(P.back));
+    normalize();
+  }
+
+  function applyTemplateFromURL(){
+    try {
+      const params = new URLSearchParams(window.location.search);
+      const tpl = params.get('template');
+      if (!tpl || !VK_TEMPLATES[tpl]) return;
+      const T = VK_TEMPLATES[tpl];
+      // Merge template into state — overwrite design, front, back from template
+      if (T.design) Object.assign(state.design, T.design);
+      if (T.style) state.style = T.style;
+      if (T.front) state.front = JSON.parse(JSON.stringify(T.front));
+      if (T.back)  state.back  = JSON.parse(JSON.stringify(T.back));
+      // Re-run normalize to ensure all fields are present
+      normalize();
+      // Clean the URL so the template isn't reapplied on save/reload
+      try { window.history.replaceState({}, '', window.location.pathname); } catch(e){}
+    } catch(e){ console.error('Template load failed', e); }
+  }
+
+  // ---------- Render ----------
+  function buildWM(){
+    let lines = '';
+    for (let i = 0; i < 9; i++) lines += '<div class="bc-wm-line">LUSIDIO · LUSIDIO · LUSIDIO · LUSIDIO</div>';
+    return '<div class="bc-wm"><div class="bc-wm-rot">' + lines + '</div></div>';
+  }
+  function luminance(hex){
+    const m = (hex || '#ffffff').replace('#','');
+    const r = parseInt(m.substr(0,2),16)/255, g = parseInt(m.substr(2,2),16)/255, b = parseInt(m.substr(4,2),16)/255;
+    return 0.2126*r + 0.7152*g + 0.0722*b;
+  }
+  function cssBg(side){
+    const bg = state[side].bg;
+    return bg.mode === 'grad' ? `linear-gradient(${bg.dir}, ${bg.c1}, ${bg.c2})` : bg.c1;
+  }
+  function wmBaseLum(side){
+    const bg = state[side].bg;
+    return bg.mode === 'grad' ? (luminance(bg.c1) + luminance(bg.c2)) / 2 : luminance(bg.c1);
+  }
+  function sideInk(side){
+    return state[side].ink || state.design.ink;
+  }
+  function cardInnerHTML(side){
+    const d = state.design, s = state[side];
+    const ink = sideInk(side);
+    const accent = state[side].ink || d.accent;
+    const gap = (s.gap | 0);
+
+    function styleStr(it, base){
+      // base: a default weight (e.g. 600 for name) — overridden by user's bold/thin choice
+      let weight = base || 400;
+      if (it.bold) weight = 700;
+      else if (it.thin) weight = 300;
+      else if (base) weight = base;
+      const fontStyle = it.italic ? 'italic' : 'normal';
+      const wrapStyle = it.wrap === false ? 'white-space:nowrap;' : 'white-space:normal;';
+      const lsStyle = (it.lspace && it.lspace > 0) ? `letter-spacing:${it.lspace}em;` : '';
+      const colStyle = it.accent ? `color:${accent};` : '';
+      const dimStyle = it.dim ? 'opacity:.65;' : '';
+      return `font-weight:${weight};font-style:${fontStyle};${wrapStyle}${lsStyle}${colStyle}${dimStyle}`;
+    }
+    function rowHtmlForFront(it){
+      if (it.type === 'line'){
+        const w = Math.round(24 * (it.size || 1));
+        return `<div style="width:${w}px;height:2px;background:${accent};margin:2px 0;flex:none;"></div>`;
+      }
+      const fontSize = Math.round(15 * (it.size || 1));
+      const ss = styleStr(it, it.type === 'name' ? 600 : null);
+      if (it.type === 'name')
+        return `<div class="bc-name" style="margin:0;font-family:'${d.titleFont}',serif;font-size:${fontSize}px;line-height:1.12;${ss}">${esc(it.value)}</div>`;
+      if (it.type === 'title')
+        return `<div class="bc-title" style="margin:0;font-size:${fontSize}px;opacity:.85;${ss}">${esc(it.value)}</div>`;
+      if (it.type === 'company')
+        return `<div class="bc-company" style="margin:0;font-size:${fontSize}px;opacity:.7;letter-spacing:.04em;${ss}">${esc(it.value)}</div>`;
+      if (it.type === 'tagline'){
+        // Tagline's default look is italic, but user can override
+        const ssT = it.italic === false && !it.bold && !it.thin
+          ? `font-weight:400;font-style:italic;${it.wrap === false ? 'white-space:nowrap;' : 'white-space:normal;'}`
+          : ss;
+        return `<div class="bc-tagline" style="margin:0;font-size:${fontSize}px;opacity:.75;${ssT}">${esc(it.value)}</div>`;
+      }
+      return `<div style="margin:0;font-size:${fontSize}px;${ss}">${esc(it.value)}</div>`;
+    }
+    function rowHtmlForBack(c){
+      if (c.type === 'line'){
+        const w = Math.round(24 * (c.size || 1));
+        return `<div style="width:${w}px;height:2px;background:${accent};margin:2px 0;flex:none;"></div>`;
+      }
+      const fontSize = Math.round(14 * (c.size || 1));
+      const icon = (c.showIcon && CONTACT_ICONS[c.type]) ? CONTACT_ICONS[c.type] : '';
+      const cls = icon ? 'bc-contact-row' : 'bc-contact-row no-ic';
+      const ss = styleStr(c, null);
+      return `<div class="${cls}" style="font-size:${fontSize}px;${ss}">${icon}<span>${esc(c.value)}</span></div>`;
+    }
+    const renderRow = side === 'front' ? rowHtmlForFront : rowHtmlForBack;
+
+    // Build the rows of one box.
+    // In stack layout, items with inline:true sit next to the previous item (creates a sub-row).
+    // In row layout, every item is already side-by-side, so inline is ignored.
+    function buildBoxHtml(items, boxAlign, boxLayout, boxGap){
+      const visible = items.filter(it => it.type === 'line' || (it.value || '').trim());
+      if (!visible.length) return '';
+      if (boxLayout === 'row') return visible.map(renderRow).join('');
+      // stack with sub-rows
+      let html = '';
+      let i = 0;
+      while (i < visible.length){
+        const groupItems = [visible[i]];
+        let j = i + 1;
+        while (j < visible.length && visible[j].inline){
+          groupItems.push(visible[j]); j++;
+        }
+        if (groupItems.length === 1){
+          html += renderRow(groupItems[0]);
+        } else {
+          const just = boxAlign === 'center' ? 'center' : (boxAlign === 'right' ? 'flex-end' : 'flex-start');
+          html += `<div class="bc-line-group" style="display:flex;flex-direction:row;flex-wrap:nowrap;gap:${boxGap}px;align-items:baseline;justify-content:${just};">` +
+            groupItems.map(renderRow).join('') + '</div>';
+        }
+        i = j;
+      }
+      return html;
+    }
+
+    // Render each box into its own grid cell
+    let parts = '';
+    (s.boxes || []).forEach(box => {
+      const align = box.align || 'left';
+      const layout = box.layout || 'stack';
+      const boxGap = (box.gap != null ? box.gap : 6);
+      const inner = buildBoxHtml(box.items || [], align, layout, boxGap);
+      if (!inner) return;
+      parts += `<div class="bc-box pos-${box.pos || 'middle-left'} al-${align} layout-${layout}" style="--box-gap:${boxGap}px;">${inner}</div>`;
+    });
+
+    return `<div class="bc-inner" style="color:${ink};font-family:'${d.bodyFont}',sans-serif;">${parts}</div>`;
+  }
+  function renderCard(side){
+    const card = byId(side === 'front' ? 'cardFront' : 'cardBack');
+    const s = state[side];
+    card.className = 'bc-card';
+    card.style.background = cssBg(side);
+    card.style.borderRadius = (state.design.radius | 0) + 'px';
+    let html = '';
+    const deco = s.deco || {};
+    if (deco.shape && deco.shape !== 'none'){
+      const dc = deco.color || '#d4a574';
+      const { cw, ch } = cardPx();
+      let shapeDiv = '';
+      if (deco.shape === 'corner'){
+        // Trekant fra øverste højre hjørne ned til nederste kant — lavet med borders,
+        // som er geometrisk præcise på alle kortformater og kommer med i eksport.
+        const w = Math.round(cw * 0.36);
+        shapeDiv = `<div style="position:absolute;right:0;bottom:0;width:0;height:0;border-left:${w}px solid transparent;border-bottom:${ch}px solid ${dc};"></div>`;
+      } else if (deco.shape === 'panel'){
+        // Skråt sidepanel: lige bånd + skrå forkant
+        const pw = Math.round(cw * 0.26);
+        const sw = Math.round(cw * 0.10);
+        shapeDiv = `<div style="position:absolute;right:0;top:0;bottom:0;width:${pw}px;background:${dc};"></div>`
+                 + `<div style="position:absolute;right:${pw}px;bottom:0;width:0;height:0;border-left:${sw}px solid transparent;border-bottom:${ch}px solid ${dc};"></div>`;
+      } else if (deco.shape === 'stripe'){
+        shapeDiv = `<div style="position:absolute;left:0;right:0;bottom:0;height:16%;background:${dc};"></div>`;
+      }
+      html += `<div class="bc-deco" style="position:absolute;inset:0;overflow:hidden;border-radius:inherit;pointer-events:none;">${shapeDiv}</div>`;
+    }
+    html += cardInnerHTML(side);
+    // If there is an image, it's shown on every side. Each side has its own
+    // position and size, so the user can place it differently on front and back.
+    if (s.logo){
+      html += `<img class="bc-logo-free" src="${s.logo}" style="left:${s.logoX}%;top:${s.logoY}%;width:${s.logoSize}%;" alt="">`;
+    }
+    html += '<div class="bc-grid"></div>';
+    if (!unlocked){
+      const lum = wmBaseLum(side);
+      const wmColor = lum < 0.45 ? 'rgba(255,250,240,.16)' : 'rgba(120,90,40,.14)';
+      card.style.setProperty('--bc-wm', wmColor);
+      html += buildWM();
+    }
+    card.innerHTML = html;
+  }
+  function cardPx(){
+    // mm → preview pixels (6 px per mm). Folded sizes double the page in the fold direction.
+    const sz = SIZES[state.size] || SIZES.std55;
+    let mmW = sz.w, mmH = sz.h;
+    if (sz.foldDir === 'horiz') mmW *= 2;
+    if (sz.foldDir === 'vert')  mmH *= 2;
+    let cw = Math.round(mmW * 6), ch = Math.round(mmH * 6);
+    if (state.orientation === 'portrait'){ const t = cw; cw = ch; ch = t; }
+    return { cw, ch };
+  }
+  function renderCards(){
+    updateFreeBtn();
+    const { cw, ch } = cardPx();
+    ['cardFront','cardBack'].forEach(id => {
+      const c = byId(id);
+      c.style.setProperty('--cw', cw + 'px');
+      c.style.setProperty('--ch', ch + 'px');
+    });
+    renderCard('front');
+    // Toggle the back-side wrapper via a class so CSS media queries can override it on mobile.
+    document.body.classList.toggle('back-enabled', !!state.backEnabled);
+    if (state.backEnabled) renderCard('back');
+    applyCardScale();
+    scheduleSave();
+  }
+  function applyCardScale(){
+    const stage = byId('stage');
+    const isMobile = window.matchMedia('(max-width:700px)').matches;
+    const { cw, ch } = cardPx();
+    let sc;
+    if (isMobile){
+      // Mobile: width-based fit with a height cap — exactly like the label tool.
+      const padX = 28;
+      const availW = Math.max(160, stage.clientWidth - padX);
+      const availH = Math.max(150, Math.round(window.innerHeight * 0.34));
+      sc = Math.min(1, availW / cw, availH / ch);
+    } else {
+      // Desktop / tablet: stack vertically, fill column width.
+      const avail = Math.max(220, stage.clientWidth - 44);
+      sc = Math.min(1, avail / cw);
+    }
+    ['fitFront','fitBack'].forEach(id => {
+      const el = byId(id);
+      el.style.transform = `scale(${sc})`;
+      el.style.height = (ch * sc) + 'px';
+      el.style.width = (cw * sc) + 'px';
+    });
+  }
+  // Showcase: skalér KUN forsiden så kortet fylder iframe-feltet (galleri-feltets sideforhold = kortets)
+  function applyShowcaseScale(){
+    const fit = byId('fitFront'); if (!fit) return;
+    const { cw, ch } = cardPx();
+    const sc = Math.min(window.innerWidth / cw, window.innerHeight / ch);
+    fit.style.transform = `scale(${sc})`;
+    fit.style.width = (cw * sc) + 'px';
+    fit.style.height = (ch * sc) + 'px';
+  }
+
+  // ---------- Editor sync ----------
+  function setSeg(id, val){
+    byId(id).querySelectorAll('.seg-btn').forEach(b => b.classList.toggle('active', b.dataset.val === val));
+  }
+  function syncSideControls(){
+    document.querySelectorAll('.side-tab').forEach(b => b.classList.toggle('active', b.dataset.side === activeSide));
+    document.querySelectorAll('#sideSwitchMobile button').forEach(b => {
+      b.classList.toggle('active', b.dataset.side === activeSide);
+      if (b.dataset.side === 'back') b.disabled = !state.backEnabled;
+    });
+    document.body.setAttribute('data-mside', activeSide);
+    byId('fieldsFront').style.display = activeSide === 'front' ? 'block' : 'none';
+    byId('fieldsBack').style.display = activeSide === 'back' ? 'block' : 'none';
+    const s = state[activeSide];
+    setSeg('segBgMode', s.bg.mode);
+    byId('colC1').value = s.bg.c1;
+    byId('colC2').value = s.bg.c2;
+    byId('c2Wrap').style.display = s.bg.mode === 'grad' ? 'flex' : 'none';
+    byId('dirWrap').style.display = s.bg.mode === 'grad' ? 'block' : 'none';
+    setSeg('segDir', s.bg.dir);
+    if (byId('segDeco')){
+      const dec = s.deco || { shape:'none', color:'#d4a574' };
+      setSeg('segDeco', dec.shape);
+      byId('colDeco').value = dec.color;
+      byId('decoColorWrap').style.display = dec.shape === 'none' ? 'none' : 'flex';
+    }
+    byId('colSideInk').value = s.ink || state.design.ink;
+    byId('rngLogoSize').value = Math.round(s.logoSize || 28);
+    // Show "Remove logo" only if THIS side has an image
+    byId('logoRemove').style.display = s.logo ? 'inline-block' : 'none';
+    // Reset the file input so picking the same file again still triggers a change
+    byId('logoIn').value = '';
+  }
+  function syncAll(){
+    document.querySelectorAll('.style-card').forEach(x => x.classList.toggle('active', x.dataset.style === state.style));
+    setSeg('segOrient', state.orientation);
+    byId('chkUseBack').checked = !!state.backEnabled;
+    byId('backTab').style.display = state.backEnabled ? 'block' : 'none';
+    setSeg('segCorners', String(state.design.radius | 0));
+    renderContactList();
+    renderFrontList();
+    byId('selTitleFont').value = state.design.titleFont;
+    byId('selBodyFont').value = state.design.bodyFont;
+    byId('selSize').value = state.size;
+    byId('chkAccentLine').checked = !!state.design.accentLine;
+    byId('logoRemove').style.display = state[activeSide].logo ? 'inline-block' : 'none';
+    syncSideControls();
+  }
+
+  // ---------- Wiring ----------
+  function fillSelect(id, arr){
+    byId(id).innerHTML = arr.map(f => `<option value="${f}">${f}</option>`).join('');
+  }
+  fillSelect('selTitleFont', FONTS_TITLE);
+  fillSelect('selBodyFont', FONTS_BODY);
+  function fillSizes(){
+    const sel = byId('selSize');
+    sel.innerHTML = Object.entries(SIZES).map(([k,v]) => `<option value="${k}">${esc(t(v.labelKey))}</option>`).join('');
+    sel.value = state.size;
+  }
+  fillSizes();
+
+  byId('styleCards').addEventListener('click', e => {
+    const card = e.target.closest('.style-card'); if (!card) return;
+    state.style = card.dataset.style;
+    const p = STYLES[state.style];
+    state.design.accent = p.accent; state.design.paper = p.paper; state.design.ink = p.ink;
+    state.design.titleFont = p.titleFont; state.design.bodyFont = p.bodyFont; state.design.accentLine = p.accentLine;
+    state.front.bg = { mode:'solid', c1:p.paper, c2:p.accent, dir:'to right' };
+    state.front.ink = '';
+    state.back.bg  = { mode:'solid', c1:p.accent, c2:p.accent, dir:'to bottom right' };
+    state.back.ink = p.paper;
+    syncAll(); renderCards();
+  });
+  byId('segOrient').addEventListener('click', e => {
+    const b = e.target.closest('.seg-btn'); if (!b) return;
+    state.orientation = b.dataset.val; setSeg('segOrient', state.orientation); renderCards();
+  });
+  document.querySelectorAll('.side-tab, #sideSwitchMobile button').forEach(btn => {
+    btn.addEventListener('click', () => {
+      if (btn.disabled) return;
+      activeSide = btn.dataset.side;
+      syncSideControls();
+      applyCardScale();
+    });
+  });
+  byId('chkUseBack').addEventListener('change', e => {
+    state.backEnabled = e.target.checked;
+    if (!state.backEnabled && activeSide === 'back'){ activeSide = 'front'; }
+    byId('backTab').style.display = state.backEnabled ? 'block' : 'none';
+    syncSideControls(); renderCards();
+  });
+  byId('segBgMode').addEventListener('click', e => {
+    const b = e.target.closest('.seg-btn'); if (!b) return;
+    state[activeSide].bg.mode = b.dataset.val; syncSideControls(); renderCards();
+  });
+  byId('colC1').addEventListener('input', e => { state[activeSide].bg.c1 = e.target.value; renderCards(); });
+  byId('colC2').addEventListener('input', e => { state[activeSide].bg.c2 = e.target.value; renderCards(); });
+  byId('segDeco').addEventListener('click', e => {
+    const b = e.target.closest('.seg-btn'); if (!b) return;
+    if (!state[activeSide].deco) state[activeSide].deco = { shape:'none', color:'#d4a574' };
+    state[activeSide].deco.shape = b.dataset.val;
+    setSeg('segDeco', b.dataset.val);
+    byId('decoColorWrap').style.display = b.dataset.val === 'none' ? 'none' : 'flex';
+    renderCards();
+  });
+  byId('colDeco').addEventListener('input', e => {
+    if (!state[activeSide].deco) state[activeSide].deco = { shape:'none', color:'#d4a574' };
+    state[activeSide].deco.color = e.target.value;
+    renderCards();
+  });
+  byId('segDir').addEventListener('click', e => {
+    const b = e.target.closest('.seg-btn'); if (!b) return;
+    state[activeSide].bg.dir = b.dataset.val; setSeg('segDir', b.dataset.val); renderCards();
+  });
+  byId('colSideInk').addEventListener('input', e => { state[activeSide].ink = e.target.value; renderCards(); });
+  byId('segCorners').addEventListener('click', e => {
+    const b = e.target.closest('.seg-btn'); if (!b) return;
+    state.design.radius = +b.dataset.val; setSeg('segCorners', b.dataset.val); renderCards();
+  });
+  byId('rngLogoSize').addEventListener('input', e => { state[activeSide].logoSize = +e.target.value; renderCards(); });
+  byId('chkGrid').addEventListener('change', e => { document.body.classList.toggle('show-grid', e.target.checked); });
+
+
+  byId('selTitleFont').addEventListener('change', e => { state.design.titleFont = e.target.value; renderCards(); });
+  byId('selBodyFont').addEventListener('change', e => { state.design.bodyFont = e.target.value; renderCards(); });
+  byId('selSize').addEventListener('change', e => { state.size = e.target.value; renderCards(); });
+  byId('chkAccentLine').addEventListener('change', e => { state.design.accentLine = e.target.checked; renderCards(); });
+
+  // Resize a picked image down to a sensible max dimension before storing it.
+  // iOS photos can be 12+ MB, which fails when stored as a data URL — we downscale
+  // to keep performance and storage healthy while still printing crisp at visitkort size.
+  function processLogoFile(file){
+    return new Promise((resolve, reject) => {
+      const url = URL.createObjectURL(file);
+      const img = new Image();
+      img.onload = () => {
+        try {
+          const MAX = 1600; // pixels on the longest side
+          let w = img.naturalWidth, h = img.naturalHeight;
+          if (w > MAX || h > MAX){
+            const k = Math.min(MAX / w, MAX / h);
+            w = Math.round(w * k); h = Math.round(h * k);
+          }
+          const canvas = document.createElement('canvas');
+          canvas.width = w; canvas.height = h;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, w, h);
+          // PNG keeps transparency for logos; JPEG is much smaller for photos.
+          // If the source is JPEG we keep JPEG to save space.
+          const isJpeg = /^image\/jpe?g$/i.test(file.type);
+          const out = canvas.toDataURL(isJpeg ? 'image/jpeg' : 'image/png', 0.9);
+          URL.revokeObjectURL(url);
+          resolve(out);
+        } catch(err){ URL.revokeObjectURL(url); reject(err); }
+      };
+      img.onerror = () => { URL.revokeObjectURL(url); reject(new Error('image load failed')); };
+      img.src = url;
+    });
+  }
+  byId('logoIn').addEventListener('change', async e => {
+    const f = e.target.files && e.target.files[0]; if (!f) return;
+    try {
+      state[activeSide].logo = await processLogoFile(f);
+    } catch(err){
+      // Fallback: store the raw file if downscaling failed for any reason
+      state[activeSide].logo = await new Promise((res, rej) => {
+        const r = new FileReader();
+        r.onload = () => res(r.result); r.onerror = () => rej(r.error);
+        r.readAsDataURL(f);
+      });
+    }
+    byId('logoRemove').style.display = 'inline-block';
+    renderCards();
+  });
+  byId('logoRemove').addEventListener('click', () => {
+    state[activeSide].logo = ''; byId('logoIn').value = ''; byId('logoRemove').style.display = 'none'; renderCards();
+  });
+
+  // ---- Drag the logo/image directly on the card (with optional grid snapping) ----
+  (function(){
+    const stage = byId('stage');
+    let drag = null;
+    stage.addEventListener('pointerdown', e => {
+      const img = e.target.closest('.bc-logo-free'); if (!img) return;
+      const card = img.closest('.bc-card');
+      drag = { img, card, side: card.id === 'cardFront' ? 'front' : 'back', rect: card.getBoundingClientRect() };
+      card.classList.add('dragging');
+      e.preventDefault();
+    });
+    document.addEventListener('pointermove', e => {
+      if (!drag) return;
+      let x = ((e.clientX - drag.rect.left) / drag.rect.width) * 100;
+      let y = ((e.clientY - drag.rect.top) / drag.rect.height) * 100;
+      if (byId('chkGrid').checked){ x = Math.round(x / 5) * 5; y = Math.round(y / 5) * 5; }
+      x = Math.max(2, Math.min(98, x)); y = Math.max(2, Math.min(98, y));
+      const s = state[drag.side]; s.logoX = x; s.logoY = y;
+      drag.img.style.left = x + '%'; drag.img.style.top = y + '%';
+    });
+    const endDrag = () => { if (!drag) return; drag.card.classList.remove('dragging'); drag = null; renderCards(); };
+    document.addEventListener('pointerup', endDrag);
+    document.addEventListener('pointercancel', endDrag);
+  })();
+
+  // ---------- Box + line editor (both sides share this) ----------
+  const LIST_CFG = {
+    front:{ types:FRONT_TYPES,   labelFn:frontLabel,   placeholderFn:frontPlaceholder,   icons:null,          wrapId:'frontBoxes', addBoxBtn:'addFrontBoxBtn', defSize:t=>FRONT_DEFAULT_SIZE[t] || 1 },
+    back: { types:CONTACT_TYPES, labelFn:contactLabel, placeholderFn:contactPlaceholder, icons:CONTACT_ICONS, wrapId:'backBoxes',  addBoxBtn:'addBackBoxBtn',  defSize:t=>1 }
+  };
+  const POSITIONS = ['top-left','top-center','top-right','middle-left','middle-center','middle-right','bottom-left','bottom-center','bottom-right'];
+
+  // Tracks which boxes are collapsed in the editor (persisted in localStorage)
+  const LS_COLLAPSED = 'visitkort_collapsed_v1';
+  let collapsedBoxes = {};
+  try { collapsedBoxes = JSON.parse(localStorage.getItem(LS_COLLAPSED) || '{}') || {}; } catch (e) {}
+  function saveCollapsed(){
+    try { localStorage.setItem(LS_COLLAPSED, JSON.stringify(collapsedBoxes)); } catch (e) {}
+  }
+
+  function posGridHtml(currentPos, boxId, sideKey){
+    return `<div class="pos-grid" data-box-id="${boxId}" data-side="${sideKey}" title="${esc(t('boxPos'))}">` +
+      POSITIONS.map(p => `<button type="button" data-pos="${p}" class="${p === currentPos ? 'active' : ''}" aria-label="${esc(t('pos' + p.split('-').map(w=>w[0].toUpperCase()+w.slice(1)).join('')))}"></button>`).join('') +
+      `</div>`;
+  }
+  function renderItemRow(c, i, listLen, cfg, boxId, sideKey, boxLayout){
+    const icon = cfg.icons ? (cfg.icons[c.type] || cfg.icons.custom) : '';
+    const showIconBtn = !!cfg.icons && c.type !== 'line';
+    const label = t(cfg.labelFn(c.type));
+    const placeholder = cfg.placeholderFn(c.type);
+    const sizePct = Math.round((c.size || 1) * 100);
+    const ph = label + (placeholder && placeholder !== '…' ? ' — ' + placeholder : '');
+    return `<div class="cli" data-id="${c.id}" data-box-id="${boxId}" data-side="${sideKey}">
+      ${ showIconBtn
+        ? `<button type="button" class="cli-ic ${c.showIcon ? '' : 'off'}" data-act="icon" title="${esc(t('cliToggleIcon'))}">${icon}</button>`
+        : `<span class="cli-ic" style="opacity:.6;font-size:.7rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;cursor:default;">${esc(label.slice(0,2))}</span>` }
+      <input type="text" class="cli-input" data-act="value" value="${esc(c.value)}" placeholder="${c.type === 'line' ? '———' : esc(ph)}" ${c.type === 'line' ? 'disabled' : ''}>
+      <div class="cli-btns">
+        ${ boxLayout === 'stack' && i > 0
+          ? `<button type="button" class="cli-btn ${c.inline ? 'active' : ''}" data-act="inline-toggle" title="${esc(t(c.inline ? 'cliInlineNo' : 'cliInline2'))}">⇄</button>`
+          : '' }
+        <button type="button" class="cli-btn" data-act="up"   ${i === 0 ? 'disabled' : ''} title="${esc(t('cliMoveUp'))}">▲</button>
+        <button type="button" class="cli-btn" data-act="down" ${i === listLen - 1 ? 'disabled' : ''} title="${esc(t('cliMoveDown'))}">▼</button>
+        <button type="button" class="cli-btn danger" data-act="del" title="${esc(t('cliDelete'))}">×</button>
+      </div>
+      <div class="cli-align" style="grid-column:1 / -1;display:flex;gap:6px;align-items:center;flex-wrap:wrap;">
+        <span class="mini-label" style="margin:0;font-size:.7rem;">${esc(t('sizeLabel2'))}</span>
+        <div class="size-presets" style="display:inline-flex;gap:3px;">
+          <button type="button" class="cli-btn ${sizePct === 70  ? 'active' : ''}" data-act="size-preset" data-val="70"  title="XS">XS</button>
+          <button type="button" class="cli-btn ${sizePct === 100 ? 'active' : ''}" data-act="size-preset" data-val="100" title="S">S</button>
+          <button type="button" class="cli-btn ${sizePct === 150 ? 'active' : ''}" data-act="size-preset" data-val="150" title="M">M</button>
+          <button type="button" class="cli-btn ${sizePct === 220 ? 'active' : ''}" data-act="size-preset" data-val="220" title="L">L</button>
+          <button type="button" class="cli-btn ${sizePct === 320 ? 'active' : ''}" data-act="size-preset" data-val="320" title="XL">XL</button>
+        </div>
+        <input type="range" class="range" data-act="size" min="40" max="500" step="5" value="${sizePct}" title="${sizePct}%" style="flex:1;min-width:100px;">
+        <span class="mini-label" style="margin:0;font-size:.7rem;min-width:36px;text-align:right;">${sizePct}%</span>
+      </div>
+      <div class="cli-align" style="grid-column:1 / -1;display:flex;gap:6px 14px;align-items:center;flex-wrap:wrap;">
+        <span style="display:inline-flex;gap:6px;align-items:center;">
+          <span class="mini-label" style="margin:0;font-size:.7rem;">${esc(t('styleLabel2'))}</span>
+          <button type="button" class="cli-btn ${!c.bold && !c.thin && !c.italic ? 'active' : ''}" data-act="style-reset" title="${esc(t('stNormal'))}">A</button>
+          <button type="button" class="cli-btn ${c.bold ? 'active' : ''}" data-act="style-bold" title="${esc(t('stBold'))}" style="font-weight:700;">B</button>
+          <button type="button" class="cli-btn ${c.thin ? 'active' : ''}" data-act="style-thin" title="${esc(t('stThin'))}" style="font-weight:300;">T</button>
+          <button type="button" class="cli-btn ${c.italic ? 'active' : ''}" data-act="style-italic" title="${esc(t('stItalic'))}" style="font-style:italic;">I</button>
+        </span>
+        <span style="display:inline-flex;gap:6px;align-items:center;">
+          <span class="mini-label" style="margin:0;font-size:.7rem;">${esc(t('lineColorLabel'))}</span>
+          <button type="button" class="cli-btn ${c.accent ? 'active' : ''}" data-act="style-accent" title="${esc(t('stAccent'))}" style="color:var(--accent);">●</button>
+          <button type="button" class="cli-btn ${c.dim ? 'active' : ''}" data-act="style-dim" title="${esc(t('stDim'))}"><span style="opacity:.4;">●</span></button>
+        </span>
+        <span style="display:inline-flex;gap:6px;align-items:center;">
+          <span class="mini-label" style="margin:0;font-size:.7rem;">${esc(t('wrapLabel'))}</span>
+          <button type="button" class="cli-btn ${c.wrap !== false ? 'active' : ''}" data-act="wrap-yes" title="${esc(t('wrapBreak'))}">↵</button>
+          <button type="button" class="cli-btn ${c.wrap === false ? 'active' : ''}" data-act="wrap-no" title="${esc(t('wrapNo'))}">→</button>
+        </span>
+      </div>
+      <div class="cli-align" style="grid-column:1 / -1;display:flex;gap:6px;align-items:center;flex-wrap:wrap;">
+        <span class="mini-label" style="margin:0;font-size:.7rem;">${esc(t('lsLabel'))}</span>
+        <button type="button" class="cli-btn ${!(c.lspace > 0) ? 'active' : ''}" data-act="lspace" data-val="0" style="width:auto;padding:6px 9px;font-size:.72rem;">${esc(t('lsNormal'))}</button>
+        <button type="button" class="cli-btn ${c.lspace === 0.12 ? 'active' : ''}" data-act="lspace" data-val="0.12" style="width:auto;padding:6px 9px;font-size:.72rem;">${esc(t('lsSome'))}</button>
+        <button type="button" class="cli-btn ${c.lspace === 0.3 ? 'active' : ''}" data-act="lspace" data-val="0.3" style="width:auto;padding:6px 9px;font-size:.72rem;">${esc(t('lsWide'))}</button>
+      </div>
+    </div>`;
+  }
+  function renderBoxList(sideKey){
+    const cfg = LIST_CFG[sideKey];
+    const wrap = byId(cfg.wrapId); if (!wrap) return;
+    const boxes = state[sideKey].boxes || [];
+    wrap.innerHTML = boxes.map((box, bi) => {
+      const addMenuId = `addMenu_${sideKey}_${box.id}`;
+      const addBtnId  = `addBtn_${sideKey}_${box.id}`;
+      const addLabel  = sideKey === 'front' ? t('addFrontLine') : t('addContact');
+      const align = box.align || 'left';
+      const layout = box.layout || 'stack';
+      const boxGap = (box.gap != null ? box.gap : 6);
+      const collapsed = !!collapsedBoxes[sideKey + '_' + box.id];
+      const rows = (box.items || []).map((c, i) => renderItemRow(c, i, box.items.length, cfg, box.id, sideKey, layout)).join('');
+      const alignBtns = ['left','center','right'].map(a =>
+        `<button type="button" class="cli-btn ${align === a ? 'active' : ''}" data-box-align="${a}" title="${esc(t('boxAlign' + a[0].toUpperCase()))}">${a === 'left' ? '⇤' : a === 'center' ? '⇔' : '⇥'}</button>`).join('');
+      const layoutBtns = [['stack','boxLayoutStack'],['row','boxLayoutRow']].map(([v, key]) =>
+        `<button type="button" class="cli-btn ${layout === v ? 'active' : ''}" data-box-layout="${v}" style="padding:6px 10px;font-size:.78rem;width:auto;">${esc(t(key))}</button>`).join('');
+      const linesCount = (box.items || []).filter(it => (it.value || '').trim()).length;
+      const posLabel = t('pos' + (box.pos || 'middle-left').split('-').map(w=>w[0].toUpperCase()+w.slice(1)).join(''));
+      const summary = collapsed ? ` <span style="font-weight:400;color:var(--muted);font-size:.7rem;text-transform:none;letter-spacing:.02em;">(${linesCount} ${linesCount === 1 ? 'linje' : 'linjer'} — ${esc(posLabel)})</span>` : '';
+      return `<div class="box-card ${collapsed ? 'collapsed' : ''}" data-box-id="${box.id}" data-side="${sideKey}">
+        <div class="box-head">
+          <button type="button" class="cli-btn box-collapse-btn" data-box-act="toggle" title="${esc(t(collapsed ? 'boxExpandLabel' : 'boxCollapseLabel'))}" style="width:24px;height:24px;font-size:.7rem;">${collapsed ? '▸' : '▾'}</button>
+          <span class="box-title">${esc(t('boxLabel'))} ${bi + 1}${summary}</span>
+          ${collapsed ? '' : posGridHtml(box.pos, box.id, sideKey)}
+          <div class="box-head-btns">
+            <button type="button" class="cli-btn" data-box-act="up"   ${bi === 0 ? 'disabled' : ''} title="${esc(t('boxMoveUp'))}">▲</button>
+            <button type="button" class="cli-btn" data-box-act="down" ${bi === boxes.length - 1 ? 'disabled' : ''} title="${esc(t('boxMoveDown'))}">▼</button>
+            <button type="button" class="cli-btn danger" data-box-act="del" title="${esc(t('boxDelete'))}">×</button>
+          </div>
+        </div>
+        <div class="box-body" ${collapsed ? 'style="display:none;"' : ''}>
+        <div class="box-options" style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px;align-items:center;">
+          <span class="mini-label" style="margin:0 4px 0 0;font-size:.72rem;">${esc(t('boxLinesLabel'))}</span>
+          ${layoutBtns}
+          <span class="mini-label" style="margin:0 4px 0 10px;font-size:.72rem;">${esc(t('boxAlignLabel'))}</span>
+          ${alignBtns}
+        </div>
+        <div class="box-options" style="display:flex;gap:8px;align-items:center;margin-bottom:10px;">
+          <span class="mini-label" style="margin:0;font-size:.72rem;white-space:nowrap;">${esc(t('boxGapLabel'))}</span>
+          <input type="range" class="range" data-box-gap min="-8" max="24" step="1" value="${boxGap}" style="flex:1;">
+          <span class="mini-label" style="margin:0;font-size:.72rem;min-width:36px;text-align:right;">${boxGap}px</span>
+        </div>
+        <div class="contact-list">${rows}</div>
+        <div style="position:relative;margin-top:8px;">
+          <button class="add-contact" id="${addBtnId}" data-box-add="${box.id}" data-side="${sideKey}" type="button" style="padding:8px;font-size:.85rem;">${esc(addLabel)}</button>
+          <div class="add-contact-menu" id="${addMenuId}"></div>
+        </div>
+        </div>
+      </div>`;
+    }).join('');
+  }
+  function renderContactList(){ renderBoxList('back'); }
+  function renderFrontList(){ renderBoxList('front'); }
+
+  // ---- Delegated click + input handlers for the box / line editor ----
+  function findBox(side, boxId){ return state[side].boxes.find(b => b.id === boxId); }
+
+  document.addEventListener('click', e => {
+    // Position picker
+    const posBtn = e.target.closest('.pos-grid button[data-pos]');
+    if (posBtn){
+      const grid = posBtn.closest('.pos-grid');
+      const side = grid.dataset.side;
+      const boxId = +grid.dataset.boxId;
+      const box = findBox(side, boxId); if (!box) return;
+      box.pos = posBtn.dataset.pos;
+      renderBoxList(side); renderCards();
+      return;
+    }
+    // Box-level actions (move up/down, delete)
+    const boxBtn = e.target.closest('[data-box-act]');
+    if (boxBtn){
+      const card = boxBtn.closest('.box-card');
+      const side = card.dataset.side;
+      const boxId = +card.dataset.boxId;
+      const list = state[side].boxes;
+      const i = list.findIndex(b => b.id === boxId); if (i < 0) return;
+      const act = boxBtn.dataset.boxAct;
+      if (act === 'up' && i > 0){ [list[i-1], list[i]] = [list[i], list[i-1]]; renderBoxList(side); renderCards(); }
+      else if (act === 'down' && i < list.length - 1){ [list[i+1], list[i]] = [list[i], list[i+1]]; renderBoxList(side); renderCards(); }
+      else if (act === 'del'){
+        if (list.length <= 1){ list[i].items = []; } // Keep at least one box; just empty it
+        else list.splice(i, 1);
+        renderBoxList(side); renderCards();
+      } else if (act === 'toggle'){
+        const key = side + '_' + boxId;
+        if (collapsedBoxes[key]) delete collapsedBoxes[key]; else collapsedBoxes[key] = true;
+        saveCollapsed();
+        renderBoxList(side);
+      }
+      return;
+    }
+    // "+ Tilføj linje" — open menu
+    const addInBox = e.target.closest('[data-box-add]');
+    if (addInBox){
+      const side = addInBox.dataset.side;
+      const boxId = +addInBox.dataset.boxAdd;
+      const menu = byId(`addMenu_${side}_${boxId}`); if (!menu) return;
+      // Close any other open menus first
+      document.querySelectorAll('.add-contact-menu.open').forEach(m => { if (m !== menu){ m.classList.remove('open'); m.innerHTML = ''; } });
+      if (menu.classList.contains('open')){ menu.classList.remove('open'); menu.innerHTML = ''; return; }
+      const cfg = LIST_CFG[side];
+      menu.innerHTML = cfg.types.map(tp => {
+        const ic = cfg.icons ? (cfg.icons[tp] || cfg.icons.custom) : '';
+        return `<button type="button" data-type="${tp}" data-box-target="${boxId}" data-side="${side}">${ic}<span>${esc(t(cfg.labelFn(tp)))}</span></button>`;
+      }).join('');
+      menu.classList.add('open');
+      return;
+    }
+    // Picked a type in an open box-add menu
+    const pickType = e.target.closest('.add-contact-menu button[data-type]');
+    if (pickType){
+      const side = pickType.dataset.side;
+      const boxId = +pickType.dataset.boxTarget;
+      const type = pickType.dataset.type;
+      const box = findBox(side, boxId); if (!box) return;
+      const cfg = LIST_CFG[side];
+      const id = box.nextItemId++;
+      const newItem = { id, type, value:'', size: cfg.defSize(type) };
+      if (cfg.icons) newItem.showIcon = true;
+      box.items.push(newItem);
+      // Close menu
+      const menu = pickType.closest('.add-contact-menu');
+      menu.classList.remove('open'); menu.innerHTML = '';
+      renderBoxList(side); renderCards();
+      setTimeout(() => {
+        const inp = document.querySelector(`#${cfg.wrapId} .cli[data-id="${id}"] .cli-input`);
+        if (inp) inp.focus();
+      }, 30);
+      return;
+    }
+    // Line-level actions inside a box
+    const cli = e.target.closest('.cli');
+    if (cli){
+      const btn = e.target.closest('[data-act]'); if (!btn) return;
+      const side = cli.dataset.side;
+      const boxId = +cli.dataset.boxId;
+      const box = findBox(side, boxId); if (!box) return;
+      const id = +cli.dataset.id;
+      const i = box.items.findIndex(c => c.id === id); if (i < 0) return;
+      const act = btn.dataset.act;
+      const cfg = LIST_CFG[side];
+      if (act === 'icon' && cfg.icons){
+        box.items[i].showIcon = !box.items[i].showIcon;
+        btn.classList.toggle('off', !box.items[i].showIcon);
+        renderCards();
+      } else if (act === 'up' && i > 0){
+        [box.items[i-1], box.items[i]] = [box.items[i], box.items[i-1]];
+        renderBoxList(side); renderCards();
+      } else if (act === 'down' && i < box.items.length - 1){
+        [box.items[i+1], box.items[i]] = [box.items[i], box.items[i+1]];
+        renderBoxList(side); renderCards();
+      } else if (act === 'del'){
+        box.items.splice(i, 1);
+        renderBoxList(side); renderCards();
+      } else if (act === 'size-preset'){
+        box.items[i].size = (+btn.dataset.val) / 100;
+        renderBoxList(side); renderCards();
+      } else if (act === 'style-reset'){
+        box.items[i].bold = false; box.items[i].thin = false; box.items[i].italic = false;
+        renderBoxList(side); renderCards();
+      } else if (act === 'style-bold'){
+        box.items[i].bold = !box.items[i].bold;
+        if (box.items[i].bold) box.items[i].thin = false; // bold and thin can't both be on
+        renderBoxList(side); renderCards();
+      } else if (act === 'style-thin'){
+        box.items[i].thin = !box.items[i].thin;
+        if (box.items[i].thin) box.items[i].bold = false;
+        renderBoxList(side); renderCards();
+      } else if (act === 'style-italic'){
+        box.items[i].italic = !box.items[i].italic;
+        renderBoxList(side); renderCards();
+      } else if (act === 'style-accent'){
+        box.items[i].accent = !box.items[i].accent;
+        renderBoxList(side); renderCards();
+      } else if (act === 'style-dim'){
+        box.items[i].dim = !box.items[i].dim;
+        renderBoxList(side); renderCards();
+      } else if (act === 'wrap-yes'){
+        box.items[i].wrap = true;
+        renderBoxList(side); renderCards();
+      } else if (act === 'wrap-no'){
+        box.items[i].wrap = false;
+        renderBoxList(side); renderCards();
+      } else if (act === 'inline-toggle' && i > 0){
+        box.items[i].inline = !box.items[i].inline;
+        renderBoxList(side); renderCards();
+      } else if (act === 'lspace'){
+        box.items[i].lspace = parseFloat(btn.dataset.val) || 0;
+        renderBoxList(side); renderCards();
+      }
+      return;
+    }
+    // Box-level align / layout switches and gap slider
+    const alignBoxBtn = e.target.closest('[data-box-align]');
+    if (alignBoxBtn){
+      const card = alignBoxBtn.closest('.box-card');
+      const side = card.dataset.side;
+      const box = findBox(side, +card.dataset.boxId); if (!box) return;
+      box.align = alignBoxBtn.dataset.boxAlign;
+      renderBoxList(side); renderCards();
+      return;
+    }
+    const layoutBoxBtn = e.target.closest('[data-box-layout]');
+    if (layoutBoxBtn){
+      const card = layoutBoxBtn.closest('.box-card');
+      const side = card.dataset.side;
+      const box = findBox(side, +card.dataset.boxId); if (!box) return;
+      box.layout = layoutBoxBtn.dataset.boxLayout;
+      renderBoxList(side); renderCards();
+      return;
+    }
+    // Click outside any add-menu — close them
+    if (!e.target.closest('.add-contact-menu') && !e.target.closest('[data-box-add]')){
+      document.querySelectorAll('.add-contact-menu.open').forEach(m => { m.classList.remove('open'); m.innerHTML = ''; });
+    }
+  });
+  document.addEventListener('input', e => {
+    // Per-box gap slider
+    if (e.target.matches('[data-box-gap]')){
+      const card = e.target.closest('.box-card');
+      const side = card.dataset.side;
+      const box = findBox(side, +card.dataset.boxId); if (!box) return;
+      box.gap = +e.target.value;
+      // Live update the px label next to the slider without a full re-render (keeps focus)
+      const label = card.querySelector('[data-box-gap] + .mini-label, [data-box-gap] ~ .mini-label');
+      if (label) label.textContent = box.gap + 'px';
+      renderCards();
+      return;
+    }
+    const cli = e.target.closest('.cli'); if (!cli) return;
+    const side = cli.dataset.side;
+    const boxId = +cli.dataset.boxId;
+    const box = findBox(side, boxId); if (!box) return;
+    const act = e.target.dataset.act;
+    const id = +cli.dataset.id;
+    const i = box.items.findIndex(c => c.id === id); if (i < 0) return;
+    if (act === 'value'){ box.items[i].value = e.target.value; renderCards(); }
+    else if (act === 'size'){
+      const pct = +e.target.value;
+      box.items[i].size = pct / 100;
+      // Live-update the matching preset button + % label without re-rendering the whole list (keeps slider focus)
+      const presetsWrap = cli.querySelector('.size-presets');
+      if (presetsWrap){
+        presetsWrap.querySelectorAll('.cli-btn').forEach(b => {
+          b.classList.toggle('active', +b.dataset.val === pct);
+        });
+      }
+      const pctLabel = cli.querySelector('.cli-align .mini-label:last-of-type');
+      if (pctLabel) pctLabel.textContent = pct + '%';
+      renderCards();
+    }
+  });
+  // "+ Ny tekstboks"
+  ['front','back'].forEach(side => {
+    const btn = byId(LIST_CFG[side].addBoxBtn); if (!btn) return;
+    btn.addEventListener('click', () => {
+      const id = state[side].nextBoxId++;
+      const isFront = side === 'front';
+      const cfg = LIST_CFG[side];
+      const firstType = cfg.types[isFront ? 4 : 0]; // 'custom' for front, 'phone' for back
+      const newBox = { id, pos:'middle-center', align:'left', layout:'stack', gap:6, items:[
+        { id:1, type:firstType, value:'', size:cfg.defSize(firstType) }
+      ], nextItemId:2 };
+      if (cfg.icons) newBox.items[0].showIcon = true;
+      state[side].boxes.push(newBox);
+      renderBoxList(side); renderCards();
+      setTimeout(() => {
+        const inp = document.querySelector(`#${cfg.wrapId} .box-card[data-box-id="${id}"] .cli-input`);
+        if (inp) inp.focus();
+      }, 30);
+    });
+  });
+
+  // ---------- Library: Save as / Export / Import ----------
+  function loadLib(){
+    try { return JSON.parse(localStorage.getItem(LS_LIBRARY) || '[]'); } catch(e){ return []; }
+  }
+  function saveLib(arr){
+    try { localStorage.setItem(LS_LIBRARY, JSON.stringify(arr)); return true; } catch(e){ return false; }
+  }
+  function setSaveStatus(msg){ byId('saveStatus').textContent = msg || ''; }
+  function fmtDate(ts){
+    const d = new Date(ts); const pad = n => (n<10?'0':'') + n;
+    return d.getFullYear() + '-' + pad(d.getMonth()+1) + '-' + pad(d.getDate()) + ' ' + pad(d.getHours()) + ':' + pad(d.getMinutes());
+  }
+  function renderLibrary(){
+    const list = byId('libraryList');
+    const arr = loadLib();
+    if (!arr.length){ list.innerHTML = `<div class="lib-empty">${esc(t('libNone'))}</div>`; return; }
+    list.innerHTML = arr.map((it,i) =>
+      `<div class="lib-item" data-i="${i}">
+         <div class="lib-info"><span class="lib-name">${esc(it.name)}</span><span class="lib-date">${fmtDate(it.ts)}</span></div>
+         <div class="lib-btns">
+           <button class="lib-btn" data-act="open" type="button">${esc(t('libOpen'))}</button>
+           <button class="lib-btn danger" data-act="del" type="button">${esc(t('libDelete'))}</button>
+         </div>
+       </div>`).join('');
+  }
+  byId('libraryList').addEventListener('click', e => {
+    const btn = e.target.closest('.lib-btn'); if (!btn) return;
+    const item = btn.closest('.lib-item'); const i = +item.dataset.i;
+    const arr = loadLib(); const it = arr[i]; if (!it) return;
+    if (btn.dataset.act === 'open'){
+      state = JSON.parse(JSON.stringify(it.data));
+      normalize();
+      activeSide = 'front';
+      relock();
+      syncAll(); renderCards();
+      setSaveStatus(t('saveStatusSaved') + it.name);
+    } else if (btn.dataset.act === 'del'){
+      if (!confirm(t('libConfirmDelete') + ' ' + it.name)) return;
+      arr.splice(i,1); saveLib(arr); renderLibrary();
+      setSaveStatus(t('saveStatusDeleted') + it.name);
+    }
+  });
+  byId('saveAsBtn').addEventListener('click', () => {
+    const name = (prompt(t('saveAsPrompt')) || '').trim();
+    if (!name) return;
+    const arr = loadLib();
+    const exists = arr.findIndex(x => x.name === name);
+    if (exists >= 0 && !confirm(t('libConfirmReplace'))) return;
+    const entry = { name, ts: Date.now(), data: JSON.parse(JSON.stringify(state)) };
+    if (exists >= 0) arr[exists] = entry; else arr.unshift(entry);
+    saveLib(arr); renderLibrary();
+    setSaveStatus(t('saveStatusSaved') + name);
+  });
+  byId('exportBtn').addEventListener('click', () => {
+    const payload = { type:'lusidio-visitkort', version:1, exported: new Date().toISOString(), data: state };
+    const blob = new Blob([JSON.stringify(payload, null, 2)], { type:'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    const allFrontItems = (state.front.boxes || []).flatMap(b => b.items || []);
+    const findName = allFrontItems.find(x => x.type === 'name' && (x.value || '').trim());
+    const findCompany = allFrontItems.find(x => x.type === 'company' && (x.value || '').trim());
+    const baseName = (findName && findName.value) || (findCompany && findCompany.value) || 'visitkort';
+    const safe = baseName.replace(/[^a-z0-9æøåÆØÅ\- ]+/gi,'').trim().replace(/\s+/g,'-') || 'visitkort';
+    a.href = url; a.download = 'lusidio-' + safe.toLowerCase() + '.json';
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    setSaveStatus(t('saveStatusExported'));
+  });
+  byId('importBtn').addEventListener('click', () => byId('importInput').click());
+  byId('importInput').addEventListener('change', e => {
+    const f = e.target.files && e.target.files[0]; if (!f) return;
+    const r = new FileReader();
+    r.onload = () => {
+      try {
+        const obj = JSON.parse(r.result);
+        const data = (obj && obj.data && obj.data.front && obj.data.back) ? obj.data : ((obj && obj.front && obj.back) ? obj : null);
+        if (!data) throw new Error('bad shape');
+        state = JSON.parse(JSON.stringify(data));
+        normalize();
+        activeSide = 'front';
+        relock();
+        syncAll(); renderCards();
+        setSaveStatus(t('saveStatusImported'));
+      } catch(err){ setSaveStatus(t('saveStatusImportFail')); }
+      e.target.value = '';
+    };
+    r.readAsText(f);
+  });
+
+  // ---------- Payment / unlock ----------
+  const TEMP_CODES = ['1234567'];
+  function getUsedCodes(){ try { return JSON.parse(localStorage.getItem(LS_CODES) || '[]'); } catch(e){ return []; } }
+  function markCodeUsed(c){ try { const u = getUsedCodes(); u.push(c); localStorage.setItem(LS_CODES, JSON.stringify(u)); } catch(e){} }
+  function setStatus(msg){ byId('payStatus').textContent = msg || ''; }
+  function setPayLabels(){
+    byId('pdfBtn').textContent = codeActive ? t('payPdfFree') : t('payPdf');
+    byId('pngBtn').textContent = codeActive ? t('payImgFree') : t('payImg');
+    const gf = byId('getFileBtn');
+    if (gf.style.display !== 'none') gf.textContent = (gf.dataset.kind === 'png') ? t('getImg') : t('getPdf');
+  }
+  byId('useCodeBtn').addEventListener('click', () => {
+    const code = (byId('codeInput').value || '').trim();
+    if (!TEMP_CODES.includes(code)){ setStatus(t('codeInvalid')); return; }
+    if (getUsedCodes().includes(code)){ setStatus(t('codeUsed')); return; }
+    markCodeUsed(code);
+    unlocked = true; codeActive = true;
+    setPayLabels(); setStatus(t('codeApplied')); renderCards();
+  });
+
+  async function startPaidDownload(kind){
+    if (unlocked){ await doDownload(kind); return; }
+    try { localStorage.setItem(LS_PENDING, kind); } catch(e){}
+    setStatus(t('stPayStart'));
+    try {
+      const res = await fetch('/api/create-checkout-session', {
+        method:'POST', headers:{ 'Content-Type':'application/json' },
+        body: JSON.stringify({ product:'visitkort', returnPath: window.location.pathname })
+      });
+      const data = await res.json();
+      if (data && data.url) window.location.href = data.url;
+      else setStatus(t('stPayFail'));
+    } catch(e){ setStatus(t('stPayFail')); }
+  }
+  byId('pdfBtn').addEventListener('click', () => startPaidDownload('pdf'));
+  byId('freeBtn').addEventListener('click', () => doDownload('pdf'));
+  byId('pngBtn').addEventListener('click', () => startPaidDownload('png'));
+  byId('getFileBtn').addEventListener('click', async function(){ await doDownload(this.dataset.kind || 'pdf'); });
+
+  function showGetFile(kind){
+    const gf = byId('getFileBtn');
+    gf.dataset.kind = kind; gf.style.display = 'block';
+    gf.textContent = kind === 'png' ? t('getImg') : t('getPdf');
+  }
+  async function verifyPaid(sessionId){
+    try {
+      const res = await fetch('/api/verify-session?session_id=' + encodeURIComponent(sessionId));
+      const data = await res.json();
+      return !!(data && data.paid);
+    } catch(e){ return false; }
+  }
+  async function initUnlock(){
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('afbrudt')){ setStatus(t('stCancel')); history.replaceState(null,'',window.location.pathname); return; }
+    const sid = params.get('betalt');
+    if (sid){
+      setStatus(t('stPayWait'));
+      const ok = await verifyPaid(sid);
+      if (ok){
+        unlocked = true;
+        try { localStorage.setItem(LS_PAID, sid); } catch(e){}
+        let kind = 'pdf'; try { kind = localStorage.getItem(LS_PENDING) || 'pdf'; } catch(e){}
+        showGetFile(kind); setStatus(t('stPayReady')); renderCards();
+      } else setStatus(t('stPayFail'));
+      history.replaceState(null,'',window.location.pathname);
+      return;
+    }
+    let stored = null; try { stored = localStorage.getItem(LS_PAID); } catch(e){}
+    if (stored){
+      const ok = await verifyPaid(stored);
+      if (ok){
+        unlocked = true;
+        let kind = 'pdf'; try { kind = localStorage.getItem(LS_PENDING) || 'pdf'; } catch(e){}
+        showGetFile(kind); setStatus(t('stPayReady')); renderCards();
+      }
+    }
+  }
+  function relock(){
+    unlocked = false; codeActive = false;
+    try { localStorage.removeItem(LS_PAID); localStorage.removeItem(LS_PENDING); } catch(e){}
+    byId('getFileBtn').style.display = 'none';
+    setPayLabels(); renderCards();
+  }
+
+  // ---------- Export ----------
+  async function captureCard(side){
+    // Clone the card at natural size, off-screen, so stage scaling never affects the capture
+    const src = byId(side === 'front' ? 'cardFront' : 'cardBack');
+    const clone = src.cloneNode(true);
+    clone.classList.remove('dragging');
+    clone.querySelectorAll('.bc-grid').forEach(g => g.remove());
+    const holder = document.createElement('div');
+    holder.style.cssText = 'position:fixed;left:-9999px;top:0;';
+    holder.appendChild(clone);
+    document.body.appendChild(holder);
+    try {
+      const canvas = await html2canvas(clone, { scale:4, backgroundColor:null, useCORS:true });
+      return canvas;
+    } finally {
+      document.body.removeChild(holder);
+    }
+  }
+  async function doDownload(kind){
+    const sz = SIZES[state.size] || SIZES.std55;
+    let mmW = sz.w, mmH = sz.h;
+    if (sz.foldDir === 'horiz') mmW *= 2;
+    if (sz.foldDir === 'vert')  mmH *= 2;
+    if (state.orientation === 'portrait'){ const t = mmW; mmW = mmH; mmH = t; }
+    const land = mmW >= mmH;
+    const W = mmW, H = mmH;
+    const sides = state.backEnabled ? ['front','back'] : ['front'];
+    if (kind === 'pdf'){
+      const { jsPDF } = window.jspdf;
+      const pdf = new jsPDF({ unit:'mm', format:[W,H], orientation: land ? 'l' : 'p' });
+      for (let i = 0; i < sides.length; i++){
+        const canvas = await captureCard(sides[i]);
+        if (i > 0) pdf.addPage([W,H], land ? 'l' : 'p');
+        void H;
+        pdf.addImage(canvas.toDataURL('image/png'), 'PNG', 0, 0, W, H);
+      }
+      pdf.save('lusidio-visitkort.pdf');
+    } else {
+      // PNG: combine all sides into one image so every browser allows the download.
+      // Browsers (especially Safari/iOS) block multiple downloads triggered by one click.
+      const canvases = [];
+      for (const side of sides) canvases.push(await captureCard(side));
+      let out;
+      if (canvases.length === 1){
+        out = canvases[0];
+      } else {
+        // Stack side-by-side for landscape cards, on top of each other for portrait, with a small gap.
+        const gap = 24;
+        const stackHoriz = land;
+        const totalW = stackHoriz ? (canvases[0].width * canvases.length + gap * (canvases.length - 1)) : canvases[0].width;
+        const totalH = stackHoriz ? canvases[0].height : (canvases[0].height * canvases.length + gap * (canvases.length - 1));
+        out = document.createElement('canvas');
+        out.width = totalW; out.height = totalH;
+        const ctx = out.getContext('2d');
+        ctx.fillStyle = '#ffffff'; ctx.fillRect(0, 0, totalW, totalH);
+        let x = 0, y = 0;
+        for (const c of canvases){
+          ctx.drawImage(c, x, y);
+          if (stackHoriz) x += c.width + gap; else y += c.height + gap;
+        }
+      }
+      const a = document.createElement('a');
+      a.href = out.toDataURL('image/png');
+      a.download = 'lusidio-visitkort.png';
+      document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    }
+    // One download per payment: relock afterwards unless a code session is active
+    if (!codeActive){ relock(); }
+    setStatus(t('stDone'));
+  }
+
+  // ---------- Init ----------
+  const _vkParams  = new URLSearchParams(window.location.search);
+  const _vkScRaw   = _vkParams.get('showcase');
+  const _vkDemoRaw = _vkParams.get('demo');
+  const _vkScIdx   = (_vkScRaw   != null && /^\d+$/.test(_vkScRaw)   && VK_SHOWCASE[+_vkScRaw])   ? +_vkScRaw   : -1;
+  const _vkDemoIdx = (_vkDemoRaw != null && /^\d+$/.test(_vkDemoRaw) && VK_SHOWCASE[+_vkDemoRaw]) ? +_vkDemoRaw : -1;
+
+  if (_vkScIdx >= 0){
+    // ----- Galleri-showcase: vis kun forsiden, fyld feltet, ingen editor -----
+    applyVKPreset(VK_SHOWCASE[_vkScIdx]);
+    document.body.classList.add('vk-showcase');
+    document.documentElement.lang = LANG;
+    renderCards();
+    applyShowcaseScale();
+    window.addEventListener('resize', applyShowcaseScale);
+    window.addEventListener('load', applyShowcaseScale);
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(applyShowcaseScale);
+  } else {
+    // ----- Normal editor (evt. forudfyldt via ?demo=N) -----
+    if (_vkDemoIdx >= 0){
+      applyVKPreset(VK_SHOWCASE[_vkDemoIdx]);
+      try { window.history.replaceState({}, '', window.location.pathname); } catch(e){}
+    } else {
+      restore();
+    }
+    syncAll();
+    applyStaticI18n();
+    setPayLabels();
+    renderCards();
+    renderLibrary();
+    setSaveStatus(storageOK ? t('saveStatusInit') : t('saveStatusInitOff'));
+    if (storageOK) byId('autosaveTag').classList.add('on');
+    initUnlock();
+    (function(){
+      const sel = byId('langSel');
+      sel.value = LANG;
+      document.documentElement.lang = LANG;
+      sel.addEventListener('change', () => applyLang(sel.value));
+    })();
+    if (_vkDemoIdx >= 0) scheduleSave();
+    // Ved rotation opdaterer telefonen skærmmålene EFTER eventet — mål derfor flere gange
+    function scheduleCardScale(){
+      applyCardScale();
+      requestAnimationFrame(applyCardScale);
+      setTimeout(applyCardScale, 180);
+      setTimeout(applyCardScale, 450);
+    }
+    window.addEventListener('resize', scheduleCardScale);
+    window.addEventListener('orientationchange', scheduleCardScale);
+    if (window.visualViewport) window.visualViewport.addEventListener('resize', scheduleCardScale);
+    window.addEventListener('load', applyCardScale);
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(applyCardScale);
+  }
+</script>
+<!-- Vercel Web Analytics -->
+<script>
+  window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
+</script>
+<script defer src="/_vercel/insights/script.js"></script>
+</body>
+</html>
