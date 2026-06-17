@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Skriv opslag · Lusidio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,500;1,9..144,600&family=Jost:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<style>
+  :root{
+    --bg:#f1ece1; --panel:#fbf7ef; --panel-2:#f4ecdc; --ink:#2c2620; --muted:#8c8275;
+    --line:#e2d8c6; --accent:#b5542a; --accent-d:#963f1f; --field:#fffdf8;
+    --shadow:0 22px 60px rgba(60,40,22,.18);
+  }
+  *{ box-sizing:border-box; }
+  html,body{ margin:0; padding:0; }
+  body{ font-family:'Jost',sans-serif; color:var(--ink); background:var(--bg); min-height:100vh; line-height:1.5; -webkit-font-smoothing:antialiased; }
+
+  /* ---------- Topbar ---------- */
+  .topbar{ max-width:1240px; margin:0 auto; padding:30px 30px 6px; display:flex; align-items:flex-start; gap:16px; }
+  .home-link-mobile{ display:none; flex:none; align-items:center; justify-content:center; width:36px; height:36px; text-decoration:none; border:1px solid var(--line); border-radius:9px; background:var(--field); color:var(--ink); font-size:1rem; line-height:1; transition:all .15s; }
+  .home-link-mobile:hover{ border-color:var(--accent); color:var(--accent); }
+  .brand{ display:flex; align-items:baseline; gap:14px; flex-wrap:wrap; }
+  .brand h1{ font-family:'Fraunces',serif; font-weight:600; font-style:italic; font-size:2.05rem; margin:0; color:var(--ink); }
+  .brand .dot{ width:9px; height:9px; border-radius:50%; background:var(--accent); display:inline-block; margin-bottom:5px; }
+  .brand p{ margin:0; color:var(--muted); font-size:.95rem; }
+
+  /* ---------- Layout ---------- */
+  .app{ max-width:1240px; margin:0 auto; padding:18px 30px 56px; display:grid; grid-template-columns:minmax(330px,400px) 1fr; gap:30px; align-items:start; }
+  .panel{ background:var(--panel); border:1px solid var(--line); border-radius:18px; padding:22px; box-shadow:0 10px 30px -18px rgba(60,40,22,.3); display:flex; flex-direction:column; gap:15px; }
+
+  .grp-label{ display:block; font-size:.66rem; font-weight:700; letter-spacing:.1em; text-transform:uppercase; color:var(--accent-d); border-top:1px dashed var(--line); padding-top:14px; margin:2px 0 0; }
+  .grp-label.first{ border-top:none; padding-top:0; }
+  .mini-label{ display:block; font-size:.72rem; color:var(--muted); margin:0 0 6px; }
+
+  .field{ width:100%; font-family:inherit; font-size:.95rem; color:var(--ink); background:var(--field); border:1px solid var(--line); border-radius:9px; padding:10px 12px; transition:border-color .15s, box-shadow .15s; outline:none; }
+  .field::placeholder{ color:#b3a896; }
+  .field:focus{ border-color:var(--accent); box-shadow:0 0 0 3px rgba(181,84,42,.13); }
+  .field.invalid{ border-color:#cf6b4a; box-shadow:0 0 0 3px rgba(207,107,74,.16); }
+  textarea.field{ resize:vertical; min-height:74px; font-family:inherit; line-height:1.45; }
+
+  /* segmented controls */
+  .seg-row{ display:grid; gap:8px; }
+  .seg-2{ grid-template-columns:1fr 1fr; }
+  .seg-3{ grid-template-columns:1fr 1fr 1fr; }
+  .seg-btn{ border:1.5px solid var(--line); background:var(--field); border-radius:10px; padding:11px 8px; cursor:pointer; font-family:inherit; font-size:.82rem; font-weight:600; color:var(--ink); text-align:center; transition:.15s; line-height:1.2; }
+  .seg-btn:hover{ border-color:#d8b59f; }
+  .seg-btn.active{ border-color:var(--accent); box-shadow:0 0 0 3px rgba(181,84,42,.12); color:var(--accent-d); }
+
+  /* generate button */
+  .btn{ font-family:inherit; font-size:.98rem; font-weight:600; border-radius:11px; padding:14px; cursor:pointer; transition:.15s; border:1.5px solid transparent; width:100%; }
+  .btn-primary{ background:var(--accent); color:#fff; box-shadow:0 6px 16px rgba(181,84,42,.28); display:flex; align-items:center; justify-content:center; gap:8px; }
+  .btn-primary:hover{ background:var(--accent-d); transform:translateY(-1px); }
+  .btn-primary:disabled{ opacity:.65; cursor:default; transform:none; }
+  .btn-spin{ width:16px; height:16px; border:2px solid rgba(255,255,255,.45); border-top-color:#fff; border-radius:50%; animation:spin .8s linear infinite; }
+  .form-note{ font-size:.78rem; color:var(--muted); line-height:1.45; text-align:center; margin:-2px 0 0; }
+
+  /* ---------- Output ---------- */
+  .output{ min-width:0; }
+  .out-block{ margin-bottom:30px; }
+  .out-block-head{ display:flex; align-items:flex-end; justify-content:space-between; gap:12px; margin:0 2px 14px; }
+  .out-block-head .h{ font-family:'Fraunces',serif; font-weight:600; font-size:1.25rem; color:var(--ink); }
+  .out-block-head .s{ font-size:.82rem; color:var(--muted); margin-top:2px; }
+  .btn-mini{ font-family:inherit; font-size:.8rem; font-weight:600; color:var(--accent-d); background:var(--field); border:1px solid var(--line); border-radius:9px; padding:9px 13px; cursor:pointer; transition:.15s; white-space:nowrap; flex:none; }
+  .btn-mini:hover{ border-color:var(--accent); background:#fff6ef; }
+  .btn-mini:disabled{ opacity:.55; cursor:default; }
+
+  /* ---------- Post-grafik ---------- */
+  .post-stage{ display:flex; justify-content:center; padding:6px 0 4px; }
+  .post{
+    container-type:inline-size;
+    width:min(380px,100%);
+    background:var(--pbg,#c2632f);
+    color:var(--pink,#fdf3e7);
+    border-radius:16px; overflow:hidden;
+    box-shadow:0 18px 44px -16px rgba(60,40,22,.5);
+    display:flex; flex-direction:column;
+    padding:9cqw 8cqw;
+  }
+  .post-brand{ font-size:3.3cqw; letter-spacing:.22em; text-transform:uppercase; font-weight:700; color:var(--pacc,#ffd9a8); text-align:center; outline:none; min-height:1em; }
+  .post-body{ flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:4.5cqw; text-align:center; padding:5cqw 0; }
+  .post-headline{ font-family:'Fraunces',serif; font-weight:600; font-size:9.6cqw; line-height:1.08; outline:none; }
+  .post-rule{ width:12cqw; height:.7cqw; min-height:2px; background:var(--pacc,#ffd9a8); border-radius:2px; opacity:.9; }
+  .post-sub{ font-size:4.3cqw; line-height:1.34; opacity:.92; outline:none; max-width:92%; }
+  .post-foot{ text-align:center; font-size:2.8cqw; letter-spacing:.18em; text-transform:uppercase; opacity:.62; min-height:1em; }
+  .post [contenteditable]:focus{ box-shadow:0 0 0 2px var(--pacc,#ffd9a8); border-radius:5px; }
+
+  .post-controls{ margin-top:16px; display:flex; flex-direction:column; gap:14px; }
+  .ctrl .mini-label{ margin-bottom:7px; }
+  .theme-row{ display:flex; gap:9px; flex-wrap:wrap; }
+  .theme-sw{ width:32px; height:32px; border-radius:9px; cursor:pointer; border:2px solid #fff; box-shadow:0 2px 7px rgba(60,40,22,.18); padding:0; transition:transform .12s; }
+  .theme-sw:hover{ transform:translateY(-2px); }
+  .theme-sw.active{ outline:2.5px solid var(--accent); outline-offset:1px; }
+  .btn-dl{ font-family:inherit; font-size:.92rem; font-weight:600; color:#fff; background:var(--accent); border:none; border-radius:11px; padding:13px; cursor:pointer; transition:.15s; box-shadow:0 6px 16px rgba(181,84,42,.25); display:flex; align-items:center; justify-content:center; gap:8px; }
+  .btn-dl:hover{ background:var(--accent-d); transform:translateY(-1px); }
+  .btn-dl:disabled{ opacity:.6; cursor:default; transform:none; }
+
+  /* ---------- Billedtekster ---------- */
+  .results{ display:flex; flex-direction:column; gap:16px; }
+  .result-card{ background:var(--panel); border:1px solid var(--line); border-radius:16px; padding:15px 16px 12px; box-shadow:0 10px 30px -20px rgba(60,40,22,.3); }
+  .result-head{ display:flex; align-items:center; justify-content:space-between; margin-bottom:9px; }
+  .result-num{ font-size:.66rem; font-weight:700; letter-spacing:.1em; text-transform:uppercase; color:var(--accent-d); }
+  .result-area{ width:100%; border:1px solid var(--line); border-radius:10px; background:var(--field); padding:12px 13px; font-family:inherit; font-size:.95rem; line-height:1.5; color:var(--ink); resize:vertical; min-height:120px; outline:none; transition:border-color .15s, box-shadow .15s; }
+  .result-area:focus{ border-color:var(--accent); box-shadow:0 0 0 3px rgba(181,84,42,.13); }
+  .result-foot{ display:flex; align-items:center; justify-content:space-between; gap:10px; margin-top:9px; }
+  .char{ font-size:.74rem; color:var(--muted); }
+  .copy-btn{ font-family:inherit; font-size:.8rem; font-weight:600; color:var(--accent-d); background:var(--field); border:1px solid var(--line); border-radius:9px; padding:8px 15px; cursor:pointer; transition:.15s; flex:none; }
+  .copy-btn:hover{ border-color:var(--accent); background:#fff6ef; }
+  .copy-btn.done{ background:var(--accent); color:#fff; border-color:var(--accent); }
+
+  /* placeholder / loading / error */
+  .placeholder{ border:1.5px dashed var(--line); border-radius:18px; padding:48px 26px; text-align:center; color:var(--muted); background:rgba(255,255,255,.4); }
+  .placeholder .big{ font-family:'Fraunces',serif; font-style:italic; font-size:1.35rem; color:var(--ink); opacity:.82; margin-bottom:8px; }
+  .placeholder .sub{ font-size:.9rem; max-width:360px; margin:0 auto; line-height:1.5; }
+  .loading{ display:flex; flex-direction:column; align-items:center; gap:15px; padding:54px 24px; color:var(--muted); }
+  .spinner{ width:36px; height:36px; border:3px solid var(--line); border-top-color:var(--accent); border-radius:50%; animation:spin .8s linear infinite; }
+  @keyframes spin{ to{ transform:rotate(360deg); } }
+  .err{ border:1px solid #e0b4a4; background:#fbeee8; color:#8a3a1f; border-radius:14px; padding:16px 18px; font-size:.9rem; line-height:1.5; }
+  .err b{ color:#7a2f17; }
+  .err .small{ display:block; margin-top:6px; font-size:.8rem; color:#9a5436; }
+
+  /* ---------- Footer ---------- */
+  .foot{ max-width:1240px; margin:0 auto; padding:0 30px 40px; text-align:center; color:var(--muted); font-size:.82rem; }
+  .foot a{ color:var(--accent-d); }
+
+  /* ---------- Responsive ---------- */
+  @media (max-width:900px){
+    .topbar{ padding:22px 16px 4px; }
+    .home-link-mobile{ display:inline-flex; }
+    .brand h1{ font-size:1.7rem; }
+    .brand p{ font-size:.88rem; }
+    .app{ display:flex; flex-direction:column; padding:16px 14px 44px; gap:22px; }
+    .field, textarea.field{ font-size:16px; }
+    .foot{ padding:0 16px 36px; }
+  }
+</style>
+</head>
+<body>
+
+  <div class="topbar">
+    <a class="home-link-mobile" href="/" title="Lusidio" aria-label="Tilbage">←</a>
+    <div class="brand">
+      <h1>Skriv opslag</h1><span class="dot"></span>
+      <p>Lav et færdigt opslag til sociale medier — grafik og tekst, på sekunder.</p>
+    </div>
+  </div>
+
+  <div class="app">
+
+    <!-- ===== Formular ===== -->
+    <div class="panel">
+      <span class="grp-label first">Om din virksomhed</span>
+      <div>
+        <label class="mini-label" for="navn">Virksomhedsnavn <span style="opacity:.7">(vises på opslaget)</span></label>
+        <input class="field" id="navn" type="text" placeholder="fx Café Solsikke" autocomplete="off">
+      </div>
+      <div>
+        <label class="mini-label" for="type">Hvad er det for en virksomhed?</label>
+        <input class="field" id="type" type="text" placeholder="fx café, frisør, butik, restaurant…" autocomplete="off">
+      </div>
+
+      <span class="grp-label">Dit opslag</span>
+      <div>
+        <label class="mini-label" for="emne">Hvad skal opslaget handle om?</label>
+        <textarea class="field" id="emne" rows="3" placeholder="fx: Vi har lige fået efterårsmenuen ind — græskarsuppe og varm kakao. Kig forbi i weekenden."></textarea>
+      </div>
+
+      <div>
+        <span class="mini-label">Tone</span>
+        <div class="seg-row seg-2" data-seg="tone">
+          <button class="seg-btn active" data-val="varm" type="button">Varm &amp; hyggelig</button>
+          <button class="seg-btn" data-val="professionel" type="button">Professionel</button>
+          <button class="seg-btn" data-val="sjov" type="button">Sjov &amp; legende</button>
+          <button class="seg-btn" data-val="skarp" type="button">Kort &amp; skarp</button>
+        </div>
+      </div>
+
+      <div>
+        <span class="mini-label">Platform</span>
+        <div class="seg-row seg-3" data-seg="platform">
+          <button class="seg-btn active" data-val="facebook" type="button">Facebook</button>
+          <button class="seg-btn" data-val="instagram" type="button">Instagram</button>
+          <button class="seg-btn" data-val="linkedin" type="button">LinkedIn</button>
+        </div>
+      </div>
+
+      <div>
+        <span class="mini-label">Længde på teksten</span>
+        <div class="seg-row seg-3" data-seg="laengde">
+          <button class="seg-btn" data-val="kort" type="button">Kort</button>
+          <button class="seg-btn active" data-val="mellem" type="button">Mellem</button>
+          <button class="seg-btn" data-val="lang" type="button">Lang</button>
+        </div>
+      </div>
+
+      <div>
+        <span class="mini-label">Emojis</span>
+        <div class="seg-row seg-2" data-seg="emoji">
+          <button class="seg-btn active" data-val="med" type="button">Med emojis</button>
+          <button class="seg-btn" data-val="uden" type="button">Uden emojis</button>
+        </div>
+      </div>
+
+      <div>
+        <span class="mini-label">Antal tekst-forslag</span>
+        <div class="seg-row seg-3" data-seg="antal">
+          <button class="seg-btn" data-val="1" type="button">1</button>
+          <button class="seg-btn active" data-val="3" type="button">3</button>
+          <button class="seg-btn" data-val="5" type="button">5</button>
+        </div>
+      </div>
+
+      <button class="btn btn-primary" id="genBtn" type="button"><span id="genIcon">✨</span><span id="genLabel">Lav opslag</span></button>
+      <p class="form-note">AI laver overskrift, grafik og billedtekst. Ret frit i alt, før du bruger det.</p>
+    </div>
+
+    <!-- ===== Output ===== -->
+    <div class="output">
+      <!-- tom-tilstand -->
+      <div class="placeholder" id="phEmpty">
+        <div class="big">Dit opslag dukker op her</div>
+        <div class="sub">Udfyld felterne til venstre og tryk “Lav opslag”. Du får en færdig opslags-grafik, du kan rette i og hente — plus billedtekst til at kopiere.</div>
+      </div>
+
+      <!-- loading / fejl -->
+      <div id="status"></div>
+
+      <!-- resultater -->
+      <div id="resultsWrap" style="display:none;">
+
+        <!-- opslags-grafik -->
+        <div class="out-block">
+          <div class="out-block-head">
+            <div>
+              <div class="h">Dit opslag</div>
+              <div class="s">Klik på teksten for at rette den direkte på opslaget</div>
+            </div>
+            <button class="btn-mini" id="regenBtn" type="button">↻ Lav nye</button>
+          </div>
+
+          <div class="post-stage">
+            <div class="post" id="post">
+              <div class="post-brand" id="postBrand" contenteditable="true" spellcheck="false">DIT FIRMANAVN</div>
+              <div class="post-body">
+                <div class="post-headline" id="postHeadline" contenteditable="true" spellcheck="false">Overskrift</div>
+                <div class="post-rule"></div>
+                <div class="post-sub" id="postSub" contenteditable="true" spellcheck="false">Underlinje</div>
+              </div>
+              <div class="post-foot" id="postFoot" contenteditable="true" spellcheck="false"></div>
+            </div>
+          </div>
+
+          <div class="post-controls">
+            <div class="ctrl">
+              <span class="mini-label">Format</span>
+              <div class="seg-row seg-3" id="fmtRow">
+                <button class="seg-btn active" data-fmt="1" type="button">Firkant</button>
+                <button class="seg-btn" data-fmt="1.25" type="button">Stående</button>
+                <button class="seg-btn" data-fmt="1.7778" type="button">Story</button>
+              </div>
+            </div>
+            <div class="ctrl">
+              <span class="mini-label">Farve</span>
+              <div class="theme-row" id="themeRow"></div>
+            </div>
+            <button class="btn-dl" id="dlBtn" type="button"><span>↓</span><span>Hent opslag som billede</span></button>
+          </div>
+        </div>
+
+        <!-- billedtekster -->
+        <div class="out-block">
+          <div class="out-block-head">
+            <div>
+              <div class="h">Tekst til opslaget</div>
+              <div class="s">Kopiér og indsæt som billedtekst, når du poster</div>
+            </div>
+          </div>
+          <div class="results" id="results"></div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+
+  <div class="foot">
+    <span>Lavet med Lusidio — enkle designværktøjer for små virksomheder. </span>
+    <a href="/">Til forsiden</a>
+  </div>
+
+<script>
+  const byId = id => document.getElementById(id);
+
+  // ----- Farvetemaer til opslaget -----
+  const THEMES = [
+    { bg:'linear-gradient(150deg,#c2632f,#9b3f1c)', ink:'#fdf3e7', acc:'#ffd9a8' },
+    { bg:'#f6eede',                                  ink:'#2c2620', acc:'#b5542a' },
+    { bg:'linear-gradient(150deg,#2a2420,#161210)', ink:'#f1e7d8', acc:'#e0b777' },
+    { bg:'linear-gradient(150deg,#6f8a54,#46603a)', ink:'#f4f7ee', acc:'#e9efce' },
+    { bg:'linear-gradient(150deg,#7a3f63,#4d2640)', ink:'#f7e9f1', acc:'#e9bad4' },
+    { bg:'linear-gradient(150deg,#34527a,#22324a)', ink:'#eaf0f8', acc:'#bfd4f0' },
+    { bg:'linear-gradient(150deg,#3f7d6f,#235048)', ink:'#e9f4f0', acc:'#bfe6da' },
+    { bg:'#11100e',                                  ink:'#f3ece0', acc:'#c9a86a' }
+  ];
+  let themeIdx = 0;
+  let postRatio = 1; // højde/bredde
+
+  function buildThemes(){
+    const row = byId('themeRow');
+    row.innerHTML = '';
+    THEMES.forEach((t, i) => {
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'theme-sw' + (i === themeIdx ? ' active' : '');
+      b.style.background = t.bg;
+      b.addEventListener('click', () => { themeIdx = i; applyTheme(); row.querySelectorAll('.theme-sw').forEach((x, j) => x.classList.toggle('active', j === i)); });
+      row.appendChild(b);
+    });
+  }
+  function applyTheme(){
+    const t = THEMES[themeIdx], post = byId('post');
+    post.style.setProperty('--pbg', t.bg);
+    post.style.setProperty('--pink', t.ink);
+    post.style.setProperty('--pacc', t.acc);
+  }
+  function applyFormat(){
+    const post = byId('post');
+    if (!post) return;
+    post.style.height = (post.clientWidth * postRatio) + 'px';
+  }
+  byId('fmtRow').addEventListener('click', e => {
+    const b = e.target.closest('.seg-btn'); if (!b) return;
+    byId('fmtRow').querySelectorAll('.seg-btn').forEach(x => x.classList.toggle('active', x === b));
+    postRatio = parseFloat(b.dataset.fmt) || 1;
+    applyFormat();
+  });
+  window.addEventListener('resize', applyFormat);
+
+  // ----- Segmenterede valg i formularen -----
+  const state = { tone:'varm', platform:'facebook', laengde:'mellem', emoji:'med', antal:'3' };
+  document.querySelectorAll('.seg-row[data-seg]').forEach(row => {
+    const key = row.dataset.seg;
+    const act = row.querySelector('.seg-btn.active'); if (act) state[key] = act.dataset.val;
+    row.addEventListener('click', e => {
+      const b = e.target.closest('.seg-btn'); if (!b) return;
+      row.querySelectorAll('.seg-btn').forEach(x => x.classList.toggle('active', x === b));
+      state[key] = b.dataset.val;
+    });
+  });
+  byId('emne').addEventListener('input', () => byId('emne').classList.remove('invalid'));
+
+  // ----- Visningstilstande -----
+  function setView(mode){
+    byId('phEmpty').style.display   = mode === 'empty'   ? '' : 'none';
+    byId('resultsWrap').style.display = mode === 'results' ? '' : 'none';
+    const st = byId('status');
+    if (mode === 'loading') st.innerHTML = '<div class="loading"><div class="spinner"></div><div>Laver dit opslag…</div></div>';
+    else if (mode !== 'error') st.innerHTML = '';
+  }
+  function showError(msg, detail){
+    byId('phEmpty').style.display = 'none';
+    byId('resultsWrap').style.display = 'none';
+    byId('status').innerHTML = '<div class="err"><b>Hov — det gik ikke.</b><br>' + escapeHtml(msg) +
+      (detail ? '<span class="small">' + escapeHtml(detail) + '</span>' : '') + '</div>';
+  }
+  function escapeHtml(s){ return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+
+  let busy = false;
+  function setBusy(on){
+    busy = on;
+    byId('genBtn').disabled = on;
+    const rb = byId('regenBtn'); if (rb) rb.disabled = on;
+    byId('genIcon').textContent = on ? '' : '✨';
+    byId('genIcon').className = on ? 'btn-spin' : '';
+    byId('genLabel').textContent = on ? 'Laver…' : 'Lav opslag';
+  }
+
+  // ----- Udfyld grafik + billedtekster -----
+  function fillPost(headline, subline, navn){
+    byId('postHeadline').textContent = headline || 'Skriv din overskrift her';
+    byId('postSub').textContent = subline || '';
+    byId('postSub').style.display = subline ? '' : 'none';
+    byId('postBrand').textContent = (navn || '').trim() || 'DIT FIRMANAVN';
+    byId('postFoot').textContent = '';
+    applyTheme();
+    applyFormat();
+  }
+
+  function renderCaptions(posts){
+    const wrap = byId('results');
+    wrap.innerHTML = '';
+    posts.forEach((p, i) => {
+      const card = document.createElement('div'); card.className = 'result-card';
+      const head = document.createElement('div'); head.className = 'result-head';
+      head.innerHTML = '<span class="result-num">Forslag ' + (i+1) + '</span>';
+      const ta = document.createElement('textarea'); ta.className = 'result-area'; ta.value = String(p).trim();
+      const foot = document.createElement('div'); foot.className = 'result-foot';
+      const char = document.createElement('span'); char.className = 'char';
+      const upd = () => { char.textContent = ta.value.length + ' tegn'; }; upd();
+      ta.addEventListener('input', upd);
+      const copy = document.createElement('button'); copy.className = 'copy-btn'; copy.type = 'button'; copy.textContent = 'Kopiér';
+      copy.addEventListener('click', () => copyText(ta.value, copy));
+      foot.appendChild(char); foot.appendChild(copy);
+      card.appendChild(head); card.appendChild(ta); card.appendChild(foot);
+      wrap.appendChild(card);
+      requestAnimationFrame(() => { ta.style.height = 'auto'; ta.style.height = Math.max(120, ta.scrollHeight + 4) + 'px'; });
+    });
+  }
+
+  async function copyText(text, btn){
+    let ok = false;
+    try { await navigator.clipboard.writeText(text); ok = true; }
+    catch(e){
+      try { const t = document.createElement('textarea'); t.value = text; t.style.position='fixed'; t.style.opacity='0'; document.body.appendChild(t); t.focus(); t.select(); ok = document.execCommand('copy'); t.remove(); } catch(_){}
+    }
+    const old = btn.textContent;
+    btn.textContent = ok ? 'Kopieret ✓' : 'Markér og kopiér';
+    btn.classList.toggle('done', ok);
+    setTimeout(() => { btn.textContent = old; btn.classList.remove('done'); }, 1500);
+  }
+
+  // ----- Hent opslag som PNG -----
+  async function downloadPost(){
+    const post = byId('post');
+    if (typeof html2canvas === 'undefined'){
+      showError('Billed-værktøjet kunne ikke indlæses. Tjek din internetforbindelse og prøv igen.');
+      return;
+    }
+    const btn = byId('dlBtn'); const old = btn.innerHTML;
+    btn.disabled = true; btn.innerHTML = '<span>Henter…</span>';
+    if (document.activeElement && document.activeElement.blur) document.activeElement.blur();
+    try {
+      const scale = Math.max(2, Math.min(4, 1080 / (post.clientWidth || 360)));
+      const canvas = await html2canvas(post, { scale, backgroundColor:null, useCORS:true, logging:false });
+      const url = canvas.toDataURL('image/png');
+      const a = document.createElement('a');
+      a.href = url; a.download = 'opslag.png';
+      document.body.appendChild(a); a.click(); a.remove();
+    } catch(err){
+      showError('Kunne ikke lave billedet. Prøv igen.', (err && err.message) || '');
+      setView('results');
+    } finally {
+      btn.disabled = false; btn.innerHTML = old;
+    }
+  }
+  byId('dlBtn').addEventListener('click', downloadPost);
+
+  // ----- Generér -----
+  async function generate(){
+    if (busy) return;
+    const emne = byId('emne').value.trim();
+    if (!emne){ byId('emne').classList.add('invalid'); byId('emne').focus(); return; }
+    const payload = {
+      navn: byId('navn').value.trim(),
+      type: byId('type').value.trim(),
+      emne: emne,
+      tone: state.tone, platform: state.platform, laengde: state.laengde,
+      emoji: state.emoji, antal: parseInt(state.antal, 10) || 3
+    };
+    setBusy(true);
+    setView('loading');
+    try {
+      const r = await fetch('/api/opslag-tekst', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(payload) });
+      let data = {};
+      try { data = await r.json(); } catch(e){ data = {}; }
+      if (!r.ok || data.error){ showError(data.error || ('Serveren svarede med en fejl (' + r.status + ').'), data.detail); return; }
+      const posts = Array.isArray(data.posts) ? data.posts.filter(p => String(p).trim()) : [];
+      if (!posts.length){ showError('Jeg fik ingen forslag tilbage. Prøv igen.'); return; }
+      fillPost(data.headline, data.subline, payload.navn);
+      renderCaptions(posts);
+      setView('results');
+      requestAnimationFrame(applyFormat);
+      if (window.matchMedia('(max-width:900px)').matches){
+        byId('resultsWrap').scrollIntoView({ behavior:'smooth', block:'start' });
+      }
+    } catch(err){
+      showError('Kunne ikke få forbindelse til serveren.', 'Tjek at /api/opslag-tekst er sat op på Vercel, og at siden ikke åbnes som en lokal fil.');
+    } finally {
+      setBusy(false);
+    }
+  }
+  byId('genBtn').addEventListener('click', generate);
+  byId('regenBtn').addEventListener('click', generate);
+
+  // ----- Init -----
+  buildThemes();
+  applyTheme();
+</script>
+</body>
+</html>
