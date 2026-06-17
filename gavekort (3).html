@@ -1,0 +1,1781 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gavekort · Lusidio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,500;1,9..144,600&family=Jost:wght@400;500;600;700&family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<style>
+  :root{
+    --bg:#f1ece1; --panel:#fbf7ef; --panel-2:#f4ecdc; --ink:#2c2620; --muted:#8c8275;
+    --line:#e2d8c6; --accent:#b5542a; --accent-d:#963f1f; --field:#fffdf8;
+    --shadow:0 22px 60px rgba(60,40,22,.18);
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{ font-family:'Jost',sans-serif; color:var(--ink); background:var(--bg); min-height:100vh; line-height:1.5; -webkit-font-smoothing:antialiased; }
+
+  /* ---------- Header ---------- */
+  .topbar{ max-width:1300px; margin:0 auto; padding:30px 30px 6px; display:flex; align-items:flex-start; justify-content:space-between; gap:16px; }
+  .home-link-mobile{ display:none; flex:none; align-items:center; justify-content:center; width:36px; height:36px; text-decoration:none; border:1px solid var(--line); border-radius:9px; background:var(--field); color:var(--ink); font-size:1rem; line-height:1; transition:all .15s; }
+  .home-link-mobile:hover{ border-color:var(--accent); color:var(--accent); }
+  .brand{ display:flex; align-items:baseline; gap:14px; flex-wrap:wrap; }
+  .brand h1{ font-family:'Fraunces',serif; font-weight:600; font-style:italic; font-size:2.05rem; margin:0; color:var(--ink); }
+  .brand .dot{ width:9px; height:9px; border-radius:50%; background:var(--accent); display:inline-block; margin-bottom:5px; }
+  .brand p{ margin:0; color:var(--muted); font-size:.95rem; }
+  .lang-sel{ flex:none; margin-top:4px; padding:7px 30px 7px 11px; border:1px solid var(--line); border-radius:8px; background:var(--field); color:var(--ink); font-size:.9rem; font-family:inherit; cursor:pointer; -webkit-appearance:none; appearance:none; background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23998f7d' stroke-width='2.5'><path d='M6 9l6 6 6-6'/></svg>"); background-repeat:no-repeat; background-position:right 10px center; }
+  .lang-sel:hover{ border-color:var(--accent); }
+
+  /* ---------- Layout ---------- */
+  .app{ max-width:1300px; margin:0 auto; padding:18px 30px 60px; display:grid; grid-template-columns:minmax(340px,400px) 1fr; gap:30px; align-items:start; }
+  .panel{ background:var(--panel); border:1px solid var(--line); border-radius:18px; padding:22px; box-shadow:0 10px 30px -18px rgba(60,40,22,.3); display:flex; flex-direction:column; gap:16px; }
+
+  .grp-label{ display:block; font-size:.66rem; font-weight:700; letter-spacing:.1em; text-transform:uppercase; color:var(--accent-d); border-top:1px dashed var(--line); padding-top:14px; margin-bottom:2px; }
+  .grp-label.first{ border-top:none; padding-top:0; }
+  .mini-label{ display:block; font-size:.72rem; color:var(--muted); margin:0 0 5px; }
+
+  .field{ width:100%; font-family:inherit; font-size:.95rem; color:var(--ink); background:var(--field); border:1px solid var(--line); border-radius:9px; padding:10px 12px; transition:border-color .15s, box-shadow .15s; outline:none; }
+  .field::placeholder{ color:#b3a896; }
+  .field:focus{ border-color:var(--accent); box-shadow:0 0 0 3px rgba(181,84,42,.13); }
+  textarea.field{ resize:vertical; min-height:58px; font-family:inherit; line-height:1.4; }
+
+  .two{ display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+
+  /* Style preset cards */
+  .styles{ display:grid; grid-template-columns:1fr 1fr 1fr; gap:9px; }
+  .style-card{ border:1.5px solid var(--line); background:var(--field); border-radius:11px; padding:0; cursor:pointer; text-align:center; transition:.15s; font-family:inherit; overflow:hidden; }
+  .style-card:hover{ border-color:#d8b59f; transform:translateY(-1px); }
+  .style-card.active{ border-color:var(--accent); box-shadow:0 0 0 3px rgba(181,84,42,.12); }
+  .sc-prev{ height:46px; display:flex; align-items:center; justify-content:center; font-size:.95rem; font-weight:700; }
+  .sc-prev.elegant{ background:#f4ecde; color:#9c4a2a; font-family:'Fraunces',serif; font-style:italic; }
+  .sc-prev.dark{ background:#27211c; color:#e9c887; font-family:'Fraunces',serif; }
+  .sc-prev.modern{ background:#ffffff; color:#b5542a; font-family:'Jost',sans-serif; letter-spacing:.05em; }
+  .sc-name{ font-weight:600; font-size:.72rem; display:block; padding:7px 4px; color:var(--ink); background:var(--field); }
+
+  .color-row{ display:flex; align-items:center; gap:10px; }
+  .color-row input[type=color]{ width:42px; height:34px; padding:0; border:1px solid var(--line); border-radius:8px; background:var(--field); cursor:pointer; }
+  /* Format buttons */
+  .fmt-row{ display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px; }
+  .corner-row{ display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+  /* Skabeloner */
+  .tpl-grid{ display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+  .tpl-btn{ border:1.5px solid var(--line); background:var(--field); border-radius:10px; padding:12px 10px; cursor:pointer; font-family:inherit; text-align:left; transition:.15s; }
+  .tpl-btn:hover{ border-color:var(--accent); box-shadow:0 4px 12px rgba(181,84,42,.12); transform:translateY(-1px); }
+  .tpl-btn .tpl-name{ display:block; font-weight:700; font-size:.85rem; color:var(--ink); }
+  .tpl-btn .tpl-desc{ display:block; font-size:.72rem; color:var(--muted); margin-top:2px; line-height:1.3; }
+  .fmt-btn{ border:1.5px solid var(--line); background:var(--field); border-radius:10px; padding:11px 6px; cursor:pointer; font-family:inherit; font-size:.78rem; font-weight:600; color:var(--ink); text-align:center; transition:.15s; line-height:1.2; }
+  .fmt-btn:hover{ border-color:#d8b59f; }
+  .fmt-btn.active{ border-color:var(--accent); box-shadow:0 0 0 3px rgba(181,84,42,.12); color:var(--accent-d); }
+  /* Surface tabs + element checkboxes */
+  .surf-tabs{ display:flex; flex-wrap:wrap; gap:6px; margin-bottom:11px; }
+  .surf-tab{ border:1px solid var(--line); background:var(--field); border-radius:8px; padding:7px 11px; cursor:pointer; font-family:inherit; font-size:.78rem; font-weight:600; color:var(--muted); transition:.15s; }
+  .surf-tab:hover{ border-color:#d8b59f; }
+  .surf-tab.active{ border-color:var(--accent); background:#fff6ef; color:var(--accent-d); }
+  .elem-grid{ display:grid; grid-template-columns:1fr 1fr; gap:7px 12px; }
+  .elem-chk{ display:flex; align-items:center; gap:7px; font-size:.85rem; color:var(--ink); cursor:pointer; }
+  .elem-chk input{ width:16px; height:16px; accent-color:var(--accent); cursor:pointer; }
+  .surf-note{ font-size:.78rem; color:var(--muted); line-height:1.4; margin:0 0 10px; }
+  /* Tekst-styling kontroller */
+  .tg-row{ display:flex; align-items:center; gap:6px; flex-wrap:wrap; margin-bottom:9px; }
+  .tg-lbl{ font-size:.72rem; color:var(--muted); min-width:78px; }
+  .tg-btn{ font-family:inherit; font-size:.78rem; font-weight:600; min-width:30px; padding:6px 9px; border:1px solid var(--line); background:var(--field); color:var(--ink); border-radius:8px; cursor:pointer; transition:.12s; }
+  .tg-btn:hover{ border-color:#d8b59f; }
+  .tg-btn.active{ border-color:var(--accent); background:#fff6ef; color:var(--accent-d); }
+  .tg-range{ flex:1; min-width:90px; accent-color:var(--accent); }
+  .fst-item{ margin-bottom:12px; }
+  .fst-head{ font-size:.76rem; font-weight:600; color:var(--ink); margin-bottom:5px; }
+
+  /* ---- Tekstbokse (porteret fra etiket) ---- */
+  .contact-list{ display:flex; flex-direction:column; gap:8px; }
+  .cli{ display:grid; grid-template-columns:30px 1fr auto; gap:8px; align-items:center; background:var(--field); border:1px solid var(--line); border-radius:10px; padding:8px 10px; }
+  .cli-ic{ width:24px; height:24px; display:inline-flex; align-items:center; justify-content:center; color:var(--accent-d); background:#fff7f1; border:1px solid var(--line); border-radius:7px; flex:none; font-size:.6rem; font-weight:700; letter-spacing:.04em; text-transform:uppercase; }
+  .cli-input{ width:100%; font-family:inherit; font-size:.92rem; color:var(--ink); background:transparent; border:none; padding:6px 0; outline:none; min-width:0; }
+  .cli-btns{ display:flex; gap:3px; }
+  .cli-btn{ width:28px; height:28px; padding:0; border:1px solid var(--line); background:var(--field); color:var(--muted); border-radius:6px; font-size:.85rem; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; transition:.12s; font-family:inherit; }
+  .cli-btn:hover{ border-color:var(--accent); color:var(--accent-d); }
+  .cli-btn.active{ background:var(--accent); border-color:var(--accent); color:#fff; }
+  .cli-btn.danger:hover{ border-color:#b14545; color:#b14545; }
+  .box-card{ background:var(--field); border:1px solid var(--line); border-radius:12px; padding:12px; margin-bottom:10px; }
+  .box-card.collapsed{ padding:10px 12px; }
+  .box-head{ display:flex; align-items:center; gap:8px; margin-bottom:10px; flex-wrap:wrap; }
+  .box-card.collapsed .box-head{ margin-bottom:0; }
+  .box-title{ font-size:.74rem; font-weight:700; letter-spacing:.06em; text-transform:uppercase; color:var(--accent-d); }
+  .box-head-btns{ display:flex; gap:3px; margin-left:auto; }
+  .box-surf{ font-family:inherit; font-size:.76rem; padding:5px 7px; border:1px solid var(--line); border-radius:7px; background:#fff; color:var(--ink); }
+  .fl-row{ display:flex; gap:6px; align-items:center; flex-wrap:wrap; grid-column:1 / -1; }
+  .fl-mini{ margin:0; font-size:.7rem; color:var(--muted); }
+  .pos-grid{ display:grid; grid-template-columns:repeat(3,26px); grid-template-rows:repeat(3,20px); gap:3px; flex:none; }
+  .pos-grid button{ border:1px solid var(--line); background:var(--field); border-radius:5px; cursor:pointer; padding:0; transition:.12s; position:relative; }
+  .pos-grid button::after{ content:''; position:absolute; inset:6px; background:var(--muted); border-radius:2px; opacity:.35; transition:.12s; }
+  .pos-grid button:hover{ border-color:var(--accent); }
+  .pos-grid button.active{ background:var(--accent); border-color:var(--accent); }
+  .pos-grid button.active::after{ background:#fff; opacity:1; }
+  .type-chips{ display:flex; flex-wrap:wrap; gap:6px; margin-top:9px; align-items:center; }
+  .type-chip{ font-family:inherit; font-size:.78rem; font-weight:600; color:var(--accent-d); background:#fff7f1; border:1px dashed var(--accent); border-radius:999px; padding:6px 11px; cursor:pointer; transition:.13s; }
+  .type-chip:hover{ background:var(--accent); color:#fff; border-style:solid; }
+  .add-box{ width:100%; border:1.5px dashed var(--accent); background:#fff7f1; color:var(--accent-d); border-radius:11px; padding:9px; cursor:pointer; font-family:inherit; font-size:.86rem; font-weight:600; transition:.15s; }
+  .add-box:hover{ background:var(--accent); color:#fff; }
+  .fl-range{ flex:1; min-width:80px; accent-color:var(--accent); }
+  /* Preview-overlay (bokse placeret på 3×3-gitter) */
+  .fb-inner{ position:absolute; inset:0; display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); grid-template-rows:repeat(3,minmax(0,1fr)); padding:calc(46px*var(--u)); gap:calc(8px*var(--u)); pointer-events:none; z-index:3; }
+  .fb-box{ min-width:0; }
+  .fb-box.pos-top-left{ grid-row:1; grid-column:1; align-self:start; justify-self:start; }
+  .fb-box.pos-top-center{ grid-row:1; grid-column:1 / -1; align-self:start; justify-self:stretch; }
+  .fb-box.pos-top-right{ grid-row:1; grid-column:3; align-self:start; justify-self:end; }
+  .fb-box.pos-middle-left{ grid-row:2; grid-column:1; align-self:center; justify-self:start; }
+  .fb-box.pos-middle-center{ grid-row:2; grid-column:1 / -1; align-self:center; justify-self:stretch; }
+  .fb-box.pos-middle-right{ grid-row:2; grid-column:3; align-self:center; justify-self:end; }
+  .fb-box.pos-bottom-left{ grid-row:3; grid-column:1; align-self:end; justify-self:start; }
+  .fb-box.pos-bottom-center{ grid-row:3; grid-column:1 / -1; align-self:end; justify-self:stretch; }
+  .fb-box.pos-bottom-right{ grid-row:3; grid-column:3; align-self:end; justify-self:end; }
+  .fb-box.layout-stack{ display:flex; flex-direction:column; gap:var(--box-gap,6px); }
+  .fb-box.layout-stack.al-left{ align-items:flex-start; }
+  .fb-box.layout-stack.al-center{ align-items:center; }
+  .fb-box.layout-stack.al-right{ align-items:flex-end; }
+  .fb-box.layout-row{ display:flex; flex-direction:row; flex-wrap:nowrap; gap:var(--box-gap,6px); align-items:baseline; }
+  .fb-box.al-left{ text-align:left; } .fb-box.al-center{ text-align:center; } .fb-box.al-right{ text-align:right; }
+  .fb-line-group{ display:flex; flex-direction:row; flex-wrap:nowrap; align-items:baseline; }
+  .swatches{ display:flex; gap:6px; flex-wrap:wrap; }
+  .swatch{ width:24px; height:24px; border-radius:6px; border:1px solid rgba(0,0,0,.12); cursor:pointer; padding:0; transition:transform .12s; }
+  .swatch:hover{ transform:scale(1.12); }
+
+  .code-gen{ display:flex; gap:8px; }
+  .code-gen .field{ flex:1; }
+  .code-gen .btn-mini{ white-space:nowrap; }
+
+  /* Buttons */
+  .btn{ font-family:inherit; font-size:.95rem; font-weight:600; border-radius:11px; padding:13px; cursor:pointer; transition:.15s; border:1.5px solid transparent; width:100%; }
+  .btn-primary{ background:var(--accent); color:#fff; box-shadow:0 6px 16px rgba(181,84,42,.28); }
+  .btn-primary:hover{ background:var(--accent-d); transform:translateY(-1px); }
+  .btn-free{ background:transparent; color:var(--accent-d); border:1.5px dashed var(--line); }
+  .btn-free:hover{ border-color:var(--accent); background:#fff6ef; }
+  .btn-ghost{ background:transparent; color:var(--muted); border:none; font-size:.85rem; padding:4px; cursor:pointer; font-family:inherit; }
+  .btn-ghost:hover{ color:var(--accent); }
+  .btn-mini{ font-family:inherit; font-size:.8rem; font-weight:600; color:var(--accent-d); background:var(--field); border:1px solid var(--line); border-radius:9px; padding:9px 12px; cursor:pointer; transition:.15s; }
+  .btn-mini:hover{ border-color:var(--accent); background:#fff6ef; }
+  .pay-note{ font-size:.78rem; color:var(--muted); margin:2px 0 0; line-height:1.45; }
+  .code-row{ display:flex; gap:8px; }
+  .code-row .field{ flex:1; }
+  .code-row .btn{ width:auto; padding:10px 16px; font-size:.85rem; }
+  .status{ font-size:.82rem; color:var(--accent-d); text-align:center; min-height:1em; margin-top:4px; }
+
+  /* Save / library */
+  .save-label{ font-size:.66rem; font-weight:700; letter-spacing:.1em; text-transform:uppercase; color:var(--accent-d); margin:0 0 9px; }
+  .save-actions{ display:flex; gap:7px; flex-wrap:wrap; }
+  .save-actions .btn-mini{ flex:1; min-width:84px; text-align:center; }
+  .tag{ font-size:.6rem; color:#cabfae; vertical-align:middle; margin-left:4px; }
+  .tag.on{ color:#6fa86b; }
+  .library{ margin-top:11px; display:flex; flex-direction:column; gap:7px; }
+  .lib-empty{ font-size:.8rem; color:var(--muted); margin:6px 2px; line-height:1.4; }
+  .lib-item{ display:flex; align-items:center; gap:8px; background:var(--field); border:1px solid var(--line); border-radius:10px; padding:8px 10px; }
+  .lib-info{ flex:1; min-width:0; display:flex; flex-direction:column; }
+  .lib-name{ font-weight:600; font-size:.88rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .lib-date{ font-size:.7rem; color:var(--muted); }
+  .lib-btns{ display:flex; gap:5px; }
+  .lib-btns .mini-btn{ font-family:inherit; padding:0 10px; height:28px; font-size:.78rem; border-radius:8px; border:1px solid var(--line); background:var(--panel); color:var(--accent-d); cursor:pointer; }
+  .lib-btns .mini-btn:hover{ border-color:var(--accent); }
+  .lib-btns .mini-btn.danger{ color:#b5443a; }
+  .hint{ font-size:.78rem; color:var(--muted); line-height:1.4; }
+
+  /* ---------- Stage / preview ---------- */
+  .stage{ position:sticky; top:16px; min-width:0; display:flex; flex-direction:column; align-items:center; gap:14px; }
+  .stage-hint{ max-width:92%; font-size:.82rem; line-height:1.42; text-align:center; color:#7a4a2b; background:rgba(255,255,255,.72); border:1px solid rgba(122,74,43,.28); border-radius:10px; padding:9px 13px; }
+  .card-frame{ position:relative; width:100%; }
+
+  .card-stack{ width:100%; display:flex; flex-direction:column; align-items:center; gap:26px; }
+  /* Mobil side-skifter — vises kun på mobil ved to-sidede formater (skjult på desktop) */
+  .gc-side-switch{ display:none; }
+  .gc-side-switch.hide{ display:none !important; }
+  .sheet-wrap{ width:100%; display:flex; flex-direction:column; align-items:center; gap:8px; }
+  .surface-label{ font-size:.7rem; font-weight:700; letter-spacing:.14em; text-transform:uppercase; color:var(--accent-d); }
+  .panel-labels{ display:flex; gap:0; }
+  .panel-labels span{ flex:1; text-align:center; font-size:.64rem; font-weight:700; letter-spacing:.1em; text-transform:uppercase; color:var(--accent-d); opacity:.82; }
+  .sheet-box{ position:relative; }
+  .sheet{ position:absolute; top:0; left:0; transform-origin:top left; display:flex; box-shadow:var(--shadow); border-radius:6px; }
+  .fold-line{ position:absolute; left:50%; top:0; bottom:0; border-left:2px dashed rgba(120,90,50,.45); pointer-events:none; z-index:5; }
+  .exporting .preview-only{ display:none !important; }
+
+  /* ----- The gift card panel (size set inline; fonts scale via --u) ----- */
+  .gc{
+    --u:1; --gc-radius:calc(22px*var(--u)); position:relative; overflow:hidden; flex:none;
+    display:flex; flex-direction:column;
+    padding:calc(54px*var(--u)) calc(60px*var(--u));
+  }
+  .gc:first-child{ border-radius:var(--gc-radius) 0 0 var(--gc-radius); }
+  .gc:last-child{ border-radius:0 var(--gc-radius) var(--gc-radius) 0; }
+  .sheet .gc:only-child, .card-stack .sheet:only-child .gc{ border-radius:var(--gc-radius); }
+  .panel-label{ position:absolute; top:calc(10px*var(--u)); left:0; right:0; text-align:center; font-size:calc(15px*var(--u)); letter-spacing:.12em; text-transform:uppercase; font-weight:700; color:rgba(150,63,31,.85); background:rgba(255,255,255,.55); padding:calc(3px*var(--u)) 0; z-index:6; }
+  .gc .gc-eyebrow{ font-size:calc(21px*var(--u)); letter-spacing:.34em; text-transform:uppercase; font-weight:600; }
+  .gc .gc-biz{ font-size:calc(24px*var(--u)); margin-top:2px; }
+  .gc .gc-amount-wrap{ flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:calc(6px*var(--u)); }
+  .gc .gc-amount-label{ font-size:calc(20px*var(--u)); letter-spacing:.22em; text-transform:uppercase; opacity:.72; }
+  .gc .gc-amount{ font-size:calc(104px*var(--u)); line-height:1; font-weight:700; }
+  .gc .gc-amount .unit{ font-size:0.44em; font-weight:600; margin-left:6px; }
+  .gc .gc-msg{ font-size:calc(23px*var(--u)); text-align:center; max-width:82%; margin:calc(2px*var(--u)) auto 0; line-height:1.4; }
+  .gc .gc-tofrom{ display:flex; justify-content:center; gap:calc(46px*var(--u)); margin-top:calc(14px*var(--u)); font-size:calc(21px*var(--u)); }
+  .gc .gc-tofrom .lbl{ opacity:.62; }
+  .gc .gc-foot{ display:flex; justify-content:space-between; align-items:flex-end; gap:calc(16px*var(--u)); font-size:calc(18px*var(--u)); margin-top:auto; }
+  .gc .gc-foot .lbl{ opacity:.6; letter-spacing:.04em; }
+  .gc .gc-foot .gc-code{ font-family:'Jost',sans-serif; letter-spacing:.16em; font-weight:600; }
+  .gc .gc-sign{ display:flex; flex-direction:column; align-items:center; gap:calc(5px*var(--u)); margin-top:calc(18px*var(--u)); }
+  .gc .gc-sign-line{ width:58%; height:calc(30px*var(--u)); border-bottom:1px solid currentColor; opacity:.45; }
+  .gc .gc-sign-label{ font-size:calc(13px*var(--u)); letter-spacing:.16em; text-transform:uppercase; opacity:.55; }
+  .gc .gc-wm{ position:absolute; left:0; right:0; bottom:calc(16px*var(--u)); text-align:center; font-size:calc(15px*var(--u)); font-family:'Jost',sans-serif; font-weight:600; opacity:.55; z-index:8; }
+  .gc .gc-wm.hide{ display:none; }
+
+  /* hide empty / unplaced rows */
+  .gc.no-biz .gc-biz, .gc.no-msg .gc-msg, .gc.no-to .gc-to, .gc.no-from .gc-from,
+  .gc.no-valid .gc-valid, .gc.no-code .gc-codewrap, .gc.no-tofrom .gc-tofrom,
+  .gc.no-amount .gc-amount, .gc.no-amount .gc-amount-label, .gc.no-eyebrow .gc-eyebrow,
+  .gc.no-sign .gc-sign, .gc.no-foot .gc-foot{ display:none; }
+
+  .gc .gc-logo{ display:block; max-width:48%; object-fit:contain; margin-bottom:calc(14px*var(--u)); }
+  .gc.no-logo .gc-logo{ display:none; }
+  /* Tekstjustering (venstre/midt) */
+  .gc.center .gc-eyebrow, .gc.center .gc-biz{ text-align:center; }
+  .gc.center .gc-logo{ margin-left:auto; margin-right:auto; }
+
+  /* ===== Ramme om papiret (til/fra styres af bruger) ===== */
+  .gc .gc-frame-line{ display:none; position:absolute; inset:calc(24px*var(--u)); border:calc(2px*var(--u)) solid var(--gc-accent,#a8542c); opacity:.55; border-radius:calc(var(--gc-radius) * 0.5); pointer-events:none; }
+  .gc.bordered .gc-frame-line{ display:block; }
+
+  /* ===== Template: Elegant ===== */
+  .gc.elegant{ background:var(--gc-bg, linear-gradient(150deg,#fbf6ec 0%,#f3e9d6 100%)); color:var(--gc-text,#3a2c20); font-family:var(--gc-font,'Cormorant Garamond',serif); border:1px solid #e6d7bd; }
+  .gc.elegant .gc-eyebrow{ color:var(--gc-accent,#a8542c); }
+  .gc.elegant .gc-amount{ font-family:var(--gc-font,'Fraunces',serif); color:var(--gc-accent,#a8542c); }
+  .gc.elegant .gc-frame-line{ border-color:var(--gc-accent,#a8542c); }
+  .gc.elegant .gc-wm{ color:var(--gc-accent,#a8542c); }
+
+  /* ===== Template: Dark ===== */
+  .gc.dark{ background:var(--gc-bg, radial-gradient(120% 120% at 30% 10%, #2f2820 0%, #211c17 60%, #191510 100%)); color:var(--gc-text,#efe6d3); font-family:var(--gc-font,'Fraunces',serif); }
+  .gc.dark .gc-eyebrow{ color:var(--gc-accent,#e3b25e); }
+  .gc.dark .gc-amount{ font-family:var(--gc-font,'Fraunces',serif); color:var(--gc-accent,#e9c887); }
+  .gc.dark .gc-frame-line{ border-color:var(--gc-accent,#e9c887); opacity:.5; }
+  .gc.dark .gc-wm{ color:var(--gc-accent,#e9c887); }
+
+  /* ===== Template: Modern ===== */
+  .gc.modern{ background:var(--gc-bg,#ffffff); color:var(--gc-text,#26221d); font-family:var(--gc-font,'Jost',sans-serif); border:1px solid #ececec; }
+  .gc.modern .gc-eyebrow{ color:var(--gc-accent,#b5542a); }
+  .gc.modern .gc-amount{ font-family:var(--gc-font,'Jost',sans-serif); color:var(--gc-accent,#b5542a); }
+  .gc.modern .gc-bar{ position:absolute; top:0; left:0; right:0; height:calc(14px*var(--u)); background:var(--gc-accent,#b5542a); }
+  .gc.modern .gc-frame-line{ border-color:rgba(0,0,0,.16); inset:calc(20px*var(--u)); }
+  .gc.modern .gc-wm{ color:var(--gc-accent,#b5542a); }
+
+  .empty-hint{ color:var(--muted); font-size:1rem; text-align:center; }
+
+  .foot{ max-width:1300px; margin:0 auto; padding:0 30px 40px; text-align:center; color:var(--muted); font-size:.82rem; }
+  .foot a{ color:var(--accent-d); }
+
+  @media (max-width:900px){
+    .topbar{ padding:22px 18px 4px; }
+    .home-link-mobile{ display:inline-flex; }
+    .lang-sel{ padding:5px 24px 5px 8px; font-size:.82rem; }
+    .brand h1{ font-size:1.7rem; }
+    .app{ display:flex; flex-direction:column; padding:0 0 40px; gap:0; }
+    .stage{ order:-1; position:sticky; top:0; z-index:20; width:100%; margin:0; padding:10px 14px 12px; background:var(--bg); border-bottom:1px solid var(--line); box-shadow:0 8px 16px rgba(60,45,25,.07); gap:8px; }
+    .stage-hint{ display:none; }
+    /* Mobil side-skifter: to knapper øverst, som på visitkort */
+    .gc-side-switch{ display:flex; gap:6px; width:100%; padding:0; margin:0 0 2px; }
+    .gc-side-switch.hide{ display:none !important; }
+    .gc-side-switch button{
+      flex:1; text-align:center; font-family:inherit; font-weight:600;
+      font-size:.9rem; color:var(--ink); padding:10px 6px; border-radius:999px;
+      border:1px solid var(--line); background:#fff; cursor:pointer; transition:all .15s;
+    }
+    .gc-side-switch button.active{ background:var(--accent); color:#fff; border-color:var(--accent); }
+    /* Vis kun det aktive ark, så det fylder hele bredden */
+    .card-stack{ gap:0 !important; }
+    .sheet-wrap{ display:none !important; }
+    .sheet-wrap.active-sheet{ display:flex !important; }
+    .surface-label{ display:none; }
+    .panel{ margin:12px 14px 0; }
+    .field, select, input, textarea{ font-size:16px; }
+  }
+  /* ===== Showcase til galleriets iframes: vis kun ét panel, kortet fylder feltet ===== */
+  body.gc-showcase{ background:transparent !important; overflow:hidden; }
+  body.gc-showcase .topbar,
+  body.gc-showcase .panel,
+  body.gc-showcase .gc-side-switch,
+  body.gc-showcase .stage-hint{ display:none !important; }
+  body.gc-showcase .app{ display:block !important; max-width:none !important; padding:0 !important; margin:0 !important; gap:0 !important; }
+  body.gc-showcase .stage{ position:static !important; top:auto !important; padding:0 !important; margin:0 !important; gap:0 !important; }
+  body.gc-showcase .card-stack{ height:100vh !important; min-height:100vh !important; display:flex !important; align-items:center !important; justify-content:center !important; padding:0 !important; margin:0 !important; gap:0 !important; }
+  body.gc-showcase .gc-show-holder{ position:relative; }
+  body.gc-showcase .gc{ box-shadow:none !important; border-radius:0 !important; }
+  body.gc-showcase .gc-wm{ display:none !important; }
+</style>
+</head>
+<body>
+
+  <div class="topbar">
+    <a class="home-link-mobile" href="/" title="Lusidio" aria-label="Tilbage">←</a>
+    <div class="brand">
+      <h1 data-i18n="brandH1">Gavekort</h1><span class="dot"></span>
+      <p data-i18n="tagline">Udfyld felterne og hent et færdigt gavekort, klar til print.</p>
+    </div>
+    <select id="langSel" class="lang-sel" aria-label="Language / Sprog">
+      <option value="da">Dansk</option>
+      <option value="en">English</option>
+      <option value="tr">Türkçe</option>
+      <option value="uk">Українська</option>
+    </select>
+  </div>
+
+  <div class="app">
+
+    <!-- ============ KONTROLPANEL ============ -->
+    <div class="panel">
+
+      <div>
+        <p class="save-label"><span data-i18n="myCards">Mine gavekort</span> <span class="tag on" title="Gemmes automatisk">●</span></p>
+        <div class="save-actions">
+          <button class="btn-mini" id="saveAsBtn" data-i18n="saveAs">+ Gem som…</button>
+          <button class="btn-mini" id="exportBtn" data-i18n="exportBtn">↓ Eksportér</button>
+          <button class="btn-mini" id="importBtn" data-i18n="importBtn">↑ Importér</button>
+          <input type="file" id="importInput" accept="application/json,.json" style="display:none;">
+        </div>
+        <div id="libraryList" class="library"></div>
+        <p class="hint" id="saveStatus"></p>
+      </div>
+
+      <div>
+        <span class="grp-label" data-i18n="templatesLabel">Skabeloner</span>
+        <p class="surf-note" data-i18n="templatesNote">Vælg en færdig skabelon at starte fra — du kan ændre alt bagefter.</p>
+        <div class="tpl-grid" id="tplGrid"></div>
+      </div>
+
+      <div>
+        <span class="grp-label" data-i18n="formatLabel">Format</span>
+        <div class="fmt-row">
+          <button class="fmt-btn active" data-format="single" type="button" data-i18n="formatSingle">Enkelt kort</button>
+          <button class="fmt-btn" data-format="frontback" type="button" data-i18n="formatFrontback">For- og bagside</button>
+          <button class="fmt-btn" data-format="folded" type="button" data-i18n="formatFolded">Foldet kort</button>
+        </div>
+        <div style="margin-top:11px;">
+          <span class="mini-label" data-i18n="paperLabel">Papirstørrelse</span>
+          <select class="field" id="paperSel">
+            <option value="a4" data-i18n="paperA4">A4</option>
+            <option value="a5" data-i18n="paperA5">A5</option>
+            <option value="a6" data-i18n="paperA6">A6</option>
+            <option value="square" data-i18n="paperSquare">Kvadratisk</option>
+            <option value="card" data-i18n="paperCard">Kreditkort-format</option>
+          </select>
+        </div>
+        <div style="margin-top:11px;">
+          <span class="mini-label" data-i18n="cornersLabel">Hjørner</span>
+          <div class="corner-row">
+            <button class="fmt-btn active" data-corner="round" type="button" data-i18n="cornerRound">Afrundede</button>
+            <button class="fmt-btn" data-corner="sharp" type="button" data-i18n="cornerSharp">Skarpe</button>
+          </div>
+        </div>
+        <div style="margin-top:11px;">
+          <span class="mini-label" data-i18n="borderLabel">Ramme om papiret</span>
+          <div class="corner-row">
+            <button class="fmt-btn active" data-border="on" type="button" data-i18n="borderOn">Med ramme</button>
+            <button class="fmt-btn" data-border="off" type="button" data-i18n="borderOff">Uden ramme</button>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <span class="grp-label" data-i18n="styleLabel">Stil</span>
+        <div class="styles">
+          <button class="style-card active" data-style="elegant" type="button">
+            <span class="sc-prev elegant">Aa</span><span class="sc-name" data-i18n="stElegant">Elegant</span>
+          </button>
+          <button class="style-card" data-style="dark" type="button">
+            <span class="sc-prev dark">Aa</span><span class="sc-name" data-i18n="stDark">Mørk</span>
+          </button>
+          <button class="style-card" data-style="modern" type="button">
+            <span class="sc-prev modern">Aa</span><span class="sc-name" data-i18n="stModern">Moderne</span>
+          </button>
+        </div>
+        <div style="margin-top:11px;">
+          <span class="mini-label" data-i18n="alignLabel">Tekstjustering</span>
+          <div class="corner-row">
+            <button class="fmt-btn active" data-align="left" type="button" data-i18n="alignLeft">Venstre</button>
+            <button class="fmt-btn" data-align="center" type="button" data-i18n="alignCenter">Midt</button>
+          </div>
+        </div>
+      </div>
+
+      <div id="surfaceBox">
+        <span class="grp-label" id="surfaceContentLabel" data-i18n="cardContentLabel">Hvad skal stå på kortet</span>
+        <p class="surf-note" id="surfaceNote" data-i18n="cardContentNote">Kryds af hvad der skal vises. Udfyld derefter felterne nedenfor.</p>
+        <div class="surf-tabs" id="surfTabs"></div>
+        <div class="elem-grid" id="elemGrid"></div>
+      </div>
+
+      <div id="eyebrowBox">
+        <span class="grp-label" data-i18n="eyebrowLabel">Overskrift (øverst)</span>
+        <input class="field" id="eyebrowInput" data-i18n-ph="eyebrowPh" placeholder="Gavekort">
+      </div>
+
+      <div>
+        <span class="grp-label" data-i18n="bizLabel">Butiksnavn</span>
+        <input class="field" id="bizInput" data-i18n-ph="bizPh" placeholder="fx Café Solsikke" value="Café Solsikke">
+      </div>
+
+      <div>
+        <span class="grp-label" data-i18n="amountLabel">Beløb</span>
+        <div class="two">
+          <input class="field" id="amountInput" inputmode="numeric" data-i18n-ph="amountPh" placeholder="200" value="200">
+          <input class="field" id="unitInput" data-i18n-ph="unitPh" placeholder="kr" value="kr">
+        </div>
+      </div>
+
+      <div>
+        <span class="grp-label" data-i18n="toFromLabel">Til / Fra</span>
+        <div class="two">
+          <input class="field" id="toInput" data-i18n-ph="toPh" placeholder="Til…">
+          <input class="field" id="fromInput" data-i18n-ph="fromPh" placeholder="Fra…">
+        </div>
+      </div>
+
+      <div>
+        <span class="grp-label" data-i18n="msgLabel">Personlig besked</span>
+        <textarea class="field" id="msgInput" rows="2" data-i18n-ph="msgPh" placeholder="Tillykke! Nyd en kop kaffe på os."></textarea>
+      </div>
+
+      <div>
+        <span class="grp-label" data-i18n="validLabel">Gyldig til</span>
+        <input class="field" id="validInput" data-i18n-ph="validPh" placeholder="fx 31.12.2026 eller 12 måneder">
+      </div>
+
+      <div>
+        <span class="grp-label" data-i18n="codeLabel">Kode (kosmetisk)</span>
+        <div class="code-gen">
+          <input class="field" id="codeInput2" data-i18n-ph="codePh2" placeholder="fx GAVE-2A9F">
+          <button class="btn-mini" id="genCodeBtn" type="button" data-i18n="genCode">Generér</button>
+        </div>
+        <p class="hint" style="margin-top:6px;" data-i18n="codeNote">Koden står kun på kortet — den kan ikke tjekkes digitalt. Notér den selv ved indløsning.</p>
+      </div>
+
+      <div id="labelsBox">
+        <span class="grp-label" data-i18n="labelsLabel">Etiketter (fast tekst)</span>
+        <p class="surf-note" data-i18n="labelsNote">Ret de faste ord på kortet (Værdi, Til, Fra …). Lad et felt stå tomt for at fjerne ordet.</p>
+        <div id="labelsList"></div>
+      </div>
+
+      <div>
+        <span class="grp-label" data-i18n="textStyleLabel">Tekststørrelse & fremhævning</span>
+        <p class="surf-note" data-i18n="textStyleNote">Tilpas størrelse, fed, kursiv og farve for hvert felt på kortet.</p>
+        <div id="fstyleList"></div>
+      </div>
+
+      <div>
+        <span class="grp-label" data-i18n="boxesLabel">Tekstbokse</span>
+        <p class="surf-note" data-i18n="boxesNote">Tilføj frie tekstbokse, vælg hvilken side de står på, og placér dem frit på kortet.</p>
+        <div id="boxWrap"></div>
+      </div>
+
+      <div>
+        <span class="grp-label" data-i18n="accentLabel">Accentfarve</span>
+        <div class="color-row">
+          <input type="color" id="accentColor" value="#a8542c">
+          <div class="swatches" id="accentSwatches"></div>
+        </div>
+      </div>
+
+      <div>
+        <span class="grp-label" data-i18n="fontLabel">Skrifttype</span>
+        <select class="field" id="fontSel">
+          <option value="" data-i18n="fontDefault">Skabelonens font</option>
+          <option value="'Fraunces',serif" style="font-family:'Fraunces',serif;">Fraunces</option>
+          <option value="'Cormorant Garamond',serif" style="font-family:'Cormorant Garamond',serif;">Cormorant Garamond</option>
+          <option value="'Playfair Display',serif" style="font-family:'Playfair Display',serif;">Playfair Display</option>
+          <option value="'Jost',sans-serif" style="font-family:'Jost',sans-serif;">Jost</option>
+          <option value="'Poppins',sans-serif" style="font-family:'Poppins',sans-serif;">Poppins</option>
+        </select>
+      </div>
+
+      <div>
+        <span class="grp-label" data-i18n="ownColorsLabel">Egne farver</span>
+        <div style="display:flex;flex-direction:column;gap:9px;">
+          <div class="color-row">
+            <input type="color" id="bgColor" value="#fbf6ec">
+            <span class="mini-label" style="margin:0;" data-i18n="bgColorLabel">Baggrund</span>
+            <div class="swatches" id="bgSwatches" style="margin-left:auto;"></div>
+          </div>
+          <div class="color-row">
+            <input type="color" id="textColor" value="#3a2c20">
+            <span class="mini-label" style="margin:0;" data-i18n="textColorLabel">Tekst</span>
+            <div class="swatches" id="textSwatches" style="margin-left:auto;"></div>
+          </div>
+          <button class="btn-mini" id="resetColorsBtn" type="button" style="align-self:flex-start;" data-i18n="resetColors">↺ Brug skabelonens farver</button>
+        </div>
+      </div>
+
+      <div>
+        <span class="grp-label" data-i18n="logoLabel">Eget logo</span>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;">
+          <button class="btn-mini" id="logoBtn" type="button" data-i18n="logoUpload">↑ Upload logo</button>
+          <button class="btn-mini" id="logoRemoveBtn" type="button" style="display:none;" data-i18n="logoRemove">Fjern logo</button>
+          <input type="file" id="logoInput" accept="image/*" style="display:none;">
+        </div>
+        <div id="logoSizeRow" style="display:none;margin-top:10px;">
+          <span class="mini-label" data-i18n="logoSizeLabel">Logo-størrelse</span>
+          <input type="range" id="logoSize" min="40" max="200" value="96" style="width:100%;">
+        </div>
+        <p class="hint" style="margin-top:6px;" data-i18n="logoHint">PNG med gennemsigtig baggrund ser bedst ud.</p>
+      </div>
+
+      <!-- ============ DOWNLOAD / PAYWALL ============ -->
+      <div>
+        <span class="grp-label" data-i18n="downloadLabel">Hent gavekort</span>
+        <div style="display:flex;flex-direction:column;gap:9px;">
+          <button class="btn btn-primary" id="pngBtn" data-i18n="payImg">Betal &amp; hent (PNG) — 49 kr.</button>
+          <button class="btn btn-primary" id="getFileBtn" style="display:none;">✓ Hent dit gavekort nu</button>
+          <button class="btn btn-free" id="freeBtn" data-i18n="freeImg">Hent gratis med vandmærke</button>
+          <button class="btn btn-ghost" id="resetBtn" data-i18n="resetAll">Ryd alt og start forfra</button>
+        </div>
+        <p class="pay-note" data-i18n-html="payNoteHtml">Forhåndsvisningen vises med et vandmærke. Når du betaler, <strong>fjernes vandmærket</strong>, og du henter et rent gavekort i høj opløsning. Hver hentning koster 49 kr.</p>
+        <div class="code-row" style="margin-top:12px;">
+          <input class="field" id="unlockCode" data-i18n-ph="codePh" placeholder="Har du en kode?">
+          <button class="btn btn-primary" id="useCodeBtn" data-i18n="useCode" style="background:transparent;color:var(--accent-d);border:1.5px solid var(--accent);box-shadow:none;">Brug kode</button>
+        </div>
+        <div class="status" id="status"></div>
+      </div>
+
+    </div>
+
+    <!-- ============ PREVIEW ============ -->
+    <div class="stage">
+      <div class="stage-hint" data-i18n="previewHint">Sådan ser dit gavekort ud. Det du henter er i høj opløsning, klar til print.</div>
+      <div class="gc-side-switch hide" id="gcSideSwitch"></div>
+      <div class="card-stack" id="cardStack"></div>
+    </div>
+
+  </div>
+
+  <div class="foot">
+    <span data-i18n="footNote">Lavet med Lusidio — enkle designværktøjer for små virksomheder. </span>
+    <a href="/" data-i18n="footHome">Til forsiden</a>
+  </div>
+
+<script>
+(function(){
+  'use strict';
+  const byId = id => document.getElementById(id);
+
+  // ---------- i18n ----------
+  const I18N = {
+    da:{
+      brandH1:'Gavekort', tagline:'Udfyld felterne og hent et færdigt gavekort, klar til print.',
+      myCards:'Mine gavekort', saveAs:'+ Gem som…', exportBtn:'↓ Eksportér', importBtn:'↑ Importér',
+      libEmpty:'Ingen gemte gavekort endnu — tryk “+ Gem som…”.', open:'Åbn', del:'Slet',
+      askName:'Giv dit gavekort et navn:', confirmOverwrite:'Der findes allerede et gavekort med dette navn. Overskriv det?', confirmDelete:'Slet dette gavekort?',
+      stSavedAs:'Gemt ✓', stOpened:'Åbnet ✓', stDeleted:'Slettet.', stExported:'Eksporteret som .json-fil (din backup).', stImported:'Importeret ✓', stImportInvalid:'Ugyldig fil — kunne ikke importere.', stStorageOff:'Lagring virker ikke her. Åbn den downloadede fil i din browser.',
+      styleLabel:'Stil', stElegant:'Elegant', stDark:'Mørk', stModern:'Moderne',
+      bizLabel:'Butiksnavn', bizPh:'fx Café Solsikke',
+      amountLabel:'Beløb', amountPh:'200', unitPh:'kr',
+      toFromLabel:'Til / Fra', toPh:'Til…', fromPh:'Fra…',
+      msgLabel:'Personlig besked', msgPh:'Tillykke! Nyd en kop kaffe på os.',
+      validLabel:'Gyldig til', validPh:'fx 31.12.2026 eller 12 måneder',
+      codeLabel:'Kode (kosmetisk)', codePh2:'fx GAVE-2A9F', genCode:'Generér',
+      codeNote:'Koden står kun på kortet — den kan ikke tjekkes digitalt. Notér den selv ved indløsning.',
+      accentLabel:'Accentfarve',
+      fontLabel:'Skrifttype', fontDefault:'Skabelonens font',
+      ownColorsLabel:'Egne farver', bgColorLabel:'Baggrund', textColorLabel:'Tekst', resetColors:'↺ Brug skabelonens farver',
+      logoLabel:'Eget logo', logoUpload:'↑ Upload logo', logoRemove:'Fjern logo', logoSizeLabel:'Logo-størrelse', logoHint:'PNG med gennemsigtig baggrund ser bedst ud.',
+      downloadLabel:'Hent gavekort',
+      formatLabel:'Format', formatSingle:'Enkelt kort', formatFrontback:'For- og bagside', formatFolded:'Foldet kort',
+      cornersLabel:'Hjørner', cornerRound:'Afrundede', cornerSharp:'Skarpe', borderLabel:'Ramme om papiret', borderOn:'Med ramme', borderOff:'Uden ramme', alignLabel:'Tekstjustering', alignLeft:'Venstre', alignCenter:'Midt', eyebrowLabel:'Overskrift (øverst)', eyebrowPh:'Gavekort', labelsLabel:'Etiketter (fast tekst)', cardContentLabel:'Hvad skal stå på kortet', cardContentNote:'Kryds af hvad der skal vises. Udfyld derefter felterne nedenfor.', labelsNote:'Ret de faste ord på kortet (Værdi, Til, Fra …). Lad et felt stå tomt for at fjerne ordet.',
+      templatesLabel:'Skabeloner', templatesNote:'Vælg en færdig skabelon at starte fra — du kan ændre alt bagefter.',
+      tpl1Name:'Klassisk café', tpl1Desc:'Elegant og varm, med besked og underskrift', tpl2Name:'Moderne minimal', tpl2Desc:'Skarpe hjørner, ren stil, tekstboks', tpl3Name:'Mørk premium', tpl3Desc:'Mørk baggrund, guld, elegant boks', tpl4Name:'Foldet kort', tpl4Desc:'Foldet med indhold på alle fire flader',
+      paperLabel:'Papirstørrelse', paperA4:'A4 (297 × 210 mm)', paperA5:'A5 (210 × 148 mm)', paperA6:'A6 (148 × 105 mm)', paperSquare:'Kvadratisk (150 × 150 mm)', paperCard:'Kreditkort (85 × 54 mm)',
+      surfaceContentLabel:'Indhold på fladerne', surfaceNote:'Vælg en flade, og kryds af hvad der skal stå på den.',
+      textStyleLabel:'Tekststørrelse & fremhævning', textStyleNote:'Tilpas størrelse, fed, kursiv og farve for hvert felt på kortet.',
+      flSize:'Størrelse', flStyle:'Skrift', flColor:'Farve', flLs:'Bogstavafstand', flLsN:'Normal', flLsS:'Lidt', flLsW:'Meget', colDefault:'A',
+      boxesLabel:'Tekstbokse', boxesNote:'Tilføj frie tekstbokse, vælg hvilken side de står på, og placér dem frit på kortet.',
+      flAdd:'Tilføj linje:', flAddDiv:'Skillelinje', flBox:'Tekstboks', flAddBox:'+ Tilføj tekstboks', flPos:'Placering', flLayout:'Linjer', flStack:'Under hinanden', flRow:'På række', flAlign:'Justering', flGap:'Afstand', flWrap:'Linjebrud', flMoveUp:'Flyt op', flMoveDown:'Flyt ned', flDelete:'Slet', flInline:'Sæt på samme linje som forrige',
+      tOverline:'Lille overskrift', tName:'Overskrift', tSubhead:'Underoverskrift', tTagline:'Undertekst', tCustom:'Fri tekst',
+      shCard:'Kort', shOutside:'Yderside', shInside:'Inderside', sfFront:'Forside', sfBack:'Bagside', sfInLeft:'Indvendig venstre', sfInRight:'Indvendig højre',
+      el_logo:'Logo', el_eyebrow:'“Gavekort”', el_biz:'Butiksnavn', el_amount:'Beløb', el_msg:'Besked', el_tofrom:'Til / Fra', el_valid:'Gyldig til', el_code:'Kode', el_sign:'Underskrift / stempel', cardSign:'Underskrift / stempel',
+      payImg:'Betal & hent (PNG) — 49 kr.', getImg:'✓ Hent dit gavekort nu',
+      payNoteHtml:'Forhåndsvisningen vises med et vandmærke. Når du betaler, <strong>fjernes vandmærket</strong>, og du henter et rent gavekort i høj opløsning. Hver hentning koster 49 kr.',
+      freeImg:'Hent gratis med vandmærke', resetAll:'Ryd alt og start forfra',
+      codePh:'Har du en kode?', useCode:'Brug kode',
+      codeApplied:'Kode godkendt ✓ — hent dit gavekort gratis med knappen ovenfor.',
+      codeInvalid:'Koden er ikke gyldig. Tjek den, og prøv igen.', codeUsed:'Denne kode er allerede brugt i denne browser.',
+      previewHint:'Sådan ser dit gavekort ud. Det du henter er i høj opløsning, klar til print.',
+      stPayStart:'Sender dig til betaling…', stPayWait:'Tjekker din betaling…', stPayReady:'Betaling gennemført ✓ — hent dit gavekort nu.', stPayFail:'Noget gik galt. Prøv igen.', stCancel:'Betaling afbrudt.',
+      stRendering:'Laver din fil…',
+      cardEyebrow:'Gavekort', cardValue:'Værdi', cardTo:'Til', cardFrom:'Fra', cardValid:'Gyldig til', cardCode:'Kode',
+      footNote:'Lavet med Lusidio — enkle designværktøjer for små virksomheder. ', footHome:'Til forsiden'
+    },
+    en:{
+      brandH1:'Gift card', tagline:'Fill in the fields and download a finished gift card, ready to print.',
+      myCards:'My gift cards', saveAs:'+ Save as…', exportBtn:'↓ Export', importBtn:'↑ Import',
+      libEmpty:'No saved gift cards yet — tap “+ Save as…”.', open:'Open', del:'Delete',
+      askName:'Name your gift card:', confirmOverwrite:'A gift card with this name already exists. Overwrite it?', confirmDelete:'Delete this gift card?',
+      stSavedAs:'Saved ✓', stOpened:'Opened ✓', stDeleted:'Deleted.', stExported:'Exported as a .json file (your backup).', stImported:'Imported ✓', stImportInvalid:'Invalid file — could not import.', stStorageOff:'Storage does not work here. Open the downloaded file in your browser.',
+      styleLabel:'Style', stElegant:'Elegant', stDark:'Dark', stModern:'Modern',
+      bizLabel:'Business name', bizPh:'e.g. Café Sunflower',
+      amountLabel:'Amount', amountPh:'200', unitPh:'kr',
+      toFromLabel:'To / From', toPh:'To…', fromPh:'From…',
+      msgLabel:'Personal message', msgPh:'Congratulations! Enjoy a coffee on us.',
+      validLabel:'Valid until', validPh:'e.g. 31.12.2026 or 12 months',
+      codeLabel:'Code (cosmetic)', codePh2:'e.g. GIFT-2A9F', genCode:'Generate',
+      codeNote:'The code only appears on the card — it cannot be checked digitally. Note it yourself when redeeming.',
+      accentLabel:'Accent color',
+      fontLabel:'Font', fontDefault:'Template font',
+      ownColorsLabel:'Custom colors', bgColorLabel:'Background', textColorLabel:'Text', resetColors:'↺ Use template colors',
+      logoLabel:'Your logo', logoUpload:'↑ Upload logo', logoRemove:'Remove logo', logoSizeLabel:'Logo size', logoHint:'A PNG with a transparent background looks best.',
+      downloadLabel:'Download gift card',
+      formatLabel:'Format', formatSingle:'Single card', formatFrontback:'Front & back', formatFolded:'Folded card',
+      cornersLabel:'Corners', cornerRound:'Rounded', cornerSharp:'Sharp', borderLabel:'Border around card', borderOn:'With border', borderOff:'No border', alignLabel:'Text alignment', alignLeft:'Left', alignCenter:'Center', eyebrowLabel:'Heading (top)', eyebrowPh:'Gift card', labelsLabel:'Labels (fixed text)', cardContentLabel:'What goes on the card', cardContentNote:'Tick what should show. Then fill in the fields below.', labelsNote:'Edit the fixed words on the card (Value, To, From …). Leave a field empty to remove the word.',
+      templatesLabel:'Templates', templatesNote:'Pick a ready-made template to start from — you can change everything afterwards.',
+      tpl1Name:'Classic café', tpl1Desc:'Elegant and warm, with message and signature', tpl2Name:'Modern minimal', tpl2Desc:'Sharp corners, clean style, text box', tpl3Name:'Dark premium', tpl3Desc:'Dark background, gold, elegant box', tpl4Name:'Folded card', tpl4Desc:'Folded with content on all four sides',
+      paperLabel:'Paper size', paperA4:'A4 (297 × 210 mm)', paperA5:'A5 (210 × 148 mm)', paperA6:'A6 (148 × 105 mm)', paperSquare:'Square (150 × 150 mm)', paperCard:'Credit card (85 × 54 mm)',
+      surfaceContentLabel:'Content per side', surfaceNote:'Pick a side and tick what should appear on it.',
+      textStyleLabel:'Text size & emphasis', textStyleNote:'Adjust size, bold, italic and colour for each field on the card.',
+      flSize:'Size', flStyle:'Style', flColor:'Color', flLs:'Letter spacing', flLsN:'Normal', flLsS:'Some', flLsW:'Wide', colDefault:'A',
+      boxesLabel:'Text boxes', boxesNote:'Add free text boxes, choose which side they go on, and place them anywhere on the card.',
+      flAdd:'Add line:', flAddDiv:'Divider', flBox:'Text box', flAddBox:'+ Add text box', flPos:'Position', flLayout:'Lines', flStack:'Stacked', flRow:'In a row', flAlign:'Alignment', flGap:'Spacing', flWrap:'Line break', flMoveUp:'Move up', flMoveDown:'Move down', flDelete:'Delete', flInline:'Put on same line as previous',
+      tOverline:'Small heading', tName:'Heading', tSubhead:'Subheading', tTagline:'Tagline', tCustom:'Free text',
+      shCard:'Card', shOutside:'Outside', shInside:'Inside', sfFront:'Front', sfBack:'Back', sfInLeft:'Inside left', sfInRight:'Inside right',
+      el_logo:'Logo', el_eyebrow:'“Gift card”', el_biz:'Business name', el_amount:'Amount', el_msg:'Message', el_tofrom:'To / From', el_valid:'Valid until', el_code:'Code', el_sign:'Signature / stamp', cardSign:'Signature / stamp',
+      payImg:'Pay & download (PNG) — 49 kr.', getImg:'✓ Download your gift card now',
+      payNoteHtml:'The preview is shown with a watermark. When you pay, <strong>the watermark is removed</strong> and you download a clean gift card in high resolution. Each download costs 49 kr.',
+      freeImg:'Download free with watermark', resetAll:'Clear everything and start over',
+      codePh:'Have a code?', useCode:'Use code',
+      codeApplied:'Code accepted ✓ — download your gift card for free with the button above.',
+      codeInvalid:'The code is not valid. Check it and try again.', codeUsed:'This code has already been used in this browser.',
+      previewHint:'This is how your gift card looks. What you download is high resolution, ready to print.',
+      stPayStart:'Sending you to checkout…', stPayWait:'Checking your payment…', stPayReady:'Payment complete ✓ — download your gift card now.', stPayFail:'Something went wrong. Try again.', stCancel:'Payment cancelled.',
+      stRendering:'Creating your file…',
+      cardEyebrow:'Gift card', cardValue:'Value', cardTo:'To', cardFrom:'From', cardValid:'Valid until', cardCode:'Code',
+      footNote:'Made with Lusidio — simple design tools for small businesses. ', footHome:'Back to home'
+    },
+    tr:{
+      brandH1:'Hediye kartı', tagline:'Alanları doldur ve baskıya hazır bir hediye kartı indir.',
+      myCards:'Hediye kartlarım', saveAs:'+ Farklı kaydet…', exportBtn:'↓ Dışa aktar', importBtn:'↑ İçe aktar',
+      libEmpty:'Henüz kayıtlı hediye kartı yok — “+ Farklı kaydet…”e dokun.', open:'Aç', del:'Sil',
+      askName:'Hediye kartına bir ad ver:', confirmOverwrite:'Bu adda bir hediye kartı zaten var. Üzerine yazılsın mı?', confirmDelete:'Bu hediye kartı silinsin mi?',
+      stSavedAs:'Kaydedildi ✓', stOpened:'Açıldı ✓', stDeleted:'Silindi.', stExported:'.json dosyası olarak dışa aktarıldı (yedeğiniz).', stImported:'İçe aktarıldı ✓', stImportInvalid:'Geçersiz dosya — içe aktarılamadı.', stStorageOff:'Depolama burada çalışmıyor. İndirilen dosyayı tarayıcınızda açın.',
+      styleLabel:'Stil', stElegant:'Zarif', stDark:'Koyu', stModern:'Modern',
+      bizLabel:'İşletme adı', bizPh:'örn. Café Solsikke',
+      amountLabel:'Tutar', amountPh:'200', unitPh:'kr',
+      toFromLabel:'Kime / Kimden', toPh:'Kime…', fromPh:'Kimden…',
+      msgLabel:'Kişisel mesaj', msgPh:'Tebrikler! Kahve bizden.',
+      validLabel:'Son geçerlilik', validPh:'örn. 31.12.2026 veya 12 ay',
+      codeLabel:'Kod (kozmetik)', codePh2:'örn. GAVE-2A9F', genCode:'Oluştur',
+      codeNote:'Kod yalnızca kartta görünür — dijital olarak kontrol edilemez. Kullanırken kendiniz not edin.',
+      accentLabel:'Vurgu rengi',
+      fontLabel:'Yazı tipi', fontDefault:'Şablon yazı tipi',
+      ownColorsLabel:'Özel renkler', bgColorLabel:'Arka plan', textColorLabel:'Metin', resetColors:'↺ Şablon renklerini kullan',
+      logoLabel:'Kendi logon', logoUpload:'↑ Logo yükle', logoRemove:'Logoyu kaldır', logoSizeLabel:'Logo boyutu', logoHint:'Şeffaf arka planlı PNG en iyi görünür.',
+      downloadLabel:'Hediye kartını indir',
+      formatLabel:'Format', formatSingle:'Tek kart', formatFrontback:'Ön ve arka', formatFolded:'Katlanır kart',
+      cornersLabel:'Köşeler', cornerRound:'Yuvarlak', cornerSharp:'Keskin', borderLabel:'Kart çerçevesi', borderOn:'Çerçeveli', borderOff:'Çerçevesiz', alignLabel:'Metin hizalama', alignLeft:'Sol', alignCenter:'Orta', eyebrowLabel:'Başlık (üst)', eyebrowPh:'Hediye kartı', labelsLabel:'Etiketler (sabit metin)', cardContentLabel:'Kartta ne olacak', cardContentNote:'Neyin görüneceğini işaretle. Sonra aşağıdaki alanları doldur.', labelsNote:'Karttaki sabit kelimeleri düzenle (Değer, Kime, Kimden …). Kelimeyi kaldırmak için alanı boş bırak.',
+      templatesLabel:'Şablonlar', templatesNote:'Başlamak için hazır bir şablon seçin — sonra her şeyi değiştirebilirsiniz.',
+      tpl1Name:'Klasik kafe', tpl1Desc:'Zarif ve sıcak, mesaj ve imza ile', tpl2Name:'Modern minimal', tpl2Desc:'Keskin köşeler, sade stil, metin kutusu', tpl3Name:'Koyu premium', tpl3Desc:'Koyu zemin, altın, zarif kutu', tpl4Name:'Katlanır kart', tpl4Desc:'Dört yüzünde de içerik olan katlanır',
+      paperLabel:'Kağıt boyutu', paperA4:'A4 (297 × 210 mm)', paperA5:'A5 (210 × 148 mm)', paperA6:'A6 (148 × 105 mm)', paperSquare:'Kare (150 × 150 mm)', paperCard:'Kredi kartı (85 × 54 mm)',
+      surfaceContentLabel:'Yüzlerin içeriği', surfaceNote:'Bir yüz seç ve üzerinde ne olacağını işaretle.',
+      textStyleLabel:'Metin boyutu ve vurgu', textStyleNote:'Karttaki her alan için boyut, kalın, italik ve rengi ayarla.',
+      flSize:'Boyut', flStyle:'Stil', flColor:'Renk', flLs:'Harf aralığı', flLsN:'Normal', flLsS:'Az', flLsW:'Çok', colDefault:'A',
+      boxesLabel:'Metin kutuları', boxesNote:'Serbest metin kutuları ekleyin, hangi yüzde olacaklarını seçin ve kartta istediğiniz yere yerleştirin.',
+      flAdd:'Satır ekle:', flAddDiv:'Ayraç', flBox:'Metin kutusu', flAddBox:'+ Metin kutusu ekle', flPos:'Konum', flLayout:'Satırlar', flStack:'Alt alta', flRow:'Yan yana', flAlign:'Hizalama', flGap:'Boşluk', flWrap:'Satır sonu', flMoveUp:'Yukarı taşı', flMoveDown:'Aşağı taşı', flDelete:'Sil', flInline:'Öncekiyle aynı satıra koy',
+      tOverline:'Küçük başlık', tName:'Başlık', tSubhead:'Alt başlık', tTagline:'Alt metin', tCustom:'Serbest metin',
+      shCard:'Kart', shOutside:'Dış yüz', shInside:'İç yüz', sfFront:'Ön', sfBack:'Arka', sfInLeft:'İç sol', sfInRight:'İç sağ',
+      el_logo:'Logo', el_eyebrow:'“Hediye kartı”', el_biz:'İşletme adı', el_amount:'Tutar', el_msg:'Mesaj', el_tofrom:'Kime / Kimden', el_valid:'Son geçerlilik', el_code:'Kod', el_sign:'İmza / kaşe', cardSign:'İmza / kaşe',
+      payImg:'Öde & indir (PNG) — 49 kr.', getImg:'✓ Hediye kartını şimdi indir',
+      payNoteHtml:'Önizleme bir filigranla gösterilir. Ödeme yaptığınızda <strong>filigran kaldırılır</strong> ve yüksek çözünürlükte temiz bir hediye kartı indirirsiniz. Her indirme 49 kr.',
+      freeImg:'Filigranlı ücretsiz indir', resetAll:'Her şeyi temizle ve baştan başla',
+      codePh:'Kodunuz var mı?', useCode:'Kodu kullan',
+      codeApplied:'Kod kabul edildi ✓ — yukarıdaki düğmeyle hediye kartını ücretsiz indir.',
+      codeInvalid:'Kod geçerli değil. Kontrol edip tekrar deneyin.', codeUsed:'Bu kod bu tarayıcıda zaten kullanıldı.',
+      previewHint:'Hediye kartın böyle görünüyor. İndirdiğin dosya yüksek çözünürlüklü, baskıya hazır.',
+      stPayStart:'Ödemeye yönlendiriliyorsun…', stPayWait:'Ödemen kontrol ediliyor…', stPayReady:'Ödeme tamamlandı ✓ — hediye kartını şimdi indir.', stPayFail:'Bir şeyler ters gitti. Tekrar deneyin.', stCancel:'Ödeme iptal edildi.',
+      stRendering:'Dosyan oluşturuluyor…',
+      cardEyebrow:'Hediye kartı', cardValue:'Değer', cardTo:'Kime', cardFrom:'Kimden', cardValid:'Son geçerlilik', cardCode:'Kod',
+      footNote:'Lusidio ile yapıldı — küçük işletmeler için basit tasarım araçları. ', footHome:'Ana sayfaya dön'
+    },
+    uk:{
+      brandH1:'Подарункова картка', tagline:'Заповніть поля та завантажте готову подарункову картку для друку.',
+      myCards:'Мої картки', saveAs:'+ Зберегти як…', exportBtn:'↓ Експорт', importBtn:'↑ Імпорт',
+      libEmpty:'Поки немає збережених карток — натисніть «+ Зберегти як…».', open:'Відкрити', del:'Видалити',
+      askName:'Назвіть свою картку:', confirmOverwrite:'Картка з такою назвою вже існує. Перезаписати?', confirmDelete:'Видалити цю картку?',
+      stSavedAs:'Збережено ✓', stOpened:'Відкрито ✓', stDeleted:'Видалено.', stExported:'Експортовано як файл .json (ваша резервна копія).', stImported:'Імпортовано ✓', stImportInvalid:'Недійсний файл — не вдалося імпортувати.', stStorageOff:'Сховище тут не працює. Відкрийте завантажений файл у браузері.',
+      styleLabel:'Стиль', stElegant:'Елегантний', stDark:'Темний', stModern:'Сучасний',
+      bizLabel:'Назва закладу', bizPh:'напр. Café Solsikke',
+      amountLabel:'Сума', amountPh:'200', unitPh:'kr',
+      toFromLabel:'Кому / Від', toPh:'Кому…', fromPh:'Від…',
+      msgLabel:'Особисте повідомлення', msgPh:'Вітаємо! Кава за наш рахунок.',
+      validLabel:'Дійсна до', validPh:'напр. 31.12.2026 або 12 місяців',
+      codeLabel:'Код (косметичний)', codePh2:'напр. GAVE-2A9F', genCode:'Згенерувати',
+      codeNote:'Код лише на картці — його не можна перевірити цифрово. Занотуйте його самі при погашенні.',
+      accentLabel:'Акцентний колір',
+      fontLabel:'Шрифт', fontDefault:'Шрифт шаблону',
+      ownColorsLabel:'Власні кольори', bgColorLabel:'Фон', textColorLabel:'Текст', resetColors:'↺ Кольори шаблону',
+      logoLabel:'Ваш логотип', logoUpload:'↑ Завантажити лого', logoRemove:'Прибрати лого', logoSizeLabel:'Розмір лого', logoHint:'PNG із прозорим фоном виглядає найкраще.',
+      downloadLabel:'Завантажити картку',
+      formatLabel:'Формат', formatSingle:'Одинарна картка', formatFrontback:'Лице і зворот', formatFolded:'Складена картка',
+      cornersLabel:'Кути', cornerRound:'Заокруглені', cornerSharp:'Гострі', borderLabel:'Рамка навколо', borderOn:'З рамкою', borderOff:'Без рамки', alignLabel:'Вирівнювання', alignLeft:'Ліворуч', alignCenter:'По центру', eyebrowLabel:'Заголовок (зверху)', eyebrowPh:'Подарунковий сертифікат', labelsLabel:'Підписи (фіксований текст)', cardContentLabel:'Що буде на картці', cardContentNote:'Позначте, що показувати. Потім заповніть поля нижче.', labelsNote:'Змініть фіксовані слова на картці (Вартість, Кому, Від …). Залиште поле порожнім, щоб прибрати слово.',
+      templatesLabel:'Шаблони', templatesNote:'Виберіть готовий шаблон для старту — потім усе можна змінити.',
+      tpl1Name:'Класичне кафе', tpl1Desc:'Елегантно й тепло, з повідомленням і підписом', tpl2Name:'Сучасний мінімал', tpl2Desc:'Гострі кути, чистий стиль, текстовий блок', tpl3Name:'Темний преміум', tpl3Desc:'Темний фон, золото, елегантний блок', tpl4Name:'Складена картка', tpl4Desc:'Складена з вмістом на всіх чотирьох сторонах',
+      paperLabel:'Розмір паперу', paperA4:'A4 (297 × 210 mm)', paperA5:'A5 (210 × 148 mm)', paperA6:'A6 (148 × 105 mm)', paperSquare:'Квадрат (150 × 150 mm)', paperCard:'Кредитка (85 × 54 mm)',
+      surfaceContentLabel:'Вміст на сторонах', surfaceNote:'Виберіть сторону й позначте, що на ній буде.',
+      textStyleLabel:'Розмір тексту та акцент', textStyleNote:'Налаштуйте розмір, жирність, курсив і колір для кожного поля на картці.',
+      flSize:'Розмір', flStyle:'Стиль', flColor:'Колір', flLs:'Міжлітерний інтервал', flLsN:'Звичайний', flLsS:'Трохи', flLsW:'Широкий', colDefault:'A',
+      boxesLabel:'Текстові блоки', boxesNote:'Додавайте вільні текстові блоки, вибирайте, на якій стороні вони будуть, і розміщуйте їх будь-де на картці.',
+      flAdd:'Додати рядок:', flAddDiv:'Розділювач', flBox:'Текстовий блок', flAddBox:'+ Додати блок', flPos:'Розташування', flLayout:'Рядки', flStack:'Один під одним', flRow:'В рядок', flAlign:'Вирівнювання', flGap:'Відступ', flWrap:'Перенос рядка', flMoveUp:'Вгору', flMoveDown:'Вниз', flDelete:'Видалити', flInline:'В той самий рядок, що й попередній',
+      tOverline:'Малий заголовок', tName:'Заголовок', tSubhead:'Підзаголовок', tTagline:'Підпис', tCustom:'Вільний текст',
+      shCard:'Картка', shOutside:'Зовні', shInside:'Усередині', sfFront:'Лице', sfBack:'Зворот', sfInLeft:'Внутрішня ліва', sfInRight:'Внутрішня права',
+      el_logo:'Логотип', el_eyebrow:'«Подарункова картка»', el_biz:'Назва закладу', el_amount:'Сума', el_msg:'Повідомлення', el_tofrom:'Кому / Від', el_valid:'Дійсна до', el_code:'Код', el_sign:'Підпис / штамп', cardSign:'Підпис / штамп',
+      payImg:'Сплатити та завантажити (PNG) — 49 kr.', getImg:'✓ Завантажити картку зараз',
+      payNoteHtml:'Попередній перегляд показано з водяним знаком. Коли ви платите, <strong>водяний знак видаляється</strong>, і ви завантажуєте чисту картку у високій якості. Кожне завантаження коштує 49 kr.',
+      freeImg:'Завантажити безкоштовно з водяним знаком', resetAll:'Очистити все та почати спочатку',
+      codePh:'Маєте код?', useCode:'Застосувати код',
+      codeApplied:'Код прийнято ✓ — завантажте картку безкоштовно кнопкою вище.',
+      codeInvalid:'Код недійсний. Перевірте його та спробуйте ще раз.', codeUsed:'Цей код уже використано в цьому браузері.',
+      previewHint:'Так виглядає ваша картка. Те, що ви завантажуєте, — у високій якості, готове до друку.',
+      stPayStart:'Перенаправляємо до оплати…', stPayWait:'Перевіряємо оплату…', stPayReady:'Оплату завершено ✓ — завантажте картку зараз.', stPayFail:'Щось пішло не так. Спробуйте ще раз.', stCancel:'Оплату скасовано.',
+      stRendering:'Створюємо ваш файл…',
+      cardEyebrow:'Подарункова картка', cardValue:'Номінал', cardTo:'Кому', cardFrom:'Від', cardValid:'Дійсна до', cardCode:'Код',
+      footNote:'Зроблено з Lusidio — прості інструменти дизайну для малого бізнесу. ', footHome:'На головну'
+    }
+  };
+
+  const LANG_KEY = 'lusidio_lang_v1';
+  let lang = 'da';
+  try { lang = localStorage.getItem(LANG_KEY) || 'da'; } catch(e){}
+  if (!I18N[lang]) lang = 'da';
+  function t(k){ return (I18N[lang] && I18N[lang][k]) || I18N.da[k] || k; }
+  function applyI18n(){
+    document.documentElement.lang = lang;
+    document.querySelectorAll('[data-i18n]').forEach(el=>{ const k=el.getAttribute('data-i18n'); if(I18N[lang][k]!=null) el.textContent=I18N[lang][k]; });
+    document.querySelectorAll('[data-i18n-html]').forEach(el=>{ const k=el.getAttribute('data-i18n-html'); if(I18N[lang][k]!=null) el.innerHTML=I18N[lang][k]; });
+    document.querySelectorAll('[data-i18n-ph]').forEach(el=>{ const k=el.getAttribute('data-i18n-ph'); if(I18N[lang][k]!=null) el.setAttribute('placeholder',I18N[lang][k]); });
+    setPayLabels();
+  }
+
+  // ---------- State ----------
+  const ELEMENTS = ['logo','eyebrow','biz','amount','msg','tofrom','valid','code','sign'];
+  const FORMAT_SURFACES = {
+    single:['card'],
+    frontback:['front','back'],
+    folded:['front','back','inl','inr']
+  };
+  const FORMAT_SHEETS = {
+    single:[{label:'shCard', panels:['card'], fold:false}],
+    frontback:[{label:'sfFront', panels:['front'], fold:false},{label:'sfBack', panels:['back'], fold:false}],
+    folded:[{label:'shOutside', panels:['back','front'], fold:true},{label:'shInside', panels:['inl','inr'], fold:true}]
+  };
+  const SURF_LABEL = { card:'shCard', front:'sfFront', back:'sfBack', inl:'sfInLeft', inr:'sfInRight' };
+  const SHEET_SUFFIX = { shCard:'', sfFront:'forside', sfBack:'bagside', shOutside:'yderside', shInside:'inderside' };
+  // Tekstbokse (etiket-system)
+  const POSITIONS = ['top-left','top-center','top-right','middle-left','middle-center','middle-right','bottom-left','bottom-center','bottom-right'];
+  const FREE_TYPES = ['over','name','subhead','tagline','custom','line'];
+  const TYPE_KEY = { over:'tOverline', name:'tName', subhead:'tSubhead', tagline:'tTagline', custom:'tCustom', line:'flAddDiv' };
+  function freeNewItem(box, type){
+    const base = { id: box.nextItemId++, type, value:'', wrap:true };
+    if (type === 'over') Object.assign(base, { size:.58, lspace:.3, accent:true });
+    else if (type === 'name') Object.assign(base, { size:2.5, bold:true, wrap:false });
+    else if (type === 'subhead') base.size = 1.15;
+    else if (type === 'tagline') Object.assign(base, { size:.95, italic:true });
+    else base.size = 1;
+    return base;
+  }
+  const collapsedBoxes = {};
+  const DEFAULT_PLACEMENT = {
+    single:{ card:['logo','eyebrow','biz','amount','msg','tofrom','valid','code','sign'] },
+    frontback:{ front:['logo','eyebrow','biz','amount'], back:['msg','tofrom','valid','code','sign'] },
+    folded:{ front:['logo','eyebrow','biz'], back:['valid','code','sign'], inl:['msg'], inr:['amount','tofrom'] }
+  };
+  const TEMPLATES = [
+    { nameKey:'tpl1Name', descKey:'tpl1Desc', data:{
+      style:'elegant', accent:'#a8542c', bg:null, text:null, font:'', logo:null, logoSize:96,
+      format:'single', paper:'a5', corners:'round', border:true, align:'left',
+      biz:'Café Solsikke', amount:'250', unit:'kr', to:'Sofie', from:'Holdet hos Solsikke',
+      msg:'Tak for et dejligt år — nyd en kop kaffe på os.', valid:'31.12.2026', code:'GAVE-4F8K-2P9X',
+      placement:{ single:{ card:['eyebrow','biz','amount','msg','tofrom','valid','code','sign'] } },
+      boxes:[], nextBoxId:1
+    }},
+    { nameKey:'tpl2Name', descKey:'tpl2Desc', data:{
+      style:'modern', accent:'#2f6f9f', bg:'#ffffff', text:'#1f2937', font:"'Jost',sans-serif", logo:null, logoSize:96,
+      format:'single', paper:'square', corners:'sharp', border:false, align:'left',
+      biz:'Studio Nord', amount:'500', unit:'kr', to:'', from:'', msg:'', valid:'31.12.2026', code:'GAVE-7H2M-5K8Q',
+      fstyle:{ biz:{ size:1.7, bold:true } },
+      placement:{ single:{ card:['eyebrow','biz','amount','valid','code'] } },
+      boxes:[], nextBoxId:1
+    }},
+    { nameKey:'tpl3Name', descKey:'tpl3Desc', data:{
+      style:'dark', eyebrow:'Premium gavekort', accent:'#e9c887', bg:null, text:null, font:"'Fraunces',serif", logo:null, logoSize:96,
+      format:'single', paper:'a5', corners:'round', border:true, align:'center',
+      biz:'Maison Lumière', amount:'1000', unit:'kr', to:'', from:'', msg:'', valid:'', code:'GAVE-9X3L-6T2V',
+      fstyle:{ biz:{ size:1.5, italic:true } },
+      placement:{ single:{ card:['eyebrow','biz','amount','code','sign'] } },
+      boxes:[], nextBoxId:1
+    }},
+    { nameKey:'tpl4Name', descKey:'tpl4Desc', data:{
+      style:'elegant', eyebrow:'', accent:'#3f7d4f', bg:null, text:null, font:"'Cormorant Garamond',serif", logo:null, logoSize:96,
+      format:'folded', paper:'a5', corners:'round', border:true, align:'center',
+      biz:'', amount:'400', unit:'kr', to:'', from:'',
+      msg:'', valid:'30.06.2027', code:'GAVE-2K7N-8R4P',
+      placement:{ folded:{ front:[], back:['sign'], inl:[], inr:['amount','valid','code'] } },
+      boxes:[
+        { id:1, surface:'front', pos:'middle-center', align:'center', layout:'stack', gap:22, nextItemId:6, items:[
+          { id:1, type:'over', value:'GAVEKORT', size:1.7, lspace:.36, accent:true, wrap:true },
+          { id:2, type:'line', value:'', size:6.5 },
+          { id:3, type:'name', value:'Den Grønne Have', size:5.0, wrap:true },
+          { id:4, type:'line', value:'', size:6.5 },
+          { id:5, type:'tagline', value:'Et lille grønt gavekort til dig', size:2.3, italic:true, wrap:true } ]},
+        { id:2, surface:'front', pos:'bottom-center', align:'center', layout:'stack', gap:6, nextItemId:2, items:[
+          { id:1, type:'custom', value:'Kan indløses i hele butikken', size:1.5, italic:true, dim:true, wrap:true } ]},
+        { id:3, surface:'inl', pos:'middle-center', align:'center', layout:'stack', gap:24, nextItemId:4, items:[
+          { id:1, type:'over', value:'TIL DIG', size:1.6, lspace:.36, accent:true, wrap:true },
+          { id:2, type:'custom', value:'Vi håber, du får mange dejlige stunder i haven. Tak, fordi du handler hos os.', size:2.5, wrap:true },
+          { id:3, type:'tagline', value:'— Kærlig hilsen, Den Grønne Have', size:1.9, italic:true, wrap:true } ]},
+        { id:4, surface:'inr', pos:'top-center', align:'center', layout:'stack', gap:6, nextItemId:2, items:[
+          { id:1, type:'over', value:'INDLØSES I BUTIKKEN', size:1.6, lspace:.3, accent:true, wrap:true } ]},
+        { id:5, surface:'back', pos:'middle-center', align:'center', layout:'stack', gap:20, nextItemId:4, items:[
+          { id:1, type:'over', value:'TAK FOR DIT KØB', size:1.6, lspace:.36, accent:true, wrap:true },
+          { id:2, type:'name', value:'Den Grønne Have', size:3.2, wrap:true },
+          { id:3, type:'line', value:'', size:5.5 } ]}
+      ], nextBoxId:6
+    }}
+  ];
+  const TEXT_ELS = ['eyebrow','biz','amount','msg','tofrom','valid','code'];
+  const BASE_SIZE = { eyebrow:21, biz:24, amount:104, msg:23, tofrom:21, valid:18, code:18 };
+  function defaultFstyle(){ const o={}; TEXT_ELS.forEach(el=>o[el]={ size:1, bold:false, italic:false, accent:false }); return o; }
+  const state = {
+    style:'elegant', eyebrow:'', biz:'Café Solsikke', amount:'200', unit:'kr',
+    to:'', from:'', msg:'', valid:'', code:'', accent:'#a8542c',
+    lblValue:'', lblTo:'', lblFrom:'', lblValid:'', lblCode:'', lblSign:'',
+    bg:null, text:null, font:'', logo:null, logoSize:96,
+    format:'single', paper:'a4', corners:'round', border:true, align:'left',
+    fstyle: defaultFstyle(),
+    placement: JSON.parse(JSON.stringify(DEFAULT_PLACEMENT)), activeSurface:'card',
+    boxes: [], nextBoxId:1
+  };
+  let showcaseMode = false;
+  let mobileSheetIdx = 0;
+  const DEFAULT_ACCENT = { elegant:'#a8542c', dark:'#e9c887', modern:'#b5542a' };
+  // repræsentative standardfarver til farvevælgerne (kun til visning)
+  const TPL_BG   = { elegant:'#fbf6ec', dark:'#211c17', modern:'#ffffff' };
+  const TPL_TEXT = { elegant:'#3a2c20', dark:'#efe6d3', modern:'#26221d' };
+
+  // ---------- Swatches ----------
+  const PALETTE = ['#a8542c','#963f1f','#2c2620','#c79a3e','#e9c887','#3f7d4f','#2f6f9f','#b03a55','#7a4ba8','#d97b3a'];
+  function buildSwatches(containerId, inputId, onPick){
+    const c=byId(containerId); if(!c) return;
+    PALETTE.forEach(col=>{ const b=document.createElement('button'); b.type='button'; b.className='swatch'; b.style.background=col; b.title=col; b.addEventListener('click',()=>{ byId(inputId).value=col; onPick(col); }); c.appendChild(b); });
+  }
+  buildSwatches('accentSwatches','accentColor', col=>{ state.accent=col; render(); doAutosave(); });
+  const BG_PALETTE = ['#fbf6ec','#ffffff','#f4ecde','#211c17','#2c2620','#1c2b24','#22303a','#f7ecec','#efe9f2','#eef3ec'];
+  (function(){ const c=byId('bgSwatches'); BG_PALETTE.forEach(col=>{ const b=document.createElement('button'); b.type='button'; b.className='swatch'; b.style.background=col; b.title=col; b.addEventListener('click',()=>{ byId('bgColor').value=col; state.bg=col; render(); doAutosave(); }); c.appendChild(b); }); })();
+  (function(){ const c=byId('textSwatches'); ['#3a2c20','#2c2620','#000000','#ffffff','#efe6d3','#5a4a3a','#7a4a2b'].forEach(col=>{ const b=document.createElement('button'); b.type='button'; b.className='swatch'; b.style.background=col; b.title=col; b.addEventListener('click',()=>{ byId('textColor').value=col; state.text=col; render(); doAutosave(); }); c.appendChild(b); }); })();
+
+  // ---------- Card rendering (multi-surface) ----------
+  const stack = byId('cardStack');
+  function esc(s){ return escH(s); }
+
+  // Fysiske papirmål i mm (liggende ark — lang side først). Bruges til eksport-opløsning.
+  const PAPER_MM = { a4:[297,210], a5:[210,148], a6:[148,105], square:[150,150], card:[86,54] };
+  function dims(){
+    const fmt=state.format, paper=state.paper;
+    if(fmt==='folded'){
+      const cr = paper==='square'?1.0 : (paper==='card'?0.63 : 0.707); // lukket portræt-forhold
+      const panelH=700, panelW=Math.round(panelH*cr);
+      return { panelW, panelH, sheetW:panelW*2, sheetH:panelH, u:panelW/920 };
+    }
+    const r = paper==='square'?1.0 : (paper==='card'?1.586 : 1.414);
+    const panelW=920, panelH=Math.round(panelW/r);
+    return { panelW, panelH, sheetW:panelW, sheetH:panelH, u:1 };
+  }
+
+  function panelClasses(sid){
+    const P = state.placement[state.format][sid]||[];
+    const has = el=>P.indexOf(el)>=0;
+    const cls=[];
+    if(!(has('logo') && state.logo)) cls.push('no-logo');
+    if(!has('eyebrow')) cls.push('no-eyebrow');
+    if(!(has('biz') && state.biz.trim())) cls.push('no-biz');
+    if(!(has('amount') && String(state.amount).trim())) cls.push('no-amount');
+    if(!(has('msg') && state.msg.trim())) cls.push('no-msg');
+    const showTo=has('tofrom')&&state.to.trim(), showFrom=has('tofrom')&&state.from.trim();
+    if(!showTo) cls.push('no-to');
+    if(!showFrom) cls.push('no-from');
+    if(!(showTo||showFrom)) cls.push('no-tofrom');
+    const showValid=has('valid')&&state.valid.trim(), showCode=has('code')&&state.code.trim();
+    if(!showValid) cls.push('no-valid');
+    if(!showCode) cls.push('no-code');
+    if(!(showValid||showCode)) cls.push('no-foot');
+    if(!has('sign')) cls.push('no-sign');
+    return cls.join(' ');
+  }
+
+  // ---- Tekstboks-rendering på preview ----
+  function styleStrBox(it){
+    let weight=400; if(it.bold) weight=700; else if(it.thin) weight=300;
+    let css='font-weight:'+weight+';font-style:'+(it.italic?'italic':'normal')+';';
+    css += (it.wrap===false?'white-space:nowrap;':'white-space:normal;');
+    if(it.lspace&&it.lspace>0) css+='letter-spacing:'+it.lspace+'em;';
+    if(it.accent) css+='color:var(--gc-accent);';
+    if(it.dim) css+='opacity:.65;';
+    return css;
+  }
+  function rowFBox(it){
+    if(it.type==='line'){ const w=Math.round(24*(it.size||1)); return '<div style="width:calc('+w+'px*var(--u));height:calc(2px*var(--u));background:var(--gc-accent);margin:calc(2px*var(--u)) 0;flex:none;"></div>'; }
+    const fpx=(15*(it.size||1)).toFixed(1);
+    return '<div style="margin:0;line-height:1.18;font-size:calc('+fpx+'px*var(--u));'+styleStrBox(it)+'">'+esc(it.value||'')+'</div>';
+  }
+  function buildBoxInner(items, align, layout, gap){
+    const visible=(items||[]).filter(it=>it.type==='line'||(it.value||'').trim());
+    if(!visible.length) return '';
+    if(layout==='row') return visible.map(rowFBox).join('');
+    let html='', i=0;
+    while(i<visible.length){
+      const grp=[visible[i]]; let j=i+1;
+      while(j<visible.length && visible[j].inline){ grp.push(visible[j]); j++; }
+      if(grp.length===1) html+=rowFBox(grp[0]);
+      else { const just=align==='center'?'center':(align==='right'?'flex-end':'flex-start'); html+='<div class="fb-line-group" style="gap:calc('+gap+'px*var(--u));justify-content:'+just+';">'+grp.map(rowFBox).join('')+'</div>'; }
+      i=j;
+    }
+    return html;
+  }
+  function boxOverlay(sid){
+    const boxes=(state.boxes||[]).filter(b=>b.surface===sid);
+    if(!boxes.length) return '';
+    let parts='';
+    boxes.forEach(box=>{
+      const al=box.align||'left', ly=box.layout||'stack', g=(box.gap!=null?box.gap:6);
+      const bi=buildBoxInner(box.items, al, ly, g);
+      if(!bi) return;
+      parts += '<div class="fb-box pos-'+(box.pos||'middle-center')+' al-'+al+' layout-'+ly+'" style="--box-gap:calc('+g+'px*var(--u));">'+bi+'</div>';
+    });
+    return parts ? '<div class="fb-inner">'+parts+'</div>' : '';
+  }
+  function fstyleStr(el){
+    const s = state.fstyle && state.fstyle[el]; if(!s) return '';
+    let css='';
+    if(s.size && Math.abs(s.size-1)>0.001 && BASE_SIZE[el]) css += 'font-size:calc('+(BASE_SIZE[el]*s.size).toFixed(1)+'px*var(--u));';
+    if(s.bold) css+='font-weight:700;';
+    if(s.italic) css+='font-style:italic;';
+    if(s.accent) css+='color:var(--gc-accent);';
+    return css ? ' style="'+css+'"' : '';
+  }
+  function innerTemplate(){
+    return ''
+     + '<div class="gc-frame-line"></div>'
+     + '<div class="gc-bar"></div>'
+     + '<img class="gc-logo" src="'+(state.logo||'')+'" alt="">'
+     + (state.eyebrow ? '<div class="gc-eyebrow"'+fstyleStr('eyebrow')+'>'+esc(state.eyebrow)+'</div>' : '')
+     + '<div class="gc-biz"'+fstyleStr('biz')+'>'+esc(state.biz)+'</div>'
+     + '<div class="gc-amount-wrap">'
+       + (state.lblValue ? '<div class="gc-amount-label">'+esc(state.lblValue)+'</div>' : '')
+       + '<div class="gc-amount"'+fstyleStr('amount')+'><span>'+esc(state.amount||'0')+'</span><span class="unit">'+esc(state.unit)+'</span></div>'
+       + '<div class="gc-msg"'+fstyleStr('msg')+'>'+esc(state.msg)+'</div>'
+     + '</div>'
+     + '<div class="gc-tofrom"'+fstyleStr('tofrom')+'>'
+       + '<div class="gc-to">'+(state.lblTo?'<span class="lbl">'+esc(state.lblTo)+'</span> ':'')+'<span>'+esc(state.to)+'</span></div>'
+       + '<div class="gc-from">'+(state.lblFrom?'<span class="lbl">'+esc(state.lblFrom)+'</span> ':'')+'<span>'+esc(state.from)+'</span></div>'
+     + '</div>'
+     + '<div class="gc-sign"><div class="gc-sign-line"></div>'+(state.lblSign?'<div class="gc-sign-label">'+esc(state.lblSign)+'</div>':'')+'</div>'
+     + '<div class="gc-foot">'
+       + '<div class="gc-valid"'+fstyleStr('valid')+'>'+(state.lblValid?'<span class="lbl">'+esc(state.lblValid)+'</span> ':'')+'<span>'+esc(state.valid)+'</span></div>'
+       + '<div class="gc-codewrap"'+fstyleStr('code')+'>'+(state.lblCode?'<span class="lbl">'+esc(state.lblCode)+'</span> ':'')+'<span class="gc-code">'+esc(state.code)+'</span></div>'
+     + '</div>'
+     + '<div class="gc-wm">made with lusidio.com</div>';
+  }
+
+  function render(){
+    const fmt=state.format, D=dims();
+    const radius = state.corners==='sharp' ? '0px' : 'calc(22px*var(--u))';
+    const sheetRad = state.corners==='sharp' ? '0' : '6px';
+    const sheets=FORMAT_SHEETS[fmt];
+    stack.innerHTML = sheets.map((sh,si)=>{
+      const multi = sh.panels.length>1;
+      const panelsHtml = sh.panels.map(sid=>{
+        return '<div class="gc '+state.style+(state.border?' bordered':'')+(state.align==='center'?' center':'')+' '+panelClasses(sid)+'" data-sid="'+sid+'" style="width:'+D.panelW+'px;height:'+D.panelH+'px;--u:'+D.u+';--gc-radius:'+radius+';">'
+          + innerTemplate()
+          + boxOverlay(sid)
+          + '</div>';
+      }).join('');
+      const foldLine = sh.fold ? '<div class="fold-line preview-only"></div>' : '';
+      const showLabel = sheets.length>1 || sh.fold;
+      const lbl = showLabel ? '<div class="surface-label preview-only">'+esc(t(sh.label))+'</div>' : '';
+      const plRow = multi ? '<div class="panel-labels preview-only">'+sh.panels.map(sid=>'<span>'+esc(t(SURF_LABEL[sid]))+'</span>').join('')+'</div>' : '';
+      return '<div class="sheet-wrap" data-sheet-idx="'+si+'">'+lbl+plRow+'<div class="sheet-box"><div class="sheet" data-label="'+sh.label+'" style="width:'+D.sheetW+'px;height:'+D.sheetH+'px;border-radius:'+sheetRad+';">'+panelsHtml+foldLine+'</div></div></div>';
+    }).join('');
+    // per-panel css-variabler + logo + vandmærke
+    stack.querySelectorAll('.gc').forEach(p=>{
+      p.style.setProperty('--gc-accent', state.accent);
+      if(state.bg) p.style.setProperty('--gc-bg',state.bg); else p.style.removeProperty('--gc-bg');
+      if(state.text) p.style.setProperty('--gc-text',state.text); else p.style.removeProperty('--gc-text');
+      if(state.font) p.style.setProperty('--gc-font',state.font); else p.style.removeProperty('--gc-font');
+      const img=p.querySelector('.gc-logo'); if(img) img.style.maxHeight=Math.round(state.logoSize*D.u)+'px';
+      const wm=p.querySelector('.gc-wm'); if(wm) wm.classList.toggle('hide', unlocked);
+    });
+    document.querySelectorAll('.fmt-btn[data-format]').forEach(b=>b.classList.toggle('active', b.dataset.format===fmt));
+    document.querySelectorAll('.fmt-btn[data-corner]').forEach(b=>b.classList.toggle('active', b.dataset.corner===state.corners));
+    document.querySelectorAll('.fmt-btn[data-border]').forEach(b=>b.classList.toggle('active', (b.dataset.border==='on')===state.border));
+    document.querySelectorAll('.fmt-btn[data-align]').forEach(b=>b.classList.toggle('active', b.dataset.align===state.align));
+    { const eb=byId('eyebrowBox'); if(eb) eb.style.display = isPlaced('eyebrow') ? '' : 'none'; }
+    document.querySelectorAll('.style-card').forEach(c=>c.classList.toggle('active', c.dataset.style===state.style));
+    byId('surfaceBox').style.display = '';
+    buildSurfaceControls();
+    buildMobileSwitch();
+    applyMobileSheet();
+    fitCard();
+  }
+
+  // Mobil: byg de to side-knapper (kun ved 2-arks formater) + vis kun det aktive ark
+  function buildMobileSwitch(){
+    const sw = byId('gcSideSwitch'); if(!sw) return;
+    const sheets = FORMAT_SHEETS[state.format] || [];
+    if(mobileSheetIdx >= sheets.length) mobileSheetIdx = 0;
+    sw.classList.toggle('hide', sheets.length < 2);
+    sw.innerHTML = sheets.map((sh,i)=>'<button type="button" data-sheet="'+i+'">'+esc(t(sh.label))+'</button>').join('');
+    sw.querySelectorAll('button').forEach((b,i)=> b.classList.toggle('active', i===mobileSheetIdx));
+  }
+  function applyMobileSheet(){
+    const wraps = stack.querySelectorAll('.sheet-wrap');
+    if(!wraps.length) return;
+    if(mobileSheetIdx >= wraps.length) mobileSheetIdx = 0;
+    wraps.forEach((w,i)=> w.classList.toggle('active-sheet', i===mobileSheetIdx));
+  }
+
+  function fitCard(){
+    const avail = stack.clientWidth || 920;
+    stack.querySelectorAll('.sheet-wrap').forEach(wrap=>{
+      const box=wrap.querySelector('.sheet-box'); const sheet=wrap.querySelector('.sheet');
+      if(!sheet||!box) return;
+      const sw=parseFloat(sheet.style.width)||920, sh=parseFloat(sheet.style.height)||560;
+      const sc=Math.min(avail/sw, 1);
+      sheet.style.transform='scale('+sc+')';
+      box.style.width=(sw*sc)+'px'; box.style.height=(sh*sc)+'px';
+      const pl=wrap.querySelector('.panel-labels'); if(pl) pl.style.width=(sw*sc)+'px';
+    });
+  }
+  window.addEventListener('resize', fitCard);
+
+  // ----- Galleri-showcase: render ét panel der fylder iframe-feltet -----
+  function gcSurfaceFor(side){
+    const fmt = state.format;
+    if(fmt==='single') return 'card';
+    if(fmt==='folded') return side==='back' ? 'inr' : 'front';
+    return side==='back' ? 'back' : 'front';
+  }
+  function renderShowcase(side){
+    const sid = gcSurfaceFor(side);
+    const D = dims();
+    const radius = state.corners==='sharp' ? '0px' : 'calc(22px*var(--u))';
+    stack.innerHTML = '<div class="gc-show-holder" id="gcHolder">'
+      + '<div class="gc '+state.style+(state.border?' bordered':'')+(state.align==='center'?' center':'')+' '+panelClasses(sid)+'" data-sid="'+sid+'" id="gcPanel" style="width:'+D.panelW+'px;height:'+D.panelH+'px;--u:'+D.u+';--gc-radius:'+radius+';">'
+      + innerTemplate() + boxOverlay(sid) + '</div></div>';
+    const p = byId('gcPanel'); if(!p) return;
+    p.style.setProperty('--gc-accent', state.accent);
+    if(state.bg) p.style.setProperty('--gc-bg', state.bg);
+    if(state.text) p.style.setProperty('--gc-text', state.text);
+    if(state.font) p.style.setProperty('--gc-font', state.font);
+    const img=p.querySelector('.gc-logo'); if(img) img.style.maxHeight=Math.round(state.logoSize*D.u)+'px';
+    gcShowcaseScale();
+  }
+  function gcShowcaseScale(){
+    const p = byId('gcPanel'), holder = byId('gcHolder'); if(!p||!holder) return;
+    const D = dims();
+    const sc = Math.min(window.innerWidth / D.panelW, window.innerHeight / D.panelH);
+    p.style.transformOrigin='top left';
+    p.style.transform='scale('+sc+')';
+    holder.style.width=(D.panelW*sc)+'px';
+    holder.style.height=(D.panelH*sc)+'px';
+  }
+
+  function buildSurfaceControls(){
+    const fmt=state.format;
+    const surfaces=FORMAT_SURFACES[fmt];
+    const single = surfaces.length===1;
+    const tabs=byId('surfTabs'); if(tabs) tabs.style.display = single ? 'none' : '';
+    if(single){
+      state.activeSurface = surfaces[0];
+    } else {
+      if(surfaces.indexOf(state.activeSurface)<0) state.activeSurface=surfaces[0];
+      tabs.innerHTML = surfaces.map(sid=>'<button type="button" class="surf-tab'+(sid===state.activeSurface?' active':'')+'" data-sid="'+sid+'">'+esc(t(SURF_LABEL[sid]))+'</button>').join('');
+    }
+    const lab=byId('surfaceContentLabel'); if(lab) lab.textContent = t(single?'cardContentLabel':'surfaceContentLabel');
+    const note=byId('surfaceNote'); if(note) note.textContent = t(single?'cardContentNote':'surfaceNote');
+    const P = state.placement[fmt][state.activeSurface]||[];
+    byId('elemGrid').innerHTML = ELEMENTS.map(el=>'<label class="elem-chk"><input type="checkbox" data-el="'+el+'"'+(P.indexOf(el)>=0?' checked':'')+'> '+esc(t('el_'+el))+'</label>').join('');
+  }
+
+  // ---- Tekstboks-kontroller ----
+  function posGridHtml(cur, boxId){ return '<div class="pos-grid" data-box-id="'+boxId+'" title="'+esc(t('flPos'))+'">'+POSITIONS.map(pp=>'<button type="button" data-pos="'+pp+'" class="'+(pp===cur?'active':'')+'"></button>').join('')+'</div>'; }
+  function surfSelectHtml(box){
+    const surfaces=FORMAT_SURFACES[state.format];
+    if(surfaces.length<2) return '';
+    return '<select class="box-surf" data-box-surf>'+surfaces.map(sid=>'<option value="'+sid+'"'+(box.surface===sid?' selected':'')+'>'+esc(t(SURF_LABEL[sid]))+'</option>').join('')+'</select>';
+  }
+  function renderItemRow(c,i,len,layout){
+    const pct=Math.round((c.size||1)*100);
+    const sizeRow='<div class="fl-row"><span class="fl-mini">'+esc(t('flSize'))+'</span>'
+      +[['70','XS'],['100','S'],['150','M'],['220','L'],['320','XL']].map(a=>'<button type="button" class="cli-btn'+(pct==+a[0]?' active':'')+'" data-act="size-preset" data-val="'+a[0]+'" style="width:auto;padding:0 7px;">'+a[1]+'</button>').join('')
+      +'<input type="range" class="fl-range" data-act="size" min="40" max="500" step="5" value="'+pct+'"><span class="fl-mini" data-size-pct style="min-width:34px;text-align:right;">'+pct+'%</span></div>';
+    const styleRows = c.type==='line' ? '' :
+      '<div class="fl-row"><span class="fl-mini">'+esc(t('flStyle'))+'</span>'
+      +'<button type="button" class="cli-btn'+(!c.bold&&!c.thin&&!c.italic?' active':'')+'" data-act="style-reset">A</button>'
+      +'<button type="button" class="cli-btn'+(c.bold?' active':'')+'" data-act="style-bold" style="font-weight:700;">B</button>'
+      +'<button type="button" class="cli-btn'+(c.thin?' active':'')+'" data-act="style-thin" style="font-weight:300;">T</button>'
+      +'<button type="button" class="cli-btn'+(c.italic?' active':'')+'" data-act="style-italic" style="font-style:italic;">I</button>'
+      +'<span class="fl-mini" style="margin-left:6px;">'+esc(t('flColor'))+'</span>'
+      +'<button type="button" class="cli-btn'+(c.accent?' active':'')+'" data-act="style-accent" style="color:var(--accent);">●</button>'
+      +'<button type="button" class="cli-btn'+(c.dim?' active':'')+'" data-act="style-dim"><span style="opacity:.4;">●</span></button>'
+      +'<span class="fl-mini" style="margin-left:6px;">'+esc(t('flWrap'))+'</span>'
+      +'<button type="button" class="cli-btn'+(c.wrap!==false?' active':'')+'" data-act="wrap-yes">↵</button>'
+      +'<button type="button" class="cli-btn'+(c.wrap===false?' active':'')+'" data-act="wrap-no">→</button>'
+      +'</div>'
+      +'<div class="fl-row"><span class="fl-mini">'+esc(t('flLs'))+'</span>'
+      +[['0','flLsN'],['0.12','flLsS'],['0.3','flLsW']].map(a=>'<button type="button" class="cli-btn'+(String(c.lspace||0)===a[0]?' active':'')+'" data-act="lspace" data-val="'+a[0]+'" style="width:auto;padding:0 8px;font-size:.72rem;">'+esc(t(a[1]))+'</button>').join('')
+      +'</div>';
+    const typeName=t(TYPE_KEY[c.type]||'tCustom');
+    return '<div class="cli" data-id="'+c.id+'">'
+      +'<span class="cli-ic" title="'+esc(typeName)+'">'+(c.type==='line'?'—':esc(typeName.slice(0,2)))+'</span>'
+      +'<input type="text" class="cli-input" data-act="value" value="'+esc(c.value||'')+'" placeholder="'+(c.type==='line'?'———':esc(typeName))+'"'+(c.type==='line'?' disabled':'')+'>'
+      +'<div class="cli-btns">'
+      +((layout==='stack'&&i>0&&c.type!=='line')?'<button type="button" class="cli-btn'+(c.inline?' active':'')+'" data-act="inline-toggle" title="'+esc(t('flInline'))+'">⇄</button>':'')
+      +'<button type="button" class="cli-btn" data-act="up"'+(i===0?' disabled':'')+' title="'+esc(t('flMoveUp'))+'">▲</button>'
+      +'<button type="button" class="cli-btn" data-act="down"'+(i===len-1?' disabled':'')+' title="'+esc(t('flMoveDown'))+'">▼</button>'
+      +'<button type="button" class="cli-btn danger" data-act="del" title="'+esc(t('flDelete'))+'">×</button>'
+      +'</div>'
+      +sizeRow+styleRows
+      +'</div>';
+  }
+  function renderBoxList(){
+    const wrap=byId('boxWrap'); if(!wrap) return;
+    const boxes=state.boxes||[];
+    wrap.innerHTML = boxes.map((box,bi)=>{
+      const layout=box.layout||'stack', align=box.align||'left', g=(box.gap!=null?box.gap:6);
+      const collapsed=!!collapsedBoxes[box.id];
+      const rows=(box.items||[]).map((c,i)=>renderItemRow(c,i,box.items.length,layout)).join('');
+      return '<div class="box-card'+(collapsed?' collapsed':'')+'" data-box-id="'+box.id+'">'
+        +'<div class="box-head">'
+          +'<button type="button" class="cli-btn" data-box-act="toggle" style="width:24px;height:24px;font-size:.7rem;">'+(collapsed?'▸':'▾')+'</button>'
+          +'<span class="box-title">'+esc(t('flBox'))+' '+(bi+1)+'</span>'
+          +surfSelectHtml(box)
+          +(collapsed?'':posGridHtml(box.pos||'middle-center',box.id))
+          +'<div class="box-head-btns">'
+            +'<button type="button" class="cli-btn" data-box-act="up"'+(bi===0?' disabled':'')+'>▲</button>'
+            +'<button type="button" class="cli-btn" data-box-act="down"'+(bi===boxes.length-1?' disabled':'')+'>▼</button>'
+            +'<button type="button" class="cli-btn danger" data-box-act="del">×</button>'
+          +'</div>'
+        +'</div>'
+        +'<div class="box-body"'+(collapsed?' style="display:none;"':'')+'>'
+          +'<div class="fl-row" style="margin-bottom:8px;">'
+            +'<span class="fl-mini">'+esc(t('flLayout'))+'</span>'
+            +'<button type="button" class="cli-btn'+(layout==='stack'?' active':'')+'" data-box-layout="stack" style="width:auto;padding:0 9px;font-size:.74rem;">'+esc(t('flStack'))+'</button>'
+            +'<button type="button" class="cli-btn'+(layout==='row'?' active':'')+'" data-box-layout="row" style="width:auto;padding:0 9px;font-size:.74rem;">'+esc(t('flRow'))+'</button>'
+            +'<span class="fl-mini" style="margin-left:6px;">'+esc(t('flAlign'))+'</span>'
+            +'<button type="button" class="cli-btn'+(align==='left'?' active':'')+'" data-box-align="left">⇤</button>'
+            +'<button type="button" class="cli-btn'+(align==='center'?' active':'')+'" data-box-align="center">⇔</button>'
+            +'<button type="button" class="cli-btn'+(align==='right'?' active':'')+'" data-box-align="right">⇥</button>'
+          +'</div>'
+          +'<div class="fl-row" style="margin-bottom:10px;"><span class="fl-mini" style="white-space:nowrap;">'+esc(t('flGap'))+'</span><input type="range" class="fl-range" data-box-gap min="-8" max="24" step="1" value="'+g+'"><span class="fl-mini" data-gap-pct style="min-width:34px;text-align:right;">'+g+'px</span></div>'
+          +'<div class="contact-list">'+rows+'</div>'
+          +'<div class="type-chips"><span class="fl-mini" style="width:100%;">'+esc(t('flAdd'))+'</span>'+FREE_TYPES.map(tt=>'<button type="button" class="type-chip" data-add-type="'+tt+'">'+esc(t(TYPE_KEY[tt]))+'</button>').join('')+'</div>'
+        +'</div>'
+      +'</div>';
+    }).join('') + '<button type="button" class="add-box" id="addBoxBtn">'+esc(t('flAddBox'))+'</button>';
+  }
+
+  // ---------- Inputs ----------
+  function bind(id, key){ byId(id).addEventListener('input', e=>{ state[key]=e.target.value; render(); doAutosave(); }); }
+  bind('eyebrowInput','eyebrow'); bind('bizInput','biz'); bind('amountInput','amount'); bind('unitInput','unit');
+  bind('toInput','to'); bind('fromInput','from'); bind('msgInput','msg');
+  bind('validInput','valid'); bind('codeInput2','code');
+
+  // Format + papir + flade-indhold
+  document.querySelectorAll('.fmt-btn[data-format]').forEach(b=>b.addEventListener('click', ()=>{
+    state.format=b.dataset.format; state.activeSurface=FORMAT_SURFACES[state.format][0];
+    mobileSheetIdx = 0;
+    const valid=FORMAT_SURFACES[state.format];
+    (state.boxes||[]).forEach(box=>{ if(valid.indexOf(box.surface)<0) box.surface=valid[0]; });
+    renderBoxList(); render(); doAutosave();
+  }));
+  document.querySelectorAll('.fmt-btn[data-corner]').forEach(b=>b.addEventListener('click', ()=>{
+    state.corners=b.dataset.corner; render(); doAutosave();
+  }));
+  document.querySelectorAll('.fmt-btn[data-border]').forEach(b=>b.addEventListener('click', ()=>{
+    state.border=(b.dataset.border==='on'); render(); doAutosave();
+  }));
+  document.querySelectorAll('.fmt-btn[data-align]').forEach(b=>b.addEventListener('click', ()=>{
+    state.align=b.dataset.align; render(); doAutosave();
+  }));
+
+  // Skabeloner
+  function renderTemplates(){
+    const g=byId('tplGrid'); if(!g) return;
+    g.innerHTML = TEMPLATES.map((tp,i)=>'<button type="button" class="tpl-btn" data-tpl="'+i+'"><span class="tpl-name">'+esc(t(tp.nameKey))+'</span><span class="tpl-desc">'+esc(t(tp.descKey))+'</span></button>').join('');
+  }
+  function applyTemplate(i){
+    const tp=TEMPLATES[i]; if(!tp) return;
+    applyData(JSON.parse(JSON.stringify(tp.data)));
+    render(); doAutosave(); setSaveStatus(t('stOpened'));
+  }
+  byId('tplGrid').addEventListener('click', e=>{ const b=e.target.closest('[data-tpl]'); if(!b) return; applyTemplate(+b.dataset.tpl); });
+
+  // Tekststørrelse & fremhævning (pr. fast felt)
+  function renderFstyle(){
+    const g=byId('fstyleList'); if(!g) return;
+    g.innerHTML = TEXT_ELS.map(el=>{
+      const s=state.fstyle[el]||{size:1};
+      const pct=Math.round((s.size||1)*100);
+      return '<div class="fst-item">'
+        + '<div class="fst-head">'+esc(t('el_'+el))+'</div>'
+        + '<div class="tg-row">'
+          + '<input type="range" class="tg-range" data-fst="size" data-el="'+el+'" min="50" max="260" step="5" value="'+pct+'">'
+          + '<span class="tg-lbl" style="min-width:40px;text-align:right;" data-pct="'+el+'">'+pct+'%</span>'
+          + '<button type="button" class="tg-btn'+(s.bold?' active':'')+'" data-fst="bold" data-el="'+el+'" style="font-weight:700;">B</button>'
+          + '<button type="button" class="tg-btn'+(s.italic?' active':'')+'" data-fst="italic" data-el="'+el+'" style="font-style:italic;">I</button>'
+          + '<button type="button" class="tg-btn'+(s.accent?' active':'')+'" data-fst="accent" data-el="'+el+'" style="color:var(--accent);">●</button>'
+        + '</div></div>';
+    }).join('');
+  }
+  byId('fstyleList').addEventListener('input', e=>{
+    const b=e.target; if(!b.dataset || b.dataset.fst!=='size') return;
+    const el=b.dataset.el; if(!state.fstyle[el]) return;
+    state.fstyle[el].size=(+b.value)/100;
+    const lbl=byId('fstyleList').querySelector('[data-pct="'+el+'"]'); if(lbl) lbl.textContent=Math.round(+b.value)+'%';
+    render(); doAutosave();
+  });
+  byId('fstyleList').addEventListener('click', e=>{
+    const b=e.target.closest('[data-fst]'); if(!b) return;
+    const a=b.dataset.fst; if(a==='size') return;
+    const el=b.dataset.el, s=state.fstyle[el]; if(!s) return;
+    s[a]=!s[a];
+    renderFstyle(); render(); doAutosave();
+  });
+
+  // Etiketter (faste ord på kortet)
+  const LABEL_FIELDS = [
+    { key:'lblValue', dkey:'cardValue', el:'amount' }, { key:'lblTo', dkey:'cardTo', el:'tofrom' }, { key:'lblFrom', dkey:'cardFrom', el:'tofrom' },
+    { key:'lblValid', dkey:'cardValid', el:'valid' }, { key:'lblCode', dkey:'cardCode', el:'code' }, { key:'lblSign', dkey:'cardSign', el:'sign' }
+  ];
+  const EYE_PAIRS = [['eyebrow','cardEyebrow'],['lblValue','cardValue'],['lblTo','cardTo'],['lblFrom','cardFrom'],['lblValid','cardValid'],['lblCode','cardCode'],['lblSign','cardSign']];
+  function applyLabelDefaults(){ EYE_PAIRS.forEach(([f,dk])=>{ state[f]=t(dk); }); }
+  function isPlaced(el){
+    const surfs = FORMAT_SURFACES[state.format] || ['card'];
+    return surfs.some(sid => ((state.placement[state.format]||{})[sid]||[]).indexOf(el)>=0);
+  }
+  function renderLabels(){
+    const g=byId('labelsList'); if(!g) return;
+    const fields = LABEL_FIELDS.filter(f=>isPlaced(f.el));
+    const box=byId('labelsBox'); if(box) box.style.display = fields.length ? '' : 'none';
+    g.innerHTML = fields.map(f=>{
+      const d=esc(t(f.dkey));
+      return '<div class="fst-item"><div class="fst-head">'+d+'</div>'
+        + '<input class="field" data-lbl="'+f.key+'" value="'+esc(state[f.key]||'')+'" placeholder="'+d+'"></div>';
+    }).join('');
+  }
+  byId('labelsList').addEventListener('input', e=>{
+    const b=e.target; if(!b.dataset || !b.dataset.lbl) return;
+    state[b.dataset.lbl]=b.value; render(); doAutosave();
+  });
+  byId('paperSel').addEventListener('change', e=>{ state.paper=e.target.value; render(); doAutosave(); });
+  byId('surfTabs').addEventListener('click', e=>{ const b=e.target.closest('.surf-tab'); if(!b) return; state.activeSurface=b.dataset.sid; buildSurfaceControls(); });
+  byId('gcSideSwitch').addEventListener('click', e=>{
+    const b=e.target.closest('button[data-sheet]'); if(!b) return;
+    mobileSheetIdx = parseInt(b.dataset.sheet,10) || 0;
+    applyMobileSheet();
+    byId('gcSideSwitch').querySelectorAll('button').forEach(x=>x.classList.toggle('active', x===b));
+    fitCard();
+  });
+  byId('elemGrid').addEventListener('change', e=>{
+    const c=e.target.closest('input[data-el]'); if(!c) return;
+    const arr=state.placement[state.format][state.activeSurface]; const el=c.dataset.el; const i=arr.indexOf(el);
+    if(c.checked){ if(i<0) arr.push(el); } else if(i>=0){ arr.splice(i,1); }
+    renderLabels(); render(); doAutosave();
+  });
+
+  // Tekstbokse: handlers
+  const findBox = el => { const card=el.closest('[data-box-id]'); if(!card) return null; return (state.boxes||[]).find(b=>b.id===+card.dataset.boxId)||null; };
+  byId('boxWrap').addEventListener('input', e=>{
+    const box=findBox(e.target); if(!box) return;
+    if(e.target.matches('[data-box-gap]')){ box.gap=+e.target.value; const lbl=e.target.parentElement.querySelector('[data-gap-pct]'); if(lbl) lbl.textContent=box.gap+'px'; render(); doAutosave(); return; }
+    const cli=e.target.closest('.cli'); if(!cli) return;
+    const it=(box.items||[]).find(x=>x.id===+cli.dataset.id); if(!it) return;
+    const act=e.target.dataset.act;
+    if(act==='value'){ it.value=e.target.value; render(); doAutosave(); }
+    else if(act==='size'){ it.size=(+e.target.value)/100; const lbl=cli.querySelector('[data-size-pct]'); if(lbl) lbl.textContent=e.target.value+'%'; render(); doAutosave(); }
+  });
+  byId('boxWrap').addEventListener('change', e=>{
+    const sel=e.target.closest('[data-box-surf]'); if(!sel) return;
+    const box=findBox(e.target); if(!box) return;
+    box.surface=sel.value; render(); doAutosave();
+  });
+  byId('boxWrap').addEventListener('click', e=>{
+    if(e.target.closest('#addBoxBtn')){ const surfaces=FORMAT_SURFACES[state.format]; state.boxes.push({ id:state.nextBoxId++, surface:surfaces[0], pos:'middle-center', align:'center', layout:'stack', gap:6, items:[], nextItemId:1 }); renderBoxList(); render(); doAutosave(); return; }
+    const posBtn=e.target.closest('.pos-grid [data-pos]'); const box=findBox(e.target);
+    if(posBtn&&box){ box.pos=posBtn.dataset.pos; renderBoxList(); render(); doAutosave(); return; }
+    if(!box) return;
+    const alignBtn=e.target.closest('[data-box-align]'); if(alignBtn){ box.align=alignBtn.dataset.boxAlign; renderBoxList(); render(); doAutosave(); return; }
+    const layoutBtn=e.target.closest('[data-box-layout]'); if(layoutBtn){ box.layout=layoutBtn.dataset.boxLayout; renderBoxList(); render(); doAutosave(); return; }
+    const addType=e.target.closest('[data-add-type]'); if(addType){ box.items.push(freeNewItem(box, addType.dataset.addType)); renderBoxList(); render(); doAutosave(); return; }
+    const boxAct=e.target.closest('[data-box-act]');
+    if(boxAct){ const a=boxAct.dataset.boxAct; const arr=state.boxes; const bi=arr.indexOf(box);
+      if(a==='toggle') collapsedBoxes[box.id]=!collapsedBoxes[box.id];
+      else if(a==='up'&&bi>0){ arr.splice(bi,1); arr.splice(bi-1,0,box); }
+      else if(a==='down'&&bi<arr.length-1){ arr.splice(bi,1); arr.splice(bi+1,0,box); }
+      else if(a==='del'){ arr.splice(bi,1); }
+      renderBoxList(); render(); doAutosave(); return;
+    }
+    const actBtn=e.target.closest('[data-act]'); if(!actBtn) return;
+    const cli=e.target.closest('.cli'); if(!cli) return;
+    const items=box.items||[]; const ii=items.findIndex(x=>x.id===+cli.dataset.id); const it=items[ii]; if(!it) return;
+    const act=actBtn.dataset.act;
+    if(act==='size'||act==='value') return; // håndteres af input
+    if(act==='size-preset') it.size=(+actBtn.dataset.val)/100;
+    else if(act==='style-reset'){ it.bold=false; it.thin=false; it.italic=false; }
+    else if(act==='style-bold'){ it.bold=!it.bold; if(it.bold) it.thin=false; }
+    else if(act==='style-thin'){ it.thin=!it.thin; if(it.thin) it.bold=false; }
+    else if(act==='style-italic') it.italic=!it.italic;
+    else if(act==='style-accent'){ it.accent=!it.accent; if(it.accent) it.dim=false; }
+    else if(act==='style-dim'){ it.dim=!it.dim; if(it.dim) it.accent=false; }
+    else if(act==='wrap-yes') it.wrap=true;
+    else if(act==='wrap-no') it.wrap=false;
+    else if(act==='lspace') it.lspace=+actBtn.dataset.val;
+    else if(act==='inline-toggle') it.inline=!it.inline;
+    else if(act==='up'&&ii>0){ items.splice(ii,1); items.splice(ii-1,0,it); }
+    else if(act==='down'&&ii<items.length-1){ items.splice(ii,1); items.splice(ii+1,0,it); }
+    else if(act==='del') items.splice(ii,1);
+    else return;
+    renderBoxList(); render(); doAutosave();
+  });
+
+  byId('accentColor').addEventListener('input', e=>{ state.accent=e.target.value; render(); doAutosave(); });
+  byId('fontSel').addEventListener('change', e=>{ state.font=e.target.value; render(); doAutosave(); });
+  byId('bgColor').addEventListener('input', e=>{ state.bg=e.target.value; render(); doAutosave(); });
+  byId('textColor').addEventListener('input', e=>{ state.text=e.target.value; render(); doAutosave(); });
+  byId('resetColorsBtn').addEventListener('click', ()=>{
+    state.bg=null; state.text=null;
+    byId('bgColor').value = TPL_BG[state.style]; byId('textColor').value = TPL_TEXT[state.style];
+    render(); doAutosave();
+  });
+
+  // Logo upload
+  byId('logoBtn').addEventListener('click', ()=> byId('logoInput').click());
+  byId('logoInput').addEventListener('change', e=>{
+    const f=e.target.files[0]; if(!f) return;
+    if(!/^image\//.test(f.type)){ return; }
+    const r=new FileReader();
+    r.onload=()=>{ state.logo=r.result; byId('logoRemoveBtn').style.display=''; byId('logoSizeRow').style.display=''; render(); doAutosave(); };
+    r.readAsDataURL(f); byId('logoInput').value='';
+  });
+  byId('logoRemoveBtn').addEventListener('click', ()=>{
+    state.logo=null; byId('logoRemoveBtn').style.display='none'; byId('logoSizeRow').style.display='none'; render(); doAutosave();
+  });
+  byId('logoSize').addEventListener('input', e=>{ state.logoSize=+e.target.value; render(); doAutosave(); });
+
+  document.querySelectorAll('.style-card').forEach(cardBtn=>{
+    cardBtn.addEventListener('click', ()=>{
+      const prevDefault = DEFAULT_ACCENT[state.style];
+      state.style = cardBtn.dataset.style;
+      // hvis brugeren stadig har standard-accenten, skift til den nye stils standard
+      if (state.accent === prevDefault){ state.accent = DEFAULT_ACCENT[state.style]; byId('accentColor').value = state.accent; }
+      // opdatér farvevælgernes visning til den nye skabelon, når der ikke er overstyret
+      if (!state.bg) byId('bgColor').value = TPL_BG[state.style];
+      if (!state.text) byId('textColor').value = TPL_TEXT[state.style];
+      render(); doAutosave();
+    });
+  });
+
+  // Kode-generator
+  function genCode(){
+    const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+    const pick = n => { let s=''; for(let i=0;i<n;i++) s+=chars[Math.floor(Math.random()*chars.length)]; return s; };
+    return 'GAVE-' + pick(4) + '-' + pick(4);
+  }
+  byId('genCodeBtn').addEventListener('click', ()=>{
+    const code = genCode();
+    byId('codeInput2').value = code; state.code = code; render(); doAutosave();
+  });
+
+  // ---------- Gem / bibliotek / eksport / import ----------
+  const LS_LIBRARY='gavekort_library_v1', LS_AUTOSAVE='gavekort_autosave_v1';
+  let storageOK=true; try{ localStorage.setItem('__t','1'); localStorage.removeItem('__t'); }catch(e){ storageOK=false; }
+  function escH(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+  function nid(){ return 'g'+Date.now().toString(36)+Math.random().toString(36).slice(2,6); }
+  function serialize(){ return {style:state.style,eyebrow:state.eyebrow,biz:state.biz,amount:state.amount,unit:state.unit,to:state.to,from:state.from,msg:state.msg,valid:state.valid,code:state.code,accent:state.accent,lblValue:state.lblValue,lblTo:state.lblTo,lblFrom:state.lblFrom,lblValid:state.lblValid,lblCode:state.lblCode,lblSign:state.lblSign,bg:state.bg,text:state.text,font:state.font,logo:state.logo,logoSize:state.logoSize,format:state.format,paper:state.paper,corners:state.corners,border:state.border,align:state.align,fstyle:state.fstyle,placement:state.placement,boxes:state.boxes,nextBoxId:state.nextBoxId}; }
+  function applyData(d){
+    if(!d||typeof d!=='object') return false;
+    state.style=['elegant','dark','modern'].includes(d.style)?d.style:'elegant';
+    state.eyebrow=(typeof d.eyebrow==='string')?d.eyebrow:t('cardEyebrow');
+    state.biz=d.biz||''; state.amount=d.amount||''; state.unit=d.unit||'kr';
+    state.to=d.to||''; state.from=d.from||''; state.msg=d.msg||''; state.valid=d.valid||'';
+    state.code=d.code||''; state.accent=d.accent||DEFAULT_ACCENT[state.style];
+    state.lblValue=(typeof d.lblValue==='string')?d.lblValue:t('cardValue'); state.lblTo=(typeof d.lblTo==='string')?d.lblTo:t('cardTo');
+    state.lblFrom=(typeof d.lblFrom==='string')?d.lblFrom:t('cardFrom'); state.lblValid=(typeof d.lblValid==='string')?d.lblValid:t('cardValid');
+    state.lblCode=(typeof d.lblCode==='string')?d.lblCode:t('cardCode'); state.lblSign=(typeof d.lblSign==='string')?d.lblSign:t('cardSign');
+    state.bg=d.bg||null; state.text=d.text||null; state.font=d.font||'';
+    state.logo=d.logo||null; state.logoSize=d.logoSize||96;
+    state.format=['single','frontback','folded'].includes(d.format)?d.format:'single';
+    state.paper=['a4','a5','a6','square','card'].includes(d.paper)?d.paper:'a4';
+    state.corners=(d.corners==='sharp')?'sharp':'round';
+    state.border=(d.border!==false);
+    state.align=(d.align==='center')?'center':'left';
+    state.fstyle = defaultFstyle();
+    if(d.fstyle && typeof d.fstyle==='object'){
+      TEXT_ELS.forEach(el=>{ const src=d.fstyle[el]; if(src&&typeof src==='object'){ const f=state.fstyle[el];
+        if(typeof src.size==='number' && src.size>=0.3 && src.size<=4) f.size=src.size;
+        f.bold=!!src.bold; f.italic=!!src.italic; f.accent=!!src.accent;
+      } });
+    }
+    state.placement = JSON.parse(JSON.stringify(DEFAULT_PLACEMENT));
+    if(d.placement && typeof d.placement==='object'){
+      ['single','frontback','folded'].forEach(f=>{ if(d.placement[f]){ Object.keys(d.placement[f]).forEach(sid=>{ if(Array.isArray(d.placement[f][sid]) && state.placement[f][sid]!=null) state.placement[f][sid]=d.placement[f][sid].filter(x=>ELEMENTS.indexOf(x)>=0); }); } });
+    }
+    state.activeSurface=FORMAT_SURFACES[state.format][0];
+    // tekstbokse
+    state.boxes = sanitizeBoxes(d.boxes);
+    let maxBoxId=0; state.boxes.forEach(b=>{ if(b.id>maxBoxId) maxBoxId=b.id; });
+    state.nextBoxId = (typeof d.nextBoxId==='number' && d.nextBoxId>maxBoxId) ? d.nextBoxId : (maxBoxId+1);
+    syncControls(); return true;
+  }
+  function sanitizeBoxes(arr){
+    if(!Array.isArray(arr)) return [];
+    const valid=FORMAT_SURFACES[state.format];
+    return arr.filter(b=>b&&typeof b==='object').map(b=>{
+      let surface = (typeof b.surface==='string')?b.surface:valid[0];
+      if(valid.indexOf(surface)<0) surface=valid[0];
+      const pos = POSITIONS.indexOf(b.pos)>=0 ? b.pos : 'middle-center';
+      const align = ['left','center','right'].indexOf(b.align)>=0 ? b.align : 'center';
+      const layout = (b.layout==='row')?'row':'stack';
+      const gap = (typeof b.gap==='number')?b.gap:6;
+      let nextItemId = (typeof b.nextItemId==='number')?b.nextItemId:1;
+      const items=(Array.isArray(b.items)?b.items:[]).filter(it=>it&&typeof it==='object').map(it=>{
+        const o={ id:(typeof it.id==='number'?it.id:nextItemId++), type:(FREE_TYPES.indexOf(it.type)>=0?it.type:'custom'), value:(typeof it.value==='string'?it.value:''), size:(typeof it.size==='number'?it.size:1) };
+        if(it.bold) o.bold=true; if(it.thin) o.thin=true; if(it.italic) o.italic=true;
+        if(it.accent) o.accent=true; if(it.dim) o.dim=true;
+        o.wrap = it.wrap!==false;
+        if(typeof it.lspace==='number') o.lspace=it.lspace;
+        if(it.inline) o.inline=true;
+        return o;
+      });
+      return { id:(typeof b.id==='number'?b.id:1), surface, pos, align, layout, gap, items, nextItemId };
+    });
+  }
+  function syncControls(){
+    byId('bizInput').value=state.biz; byId('amountInput').value=state.amount; byId('unitInput').value=state.unit;
+    byId('eyebrowInput').value=state.eyebrow;
+    byId('toInput').value=state.to; byId('fromInput').value=state.from; byId('msgInput').value=state.msg;
+    byId('validInput').value=state.valid; byId('codeInput2').value=state.code; byId('accentColor').value=state.accent;
+    byId('fontSel').value=state.font;
+    byId('paperSel').value=state.paper;
+    byId('bgColor').value = state.bg || TPL_BG[state.style];
+    byId('textColor').value = state.text || TPL_TEXT[state.style];
+    byId('logoSize').value = state.logoSize;
+    byId('logoRemoveBtn').style.display = state.logo ? '' : 'none';
+    byId('logoSizeRow').style.display = state.logo ? '' : 'none';
+    renderFstyle();
+    renderLabels();
+    renderBoxList();
+  }
+  function setSaveStatus(m){ byId('saveStatus').textContent=m||''; }
+  function loadLibrary(){ if(!storageOK) return []; try{ return JSON.parse(localStorage.getItem(LS_LIBRARY)||'[]'); }catch(e){ return []; } }
+  function saveLibrary(a){ if(!storageOK) return false; try{ localStorage.setItem(LS_LIBRARY,JSON.stringify(a)); return true; }catch(e){ return false; } }
+  function renderLibrary(){
+    const list=byId('libraryList'); const arr=loadLibrary();
+    if(!arr.length){ list.innerHTML='<p class="lib-empty">'+escH(t('libEmpty'))+'</p>'; return; }
+    list.innerHTML=arr.map((m,i)=>'<div class="lib-item"><div class="lib-info"><span class="lib-name">'+escH(m.name)+'</span><span class="lib-date">'+escH(m.savedAt||'')+'</span></div><div class="lib-btns"><button class="mini-btn" data-act="open" data-i="'+i+'">'+escH(t('open'))+'</button><button class="mini-btn danger" data-act="del" data-i="'+i+'" title="'+escH(t('del'))+'">✕</button></div></div>').join('');
+  }
+  byId('libraryList').addEventListener('click', e=>{
+    const b=e.target.closest('[data-act]'); if(!b) return;
+    const i=+b.dataset.i, arr=loadLibrary(), m=arr[i]; if(!m) return;
+    if(b.dataset.act==='open'){ if(applyData(m.data)){ render(); doAutosave(); setSaveStatus(t('stOpened')); } }
+    else if(b.dataset.act==='del'){ if(!confirm(t('confirmDelete'))) return; arr.splice(i,1); saveLibrary(arr); renderLibrary(); setSaveStatus(t('stDeleted')); }
+  });
+  byId('saveAsBtn').addEventListener('click', ()=>{
+    if(!storageOK){ setSaveStatus(t('stStorageOff')); return; }
+    const name=(prompt(t('askName'), (state.biz||'Gavekort')+' '+(state.amount||'')+(state.unit||'')) || '').trim(); if(!name) return;
+    const arr=loadLibrary(); const now=new Date().toLocaleString(lang+'-'+lang.toUpperCase(),{dateStyle:'short',timeStyle:'short'});
+    const entry={id:nid(),name,savedAt:now,data:serialize()};
+    const ex=arr.findIndex(m=>(m.name||'').toLowerCase()===name.toLowerCase());
+    if(ex>=0){ if(!confirm(t('confirmOverwrite'))) return; entry.id=arr[ex].id; arr[ex]=entry; } else arr.unshift(entry);
+    if(saveLibrary(arr)){ renderLibrary(); setSaveStatus(t('stSavedAs')); }
+  });
+  byId('exportBtn').addEventListener('click', ()=>{
+    const blob=new Blob([JSON.stringify(serialize(),null,2)],{type:'application/json'}); const url=URL.createObjectURL(blob);
+    const a=document.createElement('a'); a.href=url; a.download=((state.biz||'gavekort').replace(/[^\wæøåÆØÅ -]/g,'').trim()||'gavekort')+'.json';
+    document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url); setSaveStatus(t('stExported'));
+  });
+  byId('importBtn').addEventListener('click', ()=> byId('importInput').click());
+  byId('importInput').addEventListener('change', e=>{
+    const f=e.target.files[0]; if(!f) return; const r=new FileReader();
+    r.onload=()=>{ try{ const d=JSON.parse(r.result); if(applyData(d)){ render(); doAutosave(); setSaveStatus(t('stImported')); } else setSaveStatus(t('stImportInvalid')); }catch(err){ setSaveStatus(t('stImportInvalid')); } byId('importInput').value=''; };
+    r.readAsText(f);
+  });
+  function doAutosave(){ if(!storageOK||showcaseMode) return; try{ localStorage.setItem(LS_AUTOSAVE,JSON.stringify(serialize())); }catch(e){} }
+
+  // ---------- Paywall ----------
+  const LS_PAID='gavekort_paid_session_v1', LS_PENDING='gavekort_pending_dl_v1', LS_CODES='gavekort_codes_v1';
+  const TEMP_CODES=['1234567'];
+  let unlocked=false, codeActive=false;
+
+  function setStatus(m){ byId('status').textContent=m||''; }
+  function setPayLabels(){ byId('pngBtn').textContent = unlocked ? t('getImg') : t('payImg'); }
+  function getUsedCodes(){ try{ return JSON.parse(localStorage.getItem(LS_CODES)||'[]'); }catch(e){ return []; } }
+  function markCodeUsed(c){ try{ const u=getUsedCodes(); u.push(c); localStorage.setItem(LS_CODES,JSON.stringify(u)); }catch(e){} }
+  function setWatermark(){ render(); }
+
+  byId('useCodeBtn').addEventListener('click', ()=>{
+    const code=(byId('unlockCode').value||'').trim();
+    if(!TEMP_CODES.includes(code)){ setStatus(t('codeInvalid')); return; }
+    if(getUsedCodes().includes(code)){ setStatus(t('codeUsed')); return; }
+    markCodeUsed(code); unlocked=true; codeActive=true; setPayLabels(); setWatermark(); setStatus(t('codeApplied'));
+  });
+
+  async function startPaidDownload(){
+    if(unlocked){ await doDownload(false); return; }
+    try{ localStorage.setItem(LS_PENDING,'png'); }catch(e){}
+    setStatus(t('stPayStart'));
+    try{
+      const res=await fetch('/api/create-checkout-session',{ method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({ product:'gavekort', returnPath:window.location.pathname }) });
+      const data=await res.json();
+      if(data&&data.url) window.location.href=data.url; else setStatus(t('stPayFail'));
+    }catch(e){ setStatus(t('stPayFail')); }
+  }
+  byId('pngBtn').addEventListener('click', ()=> startPaidDownload());
+  byId('getFileBtn').addEventListener('click', ()=> doDownload(false));
+  byId('freeBtn').addEventListener('click', ()=> doDownload(true));
+
+  function showGetFile(){ byId('getFileBtn').style.display='block'; byId('getFileBtn').textContent=t('getImg'); }
+
+  // ---------- Download (html2canvas → høj-opløsning PNG, ét billede per ark) ----------
+  function sleep(ms){ return new Promise(r=>setTimeout(r,ms)); }
+  async function doDownload(free){
+    setStatus(t('stRendering'));
+    // gratis = vis vandmærke; betalt = skjul (på alle paneler)
+    stack.querySelectorAll('.gc-wm').forEach(w=>w.classList.toggle('hide', !free));
+    stack.classList.add('exporting'); // skjuler etiketter + fold-linje
+    const sheets=[...stack.querySelectorAll('.sheet')];
+    const saved=sheets.map(s=>s.style.transform);
+    sheets.forEach(s=>{ s.style.transform='none'; });
+    // lille pause så layout/billeder er klar
+    await sleep(60);
+    try{
+      for(let i=0;i<sheets.length;i++){
+        const sheet=sheets[i];
+        const sw=parseFloat(sheet.style.width)||920, sh=parseFloat(sheet.style.height)||560;
+        // Opløsning matcher den valgte fysiske papirstørrelse ved 300 DPI (print-kvalitet)
+        const mm = PAPER_MM[state.paper] || [297,210];
+        const targetLongPx = Math.round(Math.max(mm[0],mm[1]) / 25.4 * 300);
+        const scale=Math.max(2, Math.min(8, targetLongPx/Math.max(sw,sh)));
+        const canvas=await html2canvas(sheet,{ scale, backgroundColor:null, useCORS:true, width:sw, height:sh, windowWidth:sw, windowHeight:sh });
+        const suffix=SHEET_SUFFIX[sheet.dataset.label]||'';
+        let name='lusidio-gavekort'+(suffix?'-'+suffix:'')+(free?'-gratis':'')+'.png';
+        const a=document.createElement('a'); a.href=canvas.toDataURL('image/png'); a.download=name;
+        document.body.appendChild(a); a.click(); document.body.removeChild(a);
+        if(i<sheets.length-1) await sleep(500);
+      }
+      setStatus('');
+    }catch(err){ setStatus(t('stPayFail')); }
+    // gendan
+    sheets.forEach((s,i)=>{ s.style.transform=saved[i]||''; });
+    stack.classList.remove('exporting');
+    setWatermark();
+    if(!free && !codeActive){ relock(); }
+  }
+  function relock(){ unlocked=false; try{ localStorage.removeItem(LS_PAID); localStorage.removeItem(LS_PENDING); }catch(e){} byId('getFileBtn').style.display='none'; setPayLabels(); setWatermark(); }
+
+  async function verifyPaid(sid){ try{ const res=await fetch('/api/verify-session?session_id='+encodeURIComponent(sid)); const data=await res.json(); return !!(data&&data.paid); }catch(e){ return false; } }
+  async function initUnlock(){
+    const params=new URLSearchParams(window.location.search);
+    if(params.get('afbrudt')){ setStatus(t('stCancel')); history.replaceState(null,'',window.location.pathname); return; }
+    const sid=params.get('betalt');
+    if(sid){
+      setStatus(t('stPayWait')); const ok=await verifyPaid(sid);
+      if(ok){ unlocked=true; try{ localStorage.setItem(LS_PAID,sid); }catch(e){} showGetFile(); setPayLabels(); setWatermark(); setStatus(t('stPayReady')); }
+      else setStatus(t('stPayFail'));
+      history.replaceState(null,'',window.location.pathname); return;
+    }
+    let stored=null; try{ stored=localStorage.getItem(LS_PAID); }catch(e){}
+    if(stored){ const ok=await verifyPaid(stored); if(ok){ unlocked=true; showGetFile(); setPayLabels(); setWatermark(); } else { try{ localStorage.removeItem(LS_PAID); }catch(e){} } }
+  }
+
+  byId('resetBtn').addEventListener('click', ()=>{
+    Object.assign(state, { style:'elegant', eyebrow:'', biz:'Café Solsikke', amount:'200', unit:'kr', to:'', from:'', msg:'', valid:'', code:'', accent:'#a8542c', lblValue:'', lblTo:'', lblFrom:'', lblValid:'', lblCode:'', lblSign:'', bg:null, text:null, font:'', logo:null, logoSize:96, format:'single', paper:'a4', corners:'round', border:true, align:'left', activeSurface:'card' });
+    state.placement = JSON.parse(JSON.stringify(DEFAULT_PLACEMENT));
+    state.fstyle = defaultFstyle();
+    applyLabelDefaults();
+    state.boxes = []; state.nextBoxId = 1; Object.keys(collapsedBoxes).forEach(k=>delete collapsedBoxes[k]);
+    syncControls(); setStatus(''); setSaveStatus(''); render(); doAutosave();
+  });
+
+  // ---------- Language ----------
+  byId('langSel').value=lang;
+  byId('langSel').addEventListener('change', e=>{ const old=lang; lang=e.target.value; try{ localStorage.setItem(LANG_KEY,lang); }catch(err){}
+    const od=I18N[old]||{}; EYE_PAIRS.forEach(([f,dk])=>{ if(state[f]===od[dk]) state[f]=t(dk); });
+    applyI18n(); renderLibrary(); renderTemplates(); renderFstyle(); renderLabels(); renderBoxList(); render(); byId('eyebrowInput').value=state.eyebrow; });
+
+  // ====== Galleriet: 20 gavekort-forhåndsvisninger ======
+  // single = ensidet (ingen fade). frontback/folded = tosidet (fade forside→bagside/inderside).
+  const GAVEKORT_SHOWCASE = [
+    // 0 — Café · single · elegant · A4 liggende · ramme · venstre
+    { style:'elegant', format:'single', paper:'a4', corners:'round', border:true, align:'left',
+      eyebrow:'GAVEKORT', biz:'Café Solsikke', amount:'200', unit:'kr',
+      valid:'Gyldigt 1 år fra køb', code:'SOL-2K4-9XQ', lblValid:'', accent:'#a8542c', font:'',
+      fstyle:{ biz:{size:1.25,bold:true}, amount:{size:1.15} } },
+
+    // 1 — Restaurant · frontback · dark · kort-format · ramme · midt · Playfair
+    { style:'dark', format:'frontback', paper:'card', corners:'round', border:true, align:'center',
+      eyebrow:'GAVEKORT', biz:'Restaurant Nord', amount:'500', unit:'kr',
+      msg:'En aften ude — helt for dig.', to:'Sofie', from:'Mor & Far',
+      valid:'Gyldigt til 31.12.2026', code:'NORD-500-AX', lblValid:'', accent:'#e9c887', font:"'Playfair Display',serif",
+      fstyle:{ amount:{size:1.2,accent:true} } },
+
+    // 2 — Spa · folded · elegant · A5 stående · ingen ramme · midt · Cormorant
+    { style:'elegant', format:'folded', paper:'a5', corners:'round', border:false, align:'center',
+      eyebrow:'VELVÆRE', biz:'Spa Ro', amount:'750', unit:'kr',
+      msg:'Tid til at trække vejret.', to:'dig', from:'os',
+      valid:'Gyldigt 1 år', lblValid:'', accent:'#6e8a52', bg:'#f3f5ec', text:'#33402a', font:"'Cormorant Garamond',serif",
+      placement:{ folded:{ front:['eyebrow','biz'], inl:['msg'], inr:['amount','tofrom','valid'], back:['sign'] } } },
+
+    // 3 — Tøjbutik · single · modern · kvadratisk · skarp · ingen ramme · midt · Poppins
+    { style:'modern', format:'single', paper:'square', corners:'sharp', border:false, align:'center',
+      eyebrow:'GIFT CARD', biz:'STUDIO TØJ', amount:'300', unit:'kr',
+      valid:'Gyldigt 1 år', code:'TOJ-300-7K', lblValid:'', accent:'#1a1a1a', font:"'Poppins',sans-serif",
+      lblValue:'VÆRDI', fstyle:{ amount:{size:1.35,bold:true}, biz:{bold:true} } },
+
+    // 4 — Bryllup · frontback · elegant · A5 liggende · ramme · venstre
+    { style:'elegant', format:'frontback', paper:'a5', corners:'round', border:true, align:'left',
+      eyebrow:'TILLYKKE', biz:'Bryllupsgave', amount:'1000', unit:'kr',
+      msg:'Tillykke med jeres store dag.', to:'Anna & Mads', from:'Familien',
+      lblFrom:'Kærlig hilsen', valid:'Ingen udløbsdato', lblValid:'', accent:'#b03a55', font:'',
+      fstyle:{ biz:{italic:true} } },
+
+    // 5 — Frisør · single · dark · kort-format · ramme · venstre
+    { style:'dark', format:'single', paper:'card', corners:'round', border:true, align:'left',
+      eyebrow:'GAVEKORT', biz:'Salon Lux', amount:'400', unit:'kr',
+      valid:'Gyldigt til 30.06.2026', code:'LUX-400-2M', lblValid:'', accent:'#caa15a', font:'',
+      fstyle:{ amount:{size:1.1,accent:true} } },
+
+    // 6 — Boghandel · folded · modern · A6 stående · skarp · ramme · venstre · Jost
+    { style:'modern', format:'folded', paper:'a6', corners:'sharp', border:true, align:'left',
+      eyebrow:'TIL DIG', biz:'Boghandlen', amount:'250', unit:'kr',
+      msg:'God fornøjelse med læsningen.',
+      valid:'Gyldigt 1 år', lblValid:'', accent:'#2f6f9f', font:"'Jost',sans-serif",
+      placement:{ folded:{ front:['eyebrow','biz'], inl:['msg'], inr:['amount','valid'], back:['sign'] } } },
+
+    // 7 — Jul · frontback · elegant · kvadratisk · ramme · midt · festlig
+    { style:'elegant', format:'frontback', paper:'square', corners:'round', border:true, align:'center',
+      eyebrow:'GLÆDELIG JUL', biz:'Café Solsikke', amount:'500', unit:'kr',
+      msg:'Glædelig jul & godt nytår.', to:'en kær ven', from:'os hos Solsikke',
+      valid:'Gyldigt 1 år', code:'JUL-500', lblValid:'', accent:'#c79a3e', bg:'#1c2b24', text:'#efe6d3', font:'',
+      fstyle:{ biz:{size:1.1} } },
+
+    // 8 — Guldsmed · single · dark · A4 liggende · ingen ramme · midt · Playfair
+    { style:'dark', format:'single', paper:'a4', corners:'round', border:false, align:'center',
+      eyebrow:'GIFT VOUCHER', biz:'Guldsmeden', amount:'1500', unit:'kr',
+      valid:'Gyldigt til 31.12.2027', code:'GULD-1500-X', lblValid:'', accent:'#e9c887', font:"'Playfair Display',serif",
+      lblValue:'VÆRDI', fstyle:{ amount:{size:1.4}, biz:{size:1.15} } },
+
+    // 9 — Wellness · folded · elegant · kort-format stående · ramme · midt
+    { style:'elegant', format:'folded', paper:'card', corners:'round', border:true, align:'center',
+      eyebrow:'VELVÆRE', biz:'Wellness Spa', amount:'600', unit:'kr',
+      msg:'En stund kun for dig.', to:'dig', from:'Wellness Spa',
+      valid:'Gyldigt 1 år', code:'WEL-600', lblValid:'', accent:'#a8542c', font:'',
+      placement:{ folded:{ front:['eyebrow','biz'], inl:['msg'], inr:['amount','tofrom','valid','code'], back:['sign'] } } },
+
+    // 10 — Fødselsdag · frontback · modern · A5 liggende · ramme · venstre · Poppins
+    { style:'modern', format:'frontback', paper:'a5', corners:'round', border:true, align:'left',
+      eyebrow:'TILLYKKE', biz:'Tillykke!', amount:'350', unit:'kr',
+      msg:'Tillykke med fødselsdagen!', to:'Emil', from:'Hele holdet',
+      valid:'Gyldigt 1 år', lblValid:'', accent:'#7a4ba8', font:"'Poppins',sans-serif",
+      fstyle:{ amount:{size:1.2,bold:true} } },
+
+    // 11 — Vinbar · single · dark · kort-format · skarp · ramme · venstre
+    { style:'dark', format:'single', paper:'card', corners:'sharp', border:true, align:'left',
+      eyebrow:'GAVEKORT', biz:'Vinbaren', amount:'250', unit:'kr',
+      valid:'Gyldigt til 31.12.2026', code:'VIN-250', lblValid:'', accent:'#b03a55', font:'',
+      fstyle:{ biz:{size:1.05} } },
+
+    // 12 — Blomster · frontback · elegant · A6 liggende · ingen ramme · midt · Cormorant
+    { style:'elegant', format:'frontback', paper:'a6', corners:'round', border:false, align:'center',
+      eyebrow:'TIL DIG', biz:'Blomsterhjørnet', amount:'200', unit:'kr',
+      msg:'En lille hilsen til dig.',
+      valid:'Gyldigt 1 år', lblValid:'', accent:'#3f7d4f', font:"'Cormorant Garamond',serif",
+      fstyle:{ biz:{italic:true} } },
+
+    // 13 — Kaffebar · folded · modern · A5 stående · ramme · midt · Jost
+    { style:'modern', format:'folded', paper:'a5', corners:'round', border:true, align:'center',
+      eyebrow:'TAK', biz:'Kaffebar 21', amount:'150', unit:'kr',
+      msg:'Tak fordi du kigger forbi.',
+      valid:'Gyldigt 1 år', lblValid:'', accent:'#b5542a', font:"'Jost',sans-serif",
+      placement:{ folded:{ front:['eyebrow','biz'], inl:['msg'], inr:['amount','valid'], back:['sign'] } } },
+
+    // 14 — Fine dining · single · elegant · A4 liggende · ramme · midt · Fraunces · m. tekstboks
+    { style:'elegant', format:'single', paper:'a4', corners:'round', border:true, align:'center',
+      eyebrow:'GAVEKORT', biz:'Restaurant Lumière', amount:'2000', unit:'kr',
+      valid:'Gyldigt til 31.12.2027', code:'LUM-2000-AX', lblValid:'', accent:'#9a6a32', font:"'Fraunces',serif",
+      lblValue:'VÆRDI', fstyle:{ biz:{size:1.2}, amount:{size:1.3} },
+      boxes:[ { id:1, surface:'card', pos:'bottom-center', align:'center', layout:'stack', gap:4, nextItemId:2,
+        items:[ { id:1, type:'custom', value:'Tak fordi du valgte os', size:.72, italic:true } ] } ], nextBoxId:2 },
+
+    // 15 — Yoga · frontback · modern · kvadratisk · ingen ramme · midt · Poppins
+    { style:'modern', format:'frontback', paper:'square', corners:'round', border:false, align:'center',
+      eyebrow:'GIFT CARD', biz:'Yoga Loft', amount:'400', unit:'kr',
+      msg:'Find din ro.', to:'dig', from:'Yoga Loft',
+      valid:'Gyldigt 1 år', lblValid:'', accent:'#2a8c86', font:"'Poppins',sans-serif",
+      fstyle:{ amount:{size:1.25,bold:true} } },
+
+    // 16 — Tatovør · single · dark · kort-format · skarp · ingen ramme · venstre
+    { style:'dark', format:'single', paper:'card', corners:'sharp', border:false, align:'left',
+      eyebrow:'GIFT VOUCHER', biz:'INK STUDIO', amount:'1000', unit:'kr',
+      valid:'Gyldigt til 31.12.2026', code:'INK-1000', lblValid:'', accent:'#c43b34', font:'',
+      lblValue:'VALUE', lblCode:'Code', fstyle:{ biz:{size:1.15,bold:true}, amount:{size:1.2} } },
+
+    // 17 — Bageri · folded · elegant · A5 stående · ramme · venstre
+    { style:'elegant', format:'folded', paper:'a5', corners:'round', border:true, align:'left',
+      eyebrow:'TIL DIG', biz:'Bageriet', amount:'200', unit:'kr',
+      msg:'Smag på det gode håndværk.', to:'dig', from:'Bageriet',
+      valid:'Gyldigt 1 år', lblValid:'', accent:'#9a6a32', font:'',
+      placement:{ folded:{ front:['eyebrow','biz'], inl:['msg'], inr:['amount','tofrom','valid'], back:['sign'] } } },
+
+    // 18 — Konfirmation · frontback · elegant · A5 liggende · ramme · midt
+    { style:'elegant', format:'frontback', paper:'a5', corners:'round', border:true, align:'center',
+      eyebrow:'TILLYKKE', biz:'Tillykke', amount:'1000', unit:'kr',
+      msg:'Tillykke med konfirmationen.', to:'Frederik', from:'Mormor & Morfar',
+      lblFrom:'Kærlig hilsen', valid:'Ingen udløbsdato', lblValid:'', accent:'#2f6f9f', font:'',
+      fstyle:{ biz:{size:1.1,italic:true} } },
+
+    // 19 — Hudpleje · single · modern · A4 liggende · ingen ramme · midt · Poppins
+    { style:'modern', format:'single', paper:'a4', corners:'round', border:false, align:'center',
+      eyebrow:'GIFT CARD', biz:'Hudplejeklinikken', amount:'750', unit:'kr',
+      valid:'Gyldigt 1 år', code:'HUD-750-3X', lblValid:'', accent:'#b03a55', font:"'Poppins',sans-serif",
+      lblValue:'VÆRDI', fstyle:{ amount:{size:1.3,bold:true} } },
+  ];
+
+  // ---------- Init ----------
+  applyLabelDefaults();
+  const _gp = new URLSearchParams(location.search);
+  const _scRaw = _gp.get('showcase'), _demoRaw = _gp.get('demo');
+  const _scIdx   = (_scRaw   != null && /^\d+$/.test(_scRaw)   && GAVEKORT_SHOWCASE[+_scRaw])   ? +_scRaw   : -1;
+  const _demoIdx = (_demoRaw != null && /^\d+$/.test(_demoRaw) && GAVEKORT_SHOWCASE[+_demoRaw]) ? +_demoRaw : -1;
+
+  if(_scIdx >= 0){
+    // ----- Galleri-showcase: vis kun ét panel, ingen editor, ingen autosave -----
+    showcaseMode = true;
+    applyData(GAVEKORT_SHOWCASE[_scIdx]);
+    document.body.classList.add('gc-showcase');
+    const _side = _gp.get('side')==='back' ? 'back' : 'front';
+    renderShowcase(_side);
+    window.addEventListener('resize', gcShowcaseScale);
+    window.addEventListener('load', gcShowcaseScale);
+    if(document.fonts&&document.fonts.ready){ document.fonts.ready.then(()=>{ renderShowcase(_side); }); }
+  } else {
+    if(_demoIdx >= 0){ applyData(GAVEKORT_SHOWCASE[_demoIdx]); try{ history.replaceState(null,'',location.pathname); }catch(e){} }
+    else if(storageOK){ try{ const a=JSON.parse(localStorage.getItem(LS_AUTOSAVE)||'null'); if(a) applyData(a); }catch(e){} }
+    applyI18n(); renderLibrary(); renderTemplates(); renderFstyle(); renderLabels(); renderBoxList(); render();
+    if(document.fonts&&document.fonts.ready){ document.fonts.ready.then(()=>{ render(); }); }
+    setTimeout(fitCard, 400);
+    initUnlock();
+    if(_demoIdx >= 0) doAutosave();
+  }
+})();
+</script>
+</body>
+</html>
