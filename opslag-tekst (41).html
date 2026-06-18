@@ -1,0 +1,1948 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Skriv opslag · Lusidio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,700;0,9..144,900;1,9..144,600;1,9..144,700&family=Playfair+Display:ital,wght@0,600;0,700;0,800;1,600;1,700&family=Space+Grotesk:wght@400;500;600;700&family=Poppins:wght@500;600;700;800&family=Montserrat:wght@500;600;700;800&family=Oswald:wght@500;600;700&family=Caveat:wght@600;700&family=Anton&family=Bebas+Neue&family=DM+Serif+Display:ital@0;1&family=Archivo+Black&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/modern-screenshot@4.6.0/dist/index.js"></script>
+<style>
+  :root{ --bg:#f1ece1; --panel:#fbf7ef; --ink:#2c2620; --muted:#8c8275; --line:#e2d8c6; --accent:#b5542a; --accent-d:#963f1f; --field:#fffdf8; }
+  *{ box-sizing:border-box; }
+  html,body{ margin:0; padding:0; overflow-x:clip; width:100%; }
+  body{ font-family:'Space Grotesk',sans-serif; color:var(--ink); background:var(--bg); min-height:100vh; line-height:1.5; -webkit-font-smoothing:antialiased; }
+
+  .topbar{ max-width:1240px; margin:0 auto; padding:30px 30px 6px; display:flex; align-items:flex-start; gap:16px; }
+  .home-link-mobile{ display:none; flex:none; align-items:center; justify-content:center; width:36px; height:36px; text-decoration:none; border:1px solid var(--line); border-radius:9px; background:var(--field); color:var(--ink); font-size:1rem; }
+  .brand{ display:flex; align-items:baseline; gap:14px; flex-wrap:wrap; }
+  .brand h1{ font-family:'Fraunces',serif; font-weight:600; font-style:italic; font-size:2.05rem; margin:0; letter-spacing:-.01em; }
+  .brand .dot{ width:9px; height:9px; border-radius:50%; background:var(--accent); display:inline-block; margin-bottom:5px; }
+  .brand p{ margin:0; color:var(--muted); font-size:.95rem; }
+
+  .app{ max-width:1240px; margin:0 auto; padding:18px 30px 56px; display:grid; grid-template-columns:minmax(330px,395px) 1fr; gap:30px; align-items:start; }
+  .panel{ background:var(--panel); border:1px solid var(--line); border-radius:18px; padding:22px; box-shadow:0 10px 30px -18px rgba(60,40,22,.3); display:flex; flex-direction:column; gap:15px; }
+
+  .grp-label{ display:block; font-size:.66rem; font-weight:700; letter-spacing:.1em; text-transform:uppercase; color:var(--accent-d); border-top:1px dashed var(--line); padding-top:14px; margin:2px 0 0; }
+  .grp-label.first{ border-top:none; padding-top:0; }
+  .mini-label{ display:block; font-size:.72rem; color:var(--muted); margin:0 0 6px; }
+  .hint{ font-size:.75rem; color:var(--muted); line-height:1.45; margin:6px 0 0; }
+  .hint.hide{ display:none; }
+
+  .field{ width:100%; font-family:inherit; font-size:.95rem; color:var(--ink); background:var(--field); border:1px solid var(--line); border-radius:9px; padding:10px 12px; transition:border-color .15s, box-shadow .15s; outline:none; }
+  .field::placeholder{ color:#b3a896; }
+  .field:focus{ border-color:var(--accent); box-shadow:0 0 0 3px rgba(181,84,42,.13); }
+  .field.invalid{ border-color:#cf6b4a; box-shadow:0 0 0 3px rgba(207,107,74,.16); }
+  textarea.field{ resize:vertical; min-height:80px; line-height:1.45; }
+  select.field{ -webkit-appearance:none; appearance:none; background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23998f7d' stroke-width='2.5'><path d='M6 9l6 6 6-6'/></svg>"); background-repeat:no-repeat; background-position:right 11px center; padding-right:30px; cursor:pointer; }
+
+  .seg-row{ display:grid; gap:8px; }
+  .seg-2{ grid-template-columns:1fr 1fr; } .seg-3{ grid-template-columns:1fr 1fr 1fr; }
+  .seg-btn{ border:1.5px solid var(--line); background:var(--field); border-radius:10px; padding:11px 8px; cursor:pointer; font-family:inherit; font-size:.82rem; font-weight:600; color:var(--ink); text-align:center; transition:.15s; line-height:1.2; }
+  .seg-btn:hover{ border-color:#d8b59f; }
+  .seg-btn.active{ border-color:var(--accent); box-shadow:0 0 0 3px rgba(181,84,42,.12); color:var(--accent-d); }
+
+  .btn{ font-family:inherit; font-size:.98rem; font-weight:600; border-radius:11px; padding:14px; cursor:pointer; transition:.15s; border:1.5px solid transparent; width:100%; }
+  .btn-primary{ background:var(--accent); color:#fff; box-shadow:0 6px 16px rgba(181,84,42,.28); display:flex; align-items:center; justify-content:center; gap:8px; }
+  .btn-primary:hover{ background:var(--accent-d); transform:translateY(-1px); }
+  .btn-primary:disabled{ opacity:.65; cursor:default; transform:none; }
+  .btn-spin{ width:16px; height:16px; border:2px solid rgba(255,255,255,.45); border-top-color:#fff; border-radius:50%; animation:spin .8s linear infinite; }
+  .form-note{ font-size:.78rem; color:var(--muted); line-height:1.45; text-align:center; margin:-2px 0 0; }
+
+  .output{ min-width:0; max-width:100%; width:100%; }
+  .out-block{ margin-bottom:26px; }
+  .out-block-head{ display:flex; align-items:flex-end; justify-content:space-between; gap:12px; margin:0 2px 13px; }
+  .out-block-head .h{ font-family:'Fraunces',serif; font-weight:600; font-size:1.25rem; }
+  .out-block-head .s{ font-size:.82rem; color:var(--muted); margin-top:2px; }
+  .btn-mini{ font-family:inherit; font-size:.8rem; font-weight:600; color:var(--accent-d); background:var(--field); border:1px solid var(--line); border-radius:9px; padding:9px 13px; cursor:pointer; transition:.15s; white-space:nowrap; }
+  .btn-mini:hover{ border-color:var(--accent); background:#fff6ef; }
+  .btn-mini.hide{ display:none; }
+
+  /* ===== Layout-vælger (slide ligesom stil-vælgeren) ===== */
+  .layout-strip{ display:flex; gap:9px; overflow-x:auto; padding:2px 2px 8px; -webkit-overflow-scrolling:touch; scrollbar-width:none; -ms-overflow-style:none; }
+  .layout-strip::-webkit-scrollbar{ display:none; }
+  .layout-card{ flex:0 0 auto; width:104px; padding:0; border:2px solid var(--line); border-radius:12px; background:none; cursor:pointer; overflow:hidden; transition:.15s; display:flex; flex-direction:column; }
+  .layout-card:hover{ border-color:#d8b59f; transform:translateY(-2px); }
+  .layout-card.active{ border-color:var(--accent); box-shadow:0 0 0 3px rgba(181,84,42,.13); }
+  .layout-card .post.mini{ width:100%; aspect-ratio:1; height:auto; border-radius:0; box-shadow:none; }
+  .layout-card .name{ font-size:.62rem; font-weight:600; color:var(--muted); text-align:center; padding:6px 4px 7px; line-height:1.25; }
+  .layout-card.active .name{ color:var(--accent-d); }
+
+  /* ===== Opslags-grafik ===== */
+  .post-stage{ position:relative; display:flex; justify-content:center; padding:6px 0 4px; }
+  .post{ --hl:11cqw; --hf:'Fraunces',serif; --hw:700; --bf:'Space Grotesk',sans-serif; container-type:inline-size; position:relative; width:min(400px,100%); background:var(--pbg,#c2632f); color:var(--pink,#fdf3e7); border-radius:16px; overflow:hidden; box-shadow:0 20px 48px -18px rgba(40,28,16,.55); }
+
+  .post-photo{ position:absolute; inset:0; background-size:cover; background-position:center; background-repeat:no-repeat; background-color:#8a8276; z-index:0; display:none; }
+  .post-photo2, .post-photo3, .post-photo4{ position:absolute; background-size:cover; background-position:center; background-repeat:no-repeat; background-color:#8a8276; z-index:0; display:none; }
+  .post-scrim{ position:absolute; inset:0; z-index:1; display:none; pointer-events:none; }
+  .post-decor{ position:absolute; inset:0; overflow:hidden; pointer-events:none; z-index:0; display:none; }
+  .decor-blob{ position:absolute; border-radius:50%; background:var(--pacc,#ffd9a8); }
+  .decor-blob.b1{ width:54cqw; height:54cqw; top:-17cqw; right:-15cqw; opacity:.13; }
+  .decor-blob.b2{ width:42cqw; height:42cqw; bottom:-15cqw; left:-13cqw; opacity:.10; }
+  .decor-motif{ position:absolute; right:-5cqw; bottom:-6cqw; width:50cqw; height:50cqw; transform:rotate(-10deg); opacity:.15; }
+  .decor-motif svg, .decor-scatter svg{ display:block; width:100%; height:100%; }
+  .decor-scatter{ position:absolute; }
+  .decor-style{ position:absolute; inset:0; pointer-events:none; }
+  .decor-style svg{ width:100%; height:100%; display:block; }
+  .decor-style.ray{ opacity:.16; }
+  .post-frame{ position:absolute; inset:4.6cqw; border:1px solid var(--pacc,#ffd9a8); opacity:.32; border-radius:7px; pointer-events:none; z-index:3; display:none; }
+
+  .post-content{ position:absolute; inset:0; z-index:4; display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center; gap:3cqw; padding:9cqw; }
+  .post-body{ display:flex; flex-direction:column; align-items:center; gap:3.2cqw; }
+  .post-eyebrow{ font-family:var(--bf); font-size:calc(3cqw * var(--fit,1) * var(--escale,1)); letter-spacing:.34em; text-transform:uppercase; font-weight:600; color:var(--pacc,#ffd9a8); outline:none; }
+  .post-eyebrow.hide{ display:none !important; }
+  .post-headline{ font-family:var(--hf); font-weight:var(--hw); font-size:calc(var(--hl) * var(--hlk,1) * var(--fit,1) * var(--escale,1)); line-height:var(--hlh,.98); letter-spacing:var(--hls,-.02em); outline:none; overflow-wrap:break-word; word-break:break-word; max-width:100%; }
+  .post-headline .post-em{ color:var(--pacc,#ffd9a8); font-style:italic; }
+  .post.font-sans{ --hl:12cqw; --hf:'Space Grotesk',sans-serif; --hw:700; --hlh:1.0; --hls:-.012em; }
+  .post.font-sans .post-headline .post-em{ font-style:normal; }
+  .post.font-display{ --hl:17cqw; --hf:'Anton',sans-serif; --hw:400; --hlh:.9; --hls:.012em; }
+  .post.font-display .post-headline .post-em{ font-style:normal; }
+  .post.uf-fraunces{ --hf:'Fraunces',serif; --hw:700; } .post.uf-playfair{ --hf:'Playfair Display',serif; --hw:700; }
+  .post.uf-grotesk{ --hf:'Space Grotesk',sans-serif; --hw:700; } .post.uf-poppins{ --hf:'Poppins',sans-serif; --hw:700; } .post.uf-montserrat{ --hf:'Montserrat',sans-serif; --hw:700; }
+  .post.uf-anton{ --hf:'Anton',sans-serif; --hw:400; } .post.uf-bebas{ --hf:'Bebas Neue',sans-serif; --hw:400; }
+  .post.uf-oswald{ --hf:'Oswald',sans-serif; --hw:600; } .post.uf-caveat{ --hf:'Caveat',cursive; --hw:700; }
+  .post.uf-dmserif{ --hf:'DM Serif Display',serif; --hw:400; } .post.uf-archivo{ --hf:'Archivo Black',sans-serif; --hw:400; } .post.uf-mono2{ --hf:'Space Mono',monospace; --hw:700; }
+  /* stil: bogstaver, emphasis, streg */
+  .post.hc-up .post-headline{ text-transform:uppercase; } .post.hc-none .post-headline{ text-transform:none; }
+  .post.em-color .post-headline .post-em{ color:var(--pacc); font-style:normal; text-decoration:none; background:none; }
+  .post.em-italic .post-headline .post-em{ color:var(--pacc); font-style:italic; text-decoration:none; background:none; }
+  .post.em-underline .post-headline .post-em{ color:inherit; font-style:normal; background:none; text-decoration:underline; text-decoration-color:var(--pacc); text-underline-offset:.1em; text-decoration-thickness:.09em; }
+  .post.em-highlight .post-headline{ line-height:1.3; }
+  .post.em-highlight .post-headline .post-em{ color:var(--pbadge,#2c2620); font-style:normal; background:linear-gradient(var(--pacc),var(--pacc)) 0 48%/100% 1.16em no-repeat; padding:0 .16em; -webkit-box-decoration-break:clone; box-decoration-break:clone; }
+  .post-rule{ width:calc(11cqw * var(--fit,1)); height:.5cqw; min-height:2px; background:var(--pacc,#ffd9a8); border-radius:2px; opacity:.92; }
+  .post.rule-thin .post-rule{ height:.2cqw; min-height:1px; width:calc(17cqw * var(--fit,1)); opacity:.7; }
+  .post.rule-none .post-rule{ display:none; }
+  .post.rule-dot .post-rule{ width:calc(2.2cqw * var(--fit,1)); height:calc(2.2cqw * var(--fit,1)); min-height:5px; border-radius:50%; }
+  /* stil-komposition: justering (vinder over layout) */
+  .post.st-al-l .post-content{ align-items:flex-start; text-align:left; }
+  .post.st-al-l .post-body{ align-items:flex-start; }
+  .post.st-al-c .post-content{ align-items:center; text-align:center; }
+  .post.st-al-c .post-body{ align-items:center; }
+  .post.st-al-r .post-content{ align-items:flex-end; text-align:right; }
+  .post.st-al-r .post-body{ align-items:flex-end; }
+  /* overskrifts-behandling */
+  .post.st-treat-box .post-headline{ display:inline-block; border:0.5cqw solid var(--pacc); padding:.16em .34em; border-radius:.08em; }
+  .post.st-treat-underline .post-headline{ display:inline-block; border-bottom:0.8cqw solid var(--pacc); padding-bottom:.1em; }
+  .post.st-treat-panel .post-headline{ display:inline-block; background:rgba(0,0,0,.30); padding:.18em .4em; border-radius:.1em; }
+  /* overlinje-stil */
+  .post.st-eb-pill .post-eyebrow{ display:inline-block; background:var(--pacc); color:var(--pbadge); padding:.4em .95em; border-radius:99px; letter-spacing:.16em; }
+  .post.st-eb-line .post-eyebrow{ display:inline-flex; align-items:center; gap:.65em; }
+  .post.st-eb-line .post-eyebrow::before{ content:''; width:2.4em; height:1px; background:currentColor; opacity:.7; }
+  .post-sub{ font-family:var(--bf); font-size:calc(4cqw * var(--fit,1) * var(--escale,1)); line-height:1.45; opacity:.93; outline:none; max-width:92%; }
+  .post-brand{ font-family:var(--bf); font-size:calc(2.8cqw * var(--fit,1) * var(--escale,1)); letter-spacing:.22em; text-transform:uppercase; font-weight:600; color:var(--pink,#fdf3e7); opacity:.62; outline:none; }
+  .post-content [contenteditable]:focus{ box-shadow:0 0 0 2px var(--pacc,#ffd9a8); border-radius:5px; }
+
+  .post-badge{ position:absolute; top:6.5cqw; right:6.5cqw; z-index:5; width:25cqw; height:25cqw; border-radius:50%; background:var(--pacc,#ffd9a8); color:var(--pbadge,#2c2620); display:flex; align-items:center; justify-content:center; transform:rotate(8deg); box-shadow:0 6px 16px rgba(0,0,0,.24); }
+  .lay-sidebar-r .post-badge, .lay-split-right .post-badge, .lay-hero-right .post-badge{ right:auto; left:6.5cqw; transform:rotate(-8deg); }
+  .lay-hero-top .post-badge, .lay-band-top .post-badge, .lay-split-h-bottom .post-badge, .lay-hero-tr .post-badge{ top:auto; bottom:6.5cqw; }
+  .post-badge::after{ content:''; position:absolute; inset:8%; border:1px solid currentColor; opacity:.35; border-radius:50%; }
+  .post-badge span{ font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:calc(6.4cqw * var(--escale,1)); line-height:1.02; text-align:center; padding:0 1.5cqw; outline:none; position:relative; z-index:1; }
+  .post-badge.hide{ display:none; }
+  /* Energi-pynt (Instagram): pile, glimt, stickers — bag teksten, så teksten altid er læsbar */
+  .post-accents{ position:absolute; inset:0; z-index:2; pointer-events:none; overflow:hidden; }
+  .post-accents .acc{ position:absolute; }
+  .post-accents .acc svg{ width:100%; height:100%; display:block; overflow:visible; filter:drop-shadow(0 1px 2px rgba(0,0,0,.28)); }
+
+  /* ===== Instagram-skabeloner: dristige, grafiske kompositioner ===== */
+  /* ★ Retro-stribe: 70er-sol øverst, farveblok m. groovy overskrift nederst */
+  .lay-tpl-retro .post-decor{ display:block; }
+  .post.lay-tpl-retro .post-content{ inset:auto; left:0; right:0; bottom:0; height:47%; justify-content:center; align-items:center; text-align:center; gap:2.4cqw; padding:6.5cqw 8cqw; background:var(--psolid,#b5542a); color:var(--pink,#fdf3e7); }
+  .post.lay-tpl-retro .post-brand{ color:var(--pink,#fdf3e7); opacity:.72; }
+
+  /* ★ Mad-blok: foto øverst, solid farveblok m. stor overskrift nederst, pris-sticker */
+  .lay-tpl-food .post-photo{ display:block; inset:auto; top:0; left:0; right:0; height:59%; }
+  .post.lay-tpl-food .post-content{ inset:auto; left:0; right:0; bottom:0; height:41%; justify-content:center; align-items:flex-start; text-align:left; gap:1.8cqw; padding:6cqw 6.5cqw; background:var(--psolid,#b5542a); color:var(--pink,#fdf3e7); }
+  .lay-tpl-food .post-badge{ top:5.5cqw; right:5.5cqw; bottom:auto; width:26cqw; height:26cqw; transform:rotate(-7deg); }
+  .post.lay-tpl-food .post-brand{ color:var(--pink,#fdf3e7); opacity:.7; }
+
+  /* ★ Rejse-kort: helbillede, dobbelt ramme, elegant serif + lokation nederst */
+  .lay-tpl-travel .post-photo{ display:block; }
+  .lay-tpl-travel .post-scrim{ display:block; background:linear-gradient(to top,rgba(0,0,0,.66) 0%,rgba(0,0,0,.30) 34%,rgba(0,0,0,0) 64%); }
+  .lay-tpl-travel .post-frame{ display:block; inset:5cqw; border:1.4px solid rgba(255,255,255,.92); opacity:.95; border-radius:0; }
+  .post.lay-tpl-travel .post-content{ inset:auto; left:0; right:0; bottom:0; justify-content:flex-end; align-items:flex-start; text-align:left; gap:2.6cqw; padding:11cqw 10cqw; color:#fff; }
+  .post.lay-tpl-travel .post-eyebrow{ display:inline-block; background:rgba(0,0,0,.38); color:#fff; padding:.42em 1em; border-radius:99px; letter-spacing:.2em; border:1px solid rgba(255,255,255,.34); }
+  .post.lay-tpl-travel .post-brand{ color:#fff; opacity:.85; }
+
+  /* ★ Sundheds-tip: blødt baggrund, stort afrundet kort i midten */
+  .lay-tpl-health .post-decor{ display:block; }
+  .post.lay-tpl-health .post-content{ inset:8cqw; justify-content:center; align-items:center; text-align:center; gap:3cqw; padding:9cqw 8cqw; background:#ffffff; border:1.5px solid var(--pacc,#cfa); border-radius:8cqw; box-shadow:0 12px 32px -14px rgba(0,0,0,.28); color:var(--pdark,#243); }
+  .post.lay-tpl-health .post-eyebrow{ display:inline-block; background:var(--pacc,#7bc); color:var(--pbadge,#fff); padding:.42em 1em; border-radius:99px; letter-spacing:.18em; }
+  .post.lay-tpl-health .post-headline{ color:var(--pdark,#243); }
+  .post.lay-tpl-health .post-headline .post-em{ color:var(--pacc,#7bc); }
+  .post.lay-tpl-health .post-rule{ background:var(--pacc,#7bc); }
+  .post.lay-tpl-health .post-sub{ color:var(--pdark,#243); opacity:.78; }
+  .post.lay-tpl-health .post-brand{ color:var(--pdark,#243); opacity:.55; }
+  .lay-tpl-health .post-badge{ display:none; }
+  /* Skabeloner: bræk ikke lange ord midt over — lad auto-tilpasning skalere teksten i stedet */
+  .post.lay-tpl-retro .post-headline, .post.lay-tpl-food .post-headline, .post.lay-tpl-travel .post-headline, .post.lay-tpl-health .post-headline{ overflow-wrap:normal; word-break:keep-all; }
+
+  /* ----- 12 layouts ----- */
+  .lay-hero-bl .post-photo, .lay-hero-center .post-photo, .lay-hero-tr .post-photo, .lay-card-bottom .post-photo, .lay-framed .post-photo{ display:block; }
+  .lay-band-bottom .post-photo{ display:block; inset:auto; top:0; left:0; right:0; height:48%; }
+  .lay-band-top .post-photo{ display:block; inset:auto; left:0; right:0; bottom:0; top:48%; }
+  .lay-split-left .post-photo{ display:block; inset:auto; top:0; bottom:0; right:0; left:46%; }
+  .lay-split-right .post-photo{ display:block; inset:auto; top:0; bottom:0; left:0; right:46%; }
+
+  .lay-hero-bl .post-scrim{ display:block; background:var(--pscrim); }
+  .lay-hero-center .post-scrim{ display:block; background:rgba(0,0,0,.42); }
+  .lay-hero-tr .post-scrim{ display:block; background:linear-gradient(to bottom,rgba(0,0,0,.52) 0%,rgba(0,0,0,.28) 32%,rgba(0,0,0,0) 64%); }
+  .lay-card-bottom .post-scrim{ display:block; background:var(--pscrim); opacity:.55; }
+  .lay-framed .post-scrim{ display:block; background:rgba(0,0,0,.42); }
+
+  .lay-poster .post-decor, .lay-quote .post-decor{ display:block; }
+  .lay-poster .post-frame{ display:block; }
+  .lay-framed .post-frame{ display:block; inset:5cqw; border-width:2px; opacity:.65; border-radius:4px; }
+
+  .lay-hero-bl .post-content, .lay-split-left .post-content, .lay-split-right .post-content, .lay-card-bottom .post-content, .lay-type .post-content{ align-items:flex-start; text-align:left; }
+  .lay-hero-bl .post-body, .lay-split-left .post-body, .lay-split-right .post-body, .lay-card-bottom .post-body, .lay-type .post-body{ align-items:flex-start; }
+
+  .lay-hero-bl .post-content{ inset:auto; left:0; right:0; bottom:0; justify-content:flex-end; color:#fff; }
+  .lay-hero-center .post-content{ color:#fff; }
+  .lay-hero-tr .post-content{ inset:auto; top:0; left:0; right:0; bottom:auto; justify-content:flex-start; align-items:flex-end; text-align:right; color:#fff; }
+  .lay-hero-tr .post-body{ align-items:flex-end; }
+  .lay-band-bottom .post-content{ inset:auto; left:0; right:0; bottom:0; top:48%; gap:2.4cqw; }
+  .lay-band-top .post-content{ inset:auto; left:0; right:0; top:0; bottom:52%; gap:2.4cqw; }
+  .lay-split-left .post-content{ inset:auto; top:0; bottom:0; left:0; width:46%; }
+  .lay-split-right .post-content{ inset:auto; top:0; bottom:0; right:0; width:46%; }
+  .lay-card-bottom .post-content{ inset:auto; left:6cqw; right:6cqw; bottom:6cqw; background:var(--pcardbg); border-radius:13px; padding:6.5cqw; }
+  .lay-poster .post-content{ justify-content:space-between; }
+  .lay-poster .post-body{ flex:1; justify-content:center; }
+  .lay-type .post-content{ justify-content:space-between; }
+  .lay-quote .post-content{ justify-content:center; }
+  .lay-quote .post-body{ position:relative; padding-top:7cqw; }
+  .lay-quote .post-body::before{ content:'\201C'; position:absolute; top:-10cqw; left:50%; transform:translateX(-50%); font-family:'Playfair Display',serif; font-weight:700; font-size:32cqw; line-height:1; color:var(--pacc); opacity:.5; }
+  .lay-framed .post-content{ padding:13cqw 10cqw; color:#fff; }
+
+  .post.over-photo .post-brand{ color:rgba(255,255,255,.82); }
+  .post.over-photo .post-eyebrow{ color:var(--pemhero,#fff); }
+  .post.over-photo .post-headline .post-em{ color:var(--pemhero,#fff); }
+  .post.over-photo .post-rule{ background:var(--pemhero,#fff); }
+  /* tekst der ligger PÅ en accent-boks (pille/highlight) skal beholde kontrastfarven — ellers bliver tekst = boks */
+  .post.over-photo.st-eb-pill .post-eyebrow{ color:var(--pbadge,#2c2620); }
+  .post.over-photo.em-highlight .post-headline .post-em{ color:var(--pbadge,#2c2620); }
+
+  /* --hl per layout (efter font-klasser, .post-kvalificeret så de vinder) */
+  .post.lay-hero-center{ --hl:12cqw; }
+  .post.lay-hero-tr{ --hl:10.5cqw; }
+  .post.lay-split-left, .post.lay-split-right{ --hl:8.6cqw; }
+  .post.lay-band-bottom, .post.lay-band-top{ --hl:9.5cqw; }
+  .post.lay-card-bottom{ --hl:11cqw; }
+  .post.lay-type{ --hl:17cqw; }
+  .post.lay-quote{ --hl:11cqw; }
+  .post.lay-framed{ --hl:10.5cqw; }
+  .lay-band-bottom .post-body, .lay-band-top .post-body{ gap:2.6cqw; }
+
+  /* ===== NYE LAYOUTS ===== */
+  .lay-hero-top .post-photo{ display:block; }
+  .lay-hero-top .post-scrim{ display:block; background:linear-gradient(to bottom,rgba(0,0,0,.5) 0%,rgba(0,0,0,.25) 32%,rgba(0,0,0,0) 62%); }
+  .lay-hero-top .post-content{ inset:auto; top:0; left:0; right:0; bottom:auto; justify-content:flex-start; color:#fff; }
+  .lay-spotlight .post-photo{ display:block; }
+  .lay-spotlight .post-scrim{ display:block; background:radial-gradient(125% 95% at 50% 55%,rgba(0,0,0,0) 18%,rgba(0,0,0,.68) 100%); }
+  .lay-spotlight .post-content{ justify-content:center; color:#fff; }
+  .lay-band-mid .post-photo{ display:block; }
+  .lay-band-mid .post-content{ inset:auto; left:0; right:0; top:34%; bottom:34%; background:var(--pcardbg); padding:5cqw 6cqw; justify-content:center; }
+  .lay-split-h-top .post-photo{ display:block; inset:auto; top:0; left:0; right:0; height:58%; }
+  .lay-split-h-top .post-content{ inset:auto; left:0; right:0; top:58%; bottom:0; padding:6cqw; justify-content:center; }
+  .lay-split-h-bottom .post-photo{ display:block; inset:auto; bottom:0; left:0; right:0; height:58%; }
+  .lay-split-h-bottom .post-content{ inset:auto; left:0; right:0; top:0; bottom:58%; padding:6cqw; justify-content:center; }
+  .lay-sidebar-r .post-photo{ display:block; }
+  .lay-sidebar-r .post-content{ inset:auto; top:0; bottom:0; right:0; width:46%; background:var(--pcardbg); padding:6cqw; justify-content:center; }
+  .lay-card-center .post-photo{ display:block; }
+  .lay-card-center .post-scrim{ display:block; background:rgba(0,0,0,.3); }
+  .lay-card-center .post-content{ inset:12cqw; background:var(--pcardbg); border-radius:14px; padding:7cqw; justify-content:center; }
+  .lay-corner .post-photo{ display:block; }
+  .lay-corner .post-content{ inset:auto; left:0; bottom:0; right:36%; top:auto; background:var(--pcardbg); border-top-right-radius:16px; padding:6cqw; justify-content:flex-end; }
+  .lay-postcard .post-photo{ display:block; inset:5cqw 5cqw auto 5cqw; height:52%; border-radius:5px; }
+  .lay-postcard .post-content{ inset:auto; left:5cqw; right:5cqw; bottom:4cqw; top:auto; padding:2cqw 1cqw; justify-content:center; }
+  .lay-ticket .post-content{ inset:7cqw; border:2px dashed var(--pacc); border-radius:12px; padding:6cqw; justify-content:center; }
+  .lay-minimal .post-content{ padding:12cqw 9cqw; justify-content:center; }
+  /* ----- multi-billede ----- */
+  .lay-duo-v .post-photo{ display:block; inset:auto; top:0; bottom:0; left:0; width:50%; }
+  .lay-duo-v .post-photo2{ display:block; inset:auto; top:0; bottom:0; right:0; width:50%; }
+  .lay-duo-v .post-scrim{ display:block; background:var(--pscrim); }
+  .lay-duo-v .post-content{ inset:auto; left:0; right:0; bottom:0; justify-content:flex-end; color:#fff; }
+  .lay-duo-h .post-photo{ display:block; inset:auto; top:0; left:0; right:0; height:50%; }
+  .lay-duo-h .post-photo2{ display:block; inset:auto; bottom:0; left:0; right:0; height:50%; }
+  .lay-duo-h .post-content{ inset:auto; left:6cqw; right:6cqw; top:28%; bottom:28%; background:var(--pcardbg); border-radius:12px; padding:5cqw; justify-content:center; }
+  .lay-grid-4 .post-photo{ display:block; inset:auto; top:0; left:0; width:50%; height:50%; }
+  .lay-grid-4 .post-photo2{ display:block; inset:auto; top:0; right:0; width:50%; height:50%; }
+  .lay-grid-4 .post-photo3{ display:block; inset:auto; bottom:0; left:0; width:50%; height:50%; }
+  .lay-grid-4 .post-photo4{ display:block; inset:auto; bottom:0; right:0; width:50%; height:50%; }
+  .lay-grid-4 .post-content{ inset:13cqw; background:var(--pcardbg); border-radius:13px; padding:6cqw; justify-content:center; }
+  .lay-collage-3 .post-photo{ display:block; inset:auto; top:0; bottom:0; left:0; width:60%; }
+  .lay-collage-3 .post-photo2{ display:block; inset:auto; top:0; right:0; width:40%; height:50%; }
+  .lay-collage-3 .post-photo3{ display:block; inset:auto; bottom:0; right:0; width:40%; height:50%; }
+  .lay-collage-3 .post-scrim{ display:block; background:var(--pscrim); }
+  .lay-collage-3 .post-content{ inset:auto; left:0; right:0; bottom:0; justify-content:flex-end; color:#fff; }
+  .lay-mosaic .post-photo{ display:block; inset:auto; top:0; bottom:0; right:0; width:58%; }
+  .lay-mosaic .post-photo2{ display:block; inset:auto; top:0; left:0; width:42%; height:50%; }
+  .lay-mosaic .post-photo3{ display:block; inset:auto; bottom:0; left:0; width:42%; height:50%; }
+  .lay-mosaic .post-scrim{ display:block; background:var(--pscrim); }
+  .lay-mosaic .post-content{ inset:auto; left:0; right:0; bottom:0; justify-content:flex-end; color:#fff; }
+  .lay-filmstrip .post-photo{ display:block; inset:auto; top:0; left:0; width:33.34%; height:52%; }
+  .lay-filmstrip .post-photo2{ display:block; inset:auto; top:0; left:33.33%; width:33.34%; height:52%; }
+  .lay-filmstrip .post-photo3{ display:block; inset:auto; top:0; right:0; width:33.34%; height:52%; }
+  .lay-filmstrip .post-content{ inset:auto; left:0; right:0; top:52%; bottom:0; padding:6cqw; justify-content:center; }
+  .lay-triptych .post-photo{ display:block; inset:auto; top:0; bottom:0; left:0; width:33.34%; }
+  .lay-triptych .post-photo2{ display:block; inset:auto; top:0; bottom:0; left:33.33%; width:33.34%; }
+  .lay-triptych .post-photo3{ display:block; inset:auto; top:0; bottom:0; right:0; width:33.34%; }
+  .lay-triptych .post-scrim{ display:block; background:var(--pscrim); }
+  .lay-triptych .post-content{ inset:auto; left:0; right:0; bottom:0; justify-content:flex-end; color:#fff; }
+  /* --hl nye layouts */
+  .post.lay-hero-top{ --hl:11cqw; }
+  .post.lay-spotlight{ --hl:12cqw; }
+  .post.lay-band-mid{ --hl:9cqw; }
+  .post.lay-split-h-top, .post.lay-split-h-bottom{ --hl:9.5cqw; }
+  .post.lay-sidebar-r{ --hl:8.4cqw; }
+  .post.lay-card-center{ --hl:10cqw; }
+  .post.lay-corner{ --hl:8.4cqw; }
+  .post.lay-postcard{ --hl:7.4cqw; }
+  .post.lay-ticket{ --hl:10cqw; }
+  .post.lay-minimal{ --hl:12cqw; }
+  .post.lay-duo-v, .post.lay-collage-3, .post.lay-mosaic, .post.lay-triptych{ --hl:9cqw; }
+  .post.lay-duo-h, .post.lay-grid-4{ --hl:8.2cqw; }
+  .post.lay-filmstrip{ --hl:8.8cqw; }
+
+  /* hero-venstre/højre: tekstblok i en kolonne over fotoet */
+  .lay-hero-left .post-photo{ display:block; }
+  .lay-hero-left .post-scrim{ display:block; background:var(--pscrim); }
+  .lay-hero-left .post-content{ inset:auto; left:0; right:36%; bottom:0; justify-content:flex-end; color:#fff; }
+  .lay-hero-right .post-photo{ display:block; }
+  .lay-hero-right .post-scrim{ display:block; background:linear-gradient(to top left,rgba(0,0,0,.78) 0%,rgba(0,0,0,.4) 38%,rgba(0,0,0,0) 72%); }
+  .lay-hero-right .post-content{ inset:auto; left:36%; right:0; bottom:0; justify-content:flex-end; color:#fff; }
+  /* showcase: ét stort foto + tre små i en kolonne */
+  .lay-showcase .post-photo{ display:block; inset:auto; top:0; bottom:0; left:0; width:62%; }
+  .lay-showcase .post-photo2{ display:block; inset:auto; top:0; right:0; width:38%; height:33.34%; }
+  .lay-showcase .post-photo3{ display:block; inset:auto; top:33.33%; right:0; width:38%; height:33.34%; }
+  .lay-showcase .post-photo4{ display:block; inset:auto; bottom:0; right:0; width:38%; height:33.34%; }
+  .lay-showcase .post-scrim{ display:block; background:var(--pscrim); }
+  .lay-showcase .post-content{ inset:auto; left:0; right:0; bottom:0; justify-content:flex-end; color:#fff; }
+  .post.lay-hero-left, .post.lay-hero-right{ --hl:10cqw; }
+  .post.lay-showcase{ --hl:9cqw; }
+
+  /* ----- skitse-tilstand (wireframe) ----- */
+  .post.skeleton{ background:#ece6da; box-shadow:none; }
+  .post.skeleton .post-photo, .post.skeleton .post-photo2, .post.skeleton .post-photo3, .post.skeleton .post-photo4{ background:#d4cbb9 !important; background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23a89e8c'%3E%3Cpath d='M5 5h14a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1zm1 2v6.2l3.5-3.5 3.5 3.5 2.5-2.5L20 16V7H6zm2.2 1.3a1.4 1.4 0 1 1 0 2.8 1.4 1.4 0 0 1 0-2.8z'/%3E%3C/svg%3E") !important; background-size:30% auto !important; background-position:center !important; background-repeat:no-repeat !important; box-shadow:inset 0 0 0 1px #ece6da !important; }
+  .post.skeleton .post-scrim, .post.skeleton .post-decor, .post.skeleton .post-frame, .post.skeleton .post-badge, .post.skeleton .post-accents{ display:none !important; }
+  .post.skeleton .post-content{ background:transparent !important; color:transparent !important; }
+  .post.skeleton.lay-card-bottom .post-content, .post.skeleton.lay-card-center .post-content, .post.skeleton.lay-sidebar-r .post-content, .post.skeleton.lay-corner .post-content, .post.skeleton.lay-band-mid .post-content, .post.skeleton.lay-duo-h .post-content, .post.skeleton.lay-grid-4 .post-content, .post.skeleton.lay-ticket .post-content{ background:#ddd3c2 !important; }
+  .post.skeleton .post-eyebrow{ background:#c8bda9; border-radius:99px; height:2.6cqw; min-height:6px; width:26%; }
+  .post.skeleton .post-headline{ background:#b1a68f; border-radius:5px; height:15cqw; width:80%; letter-spacing:0; }
+  .post.skeleton.lay-type .post-headline{ height:22cqw; }
+  .post.skeleton .post-rule{ display:none; }
+  .post.skeleton .post-sub{ background:#c8bda9; border-radius:99px; height:3.2cqw; min-height:6px; width:62%; }
+  .post.skeleton .post-brand{ background:#ccc1ae; border-radius:99px; height:2.4cqw; min-height:5px; width:34%; }
+
+  .post-controls{ margin-top:16px; display:flex; flex-direction:column; gap:14px; }
+  .ctrl .mini-label{ margin-bottom:7px; }
+  .ctrl-btns{ display:flex; gap:8px; flex-wrap:wrap; }
+  .text-fields{ display:flex; flex-direction:column; gap:7px; }
+  .text-fields .field{ font-size:.88rem; padding:8px 11px; }
+  .photo-search{ display:flex; gap:8px; margin-top:9px; }
+  .photo-search .field{ flex:1; }
+  .photo-search .btn-mini{ flex:none; }
+  .photo-results{ display:grid; grid-template-columns:repeat(4,1fr); gap:6px; margin-top:9px; }
+  .photo-results:empty{ display:none; }
+  .ph-thumb{ width:100%; aspect-ratio:1; object-fit:cover; border-radius:8px; cursor:pointer; border:2px solid transparent; transition:.12s; background:#eee; }
+  .ph-thumb:hover{ border-color:var(--accent); transform:translateY(-2px); }
+  .ph-msg{ grid-column:1/-1; font-size:.78rem; color:var(--muted); padding:4px 2px; }
+  .abs-row{ display:flex; gap:8px; flex-wrap:wrap; }
+  /* direkte editor: markering, flyt, skalér */
+  .post-content [contenteditable]{ cursor:text; }
+  .post-content [contenteditable]:hover{ box-shadow:0 0 0 1.5px rgba(255,255,255,.5); border-radius:4px; }
+  #selBox{ position:absolute; z-index:30; border:1.5px solid var(--accent); border-radius:4px; pointer-events:none; display:none; box-shadow:0 0 0 1px rgba(255,255,255,.5); }
+  #selBox.on{ display:block; }
+  .sel-handle{ position:absolute; pointer-events:auto; background:var(--accent); border:2px solid #fff; box-shadow:0 2px 6px rgba(0,0,0,.3); }
+  .sel-move{ top:-13px; left:-13px; width:26px; height:26px; border-radius:50%; cursor:move; display:flex; align-items:center; justify-content:center; color:#fff; font-size:13px; }
+  .sel-size{ right:-9px; bottom:-9px; width:18px; height:18px; border-radius:4px; cursor:nwse-resize; }
+  .sel-del{ top:-13px; right:-13px; width:26px; height:26px; border-radius:50%; cursor:pointer; display:flex; align-items:center; justify-content:center; color:#fff; font-size:15px; font-weight:700; background:#c0392b; }
+  .style-strip{ display:flex; gap:9px; overflow-x:auto; padding:2px 2px 8px; -webkit-overflow-scrolling:touch; scrollbar-width:none; -ms-overflow-style:none; }
+  .style-strip::-webkit-scrollbar{ display:none; }
+  .style-card{ flex:0 0 auto; width:92px; border:2px solid var(--line); border-radius:12px; background:none; cursor:pointer; overflow:hidden; transition:.15s; padding:0; }
+  .style-card:hover{ border-color:#d8b59f; transform:translateY(-2px); }
+  .style-card.active{ border-color:var(--accent); box-shadow:0 0 0 3px rgba(181,84,42,.13); }
+  .style-card .sw{ height:60px; display:flex; flex-direction:column; justify-content:center; gap:3px; padding:8px 9px; overflow:hidden; position:relative; }
+  .style-card .sw.a-l{ align-items:flex-start; }
+  .style-card .sw.a-c{ align-items:center; }
+  .style-card .sw.a-r{ align-items:flex-end; }
+  .style-card .sw .m-eb{ height:3px; width:32%; border-radius:2px; background:currentColor; opacity:.85; }
+  .style-card .sw .m-h{ line-height:1; font-weight:700; }
+  .style-card .sw .m-sub{ height:3px; width:62%; border-radius:2px; background:currentColor; opacity:.5; }
+  .style-card .name{ font-size:.62rem; font-weight:600; color:var(--muted); text-align:center; padding:5px 3px 6px; line-height:1.2; }
+  .style-card.active .name{ color:var(--accent-d); }
+  .editor-tip{ font-size:.75rem; color:var(--muted); line-height:1.45; margin:8px 2px 0; }
+  .theme-row{ display:flex; gap:8px; flex-wrap:wrap; }
+  .theme-sw{ width:30px; height:30px; border-radius:8px; cursor:pointer; border:2px solid #fff; box-shadow:0 2px 7px rgba(60,40,22,.18); padding:0; transition:transform .12s; }
+  .theme-sw:hover{ transform:translateY(-2px); } .theme-sw.active{ outline:2.5px solid var(--accent); outline-offset:1px; }
+  .color-row{ display:flex; gap:16px; }
+  .color-pick{ display:flex; flex-direction:column; align-items:center; gap:6px; font-size:.68rem; color:var(--muted); cursor:pointer; }
+  .color-pick input[type=color]{ width:40px; height:40px; border:2px solid #fff; border-radius:10px; box-shadow:0 2px 7px rgba(60,40,22,.18); cursor:pointer; padding:0; background:none; }
+  .btn-dl{ font-family:inherit; font-size:.92rem; font-weight:600; color:#fff; background:var(--accent); border:none; border-radius:11px; padding:13px; cursor:pointer; transition:.15s; box-shadow:0 6px 16px rgba(181,84,42,.25); display:flex; align-items:center; justify-content:center; gap:8px; }
+  .btn-dl:hover{ background:var(--accent-d); transform:translateY(-1px); } .btn-dl:disabled{ opacity:.6; cursor:default; transform:none; }
+
+  .brand-note{ font-size:.82rem; color:var(--accent-d); background:#fff6ef; border:1px solid var(--line); border-radius:10px; padding:9px 13px; margin:0 2px 13px; text-align:center; }
+  .brand-note.hide{ display:none; }
+
+  .results{ display:flex; flex-direction:column; gap:16px; }
+  .result-card{ background:var(--panel); border:1px solid var(--line); border-radius:16px; padding:15px 16px 12px; box-shadow:0 10px 30px -20px rgba(60,40,22,.3); }
+  .result-head{ display:flex; align-items:center; justify-content:space-between; margin-bottom:9px; }
+  .result-num{ font-size:.66rem; font-weight:700; letter-spacing:.1em; text-transform:uppercase; color:var(--accent-d); }
+  .result-area{ width:100%; border:1px solid var(--line); border-radius:10px; background:var(--field); padding:12px 13px; font-family:inherit; font-size:.95rem; line-height:1.5; color:var(--ink); resize:vertical; min-height:118px; outline:none; transition:border-color .15s, box-shadow .15s; }
+  .result-area:focus{ border-color:var(--accent); box-shadow:0 0 0 3px rgba(181,84,42,.13); }
+  .result-foot{ display:flex; align-items:center; justify-content:space-between; gap:10px; margin-top:9px; }
+  .char{ font-size:.74rem; color:var(--muted); }
+  .copy-btn{ font-family:inherit; font-size:.8rem; font-weight:600; color:var(--accent-d); background:var(--field); border:1px solid var(--line); border-radius:9px; padding:8px 15px; cursor:pointer; transition:.15s; flex:none; }
+  .copy-btn:hover{ border-color:var(--accent); background:#fff6ef; } .copy-btn.done{ background:var(--accent); color:#fff; border-color:var(--accent); }
+
+  .placeholder{ border:1.5px dashed var(--line); border-radius:18px; padding:48px 26px; text-align:center; color:var(--muted); background:rgba(255,255,255,.4); }
+  .placeholder .big{ font-family:'Fraunces',serif; font-style:italic; font-size:1.35rem; color:var(--ink); opacity:.82; margin-bottom:8px; }
+  .placeholder .sub{ font-size:.9rem; max-width:380px; margin:0 auto; line-height:1.5; }
+  .loading{ display:flex; flex-direction:column; align-items:center; gap:15px; padding:54px 24px; color:var(--muted); }
+  .spinner{ width:36px; height:36px; border:3px solid var(--line); border-top-color:var(--accent); border-radius:50%; animation:spin .8s linear infinite; }
+  @keyframes spin{ to{ transform:rotate(360deg); } }
+  .err{ border:1px solid #e0b4a4; background:#fbeee8; color:#8a3a1f; border-radius:14px; padding:16px 18px; font-size:.9rem; line-height:1.5; }
+  .err b{ color:#7a2f17; } .err .small{ display:block; margin-top:6px; font-size:.8rem; color:#9a5436; }
+
+  .foot{ max-width:1240px; margin:0 auto; padding:0 30px 40px; text-align:center; color:var(--muted); font-size:.82rem; }
+  .foot a{ color:var(--accent-d); }
+
+  /* ===== Resultat-layout: kontroller til venstre, klæbende forhåndsvisning til højre ===== */
+  .app.results-mode{ grid-template-columns:1fr; }
+  .app.results-mode > .panel{ display:none; }
+  .app.results-mode .placeholder{ display:none; }
+  #resultsWrap{ display:grid; grid-template-columns:minmax(0,1fr) minmax(360px,430px); gap:38px; align-items:start; }
+  .res-main{ min-width:0; }
+  .res-bar{ display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap; margin:0 2px 24px; padding-bottom:18px; border-bottom:1px solid var(--line); }
+  .res-bar-actions{ display:flex; gap:8px; flex-wrap:wrap; }
+  .btn-back{ font-family:inherit; font-size:.88rem; font-weight:600; color:var(--ink); background:var(--field); border:1px solid var(--line); border-radius:10px; padding:10px 16px; cursor:pointer; transition:.15s; display:inline-flex; align-items:center; gap:7px; }
+  .btn-back span{ color:var(--accent); font-weight:700; font-size:1.05em; }
+  .btn-back:hover{ border-color:var(--accent); background:#fff6ef; transform:translateX(-1px); }
+  .res-preview{ position:sticky; top:22px; }
+  .res-preview-inner{ background:var(--panel); border:1px solid var(--line); border-radius:18px; padding:20px 20px 22px; box-shadow:0 16px 40px -22px rgba(60,40,22,.4); display:flex; flex-direction:column; }
+  .res-preview-label{ font-size:.66rem; font-weight:700; letter-spacing:.12em; text-transform:uppercase; color:var(--muted); margin:0 0 13px 2px; }
+  .res-preview .post-stage{ padding:0; }
+  .res-preview .brand-note{ margin:0 0 12px; }
+  .res-preview .editor-tip{ margin:13px 2px 0; }
+  .res-preview .btn-dl{ margin-top:16px; }
+
+  /* ===== Scene-motor: frit design (vilkårlige elementer, fri placering) ===== */
+  #sceneLayer{ position:absolute; inset:0; z-index:6; display:none; }
+  .post.scene-on #sceneLayer{ display:block; }
+  .post.scene-on > .post-photo, .post.scene-on > .post-photo2, .post.scene-on > .post-photo3, .post.scene-on > .post-photo4, .post.scene-on > .post-scrim, .post.scene-on > .post-decor, .post.scene-on > .post-accents, .post.scene-on > .post-frame, .post.scene-on > .post-badge, .post.scene-on > .post-content{ display:none !important; }
+  .se{ position:absolute; box-sizing:border-box; }
+  .se-text{ outline:none; overflow-wrap:break-word; word-break:normal; }
+  .se-text:hover{ box-shadow:0 0 0 1.5px rgba(120,120,120,.4); border-radius:3px; }
+  .se-image{ background-color:#8a8276; }
+  .se svg{ width:100%; height:100%; display:block; overflow:visible; }
+  .mode-seg{ display:inline-flex; gap:8px; width:auto; flex:0 0 auto; }
+  .mode-seg .seg-btn{ white-space:nowrap; }
+  #scenePanel .out-block{ margin-bottom:24px; }
+  #scenePanel textarea.field{ margin-top:2px; }
+  .scene-actions{ display:flex; gap:10px; margin-top:13px; flex-wrap:wrap; }
+  .btn-dl.scene-draw{ width:auto; padding:13px 24px; margin:0; }
+  .scene-empty{ border:1.5px dashed var(--line); border-radius:16px; padding:30px 22px; text-align:center; color:var(--muted); font-size:.9rem; line-height:1.5; }
+  .btn-ghost{ display:inline-flex; align-items:center; gap:7px; padding:9px 14px; border-radius:10px; border:1.4px solid var(--line); background:#fff; color:var(--ink); font:inherit; font-size:.85rem; font-weight:600; cursor:pointer; }
+  .btn-ghost:hover{ border-color:var(--accent); color:var(--accent); }
+  .style-ref-row{ display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin-top:11px; }
+  .style-ref-chip{ display:inline-flex; align-items:center; gap:9px; padding:6px 8px 6px 10px; border:1.4px solid var(--line); border-radius:999px; background:#fff; }
+  .style-pal{ display:inline-flex; border-radius:6px; overflow:hidden; box-shadow:0 0 0 1px rgba(0,0,0,.08); }
+  .style-pal i{ width:15px; height:18px; display:block; }
+  .style-ref-name{ font-size:.78rem; color:var(--muted); font-weight:600; max-width:160px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .style-ref-x{ width:20px; height:20px; border:none; border-radius:50%; background:#eee; color:#555; cursor:pointer; font-size:14px; line-height:1; display:flex; align-items:center; justify-content:center; }
+  .style-ref-x:hover{ background:#e6c4b8; color:#7a2e16; }
+
+  @media (max-width:900px){
+    .topbar{ padding:22px 16px 4px; } .home-link-mobile{ display:inline-flex; }
+    .brand h1{ font-size:1.7rem; } .brand p{ font-size:.88rem; }
+    .app{ display:flex; flex-direction:column; padding:16px 14px 44px; gap:22px; }
+    .app.results-mode{ display:flex; }
+    #resultsWrap{ display:flex; flex-direction:column; gap:20px; }
+    .res-preview{ position:static; order:-1; }
+    .res-bar{ margin-bottom:4px; padding-bottom:14px; }
+    .field, textarea.field{ font-size:16px; } .foot{ padding:0 16px 36px; }
+    .photo-results{ grid-template-columns:repeat(3,1fr); }
+    /* større touch-targets */
+    .theme-sw{ width:34px; height:34px; }
+    .color-pick input[type=color]{ width:46px; height:46px; }
+    .color-row{ gap:20px; }
+    .sel-move, .sel-del{ width:30px; height:30px; }
+    .sel-move{ top:-15px; left:-15px; } .sel-del{ top:-15px; right:-15px; }
+    .sel-size{ width:22px; height:22px; right:-11px; bottom:-11px; }
+    /* behageligere vandret swipe på begge striber */
+    .style-strip, .layout-strip{ scroll-snap-type:x proximity; gap:11px; }
+    .style-card, .layout-card{ scroll-snap-align:start; }
+  }
+</style>
+</head>
+<body>
+
+  <div class="topbar">
+    <a class="home-link-mobile" href="/" title="Lusidio" aria-label="Tilbage">←</a>
+    <div class="brand">
+      <h1>Skriv opslag</h1><span class="dot"></span>
+      <p>Vælg et layout og få et færdigt, moderne opslag — med dit eget eller et stock-foto.</p>
+    </div>
+  </div>
+
+  <div class="app">
+
+    <!-- ===== Formular ===== -->
+    <div class="panel">
+      <span class="grp-label first">Om din virksomhed</span>
+      <div>
+        <label class="mini-label" for="navn">Virksomhedsnavn <span style="opacity:.7">(vises på opslaget)</span></label>
+        <input class="field" id="navn" type="text" placeholder="fx Café Solsikke" autocomplete="off">
+      </div>
+      <div>
+        <label class="mini-label" for="type">Hvad er det for en virksomhed?</label>
+        <input class="field" id="type" type="text" placeholder="fx café, frisør, butik, restaurant…" autocomplete="off">
+      </div>
+
+      <span class="grp-label">Dit opslag</span>
+      <div>
+        <label class="mini-label" for="emne">Hvad skal opslaget handle om?</label>
+        <textarea class="field" id="emne" rows="3" placeholder="fx: Studenterrabat hele juni — vis dit studiekort og få 20% på alt."></textarea>
+      </div>
+      <div>
+        <label class="mini-label" for="site">Jeres hjemmeside <span style="opacity:.7">(valgfri)</span></label>
+        <input class="field" id="site" type="text" placeholder="fx cafesolsikke.dk" autocomplete="off" inputmode="url">
+        <p class="hint">Skriv jeres webadresse, så matcher vi farverne til jeres <b>rigtige brand</b>.</p>
+      </div>
+
+      <div>
+        <span class="mini-label">Platform</span>
+        <div class="seg-row seg-3" data-seg="platform">
+          <button class="seg-btn active" data-val="facebook" type="button">Facebook</button>
+          <button class="seg-btn" data-val="instagram" type="button">Instagram</button>
+          <button class="seg-btn" data-val="linkedin" type="button">LinkedIn</button>
+        </div>
+      </div>
+      <div>
+        <span class="mini-label">Længde på teksten</span>
+        <div class="seg-row seg-3" data-seg="laengde">
+          <button class="seg-btn" data-val="kort" type="button">Kort</button>
+          <button class="seg-btn active" data-val="mellem" type="button">Mellem</button>
+          <button class="seg-btn" data-val="lang" type="button">Lang</button>
+        </div>
+      </div>
+      <div>
+        <span class="mini-label">Emojis</span>
+        <div class="seg-row seg-2" data-seg="emoji">
+          <button class="seg-btn active" data-val="med" type="button">Med emojis</button>
+          <button class="seg-btn" data-val="uden" type="button">Uden emojis</button>
+        </div>
+      </div>
+
+      <button class="btn btn-primary" id="genBtn" type="button"><span id="genIcon">✨</span><span id="genLabel">Lav opslag</span></button>
+      <p class="form-note">AI’en skriver teksten og vælger farver — derefter vælger du selv layout og billede.</p>
+    </div>
+
+    <!-- ===== Output ===== -->
+    <div class="output">
+      <div class="placeholder" id="phEmpty">
+        <div class="big">Dit opslag dukker op her</div>
+        <div class="sub">Udfyld felterne og tryk “Lav opslag”. Vælg et layout blandt flere skitser, upload evt. dit eget billede, og hent opslaget i høj opløsning.</div>
+      </div>
+
+      <div id="status"></div>
+
+      <div id="resultsWrap" style="display:none;">
+
+        <div class="res-main">
+          <div class="res-bar">
+            <button class="btn-back" id="backBtn" type="button"><span aria-hidden="true">←</span> Ændre oplysninger</button>
+            <div class="seg-row mode-seg" id="modeSeg">
+              <button class="seg-btn active" data-mode="auto" type="button">✨ Auto-design</button>
+              <button class="seg-btn" data-mode="scene" type="button">🎨 Beskriv selv</button>
+            </div>
+          </div>
+
+          <div id="autoPanel">
+          <div class="res-bar-actions" style="justify-content:flex-end;margin:0 2px 18px;">
+            <button class="btn-mini" id="shuffleBtn" type="button">✨ Overrask mig</button>
+            <button class="btn-mini" id="regenBtn" type="button">↻ Ny tekst</button>
+          </div>
+
+          <div class="out-block">
+            <div class="out-block-head"><div><div class="h">Vælg en stil</div><div class="s">Hele udtrykket skifter — skrift, farver, tekstur og pynt</div></div></div>
+            <div class="style-strip" id="styleStrip"></div>
+          </div>
+
+          <div class="out-block">
+            <div class="out-block-head"><div><div class="h">Vælg et layout</div><div class="s">Tryk på en opstilling — samme stil, ny opsætning</div></div></div>
+            <div class="layout-strip" id="layoutStrip"></div>
+          </div>
+
+          <div class="out-block">
+            <div class="out-block-head"><div><div class="h">Tilpas opslaget</div><div class="s">Billede, skrift, format, farver og motiv</div></div></div>
+            <div class="post-controls">
+              <div class="ctrl">
+                <span class="mini-label">Billede</span>
+                <div class="ctrl-btns">
+                  <button class="btn-mini" id="uploadBtn" type="button">⬆ Upload eget billede</button>
+                  <button class="btn-mini hide" id="swapBtn" type="button">↻ Skift stock-foto</button>
+                  <button class="btn-mini hide" id="clearPhotoBtn" type="button">Fjern billede</button>
+                </div>
+                <input type="file" id="uploadInput" accept="image/png,image/jpeg,image/webp" style="display:none">
+                <p class="hint hide" id="photoHint"></p>
+              </div>
+              <div class="ctrl">
+                <span class="mini-label">Skrifttype</span>
+                <select class="field" id="fontSel">
+                  <option value="auto">Automatisk (følger stilen)</option>
+                  <option value="fraunces">Fraunces — elegant serif</option>
+                  <option value="playfair">Playfair Display — klassisk serif</option>
+                  <option value="grotesk">Space Grotesk — moderne sans</option>
+                  <option value="poppins">Poppins — rund sans</option>
+                  <option value="montserrat">Montserrat — ren sans</option>
+                  <option value="oswald">Oswald — kondenseret</option>
+                  <option value="dmserif">DM Serif — high-fashion</option>
+                  <option value="archivo">Archivo Black — ultrafed</option>
+                  <option value="anton">Anton — fed plakat</option>
+                  <option value="bebas">Bebas Neue — kondenseret</option>
+                  <option value="mono2">Space Mono — teknisk</option>
+                  <option value="caveat">Caveat — håndskrift</option>
+                </select>
+              </div>
+              <div class="ctrl">
+                <span class="mini-label">Format</span>
+                <div class="seg-row seg-3" id="fmtRow">
+                  <button class="seg-btn active" data-fmt="1" type="button">Firkant</button>
+                  <button class="seg-btn" data-fmt="1.25" type="button">Stående</button>
+                  <button class="seg-btn" data-fmt="1.7778" type="button">Story</button>
+                </div>
+              </div>
+              <div class="ctrl">
+                <span class="mini-label">Energi-pynt (pile, glimt)</span>
+                <div class="seg-row seg-3" id="accentRow">
+                  <button class="seg-btn active" data-acc="none" type="button">Ingen</button>
+                  <button class="seg-btn" data-acc="some" type="button">Lidt</button>
+                  <button class="seg-btn" data-acc="max" type="button">Maks</button>
+                </div>
+              </div>
+              <div class="ctrl">
+                <span class="mini-label">Farve</span>
+                <div class="theme-row" id="themeRow"></div>
+              </div>
+              <div class="ctrl">
+                <span class="mini-label">Egne farver</span>
+                <div class="color-row">
+                  <label class="color-pick"><input type="color" id="cBg" value="#c2632f"><span>Baggrund</span></label>
+                  <label class="color-pick"><input type="color" id="cInk" value="#fdf3e7"><span>Tekst</span></label>
+                  <label class="color-pick"><input type="color" id="cAcc" value="#ffd9a8"><span>Accent</span></label>
+                </div>
+              </div>
+              <div class="ctrl">
+                <span class="mini-label">Motiv <span style="opacity:.6">(plakat-layout)</span></span>
+                <select class="field" id="motifSel">
+                  <option value="none">Intet motiv</option>
+                  <option value="graduation">Studenterhue</option>
+                  <option value="sale">Tilbud / prismærke</option>
+                  <option value="coffee">Kaffe</option>
+                  <option value="food">Mad / bestik</option>
+                  <option value="leaf">Blade / efterår</option>
+                  <option value="snowflake">Snefnug / jul</option>
+                  <option value="confetti">Konfetti / fest</option>
+                  <option value="flower">Blomst</option>
+                  <option value="heart">Hjerte</option>
+                  <option value="gift">Gave</option>
+                  <option value="sun">Sol / sommer</option>
+                  <option value="sparkle">Stjerneglimt / nyhed</option>
+                  <option value="scissors">Saks / frisør</option>
+                  <option value="dumbbell">Vægt / fitness</option>
+                </select>
+              </div>
+            </div>
+          </div>
+          </div><!-- /autoPanel -->
+
+          <div id="scenePanel" style="display:none;">
+            <div class="out-block">
+              <div class="out-block-head"><div><div class="h">Beskriv dit eget design</div><div class="s">Skriv præcis hvad du vil have — farver, stemning, elementer, placering. Helt frie hænder.</div></div></div>
+              <textarea class="field" id="sceneBrief" rows="4" placeholder="fx: Mørk flaskegrøn baggrund. Stor guld-serif-overskrift øverst der siger ‘Nyåbning’. Et stort foto af en kaffekop i midten. Et rundt guld-badge i øverste højre hjørne med ‘−20%’. Firmanavnet nederst i små lyse versaler. En tynd guld-streg under overskriften."></textarea>
+              <div class="style-ref-row">
+                <input type="file" id="styleRefInput" accept="image/*" hidden>
+                <button class="btn-ghost" id="styleRefBtn" type="button"><span>📎</span><span>Match en stil — upload billede</span></button>
+                <div class="style-ref-chip hide" id="styleRefChip">
+                  <span class="style-pal" id="stylePal"></span>
+                  <span class="style-ref-name" id="styleRefName">Stil hentet</span>
+                  <button class="style-ref-x" id="styleRefClear" type="button" title="Fjern stil-reference">×</button>
+                </div>
+              </div>
+              <div class="scene-actions">
+                <button class="btn-dl scene-draw" id="sceneBtn" type="button"><span>🎨</span><span>Tegn mit design</span></button>
+              </div>
+              <p class="hint" id="sceneHint">Når designet er tegnet kan du skrive en ændring (fx “gør overskriften større og flyt den ned”, “tilføj en sol i hjørnet”, “skift baggrund til mørkeblå”) og trykke igen — eller klikke direkte på et element for at flytte, skalere, rette eller slette det.</p>
+            </div>
+            <div class="out-block">
+              <div class="out-block-head"><div><div class="h">Format</div><div class="s">Firkant, stående eller story</div></div></div>
+              <div class="seg-row seg-3" id="sceneFmtRow">
+                <button class="seg-btn active" data-fmt="1" type="button">Firkant</button>
+                <button class="seg-btn" data-fmt="1.25" type="button">Stående</button>
+                <button class="seg-btn" data-fmt="1.7778" type="button">Story</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="out-block">
+            <div class="out-block-head"><div><div class="h">Tekst til opslaget</div><div class="s">Kopiér og indsæt som billedtekst, når du poster</div></div></div>
+            <div class="results" id="results"></div>
+          </div>
+        </div>
+
+        <div class="res-preview">
+          <div class="res-preview-inner">
+            <span class="res-preview-label">Forhåndsvisning</span>
+            <div class="brand-note hide" id="brandNote"></div>
+            <div class="post-stage">
+              <div class="post lay-hero-bl" id="post">
+                <div class="post-photo" id="postPhoto"></div>
+                <div class="post-photo2" id="postPhoto2"></div>
+                <div class="post-photo3" id="postPhoto3"></div>
+                <div class="post-photo4" id="postPhoto4"></div>
+                <div class="post-scrim" id="postScrim"></div>
+                <div class="post-decor" id="postDecor"></div>
+                <div class="post-accents" id="postAccents"></div>
+                <div class="post-frame" id="postFrame"></div>
+                <div class="post-badge hide" id="postBadge"><span contenteditable="true" spellcheck="false"></span></div>
+                <div class="post-content" id="postContent">
+                  <div class="post-eyebrow hide" id="postEyebrow" contenteditable="true" spellcheck="false"></div>
+                  <div class="post-body">
+                    <div class="post-headline" id="postHeadline" contenteditable="true" spellcheck="false">Overskrift</div>
+                    <div class="post-rule"></div>
+                    <div class="post-sub" id="postSub" contenteditable="true" spellcheck="false">Underlinje</div>
+                  </div>
+                  <div class="post-brand" id="postBrand" contenteditable="true" spellcheck="false">DIT FIRMANAVN</div>
+                </div>
+                <div id="sceneLayer"></div>
+              </div>
+              <div id="selBox"><div class="sel-handle sel-move" id="selMove">✛</div><div class="sel-handle sel-del" id="selDel">×</div><div class="sel-handle sel-size" id="selSize"></div></div>
+            </div>
+            <p class="editor-tip">✏️ Klik på en tekst for at rette den. Træk i den runde knap for at flytte, i hjørnet for at ændre størrelse — og tryk på det røde × for at fjerne et element.</p>
+            <button class="btn-dl" id="dlBtn" type="button"><span>↓</span><span>Hent opslag som billede</span></button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <div class="foot"><span>Lavet med Lusidio — enkle designværktøjer for små virksomheder. </span><a href="/">Til forsiden</a></div>
+
+<script>
+  const byId = id => document.getElementById(id);
+  const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+  const PALETTES = {
+    terra:{bg:'linear-gradient(150deg,#c2632f,#9b3f1c)',ink:'#fdf3e7',acc:'#ffd9a8'},
+    cream:{bg:'linear-gradient(150deg,#f6eede,#ece0c9)',ink:'#2c2620',acc:'#b5542a'},
+    dark:{bg:'linear-gradient(155deg,#2a2420,#15110d)',ink:'#f1e7d8',acc:'#e0b777'},
+    forest:{bg:'linear-gradient(150deg,#3f6b4a,#22402f)',ink:'#eef5ec',acc:'#d6e8bf'},
+    berry:{bg:'linear-gradient(150deg,#7c2f57,#43203c)',ink:'#fbe9f1',acc:'#f1b6d2'},
+    navy:{bg:'linear-gradient(150deg,#304970,#1b2b46)',ink:'#e9f0fb',acc:'#bcd2f0'},
+    teal:{bg:'linear-gradient(150deg,#2f7d77,#1c4d4a)',ink:'#e6f5f1',acc:'#bfe6da'},
+    blush:{bg:'linear-gradient(150deg,#f6e0db,#ecc4cc)',ink:'#5e3140',acc:'#c75d7a'},
+    mustard:{bg:'linear-gradient(150deg,#e0a838,#bd7c1c)',ink:'#3a2c0e',acc:'#5e4310'},
+    coral:{bg:'linear-gradient(150deg,#e8654f,#c23b3b)',ink:'#fff0ec',acc:'#ffd6cb'},
+    sky:{bg:'linear-gradient(150deg,#7ec2dd,#4a90b8)',ink:'#08344e',acc:'#eaf6fd'},
+    wine:{bg:'linear-gradient(150deg,#7a2230,#43121d)',ink:'#f7e6df',acc:'#e0b48a'},
+    rust:{bg:'linear-gradient(150deg,#a8431f,#5e2410)',ink:'#fbe7da',acc:'#e8a06a'},
+    olive:{bg:'linear-gradient(150deg,#7a7d3a,#4c4f20)',ink:'#f4f3e2',acc:'#d8dca0'},
+    ocean:{bg:'linear-gradient(150deg,#226f86,#123f52)',ink:'#e6f4f8',acc:'#bfe2ee'},
+    lavender:{bg:'linear-gradient(150deg,#8a6fb0,#574080)',ink:'#f4eefb',acc:'#d9c6f0'},
+    peach:{bg:'linear-gradient(150deg,#f7d3b0,#eeb487)',ink:'#6e3f24',acc:'#c2682f'},
+    slate:{bg:'linear-gradient(150deg,#5a6b7a,#33414e)',ink:'#eef2f6',acc:'#c4d2dd'},
+    cocoa:{bg:'linear-gradient(150deg,#6b4a36,#3f2a1e)',ink:'#f3e7da',acc:'#d8b48c'},
+    mint:{bg:'linear-gradient(150deg,#bfe3cf,#9bcdaf)',ink:'#1f4533',acc:'#2f7d57'},
+    charcoal:{bg:'linear-gradient(150deg,#3a3632,#1f1c19)',ink:'#f0ebe3',acc:'#c9a978'},
+    sand:{bg:'linear-gradient(150deg,#efe3cf,#e0cdab)',ink:'#3d3526',acc:'#b06a3a'},
+    plum:{bg:'linear-gradient(150deg,#5a2a52,#331530)',ink:'#f6e8f2',acc:'#e3b8d8'},
+    sage:{bg:'linear-gradient(150deg,#d7e0cf,#bcc9af)',ink:'#33402c',acc:'#5a7344'},
+    ruby:{bg:'linear-gradient(150deg,#8e2230,#4f111b)',ink:'#fbe6e2',acc:'#e8b07a'},
+    denim:{bg:'linear-gradient(150deg,#3a5a82,#21354f)',ink:'#e8f0f9',acc:'#bcd6ee'},
+    midnight:{bg:'linear-gradient(150deg,#222a3a,#10131c)',ink:'#e7ecf5',acc:'#a9b8d6'},
+    clay:{bg:'linear-gradient(150deg,#b5613f,#7a3a22)',ink:'#fceee5',acc:'#f0c4a3'}
+  };
+  const PAL_ORDER = ['terra','rust','clay','cocoa','sand','cream','peach','mustard','coral','ruby','wine','berry','plum','lavender','blush','charcoal','dark','midnight','forest','sage','olive','mint','teal','ocean','denim','navy','slate','sky'];
+
+  const LAYOUTS = [
+    {id:'hero-bl',     name:'Foto · tekst i bund', photo:true,  font:'serif',   imgs:1, over:true},
+    {id:'hero-center', name:'Foto · centreret',    photo:true,  font:'serif',   imgs:1, over:true},
+    {id:'hero-top',    name:'Foto · tekst i top',  photo:true,  font:'sans',    imgs:1, over:true},
+    {id:'hero-tr',     name:'Foto · top-højre',    photo:true,  font:'sans',    imgs:1, over:true},
+    {id:'spotlight',   name:'Foto · spotlight',    photo:true,  font:'serif',   imgs:1, over:true},
+    {id:'hero-left',   name:'Foto · tekst venstre', photo:true, font:'serif',   imgs:1, over:true},
+    {id:'hero-right',  name:'Foto · tekst højre',  photo:true,  font:'serif',   imgs:1, over:true},
+    {id:'band-top',    name:'Farvefelt + foto',    photo:true,  font:'sans',    imgs:1},
+    {id:'band-bottom', name:'Foto + farvefelt',    photo:true,  font:'sans',    imgs:1},
+    {id:'band-mid',    name:'Foto · midterbånd',   photo:true,  font:'sans',    imgs:1},
+    {id:'split-left',  name:'Tekst | foto',        photo:true,  font:'serif',   imgs:1},
+    {id:'split-right', name:'Foto | tekst',        photo:true,  font:'serif',   imgs:1},
+    {id:'split-h-top', name:'Foto over · tekst',   photo:true,  font:'sans',    imgs:1},
+    {id:'split-h-bottom', name:'Tekst · foto under', photo:true, font:'sans',   imgs:1},
+    {id:'sidebar-r',   name:'Foto + sidefelt',     photo:true,  font:'sans',    imgs:1},
+    {id:'card-bottom', name:'Foto + tekstkort',    photo:true,  font:'sans',    imgs:1},
+    {id:'card-center', name:'Foto + kort i midten',photo:true,  font:'sans',    imgs:1},
+    {id:'corner',      name:'Foto + hjørnefelt',   photo:true,  font:'serif',   imgs:1},
+    {id:'postcard',    name:'Postkort',            photo:true,  font:'serif',   imgs:1},
+    {id:'framed',      name:'Foto · ramme',        photo:true,  font:'serif',   imgs:1, over:true},
+    {id:'poster',      name:'Klassisk plakat',     photo:false, font:'serif',   imgs:0},
+    {id:'type',        name:'Stor typografi',      photo:false, font:'display', imgs:0},
+    {id:'quote',       name:'Citat',               photo:false, font:'serif',   imgs:0},
+    {id:'ticket',      name:'Kupon',               photo:false, font:'sans',    imgs:0},
+    {id:'minimal',     name:'Minimal',             photo:false, font:'serif',   imgs:0},
+    {id:'duo-v',       name:'2 fotos · side',      photo:true,  font:'sans',    imgs:2, over:true},
+    {id:'duo-h',       name:'2 fotos · over',      photo:true,  font:'sans',    imgs:2},
+    {id:'grid-4',      name:'4 fotos · net',       photo:true,  font:'sans',    imgs:4},
+    {id:'showcase',    name:'4 fotos · udstilling',photo:true,  font:'sans',    imgs:4, over:true},
+    {id:'collage-3',   name:'Collage · 3 fotos',   photo:true,  font:'sans',    imgs:3, over:true},
+    {id:'mosaic',      name:'Mosaik · 3 fotos',    photo:true,  font:'sans',    imgs:3, over:true},
+    {id:'filmstrip',   name:'Filmstribe · 3 fotos',photo:true,  font:'sans',    imgs:3},
+    {id:'triptych',    name:'Triptykon · 3 fotos', photo:true,  font:'sans',    imgs:3, over:true},
+    {id:'tpl-retro',  name:'★ Retro-stribe',   photo:false, font:'sans',  imgs:0, tpl:true},
+    {id:'tpl-food',   name:'★ Mad-blok',       photo:true,  font:'sans',  imgs:1, tpl:true},
+    {id:'tpl-travel', name:'★ Rejse-kort',     photo:true,  font:'serif', imgs:1, over:true, tpl:true},
+    {id:'tpl-health', name:'★ Sundheds-tip',   photo:false, font:'sans',  imgs:0, tpl:true}
+  ];
+
+  function motifInner(id, c){
+    switch(id){
+      case 'graduation': return '<polygon points="50,22 88,38 50,54 12,38" fill="'+c+'"/><path d="M28 47 L28 60 C28 70 72 70 72 60 L72 47 L50 56 Z" fill="'+c+'"/><rect x="86.5" y="38" width="3" height="26" fill="'+c+'"/><circle cx="88" cy="67" r="4.5" fill="'+c+'"/>';
+      case 'sale': return '<path fill-rule="evenodd" d="M50 12 L86 12 L86 48 L48 88 L12 52 Z M68 28 a7 7 0 1 0 0.1 0 Z" fill="'+c+'"/>';
+      case 'coffee': return '<path d="M24 42 L70 42 L70 60 C70 78 47 82 47 82 C47 82 24 78 24 60 Z" fill="'+c+'"/><path d="M70 46 C86 46 86 64 70 64" fill="none" stroke="'+c+'" stroke-width="5"/><rect x="18" y="86" width="58" height="6" rx="3" fill="'+c+'"/><path d="M34 18 q5 6 0 12 M48 16 q5 6 0 12" fill="none" stroke="'+c+'" stroke-width="3" opacity=".85"/>';
+      case 'food': return '<rect x="35" y="20" width="4.5" height="62" rx="2" fill="'+c+'"/><rect x="29" y="20" width="3.5" height="15" rx="1.5" fill="'+c+'"/><rect x="42" y="20" width="3.5" height="15" rx="1.5" fill="'+c+'"/><rect x="29" y="20" width="17" height="4" rx="2" fill="'+c+'"/><path d="M64 20 C75 23 75 46 64 52 L64 82 L60 82 L60 20 Z" fill="'+c+'"/>';
+      case 'leaf': return '<path d="M50 14 C26 30 22 62 50 86 C78 62 74 30 50 14 Z" fill="'+c+'"/>';
+      case 'snowflake': return '<g stroke="'+c+'" stroke-width="4" stroke-linecap="round"><line x1="50" y1="12" x2="50" y2="88"/><line x1="21" y1="29" x2="79" y2="71"/><line x1="79" y1="29" x2="21" y2="71"/><line x1="50" y1="22" x2="42" y2="30"/><line x1="50" y1="22" x2="58" y2="30"/><line x1="50" y1="78" x2="42" y2="70"/><line x1="50" y1="78" x2="58" y2="70"/></g>';
+      case 'confetti': return '<g fill="'+c+'"><rect x="16" y="20" width="12" height="5" rx="2" transform="rotate(-20 22 22)"/><circle cx="78" cy="26" r="5"/><rect x="70" y="60" width="12" height="5" rx="2" transform="rotate(30 76 62)"/><circle cx="24" cy="68" r="5"/><polygon points="50,12 55,22 45,22"/></g>';
+      case 'flower': return '<g fill="'+c+'"><circle cx="50" cy="28" r="14"/><circle cx="72" cy="44" r="14"/><circle cx="64" cy="70" r="14"/><circle cx="36" cy="70" r="14"/><circle cx="28" cy="44" r="14"/></g><circle cx="50" cy="52" r="12" fill="'+c+'" opacity=".55"/>';
+      case 'heart': return '<path d="M50 84 C16 60 14 32 36 27 C46 25 50 32 50 36 C50 32 54 25 64 27 C86 32 84 60 50 84 Z" fill="'+c+'"/>';
+      case 'gift': return '<rect x="22" y="42" width="56" height="42" rx="3" fill="'+c+'"/><rect x="16" y="32" width="68" height="13" rx="3" fill="'+c+'"/><ellipse cx="42" cy="30" rx="9" ry="6" fill="'+c+'"/><ellipse cx="58" cy="30" rx="9" ry="6" fill="'+c+'"/>';
+      case 'sun': return '<circle cx="50" cy="50" r="19" fill="'+c+'"/><g stroke="'+c+'" stroke-width="5" stroke-linecap="round"><line x1="50" y1="14" x2="50" y2="24"/><line x1="50" y1="76" x2="50" y2="86"/><line x1="14" y1="50" x2="24" y2="50"/><line x1="76" y1="50" x2="86" y2="50"/><line x1="25" y1="25" x2="32" y2="32"/><line x1="68" y1="68" x2="75" y2="75"/><line x1="75" y1="25" x2="68" y2="32"/><line x1="32" y1="68" x2="25" y2="75"/></g>';
+      case 'sparkle': return '<path d="M50 12 C53 37 63 47 88 50 C63 53 53 63 50 88 C47 63 37 53 12 50 C37 47 47 37 50 12 Z" fill="'+c+'"/>';
+      case 'scissors': return '<circle cx="30" cy="68" r="9" fill="none" stroke="'+c+'" stroke-width="5"/><circle cx="48" cy="72" r="9" fill="none" stroke="'+c+'" stroke-width="5"/><path d="M34 62 L82 26 M44 64 L82 40" stroke="'+c+'" stroke-width="5" stroke-linecap="round" fill="none"/>';
+      case 'dumbbell': return '<g fill="'+c+'"><rect x="26" y="45" width="48" height="10" rx="3"/><rect x="14" y="36" width="11" height="28" rx="3"/><rect x="75" y="36" width="11" height="28" rx="3"/><rect x="7" y="42" width="7" height="16" rx="2"/><rect x="86" y="42" width="7" height="16" rx="2"/></g>';
+      default: return '';
+    }
+  }
+  const SCATTER = new Set(['snowflake','sparkle','heart','confetti']);
+  const SCAT_POS = [{t:11,l:13,s:15,r:-12,o:.5},{t:17,l:81,s:11,r:18,o:.42},{t:40,l:7,s:10,r:10,o:.4},{t:63,l:89,s:14,r:-18,o:.48},{t:83,l:16,s:12,r:14,o:.48},{t:87,l:74,s:17,r:-8,o:.52},{t:52,l:93,s:9,r:0,o:.38}];
+  function buildDecorHTML(motifId, acc){
+    let h = '<div class="decor-blob b1"></div><div class="decor-blob b2"></div>';
+    if (!motifId || motifId === 'none') return h;
+    if (SCATTER.has(motifId)){ SCAT_POS.forEach(p => { h += '<div class="decor-scatter" style="top:'+p.t+'%;left:'+p.l+'%;width:'+p.s+'cqw;height:'+p.s+'cqw;transform:translate(-50%,-50%) rotate('+p.r+'deg);opacity:'+p.o+'"><svg viewBox="0 0 100 100">'+motifInner(motifId,acc)+'</svg></div>'; }); }
+    else { h += '<div class="decor-motif"><svg viewBox="0 0 100 100">'+motifInner(motifId,acc)+'</svg></div>'; }
+    return h;
+  }
+
+  function norm(hex){ hex=String(hex).replace('#',''); if(hex.length===3) hex=hex.split('').map(c=>c+c).join(''); return hex; }
+  function lum(hex){ hex=norm(hex); const r=parseInt(hex.slice(0,2),16),g=parseInt(hex.slice(2,4),16),b=parseInt(hex.slice(4,6),16); return (0.299*r+0.587*g+0.114*b)/255; }
+  function badgeInk(hex){ return lum(hex) > 0.6 ? '#2c2620' : '#ffffff'; }
+  function darken(hex,pct){ hex=norm(hex); let r=parseInt(hex.slice(0,2),16),g=parseInt(hex.slice(2,4),16),b=parseInt(hex.slice(4,6),16); const f=1-pct/100; return '#'+[r,g,b].map(v=>Math.max(0,Math.round(v*f)).toString(16).padStart(2,'0')).join(''); }
+  function lighten(hex,amt){ hex=norm(hex); let r=parseInt(hex.slice(0,2),16),g=parseInt(hex.slice(2,4),16),b=parseInt(hex.slice(4,6),16); return '#'+[r,g,b].map(v=>Math.round(v+(255-v)*amt).toString(16).padStart(2,'0')).join(''); }
+  function rgba(hex,a){ hex=norm(hex); return 'rgba('+parseInt(hex.slice(0,2),16)+','+parseInt(hex.slice(2,4),16)+','+parseInt(hex.slice(4,6),16)+','+a+')'; }
+  function firstHex(s){ const m=String(s).match(/#[0-9a-fA-F]{3,6}/); return m?m[0]:'#b5542a'; }
+  function hexOk(h){ return typeof h === 'string' && /^#[0-9a-fA-F]{6}$/.test(h); }
+  function proxied(u){ return '/api/opslag-foto?u=' + encodeURIComponent(u); }
+  function hiResUrl(u){ try { const x = new URL(u); if (/(^|\.)pexels\.com$/i.test(x.hostname)) x.search = ''; return x.href; } catch(e){ return u; } }
+
+  function colorsFor(cust, pal){
+    if (cust) return { bgcss:'linear-gradient(150deg,'+cust.bg+','+darken(cust.bg,15)+')', ink:cust.ink, acc:cust.acc, solid:cust.bg, ptint:lighten(cust.bg,.86), pdark:darken(cust.bg,42) };
+    const p = PALETTES[pal] || PALETTES.terra;
+    const sol = firstHex(p.bg);
+    return { bgcss:p.bg, ink:p.ink, acc:p.acc, solid:sol, ptint:lighten(sol,.86), pdark:darken(sol,42) };
+  }
+  function setPostVars(el, c){
+    el.style.setProperty('--pbg', c.bgcss);
+    el.style.setProperty('--pink', c.ink);
+    el.style.setProperty('--pacc', c.acc);
+    el.style.setProperty('--psolid', c.solid);
+    el.style.setProperty('--ptint', c.ptint);
+    el.style.setProperty('--pdark', c.pdark);
+    el.style.setProperty('--pbadge', badgeInk(c.acc));
+    el.style.setProperty('--pemhero', lum(c.acc) > 0.5 ? c.acc : lighten(c.acc, 0.55));
+    el.style.setProperty('--pcardbg', rgba(c.solid, 0.9));
+    el.style.setProperty('--pscrim', 'linear-gradient(to top,'+rgba(c.solid,.95)+' 0%,'+rgba(c.solid,.82)+' 20%,'+rgba(c.solid,.32)+' 48%,'+rgba(c.solid,0)+' 80%)');
+  }
+
+  // ---------- Stilarter (komplette visuelle udtryk — AI vælger, bruger kan skifte) ----------
+  // pal=palette, head/body=skrift, hw=vægt, hc=bogstaver, ls=knibning, emph=fremhævning, bgfx=baggrund, rule=streg, decor=pynt,
+  // align=justering(l/c/r), scale=overskriftsskala, treat=overskriftsbehandling(plain/box/underline/panel), eb=overlinje(plain/pill/line)
+  const STYLES = [
+    {id:'retro',     name:'Retro',     pal:'mustard',  head:"'Anton',sans-serif",         body:"'Poppins',sans-serif",       hw:400, hc:'up',   ls:'.01em',  emph:'color',     bgfx:'grain', rule:'thick', decor:'sun',      align:'c', scale:1.15, treat:'plain',     eb:'pill'},
+    {id:'rustik',    name:'Rustik',    pal:'cocoa',    head:"'Fraunces',serif",           body:"'Poppins',sans-serif",       hw:700, hc:'none', ls:'-.01em', emph:'italic',    bgfx:'paper', rule:'thin',  decor:'leaf',     align:'l', scale:1.0,  treat:'plain',     eb:'line'},
+    {id:'skandi',    name:'Skandi',    pal:'cream',    head:"'Space Grotesk',sans-serif", body:"'Space Grotesk',sans-serif", hw:600, hc:'none', ls:'-.01em', emph:'color',     bgfx:'solid', rule:'none',  decor:'none',     align:'l', scale:0.9,  treat:'plain',     eb:'plain'},
+    {id:'brutal',    name:'Brutal',    pal:'dark',     head:"'Anton',sans-serif",         body:"'Space Grotesk',sans-serif", hw:400, hc:'up',   ls:'0',      emph:'highlight', bgfx:'solid', rule:'none',  decor:'none',     align:'l', scale:1.25, treat:'plain',     eb:'pill'},
+    {id:'editorial', name:'Editorial', pal:'slate',    head:"'Playfair Display',serif",   body:"'Montserrat',sans-serif",    hw:700, hc:'none', ls:'-.01em', emph:'italic',    bgfx:'grad',  rule:'thin',  decor:'none',     align:'c', scale:0.95, treat:'underline', eb:'line'},
+    {id:'cafe',      name:'Café',      pal:'dark',     head:"'Caveat',cursive",           body:"'Montserrat',sans-serif",    hw:700, hc:'none', ls:'0',      emph:'color',     bgfx:'chalk', rule:'dot',   decor:'coffee',   align:'c', scale:1.1,  treat:'plain',     eb:'plain'},
+    {id:'duotone',   name:'Duotone',   pal:'berry',    head:"'Anton',sans-serif",         body:"'Space Grotesk',sans-serif", hw:400, hc:'up',   ls:'0',      emph:'color',     bgfx:'grad',  rule:'none',  decor:'none',     align:'l', scale:1.25, treat:'plain',     eb:'plain'},
+    {id:'gradient',  name:'Gradient',  pal:'lavender', head:"'Poppins',sans-serif",       body:"'Poppins',sans-serif",       hw:800, hc:'none', ls:'-.02em', emph:'color',     bgfx:'grad',  rule:'none',  decor:'none',     align:'c', scale:1.15, treat:'plain',     eb:'plain'},
+    {id:'stamp',     name:'Stempel',   pal:'rust',     head:"'Oswald',sans-serif",        body:"'Space Grotesk',sans-serif", hw:600, hc:'up',   ls:'.04em',  emph:'color',     bgfx:'paper', rule:'thin',  decor:'stamp',    align:'c', scale:1.0,  treat:'box',       eb:'plain'},
+    {id:'neon',      name:'Neon',      pal:'dark',     head:"'Bebas Neue',sans-serif",    body:"'Space Grotesk',sans-serif", hw:400, hc:'up',   ls:'.02em',  emph:'color',     bgfx:'solid', rule:'none',  decor:'dots',     align:'c', scale:1.25, treat:'plain',     eb:'line'},
+    {id:'pop',       name:'Pop',       pal:'coral',    head:"'Poppins',sans-serif",       body:"'Poppins',sans-serif",       hw:800, hc:'none', ls:'-.02em', emph:'highlight', bgfx:'solid', rule:'none',  decor:'confetti', align:'l', scale:1.2,  treat:'panel',     eb:'pill'},
+    {id:'lux',       name:'Luksus',    pal:'dark',     head:"'Fraunces',serif",           body:"'Montserrat',sans-serif",    hw:600, hc:'up',   ls:'.06em',  emph:'italic',    bgfx:'chalk', rule:'thin',  decor:'corners',  align:'c', scale:0.95, treat:'panel',     eb:'line'},
+    {id:'fresh',     name:'Fresh',     pal:'teal',     head:"'Montserrat',sans-serif",    body:"'Montserrat',sans-serif",    hw:800, hc:'none', ls:'-.02em', emph:'color',     bgfx:'grad',  rule:'thick', decor:'none',     align:'l', scale:1.2,  treat:'plain',     eb:'plain'},
+    {id:'mono',      name:'Mono',      pal:'slate',    head:"'Space Grotesk',sans-serif", body:"'Space Grotesk',sans-serif", hw:700, hc:'up',   ls:'-.01em', emph:'underline', bgfx:'solid', rule:'none',  decor:'lines',    align:'l', scale:1.0,  treat:'underline', eb:'line'},
+    {id:'noir',      name:'Noir',      pal:'dark',     head:"'DM Serif Display',serif",   body:"'Montserrat',sans-serif",    hw:400, hc:'none', ls:'0',      emph:'italic',    bgfx:'chalk', rule:'thin',  decor:'none',     align:'c', scale:1.05, treat:'plain',     eb:'line'},
+    {id:'vogue',     name:'Vogue',     pal:'cream',    head:"'DM Serif Display',serif",   body:"'Montserrat',sans-serif",    hw:400, hc:'up',   ls:'.04em',  emph:'italic',    bgfx:'solid', rule:'none',  decor:'corners',  align:'c', scale:1.0,  treat:'plain',     eb:'line'},
+    {id:'impact',    name:'Impact',    pal:'rust',     head:"'Archivo Black',sans-serif", body:"'Space Grotesk',sans-serif", hw:400, hc:'up',   ls:'-.01em', emph:'highlight', bgfx:'grad',  rule:'none',  decor:'none',     align:'l', scale:1.15, treat:'plain',     eb:'pill'},
+    {id:'candy',     name:'Candy',     pal:'berry',    head:"'Archivo Black',sans-serif", body:"'Poppins',sans-serif",       hw:400, hc:'none', ls:'-.01em', emph:'highlight', bgfx:'grad',  rule:'none',  decor:'confetti', align:'c', scale:1.1,  treat:'plain',     eb:'pill'},
+    {id:'terminal',  name:'Terminal',  pal:'dark',     head:"'Space Mono',monospace",     body:"'Space Mono',monospace",     hw:700, hc:'none', ls:'0',      emph:'underline', bgfx:'solid', rule:'none',  decor:'lines',    align:'l', scale:0.92, treat:'plain',     eb:'line'},
+    {id:'press',     name:'Avis',      pal:'cream',    head:"'Fraunces',serif",           body:"'Space Mono',monospace",     hw:900, hc:'none', ls:'-.01em', emph:'underline', bgfx:'paper', rule:'thin',  decor:'none',     align:'l', scale:1.0,  treat:'underline', eb:'line'},
+    {id:'bloom',     name:'Bloom',     pal:'blush',    head:"'Fraunces',serif",           body:"'Poppins',sans-serif",       hw:600, hc:'none', ls:'-.01em', emph:'italic',    bgfx:'solid', rule:'dot',   decor:'flower',   align:'c', scale:1.0,  treat:'plain',     eb:'plain'},
+    {id:'deco',      name:'Deco',      pal:'navy',     head:"'Oswald',sans-serif",        body:"'Montserrat',sans-serif",    hw:600, hc:'up',   ls:'.12em',  emph:'color',     bgfx:'grad',  rule:'thin',  decor:'corners',  align:'c', scale:1.0,  treat:'box',       eb:'line'},
+    {id:'zen',       name:'Zen',       pal:'mint',     head:"'Fraunces',serif",           body:"'Montserrat',sans-serif",    hw:400, hc:'none', ls:'.01em',  emph:'italic',    bgfx:'solid', rule:'none',  decor:'none',     align:'c', scale:0.92, treat:'plain',     eb:'line'},
+    {id:'sunset',    name:'Solnedgang',pal:'coral',    head:"'Poppins',sans-serif",       body:"'Poppins',sans-serif",       hw:800, hc:'none', ls:'-.02em', emph:'color',     bgfx:'grad',  rule:'none',  decor:'sun',      align:'c', scale:1.18, treat:'plain',     eb:'plain'}
+  ];
+  const MOTIFS_SET = new Set(['graduation','sale','coffee','food','leaf','snowflake','confetti','flower','heart','gift','sun','sparkle','scissors','dumbbell']);
+  function styleOf(id){ return STYLES.find(s => s.id === id) || STYLES[2]; }
+
+  function bgCss(c, fx){
+    const s = c.solid;
+    if (fx === 'solid')  return s;
+    if (fx === 'paper')  return 'linear-gradient(155deg,'+lighten(s,.05)+','+darken(s,7)+')';
+    if (fx === 'chalk')  return 'radial-gradient(125% 100% at 50% 0%,'+lighten(s,.10)+','+darken(s,16)+')';
+    if (fx === 'grain')  return 'radial-gradient('+rgba('#ffffff',.05)+' 1px, transparent 1.5px) 0 0/5px 5px,'+c.bgcss;
+    return c.bgcss;
+  }
+  function buildStyleDecor(type, acc){
+    if (!type) return '';
+    if (type === 'sunburst'){ let r=''; for(let i=0;i<24;i++) r += '<line x1="50" y1="50" x2="50" y2="1" stroke="'+acc+'" stroke-width="3" transform="rotate('+(i*15)+' 50 50)"/>'; return '<div class="decor-style ray"><svg viewBox="0 0 100 100">'+r+'</svg></div>'; }
+    if (type === 'dots'){ let r=''; for(let y=0;y<11;y++) for(let x=0;x<11;x++) r += '<circle cx="'+(x*10)+'" cy="'+(y*10)+'" r="1.2" fill="'+acc+'" opacity="0.5"/>'; return '<div class="decor-style"><svg viewBox="0 0 100 100" preserveAspectRatio="none">'+r+'</svg></div>'; }
+    if (type === 'lines'){ let r=''; for(let i=1;i<8;i++){ const y=i*12.5; r += '<line x1="6" y1="'+y+'" x2="94" y2="'+y+'" stroke="'+acc+'" stroke-width="0.5" opacity="0.45"/>'; } return '<div class="decor-style"><svg viewBox="0 0 100 100" preserveAspectRatio="none">'+r+'</svg></div>'; }
+    if (type === 'corners'){ return '<div class="decor-style"><svg viewBox="0 0 100 100" preserveAspectRatio="none"><path d="M6 16 V6 H16 M84 6 H94 V16 M94 84 V94 H84 M16 94 H6 V84" fill="none" stroke="'+acc+'" stroke-width="1.1" opacity="0.7"/></svg></div>'; }
+    if (type === 'stamp'){ return '<div class="decor-style"><svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="43" fill="none" stroke="'+acc+'" stroke-width="1.1" stroke-dasharray="2 3.2" opacity="0.6"/><circle cx="50" cy="50" r="38" fill="none" stroke="'+acc+'" stroke-width="0.7" opacity="0.5"/></svg></div>'; }
+    return '';
+  }
+  // Skabelon-specifik baggrundsgrafik
+  function buildTemplateDecor(tpl, c){
+    if (!tpl) return '';
+    if (tpl === 'tpl-retro'){
+      const t1=darken(c.acc,16), t2=c.acc, t3=lighten(c.acc,.26), t4=lighten(c.acc,.46);
+      let rays='';
+      for (let i=0;i<=12;i++){ const a=(180+i*15)*Math.PI/180, cx=50, cy=47;
+        const x1=(cx+Math.cos(a)*16.5).toFixed(1), y1=(cy+Math.sin(a)*16.5).toFixed(1);
+        const x2=(cx+Math.cos(a)*31).toFixed(1), y2=(cy+Math.sin(a)*31).toFixed(1);
+        rays += '<line x1="'+x1+'" y1="'+y1+'" x2="'+x2+'" y2="'+y2+'" stroke="'+t1+'" stroke-width="2.1" stroke-linecap="round"/>';
+      }
+      const stripes='<rect x="0" y="41" width="100" height="3.2" fill="'+t4+'"/><rect x="0" y="45.6" width="100" height="3.2" fill="'+t3+'"/><rect x="0" y="50.2" width="100" height="3.2" fill="'+t2+'"/>';
+      return '<div class="decor-style"><svg viewBox="0 0 100 100" preserveAspectRatio="xMidYMid meet">'+rays+'<circle cx="50" cy="47" r="15" fill="'+t2+'"/>'+stripes+'</svg></div>';
+    }
+    if (tpl === 'tpl-health'){
+      const a=c.acc;
+      return '<div class="decor-style"><svg viewBox="0 0 100 100" preserveAspectRatio="none">'
+        +'<circle cx="11" cy="13" r="13" fill="'+a+'" opacity=".16"/>'
+        +'<circle cx="91" cy="89" r="16" fill="'+a+'" opacity=".14"/>'
+        +'<g stroke="'+a+'" stroke-width="2.4" stroke-linecap="round" opacity=".42"><line x1="87" y1="11" x2="87" y2="21"/><line x1="82" y1="16" x2="92" y2="16"/></g>'
+        +'<g stroke="'+a+'" stroke-width="2" stroke-linecap="round" opacity=".34"><line x1="12" y1="85" x2="12" y2="93"/><line x1="8" y1="89" x2="16" y2="89"/></g>'
+        +'</svg></div>';
+    }
+    return '';
+  }
+
+  // ---------- Tilstand ----------
+  let palId='terra', motifId='none', postRatio=1, custom=null, photos=[], photosHi=[], photoIdx=0, curLayout='hero-bl', customPhoto=null, userFont='auto', curStyleId='editorial', curStyleDecor='', accentLevel='none';
+  let CONTENT = { headline:'', emphasis:'', eyebrow:'', subline:'', badge:'', navn:'' };
+  const removed = new Set();
+
+  function curAcc(){ return custom ? custom.acc : (PALETTES[palId]||PALETTES.terra).acc; }
+  function accentColor(){ return custom ? custom.ink : (PALETTES[palId]||PALETTES.terra).ink; }
+  function hasPhoto(){ return !!customPhoto || photos.length>0; }
+  // Energi-pynt: spredte glimt, pile, ringe og prikker (bag teksten). 'some' = let, 'max' = meget.
+  function buildAccents(level, acc){
+    if (!level || level === 'none') return '';
+    const SP='M12 0 C13 7 17 11 24 12 C17 13 13 17 12 24 C11 17 7 13 0 12 C7 11 11 7 12 0 Z';
+    const spark=(t,l,s,r,o)=>'<div class="acc" style="top:'+t+'%;left:'+l+'%;width:'+s+'cqw;height:'+s+'cqw;transform:translate(-50%,-50%) rotate('+r+'deg);opacity:'+(o||1)+'"><svg viewBox="0 0 24 24"><path d="'+SP+'" fill="'+acc+'"/></svg></div>';
+    const arrow=(t,l,s,r)=>'<div class="acc" style="top:'+t+'%;left:'+l+'%;width:'+s+'cqw;height:'+(s*0.66)+'cqw;transform:translate(-50%,-50%) rotate('+r+'deg)"><svg viewBox="0 0 60 40" fill="none" stroke="'+acc+'" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 32 C 18 6, 38 4, 55 16"/><path d="M55 16 L45 13"/><path d="M55 16 L50 26"/></svg></div>';
+    const dot=(t,l,s,o)=>'<div class="acc" style="top:'+t+'%;left:'+l+'%;width:'+s+'cqw;height:'+s+'cqw;transform:translate(-50%,-50%);opacity:'+(o||1)+'"><svg viewBox="0 0 10 10"><circle cx="5" cy="5" r="5" fill="'+acc+'"/></svg></div>';
+    const ring=(t,l,s,r)=>'<div class="acc" style="top:'+t+'%;left:'+l+'%;width:'+s+'cqw;height:'+(s*0.7)+'cqw;transform:translate(-50%,-50%) rotate('+r+'deg)"><svg viewBox="0 0 60 42" fill="none" stroke="'+acc+'" stroke-width="3.5" stroke-linecap="round"><path d="M30 3 C8 3 3 14 5 22 C8 36 30 40 44 38 C57 36 59 22 52 12 C47 5 38 3 30 3.5"/></svg></div>';
+    if (level === 'some') return spark(11,9,7,-10,1)+spark(18,90,5,16,.9)+dot(84,93,2.3,.9)+arrow(86,15,15,-6);
+    return spark(8,9,8,-12,1)+spark(15,89,5.5,18,.95)+spark(48,96,6,0,.9)+spark(90,12,7,10,1)+spark(82,91,5,-8,.9)
+         +arrow(20,85,17,18)+arrow(89,18,16,-12)
+         +ring(60,7,16,-10)
+         +dot(33,5,2.4,.85)+dot(72,96,2.6,.9)+dot(95,46,2,.8)+dot(6,55,2.2,.8);
+  }
+  function applyColors(){
+    const post=byId('post'); const c=colorsFor(custom, palId); setPostVars(post, c);
+    const tpl = (curLayout && curLayout.indexOf('tpl-')===0) ? curLayout : '';
+    let bg = bgCss(c, styleOf(curStyleId).bgfx);
+    if (tpl === 'tpl-health') bg = c.ptint;
+    else if (tpl === 'tpl-retro') bg = 'linear-gradient(180deg,'+lighten(c.acc,.60)+' 0%,'+lighten(c.acc,.30)+' 52%,'+lighten(c.acc,.30)+' 100%)';
+    post.style.setProperty('--pbg', bg);
+    byId('postDecor').innerHTML = buildDecorHTML(motifId, curAcc()) + buildStyleDecor(curStyleDecor, curAcc()) + buildTemplateDecor(tpl, c);
+    byId('postAccents').innerHTML = buildAccents(accentLevel, accentColor());
+  }
+  function applyFormat(){ const post=byId('post'); if(post) post.style.height = (post.clientWidth * postRatio) + 'px'; }
+
+  // ---------- Auto-tilpas tekststørrelse til formatet ----------
+  function overflowing(){
+    const postR = byId('post').getBoundingClientRect();
+    const c = byId('postContent'); const cs = getComputedStyle(c);
+    const padT=parseFloat(cs.paddingTop)||0, padB=parseFloat(cs.paddingBottom)||0, gap=parseFloat(cs.rowGap)||0;
+    const kids=[...c.children].filter(k=>getComputedStyle(k).display!=='none');
+    let need=0; kids.forEach(k=>need+=k.offsetHeight); need += gap*Math.max(0,kids.length-1);
+    if (need > (c.clientHeight - padT - padB) + 1) return true;
+    const cr=c.getBoundingClientRect();
+    if (cr.top < postR.top - 1 || cr.bottom > postR.bottom + 1) return true;
+    const hl=byId('postHeadline');
+    if (hl.scrollWidth > hl.clientWidth + 1) return true;
+    return false;
+  }
+  function fitText(){
+    const post=byId('post'); if(!post) return;
+    let f=1; post.style.setProperty('--fit','1'); let g=0;
+    while (overflowing() && f>0.4 && g<30){ f-=0.04; post.style.setProperty('--fit', f.toFixed(3)); g++; }
+  }
+  function relayout(){ applyFormat(); fitText(); if(selId) showSel(); }
+
+  // ---------- Skrifttype ----------
+  const UF = ['fraunces','playfair','grotesk','poppins','montserrat','anton','bebas','oswald','caveat','dmserif','archivo','mono2'];
+  function applyUserFont(){
+    const post=byId('post'); UF.forEach(f=>post.classList.remove('uf-'+f));
+    if (userFont && userFont!=='auto'){ post.classList.add('uf-'+userFont); post.style.removeProperty('--hf'); post.style.removeProperty('--hw'); post.style.removeProperty('--hls'); }
+    else { const st=styleOf(curStyleId); post.style.setProperty('--hf', st.head); post.style.setProperty('--hw', st.hw); post.style.setProperty('--hls', st.ls); }
+  }
+  function applyStyle(id, keepPal){
+    const st=styleOf(id); curStyleId=id;
+    if (!keepPal && !custom) palId=st.pal;
+    const post=byId('post');
+    post.style.setProperty('--bf', st.body);
+    post.style.setProperty('--hlk', st.scale || 1);
+    ['st-al-l','st-al-c','st-al-r'].forEach(c=>post.classList.remove(c)); post.classList.add('st-al-'+(st.align||'l'));
+    ['st-treat-box','st-treat-underline','st-treat-panel'].forEach(c=>post.classList.remove(c)); if(st.treat && st.treat!=='plain') post.classList.add('st-treat-'+st.treat);
+    ['st-eb-pill','st-eb-line'].forEach(c=>post.classList.remove(c)); if(st.eb && st.eb!=='plain') post.classList.add('st-eb-'+st.eb);
+    ['hc-up','hc-none'].forEach(c=>post.classList.remove(c)); if(st.hc==='up')post.classList.add('hc-up'); else if(st.hc==='none')post.classList.add('hc-none');
+    ['em-color','em-italic','em-underline','em-highlight'].forEach(c=>post.classList.remove(c)); post.classList.add('em-'+st.emph);
+    ['rule-thin','rule-none','rule-dot'].forEach(c=>post.classList.remove(c)); if(st.rule==='thin')post.classList.add('rule-thin'); else if(st.rule==='none')post.classList.add('rule-none'); else if(st.rule==='dot')post.classList.add('rule-dot');
+    if (MOTIFS_SET.has(st.decor)){ motifId=st.decor; curStyleDecor=''; const ms=byId('motifSel'); if(ms) ms.value=motifId; }
+    else curStyleDecor = (st.decor && st.decor!=='none') ? st.decor : '';
+    applyUserFont(); applyColors();
+  }
+  function renderStyleStrip(){
+    const strip=byId('styleStrip'); if(!strip) return; strip.innerHTML='';
+    STYLES.forEach(s => {
+      const c=colorsFor(null, s.pal);
+      const btn=document.createElement('button'); btn.type='button'; btn.dataset.style=s.id;
+      btn.className='style-card'+(s.id===curStyleId?' active':'');
+      const sw=document.createElement('div'); sw.className='sw a-'+(s.align||'l');
+      sw.style.background=c.bgcss; sw.style.color=c.acc;
+      const eb=document.createElement('div'); eb.className='m-eb';
+      const h=document.createElement('div'); h.className='m-h'; h.textContent='Aa';
+      h.style.fontFamily=s.head; h.style.fontWeight=s.hw; h.style.fontSize=(13*(s.scale||1)).toFixed(0)+'px';
+      if(s.hc==='up') h.style.textTransform='uppercase';
+      const sub=document.createElement('div'); sub.className='m-sub';
+      sw.appendChild(eb); sw.appendChild(h); sw.appendChild(sub);
+      const nm=document.createElement('div'); nm.className='name'; nm.textContent=s.name;
+      btn.appendChild(sw); btn.appendChild(nm);
+      btn.addEventListener('click', () => selectStyle(s.id));
+      strip.appendChild(btn);
+    });
+    centerActive(strip, '.style-card.active');
+  }
+  function selectStyle(id){
+    applyStyle(id, false);
+    if (typeof syncColorInputs === 'function') syncColorInputs();
+    const ms=byId('motifSel'); if(ms) ms.value=motifId;
+    fitText(); if(selId) showSel();
+    byId('styleStrip').querySelectorAll('.style-card').forEach(c=>c.classList.toggle('active', c.dataset.style===id));
+  }
+  byId('fontSel').addEventListener('change', e => { userFont = e.target.value; applyUserFont(); fitText(); if(selId) showSel(); });
+
+  // ---------- Overrask mig: ét klik = helt nyt udtryk (stil + layout + palette + skrift) ----------
+  // ---------- Platform-profiler: format + vibe (stil/palette/layout) + tekstlængde + energi-pynt ----------
+  const PLATFORM_PROFILES = {
+    facebook:  { ratio:1,    laengde:'mellem', accent:'none', styles:null, palettes:null, layouts:null },
+    instagram: { ratio:1.25, laengde:'kort',   accent:'none',
+      styles:['impact','candy','pop','sunset','neon','retro','bloom','gradient','duotone','stamp','brutal','fresh'],
+      palettes:['coral','berry','ruby','plum','mustard','terra','rust','sky','teal','lavender','clay','blush','peach'],
+      layouts:['hero-bl','hero-center','hero-tr','hero-left','hero-right','spotlight','framed','card-bottom','card-center','duo-v','collage-3','mosaic','triptych','showcase','band-bottom'] },
+    linkedin:  { ratio:1,    laengde:'lang',   accent:'none',
+      styles:['skandi','editorial','mono','vogue','zen','deco','lux','noir','terminal','press'],
+      palettes:['navy','slate','denim','midnight','charcoal','sage','forest','ocean','cocoa','cream','sand'],
+      layouts:['poster','minimal','split-left','split-right','card-bottom','sidebar-r','band-bottom','band-top','quote','hero-bl','hero-top'] }
+  };
+  function platformPools(){
+    const p = PLATFORM_PROFILES[state.platform] || PLATFORM_PROFILES.facebook;
+    return { styles:p.styles||STYLES.map(s=>s.id), palettes:p.palettes||PAL_ORDER, layoutIds:p.layouts||LAYOUTS.map(l=>l.id), prof:p };
+  }
+
+  // ---------- Instagram-skabeloner (færdige, dristige udtryk) ----------
+  const TEMPLATES = [
+    {id:'t-retro',  name:'Retro-stribe', layout:'tpl-retro',  style:'retro',     pals:['mustard','rust','terra','coral','clay'], font:'auto',   motif:'none', accent:'none'},
+    {id:'t-food',   name:'Mad-blok',     layout:'tpl-food',   style:'impact',    pals:['rust','terra','mustard','wine','cocoa'], font:'auto',   motif:'none', accent:'none'},
+    {id:'t-travel', name:'Rejse-kort',   layout:'tpl-travel', style:'editorial', pals:['ocean','teal','sky','slate','navy'],     font:'dmserif',motif:'none', accent:'none'},
+    {id:'t-health', name:'Sundheds-tip', layout:'tpl-health', style:'fresh',     pals:['teal','sky','mint','sage','ocean'],      font:'auto',   motif:'none', accent:'none'}
+  ];
+  function templateForLayout(layId){ return TEMPLATES.find(t => t.layout === layId); }
+  function pickTemplate(){
+    const hasBadge = (typeof CONTENT !== 'undefined' && CONTENT && CONTENT.badge && CONTENT.badge.trim());
+    let ok = TEMPLATES.filter(t => { const L=LAYOUTS.find(l=>l.id===t.layout); return !L || !L.photo || hasPhoto(); });
+    if (hasBadge) { const noH = ok.filter(t => t.id !== 't-health'); if (noH.length) ok = noH; }
+    const pool = ok.length ? ok : TEMPLATES;
+    return pool[(Math.random()*pool.length)|0].id;
+  }
+  function applyTemplate(id){
+    const t = TEMPLATES.find(x => x.id === id) || TEMPLATES[0];
+    custom=null; userFont=t.font||'auto'; palId = t.pals[(Math.random()*t.pals.length)|0]; curStyleId=t.style; curLayout=t.layout;
+    selectLayout(t.layout);
+    motifId = t.motif || 'none'; setAccentUI(t.accent||'none');
+    applyColors();
+    renderStyleStrip(); buildThemes();
+    byId('fontSel').value = userFont; const ms=byId('motifSel'); if(ms) ms.value=motifId;
+    if (typeof syncColorInputs === 'function') syncColorInputs();
+    centerActive(byId('styleStrip'),'.style-card.active'); centerActive(byId('layoutStrip'),'.layout-card.active');
+  }
+
+  function surpriseMe(){
+    if (state.platform === 'instagram'){ applyTemplate(pickTemplate()); return; }
+    const { styles, palettes, layoutIds } = platformPools();
+    const st = STYLES.find(s=>s.id===styles[(Math.random()*styles.length)|0]) || STYLES[0];
+    const pool = LAYOUTS.filter(L => layoutIds.includes(L.id) && (!L.photo || hasPhoto()));
+    const lay = pool[(Math.random()*pool.length)|0] || LAYOUTS[0];
+    const pal = Math.random() < 0.5 ? st.pal : palettes[(Math.random()*palettes.length)|0];
+    const font = Math.random() < 0.62 ? 'auto' : UF[(Math.random()*UF.length)|0];
+    custom = null; userFont = font; palId = pal; curStyleId = st.id; curLayout = lay.id;
+    selectLayout(lay.id); applyFormat();
+    renderStyleStrip(); buildThemes(); byId('fontSel').value = userFont;
+    const ms = byId('motifSel'); if (ms) ms.value = motifId;
+    if (typeof syncColorInputs === 'function') syncColorInputs();
+    centerActive(byId('styleStrip'), '.style-card.active');
+    centerActive(byId('layoutStrip'), '.layout-card.active');
+  }
+  byId('shuffleBtn').addEventListener('click', surpriseMe);
+
+  function setSeg(seg, val){ const row=document.querySelector('.seg-row[data-seg="'+seg+'"]'); if(row) row.querySelectorAll('.seg-btn').forEach(b=>b.classList.toggle('active', b.dataset.val===val)); }
+  function setAccentUI(level){ accentLevel=level; const r=byId('accentRow'); if(r) r.querySelectorAll('.seg-btn').forEach(b=>b.classList.toggle('active', b.dataset.acc===level)); }
+  function setFmtUI(ratio){ postRatio=ratio; const r=byId('fmtRow'); if(r) r.querySelectorAll('.seg-btn').forEach(b=>b.classList.toggle('active', Math.abs(parseFloat(b.dataset.fmt)-ratio)<0.001)); }
+  function applyPlatform(p){
+    state.platform = p;
+    const prof = PLATFORM_PROFILES[p] || PLATFORM_PROFILES.facebook;
+    setFmtUI(prof.ratio);
+    if (prof.laengde){ state.laengde = prof.laengde; setSeg('laengde', prof.laengde); }
+    setAccentUI(prof.accent);
+    const hasPost = byId('styleStrip') && byId('styleStrip').children.length;
+    if (hasPost) applyPlatformVibe(); else applyFormat();
+  }
+  function applyPlatformVibe(){
+    if (state.platform === 'instagram'){ applyTemplate(pickTemplate()); return; }
+    const { styles, palettes, layoutIds } = platformPools();
+    const st = STYLES.find(s=>s.id===styles[(Math.random()*styles.length)|0]) || STYLES[0];
+    const pool = LAYOUTS.filter(L => layoutIds.includes(L.id) && (!L.photo || hasPhoto()));
+    const lay = pool[(Math.random()*pool.length)|0] || LAYOUTS.find(l=>!l.photo) || LAYOUTS[0];
+    custom=null; userFont='auto'; palId=palettes[(Math.random()*palettes.length)|0]; curStyleId=st.id; curLayout=lay.id;
+    selectLayout(lay.id); applyFormat();
+    renderStyleStrip(); buildThemes(); byId('fontSel').value='auto';
+    const ms=byId('motifSel'); if(ms) ms.value=motifId;
+    if (typeof syncColorInputs === 'function') syncColorInputs();
+    centerActive(byId('styleStrip'),'.style-card.active'); centerActive(byId('layoutStrip'),'.layout-card.active');
+  }
+
+  // ---------- Direkte editor: vælg, flyt, skalér, redigér ----------
+  // ================= SCENE-MOTOR (frit design — vilkårlige elementer) =================
+  let sceneMode = false, scene = null, sceneSelI = -1, sceneImgN = 0, styleRef = null;
+  const SFONT = { fraunces:"'Fraunces',serif", playfair:"'Playfair Display',serif", grotesk:"'Space Grotesk',sans-serif", poppins:"'Poppins',sans-serif", montserrat:"'Montserrat',sans-serif", oswald:"'Oswald',sans-serif", caveat:"'Caveat',cursive", anton:"'Anton',sans-serif", bebas:"'Bebas Neue',sans-serif", dmserif:"'DM Serif Display',serif", archivo:"'Archivo Black',sans-serif", mono2:"'Space Mono',monospace" };
+  function snum(v, d){ const n = parseFloat(v); return isFinite(n) ? n : (d == null ? 0 : d); }
+  function sclamp(v, a, b){ return Math.max(a, Math.min(b, v)); }
+  function sFill(f){
+    if (f == null) return '';
+    if (typeof f === 'string') return f;
+    if (typeof f === 'object'){
+      const stops = (Array.isArray(f.stops) && f.stops.length ? f.stops : ['#333333','#000000']).filter(s => typeof s === 'string');
+      if (f.type === 'radial') return 'radial-gradient(circle at '+snum(f.cx,50)+'% '+snum(f.cy,40)+'%, '+stops.join(', ')+')';
+      return 'linear-gradient('+snum(f.angle,180)+'deg, '+stops.join(', ')+')';
+    }
+    return '';
+  }
+  function sanitizePath(d){ return String(d || '').replace(/[^0-9a-zA-Z\s,.\-]/g, ' ').slice(0, 4000); }
+  function sceneImageUrl(src){
+    if (src === 'upload' && customPhoto) return customPhoto;
+    if (customPhoto) return customPhoto;
+    if (photos.length){ return proxied(photos[(sceneImgN++) % photos.length]); }
+    return '';
+  }
+  function renderScene(sc){
+    if (!sc || !Array.isArray(sc.els)) return;
+    scene = sc; sceneImgN = 0;
+    const layer = byId('sceneLayer'); const post = byId('post'); if (!layer) return;
+    postRatio = (typeof sc.ar === 'number' && sc.ar > 0.4 && sc.ar < 4) ? sc.ar : 1;
+    post.style.setProperty('--pbg', sFill(sc.bg) || '#1c1a17');
+    layer.innerHTML = '';
+    sc.els.forEach((e, i) => {
+      const t = e.t || 'rect';
+      const node = document.createElement('div');
+      node.className = 'se se-' + t; node.dataset.i = i;
+      let s = 'left:'+snum(e.x,0)+'%;top:'+snum(e.y,0)+'%;width:'+snum(e.w,20)+'%;height:'+snum(e.h,12)+'%;';
+      if (e.z != null) s += 'z-index:'+(e.z|0)+';';
+      if (e.rot) s += 'transform:rotate('+snum(e.rot,0)+'deg);';
+      if (e.op != null) s += 'opacity:'+sclamp(snum(e.op,1),0,1)+';';
+      if (e.shadow) s += 'box-shadow:0 '+(t==='text'?5:9)+'cqw 16cqw -8cqw rgba(0,0,0,.42);';
+      if (t === 'text'){
+        if (e.fill) s += 'background:'+sFill(e.fill)+';';
+        if (e.r != null) s += 'border-radius:'+snum(e.r,0)+'cqw;';
+        if (e.stroke && e.sw) s += 'border:'+snum(e.sw,1)+'cqw solid '+e.stroke+';';
+        s += 'padding:'+snum(e.pad,0)+'cqw;';
+        s += 'font-family:'+(SFONT[e.font] || SFONT.grotesk)+';';
+        s += 'font-size:'+sclamp(snum(e.fs,7),0.5,60)+'cqw;';
+        s += 'font-weight:'+(e.fw || 600)+';';
+        s += 'line-height:'+(e.lh != null ? e.lh : 1.06)+';';
+        s += 'letter-spacing:'+(e.ls != null ? e.ls : 0)+'em;';
+        s += 'color:'+(e.color || '#ffffff')+';';
+        if (e.up) s += 'text-transform:uppercase;';
+        if (e.italic) s += 'font-style:italic;';
+        s += 'text-align:'+({l:'left',c:'center',r:'right'}[e.align] || 'left')+';';
+        s += 'display:flex;flex-direction:column;justify-content:'+({t:'flex-start',m:'center',b:'flex-end'}[e.va] || 'center')+';';
+        node.style.cssText = s;
+        node.setAttribute('contenteditable','true'); node.setAttribute('spellcheck','false');
+        node.textContent = e.str || '';
+      } else if (t === 'image'){
+        if (e.r != null) s += 'border-radius:'+snum(e.r,0)+'cqw;';
+        s += 'background-size:'+(e.fit === 'contain' ? 'contain' : 'cover')+';background-position:center;background-repeat:no-repeat;';
+        if (e.stroke && e.sw) s += 'border:'+snum(e.sw,1)+'cqw solid '+e.stroke+';';
+        const u = sceneImageUrl(e.src);
+        if (u) s += 'background-image:url("'+u+'");';
+        node.style.cssText = s;
+      } else if (t === 'icon'){
+        node.style.cssText = s;
+        const col = (typeof e.fill === 'string' && e.fill) ? e.fill : (e.color || '#ffffff');
+        node.innerHTML = '<svg viewBox="0 0 100 100">'+motifInner(e.icon || 'sparkle', col)+'</svg>';
+      } else if (t === 'path'){
+        node.style.cssText = s;
+        const fill = (typeof e.fill === 'string' && e.fill) ? e.fill : 'none';
+        const stroke = e.stroke || 'none';
+        node.innerHTML = '<svg viewBox="0 0 100 100" preserveAspectRatio="none"><path d="'+sanitizePath(e.d)+'" fill="'+fill+'" stroke="'+stroke+'" stroke-width="'+snum(e.sw,0)+'" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+      } else {
+        if (t === 'ellipse') s += 'border-radius:50%;';
+        else if (e.r != null) s += 'border-radius:'+snum(e.r,0)+'cqw;';
+        if (e.fill) s += 'background:'+sFill(e.fill)+';';
+        if (e.stroke && e.sw) s += 'border:'+snum(e.sw,1)+'cqw solid '+e.stroke+';';
+        node.style.cssText = s;
+      }
+      layer.appendChild(node);
+    });
+    applyFormat();
+    // Auto-tilpas tekst der ellers ville flyde ud over sit felt (eksakt DOM-måling, kun nedad)
+    layer.querySelectorAll('.se-text').forEach(node => {
+      const e = sc.els[+node.dataset.i]; if (!e) return;
+      const start = parseFloat(node.style.fontSize) || 0; if (!start || node.clientHeight < 2) return;
+      let fs = start; const floor = start * 0.5; let g = 0;
+      while ((node.scrollHeight > node.clientHeight + 1 || node.scrollWidth > node.clientWidth + 1) && fs > floor && g < 40){ fs *= 0.93; node.style.fontSize = fs + 'cqw'; g++; }
+      if (Math.abs(fs - start) > 0.01) e.fs = +fs.toFixed(2);
+    });
+    if (sceneSelI >= (sc.els.length)) sceneSelI = -1;
+    showSceneSel();
+  }
+  function sceneSelNode(){ return sceneSelI >= 0 ? byId('sceneLayer').querySelector('.se[data-i="'+sceneSelI+'"]') : null; }
+  function showSceneSel(){
+    const box = byId('selBox'); const node = sceneSelNode();
+    if (!sceneMode || !node){ box.classList.remove('on'); return; }
+    const stage = byId('post').parentElement.getBoundingClientRect(); const r = node.getBoundingClientRect();
+    box.style.left=(r.left-stage.left)+'px'; box.style.top=(r.top-stage.top)+'px'; box.style.width=r.width+'px'; box.style.height=r.height+'px';
+    byId('selDel').style.display=''; box.classList.add('on');
+  }
+  function selectSceneEl(i){ sceneSelI = i; selId = null; showSceneSel(); }
+  byId('sceneLayer').addEventListener('pointerdown', e => {
+    if (!sceneMode) return; const el = e.target.closest('.se'); if (!el) return; selectSceneEl(+el.dataset.i);
+  });
+  byId('sceneLayer').addEventListener('input', e => {
+    const el = e.target.closest('.se-text'); if (!el || !scene) return;
+    const i = +el.dataset.i; if (scene.els[i]) scene.els[i].str = el.innerText; showSceneSel();
+  });
+
+  const OV = {};
+  let selId = null, manual = false;
+  function ovOf(id){ return OV[id] || (OV[id] = {dx:0,dy:0,scale:1}); }
+  function applyOv(id){ const el=byId(id); const o=ovOf(id); el.style.transform='translate('+Math.round(o.dx)+'px,'+Math.round(o.dy)+'px)'; el.style.setProperty('--escale', o.scale.toFixed(3)); }
+  function resetOverrides(){ Object.keys(OV).forEach(k=>delete OV[k]); ['postEyebrow','postHeadline','postSub','postBrand','postBadge'].forEach(id=>{ const el=byId(id); if(el){ el.style.transform=''; el.style.removeProperty('--escale'); } }); manual=false; hideSel(); }
+  function selTarget(id){ return byId(id); }
+  function hideSel(){ byId('selBox').classList.remove('on'); }
+  function showSel(){
+    if (!selId){ hideSel(); return; }
+    const el = selTarget(selId);
+    if (!el || el.classList.contains('hide')){ hideSel(); return; }
+    const stage = byId('post').parentElement.getBoundingClientRect();
+    const r = el.getBoundingClientRect();
+    const box = byId('selBox');
+    box.style.left=(r.left-stage.left)+'px'; box.style.top=(r.top-stage.top)+'px'; box.style.width=r.width+'px'; box.style.height=r.height+'px';
+    byId('selDel').style.display = (selId==='postHeadline') ? 'none' : '';
+    box.classList.add('on');
+  }
+  function selectEl(id){ selId = id; showSel(); }
+  function onInlineEdit(id){
+    if (id==='postHeadline') CONTENT.headline = byId('postHeadline').innerText.replace(/\s+/g,' ').trim();
+    else if (id==='postSub') CONTENT.subline = byId('postSub').innerText.trim();
+    else if (id==='postEyebrow') CONTENT.eyebrow = byId('postEyebrow').innerText.trim();
+    else if (id==='postBrand') CONTENT.navn = byId('postBrand').innerText.trim();
+    else if (id==='postBadge') CONTENT.badge = byId('postBadge').querySelector('span').innerText.trim();
+    if (!manual) fitText();
+    showSel();
+  }
+  ['postEyebrow','postHeadline','postSub','postBrand'].forEach(id => {
+    const el = byId(id);
+    el.addEventListener('pointerdown', () => selectEl(id));
+    el.addEventListener('input', () => onInlineEdit(id));
+  });
+  byId('postBadge').addEventListener('pointerdown', () => selectEl('postBadge'));
+  byId('postBadge').querySelector('span').addEventListener('input', () => onInlineEdit('postBadge'));
+  byId('postHeadline').addEventListener('blur', () => { byId('postHeadline').innerHTML = headlineHTML(CONTENT.headline, CONTENT.emphasis); if(selId==='postHeadline') showSel(); });
+
+  byId('selMove').addEventListener('pointerdown', e => {
+    if (sceneMode){
+      if (sceneSelI < 0 || !scene) return; e.preventDefault();
+      const el = scene.els[sceneSelI]; const node = sceneSelNode(); const pr = byId('post').getBoundingClientRect();
+      const sx=e.clientX, sy=e.clientY, x0=snum(el.x,0), y0=snum(el.y,0);
+      try { e.target.setPointerCapture(e.pointerId); } catch(_){}
+      const mv = ev => { el.x = x0 + (ev.clientX-sx)/pr.width*100; el.y = y0 + (ev.clientY-sy)/pr.height*100; if(node){ node.style.left=el.x+'%'; node.style.top=el.y+'%'; } showSceneSel(); };
+      const up = () => { document.removeEventListener('pointermove', mv); document.removeEventListener('pointerup', up); };
+      document.addEventListener('pointermove', mv); document.addEventListener('pointerup', up); return;
+    }
+    if (!selId) return; e.preventDefault(); manual=true; const o=ovOf(selId); let sx=e.clientX, sy=e.clientY;
+    try { e.target.setPointerCapture(e.pointerId); } catch(_){}
+    const mv = ev => { o.dx += ev.clientX-sx; o.dy += ev.clientY-sy; sx=ev.clientX; sy=ev.clientY; applyOv(selId); showSel(); };
+    const up = () => { document.removeEventListener('pointermove', mv); document.removeEventListener('pointerup', up); };
+    document.addEventListener('pointermove', mv); document.addEventListener('pointerup', up);
+  });
+  byId('selSize').addEventListener('pointerdown', e => {
+    if (sceneMode){
+      if (sceneSelI < 0 || !scene) return; e.preventDefault();
+      const el = scene.els[sceneSelI]; const node = sceneSelNode(); const r = node.getBoundingClientRect();
+      const ox=r.left, oy=r.top, sd=Math.hypot(e.clientX-ox, e.clientY-oy)||1;
+      const w0=snum(el.w,20), h0=snum(el.h,12), fs0=snum(el.fs,7);
+      try { e.target.setPointerCapture(e.pointerId); } catch(_){}
+      const mv = ev => { const k=sclamp(Math.hypot(ev.clientX-ox, ev.clientY-oy)/sd, 0.2, 6); el.w=w0*k; el.h=h0*k; if(el.t==='text') el.fs=fs0*k; if(node){ node.style.width=el.w+'%'; node.style.height=el.h+'%'; if(el.t==='text') node.style.fontSize=el.fs+'cqw'; } showSceneSel(); };
+      const up = () => { document.removeEventListener('pointermove', mv); document.removeEventListener('pointerup', up); };
+      document.addEventListener('pointermove', mv); document.addEventListener('pointerup', up); return;
+    }
+    if (!selId) return; e.preventDefault(); manual=true; const o=ovOf(selId);
+    const r=selTarget(selId).getBoundingClientRect(); const cx=r.left+r.width/2, cy=r.top+r.height/2;
+    const sd=Math.hypot(e.clientX-cx, e.clientY-cy)||1, startScale=o.scale;
+    try { e.target.setPointerCapture(e.pointerId); } catch(_){}
+    const mv = ev => { const d=Math.hypot(ev.clientX-cx, ev.clientY-cy); o.scale=Math.max(0.4, Math.min(5, startScale*(d/sd))); applyOv(selId); showSel(); };
+    const up = () => { document.removeEventListener('pointermove', mv); document.removeEventListener('pointerup', up); };
+    document.addEventListener('pointermove', mv); document.addEventListener('pointerup', up);
+  });
+  byId('selDel').addEventListener('click', e => {
+    e.preventDefault(); e.stopPropagation();
+    if (sceneMode){ if (sceneSelI < 0 || !scene) return; scene.els.splice(sceneSelI,1); sceneSelI=-1; byId('selBox').classList.remove('on'); renderScene(scene); return; }
+    if (!selId || selId === 'postHeadline') return;
+    removed.add(selId); selId = null; hideSel(); applyText();
+  });
+  document.addEventListener('pointerdown', e => {
+    if (e.target.closest('#selBox')) return;
+    if (sceneMode){ if (e.target.closest('#sceneLayer')) return; sceneSelI=-1; byId('selBox').classList.remove('on'); return; }
+    if (e.target.closest('#postContent') || e.target.closest('#postBadge')) return;
+    selId=null; hideSel();
+  }, true);
+
+
+  const PHOTO_SLOTS = ['postPhoto','postPhoto2','postPhoto3','postPhoto4'];
+  function clearPhotoSlots(){ PHOTO_SLOTS.forEach(id => { const el=byId(id); if(el) el.style.backgroundImage=''; }); }
+  function setPhoto(){
+    const L = LAYOUTS.find(x => x.id === curLayout) || LAYOUTS[0];
+    const n = Math.max(1, L.imgs || 1);
+    for (let k = n; k < 4; k++){ const el = byId(PHOTO_SLOTS[k]); if (el) el.style.backgroundImage = ''; }
+    if (customPhoto){ for (let k = 0; k < n; k++){ const el = byId(PHOTO_SLOTS[k]); if (el) el.style.backgroundImage = 'url("' + customPhoto + '")'; } return; }
+    if (!photos.length) return;
+    // primær med fejl-probe
+    const purl = proxied(photos[photoIdx % photos.length]);
+    const probe = new Image();
+    probe.onload = () => { byId('postPhoto').style.backgroundImage = 'url("' + purl + '")'; };
+    probe.onerror = () => { byId('photoHint').textContent = 'Kunne ikke hente fotoet — prøv “Skift stock-foto” eller upload dit eget.'; byId('photoHint').classList.remove('hide'); };
+    probe.src = purl;
+    // ekstra felter
+    for (let k = 1; k < n; k++){ const el = byId(PHOTO_SLOTS[k]); if (!el) continue; const idx = (photoIdx + k) % photos.length; el.style.backgroundImage = 'url("' + proxied(photos[idx]) + '")'; }
+  }
+  function nextPhoto(){ if (!customPhoto && photos.length){ photoIdx = (photoIdx + 1) % photos.length; setPhoto(); } }
+  function updatePhotoControls(){
+    const L = LAYOUTS.find(x => x.id === curLayout) || LAYOUTS[0];
+    byId('swapBtn').classList.toggle('hide', !(L.photo && !customPhoto && photos.length > 1));
+    byId('clearPhotoBtn').classList.toggle('hide', !customPhoto);
+    const noStock = L.photo && !customPhoto && photos.length === 0;
+    byId('photoHint').classList.toggle('hide', !noStock);
+    if (noStock) byId('photoHint').textContent = 'Intet stock-foto (kræver en Pexels-nøgle på serveren) — upload dit eget billede, eller vælg et plakat-layout.';
+  }
+
+  function handleUpload(f){
+    if (!f) return;
+    if (!/^image\/(png|jpe?g|webp)$/i.test(f.type)){ byId('photoHint').textContent = 'Brug en PNG-, JPG- eller WebP-fil.'; byId('photoHint').classList.remove('hide'); return; }
+    if (f.size > 12*1024*1024){ byId('photoHint').textContent = 'Billedet er for stort (maks 12 MB).'; byId('photoHint').classList.remove('hide'); return; }
+    const rd = new FileReader();
+    rd.onload = () => { customPhoto = rd.result; const L = LAYOUTS.find(x=>x.id===curLayout); if (!L || !L.photo) curLayout = 'hero-bl'; selectLayout(curLayout); byId('photoHint').classList.add('hide'); };
+    rd.onerror = () => { byId('photoHint').textContent = 'Kunne ikke læse billedet. Prøv en anden fil.'; byId('photoHint').classList.remove('hide'); };
+    rd.readAsDataURL(f);
+  }
+  byId('uploadBtn').addEventListener('click', () => byId('uploadInput').click());
+  byId('uploadInput').addEventListener('change', e => { handleUpload(e.target.files && e.target.files[0]); e.target.value=''; });
+  byId('clearPhotoBtn').addEventListener('click', () => { customPhoto = null; selectLayout(curLayout); });
+
+  function buildThemes(){
+    const row = byId('themeRow'); row.innerHTML = '';
+    PAL_ORDER.forEach(id => {
+      const b = document.createElement('button'); b.type='button';
+      b.className = 'theme-sw' + (!custom && id===palId ? ' active' : '');
+      b.style.background = PALETTES[id].bg; b.title = id;
+      b.addEventListener('click', () => { custom=null; palId=id; row.querySelectorAll('.theme-sw').forEach(x=>x.classList.toggle('active', x===b)); applyColors(); syncColorInputs(); });
+      row.appendChild(b);
+    });
+  }
+  function syncColorInputs(){
+    const p = PALETTES[palId];
+    if (custom){ byId('cBg').value=custom.bg; byId('cInk').value=custom.ink; byId('cAcc').value=custom.acc; }
+    else if (p){ byId('cBg').value=firstHex(p.bg); byId('cInk').value=(p.ink[0]==='#'?p.ink:'#2c2620'); byId('cAcc').value=(p.acc[0]==='#'?p.acc:'#b5542a'); }
+  }
+  ['cBg','cInk','cAcc'].forEach(id => byId(id).addEventListener('input', () => {
+    custom = { bg:byId('cBg').value, ink:byId('cInk').value, acc:byId('cAcc').value };
+    byId('themeRow').querySelectorAll('.theme-sw').forEach(x=>x.classList.remove('active'));
+    applyColors();
+  }));
+  byId('motifSel').addEventListener('change', e => { motifId = e.target.value; byId('postDecor').innerHTML = buildDecorHTML(motifId, curAcc()); });
+  byId('fmtRow').addEventListener('click', e => { const b=e.target.closest('.seg-btn'); if(!b) return; byId('fmtRow').querySelectorAll('.seg-btn').forEach(x=>x.classList.toggle('active', x===b)); postRatio=parseFloat(b.dataset.fmt)||1; relayout(); });
+  byId('accentRow').addEventListener('click', e => { const b=e.target.closest('.seg-btn'); if(!b) return; byId('accentRow').querySelectorAll('.seg-btn').forEach(x=>x.classList.toggle('active', x===b)); accentLevel=b.dataset.acc||'none'; byId('postAccents').innerHTML = buildAccents(accentLevel, accentColor()); });
+  byId('swapBtn').addEventListener('click', nextPhoto);
+  window.addEventListener('resize', relayout);
+
+  // ---------- Formular-valg ----------
+  const state = { platform:'facebook', laengde:'mellem', emoji:'med' };
+  document.querySelectorAll('.seg-row[data-seg]').forEach(row => {
+    const key = row.dataset.seg; const act = row.querySelector('.seg-btn.active'); if (act) state[key]=act.dataset.val;
+    row.addEventListener('click', e => {
+      const b=e.target.closest('.seg-btn'); if(!b) return;
+      row.querySelectorAll('.seg-btn').forEach(x=>x.classList.toggle('active', x===b));
+      state[key]=b.dataset.val;
+      if (key==='platform') applyPlatform(b.dataset.val);
+    });
+  });
+  byId('emne').addEventListener('input', () => byId('emne').classList.remove('invalid'));
+
+  function inferDesign(text){
+    const s=(text||'').toLowerCase(); const has=(...w)=>w.some(x=>s.includes(x));
+    if (has('student','dimission','studenter','eksamen','gymnasie')) return {palette:'berry',motif:'graduation'};
+    if (has('rabat','tilbud','spar','udsalg','procent','% ','kampagne','black friday')) return {palette:'mustard',motif:'sale'};
+    if (has('jul','julen','glædelig','advent','nytår')) return {palette:'dark',motif:'snowflake'};
+    if (has('efterår','græskar','høst')) return {palette:'rust',motif:'leaf'};
+    if (has('kaffe','latte','barista','cappuccino','espresso')) return {palette:'cocoa',motif:'coffee'};
+    if (has('fødselsdag','fest','jubilæum','åbning','fejr','reception')) return {palette:'berry',motif:'confetti'};
+    if (has('valentine','kærlighed','hjerte','date')) return {palette:'blush',motif:'heart'};
+    if (has('blomst','forår','buket')) return {palette:'forest',motif:'flower'};
+    if (has('gave','gavekort','julegave')) return {palette:'wine',motif:'gift'};
+    if (has('sommer','sol','ferie','strand')) return {palette:'sky',motif:'sun'};
+    if (has('nyhed','lancering','nyåbn','snart','kommer')) return {palette:'teal',motif:'sparkle'};
+    if (has('fitness','træning','yoga','gym','løb','crossfit')) return {palette:'navy',motif:'dumbbell'};
+    if (has('frisør','klip','negle','salon','hår','barber')) return {palette:'blush',motif:'scissors'};
+    if (has('menu','restaurant','frokost','middag',' mad','retter','brunch')) return {palette:'wine',motif:'food'};
+    return {palette:'terra',motif:'none'};
+  }
+
+  function setView(mode){
+    document.querySelector('.app').classList.toggle('results-mode', mode==='results');
+    byId('phEmpty').style.display = mode==='empty' ? '' : 'none';
+    byId('resultsWrap').style.display = mode==='results' ? '' : 'none';
+    const st = byId('status');
+    if (mode==='loading') st.innerHTML = '<div class="loading"><div class="spinner"></div><div>AI’en skriver dit opslag…</div></div>';
+    else if (mode!=='error') st.innerHTML = '';
+  }
+  function showError(msg, detail){
+    document.querySelector('.app').classList.remove('results-mode');
+    byId('phEmpty').style.display='none'; byId('resultsWrap').style.display='none';
+    byId('status').innerHTML = '<div class="err"><b>Hov — det gik ikke.</b><br>'+esc(msg)+(detail?'<span class="small">'+esc(detail)+'</span>':'')+'</div>';
+  }
+  let busy = false;
+  function setBusy(on){ busy=on; byId('genBtn').disabled=on; const rb=byId('regenBtn'); if(rb) rb.disabled=on; byId('genIcon').textContent=on?'':'✨'; byId('genIcon').className=on?'btn-spin':''; byId('genLabel').textContent=on?'Skriver…':'Lav opslag'; }
+
+  // ---------- Tekst i opslaget ----------
+  function headlineHTML(headline, emphasis){
+    const h = headline || 'Skriv din overskrift';
+    if (emphasis && h.toLowerCase().indexOf(emphasis.toLowerCase()) >= 0){
+      const i = h.toLowerCase().indexOf(emphasis.toLowerCase());
+      return esc(h.slice(0,i)) + '<span class="post-em">' + esc(h.slice(i,i+emphasis.length)) + '</span>' + esc(h.slice(i+emphasis.length));
+    }
+    return esc(h);
+  }
+  function applyText(){
+    byId('postHeadline').innerHTML = headlineHTML(CONTENT.headline, CONTENT.emphasis);
+    const sub=byId('postSub'); sub.textContent = CONTENT.subline; sub.style.display = (CONTENT.subline.trim() && !removed.has('postSub')) ? '' : 'none';
+    const brand=byId('postBrand'); brand.textContent = CONTENT.navn.trim() || 'DIT FIRMANAVN'; brand.style.display = removed.has('postBrand') ? 'none' : '';
+    const badge = byId('postBadge');
+    if (CONTENT.badge.trim() && !removed.has('postBadge')) badge.classList.remove('hide'); else badge.classList.add('hide');
+    badge.querySelector('span').textContent = CONTENT.badge.trim();
+    const eb = byId('postEyebrow');
+    if (CONTENT.eyebrow.trim() && !removed.has('postEyebrow')) eb.classList.remove('hide'); else eb.classList.add('hide');
+    eb.textContent = CONTENT.eyebrow.trim();
+    fitText();
+    if (selId) showSel();
+  }
+  function fillText(c){
+    removed.clear();
+    CONTENT = { headline:c.headline||'', emphasis:c.emphasis||'', eyebrow:c.eyebrow||'', subline:c.subline||'', badge:c.badge||'', navn:(c.navn||'').trim() };
+    applyText();
+  }
+
+  // ---------- Layout-vælger ----------
+  function buildSkeleton(layId){
+    const d = document.createElement('div'); d.className = 'post mini skeleton lay-' + layId;
+    d.innerHTML = '<div class="post-photo"></div><div class="post-photo2"></div><div class="post-photo3"></div><div class="post-photo4"></div><div class="post-content"><div class="post-eyebrow"></div><div class="post-body"><div class="post-headline"></div><div class="post-rule"></div><div class="post-sub"></div></div><div class="post-brand"></div></div>';
+    return d;
+  }
+  function centerActive(strip, sel){
+    if (!strip) return;
+    requestAnimationFrame(() => {
+      const a = strip.querySelector(sel); if (!a) return;
+      const ar = a.getBoundingClientRect(), sr = strip.getBoundingClientRect();
+      strip.scrollLeft += (ar.left - sr.left) - (sr.width - ar.width) / 2;
+    });
+  }
+  function renderLayoutGallery(){
+    const strip = byId('layoutStrip'); strip.innerHTML = '';
+    LAYOUTS.forEach(L => {
+      const card = document.createElement('button'); card.type='button'; card.dataset.lay = L.id;
+      card.className = 'layout-card' + (L.id===curLayout ? ' active' : '');
+      card.appendChild(buildSkeleton(L.id));
+      const nm = document.createElement('div'); nm.className='name'; nm.textContent = L.name; card.appendChild(nm);
+      card.addEventListener('click', () => { if (L.tpl){ const t=templateForLayout(L.id); if(t){ applyTemplate(t.id); return; } } selectLayout(L.id); });
+      strip.appendChild(card);
+    });
+    centerActive(strip, '.layout-card.active');
+  }
+  function selectLayout(id){
+    const L = LAYOUTS.find(x => x.id === id) || LAYOUTS[0];
+    curLayout = L.id;
+    resetOverrides();
+    const post = byId('post');
+    LAYOUTS.forEach(x => post.classList.remove('lay-'+x.id));
+    post.classList.add('lay-'+L.id);
+    post.classList.remove('font-sans','font-display');
+    if (L.font === 'sans') post.classList.add('font-sans');
+    else if (L.font === 'display') post.classList.add('font-display');
+    post.classList.toggle('over-photo', !!L.over);
+    const usePhoto = L.photo && hasPhoto();
+    if (usePhoto) setPhoto(); else clearPhotoSlots();
+    updatePhotoControls();
+    applyStyle(curStyleId, true);
+    applyText();
+    applyFormat(); fitText();
+    byId('layoutStrip').querySelectorAll('.layout-card').forEach(c => c.classList.toggle('active', c.dataset.lay === id));
+  }
+
+  function renderCaptions(posts){
+    const wrap = byId('results'); wrap.innerHTML = '';
+    posts.forEach((p, i) => {
+      const card = document.createElement('div'); card.className='result-card';
+      const head = document.createElement('div'); head.className='result-head'; head.innerHTML = '<span class="result-num">Forslag '+(i+1)+'</span>';
+      const ta = document.createElement('textarea'); ta.className='result-area'; ta.value = String(p).trim();
+      const foot = document.createElement('div'); foot.className='result-foot';
+      const char = document.createElement('span'); char.className='char';
+      const upd = () => { char.textContent = ta.value.length + ' tegn'; }; upd();
+      ta.addEventListener('input', upd);
+      const copy = document.createElement('button'); copy.className='copy-btn'; copy.type='button'; copy.textContent='Kopiér';
+      copy.addEventListener('click', () => copyText(ta.value, copy));
+      foot.appendChild(char); foot.appendChild(copy);
+      card.appendChild(head); card.appendChild(ta); card.appendChild(foot);
+      wrap.appendChild(card);
+      requestAnimationFrame(() => { ta.style.height='auto'; ta.style.height = Math.max(118, ta.scrollHeight+4)+'px'; });
+    });
+  }
+  async function copyText(text, btn){
+    let ok=false;
+    try { await navigator.clipboard.writeText(text); ok=true; }
+    catch(e){ try { const t=document.createElement('textarea'); t.value=text; t.style.position='fixed'; t.style.opacity='0'; document.body.appendChild(t); t.focus(); t.select(); ok=document.execCommand('copy'); t.remove(); } catch(_){} }
+    const old = btn.textContent; btn.textContent = ok?'Kopieret ✓':'Markér og kopiér'; btn.classList.toggle('done', ok);
+    setTimeout(() => { btn.textContent=old; btn.classList.remove('done'); }, 1500);
+  }
+
+  // Fryser præcise px-værdier (skrift, linjeafstand, margener) så downloaden bliver 1:1 med forhåndsvisningen,
+  // uafhængigt af hvordan gengivelses-motoren udregner container-enheder (cqw) og auto-tilpasning.
+  function freezeForCapture(post){
+    const saved = [];
+    const els = [post, ...post.querySelectorAll('*')];
+    els.forEach(el => {
+      saved.push([el, el.getAttribute('style')]);
+      const cs = getComputedStyle(el);
+      el.style.fontSize = cs.fontSize;
+      el.style.lineHeight = cs.lineHeight;
+      el.style.letterSpacing = cs.letterSpacing;
+      el.style.paddingTop = cs.paddingTop; el.style.paddingRight = cs.paddingRight;
+      el.style.paddingBottom = cs.paddingBottom; el.style.paddingLeft = cs.paddingLeft;
+      el.style.rowGap = cs.rowGap; el.style.columnGap = cs.columnGap;
+    });
+    const rule = post.querySelector('.post-rule');
+    if (rule){ const cs = getComputedStyle(rule); rule.style.width = cs.width; rule.style.height = cs.height; }
+    const frame = post.querySelector('.post-frame');
+    if (frame){ const cs = getComputedStyle(frame); frame.style.top = cs.top; frame.style.right = cs.right; frame.style.bottom = cs.bottom; frame.style.left = cs.left; }
+    return () => saved.forEach(([el, s]) => { if (s === null) el.removeAttribute('style'); else el.setAttribute('style', s); });
+  }
+
+  // Låser linjeskiftene præcis som de står i forhåndsvisningen: hvert ord bliver et lille element,
+  // og der sættes faste <br> netop hvor browseren bryder nu. Så kan ingen ord "rykke ned" i downloaden,
+  // uanset at gengivelses-motoren måler bogstavbredder en anelse anderledes. (Indhold gendannes af kalderen.)
+  function hardWrap(el){
+    const tokens = [];
+    el.childNodes.forEach(node => {
+      const em = node.nodeType === 1 && node.classList && node.classList.contains('post-em');
+      (node.textContent || '').split(/(\s+)/).forEach(part => {
+        if (part === '') return;
+        if (/^\s+$/.test(part)) tokens.push({ sp:true });
+        else tokens.push({ w:part, em:em });
+      });
+    });
+    el.innerHTML = '';
+    const spans = [];
+    tokens.forEach(t => {
+      if (t.sp){ el.appendChild(document.createTextNode(' ')); return; }
+      const s = document.createElement('span'); s.textContent = t.w; if (t.em) s.className = 'post-em';
+      el.appendChild(s); spans.push(s);
+    });
+    const tops = spans.map(s => s.offsetTop);
+    for (let i = 1; i < spans.length; i++){ if (tops[i] - tops[i-1] > 2) el.insertBefore(document.createElement('br'), spans[i]); }
+    el.style.whiteSpace = 'nowrap';
+  }
+
+  // Låser KUN de container-relative (cqw) mål til px, så foreignObject-gengivelsen får samme
+  // størrelser. Rører IKKE line-height/letter-spacing/position (em/unitless) — de ville flytte teksten.
+  function freezeSizes(post){
+    const saved = [];
+    [post, ...post.querySelectorAll('*')].forEach(el => {
+      saved.push([el, el.getAttribute('style')]);
+      const cs = getComputedStyle(el);
+      el.style.fontSize = cs.fontSize;
+      el.style.paddingTop = cs.paddingTop; el.style.paddingRight = cs.paddingRight;
+      el.style.paddingBottom = cs.paddingBottom; el.style.paddingLeft = cs.paddingLeft;
+      el.style.rowGap = cs.rowGap; el.style.columnGap = cs.columnGap;
+    });
+    const rule = post.querySelector('.post-rule');
+    if (rule){ const cs = getComputedStyle(rule); rule.style.width = cs.width; rule.style.height = cs.height; }
+    const frame = post.querySelector('.post-frame');
+    if (frame){ const cs = getComputedStyle(frame); frame.style.top=cs.top; frame.style.right=cs.right; frame.style.bottom=cs.bottom; frame.style.left=cs.left; }
+    return () => saved.forEach(([el, s]) => { if (s === null) el.removeAttribute('style'); else el.setAttribute('style', s); });
+  }
+
+  // Hvilke skrifttype-familier bruger opslaget lige nu (overskrift + brødtekst)?
+  function usedFamilies(){
+    const set = new Set();
+    ['postHeadline','postEyebrow','postSub','postBrand'].forEach(id => {
+      const el = byId(id); if (!el || getComputedStyle(el).display === 'none') return;
+      const fam = (getComputedStyle(el).fontFamily.split(',')[0] || '').replace(/["']/g,'').trim();
+      if (fam) set.add(fam);
+    });
+    // frit design: scan alle scene-tekstelementer
+    document.querySelectorAll('#sceneLayer .se-text').forEach(el => {
+      const fam = (getComputedStyle(el).fontFamily.split(',')[0] || '').replace(/["']/g,'').trim();
+      if (fam) set.add(fam);
+    });
+    return [...set];
+  }
+  // Indlejrer de brugte Google-fonte som data-URL'er, så download-gengivelsen ALTID får rigtige fonte
+  // (modern-screenshot kan ellers ikke læse de cross-origin font-regler, og fonten falder tilbage).
+  const _fontCache = {};
+  async function embeddedFontCss(){
+    const fams = usedFamilies(); const key = fams.slice().sort().join('|');
+    if (_fontCache[key] !== undefined) return _fontCache[key];
+    _fontCache[key] = '';
+    try {
+      const link = [...document.querySelectorAll('link[rel="stylesheet"]')].find(l => /fonts\.googleapis\.com\/css2/.test(l.href));
+      if (!link) return '';
+      const css = await (await fetch(link.href)).text();
+      const blocks = css.match(/@font-face\s*{[^}]*}/g) || [];
+      const want = blocks.filter(b => { const m = b.match(/font-family:\s*['"]?([^;'"]+)/i); return m && fams.includes(m[1].trim()); });
+      if (!want.length) return '';
+      let combined = want.join('\n');
+      const urls = [...new Set([...combined.matchAll(/url\((https:\/\/[^)]+)\)/g)].map(x => x[1]))];
+      const map = {};
+      await Promise.all(urls.map(async u => {
+        try { const r = await fetch(u); const b = await r.blob(); const d = await new Promise(res => { const fr = new FileReader(); fr.onload = () => res(fr.result); fr.onerror = () => res(''); fr.readAsDataURL(b); }); if (d) map[u] = d; } catch(e){}
+      }));
+      combined = combined.replace(/url\((https:\/\/[^)]+)\)/g, (s, u) => map[u] ? ('url(' + map[u] + ')') : s);
+      _fontCache[key] = combined;
+    } catch(e){ _fontCache[key] = ''; }
+    return _fontCache[key];
+  }
+
+  // ---------- Hent som PNG (gengives præcis som forhåndsvisningen) ----------
+  async function downloadPost(){
+    const post = byId('post');
+    const useModern = !!(window.modernScreenshot && modernScreenshot.domToBlob);
+    if (!useModern && typeof html2canvas === 'undefined'){ showError('Billed-værktøjet kunne ikke indlæses. Tjek din internetforbindelse og prøv igen.'); return; }
+    const btn = byId('dlBtn'); const old = btn.innerHTML; btn.disabled=true; btn.innerHTML='<span class="btn-spin"></span><span>Henter…</span>';
+    if (document.activeElement && document.activeElement.blur) document.activeElement.blur();
+    const L = LAYOUTS.find(x=>x.id===curLayout) || LAYOUTS[0];
+    let restoreStyles = null, savedHTML = [], photoRestores = [];
+    if (L.photo && !customPhoto && photos.length){
+      const n = Math.max(1, L.imgs || 1);
+      for (let k = 0; k < n; k++){
+        const el = byId(PHOTO_SLOTS[k]); if (!el) continue;
+        const idx = (photoIdx + k) % photos.length;
+        const hi = proxied(hiResUrl(photosHi[idx] || photos[idx]));
+        await new Promise(res => { const im = new Image(); im.onload = res; im.onerror = res; im.src = hi; });
+        photoRestores.push([el, el.style.backgroundImage]);
+        el.style.backgroundImage = 'url("' + hi + '")';
+      }
+    }
+    try { if (document.fonts && document.fonts.ready) await document.fonts.ready; } catch(e){}
+    let fontCss = '';
+    if (useModern){ try { fontCss = await embeddedFontCss(); } catch(e){} }
+    try {
+      // Skala vælges så langsiden bliver ~3840 px (4K).
+      const longCss = Math.max(post.clientWidth, post.clientHeight) || 400;
+      let scale = 3840 / longCss;
+      const MAXPX = 16000000; // hold under browserens canvas-grænse
+      const totalPx = (post.clientWidth * scale) * (post.clientHeight * scale);
+      if (totalPx > MAXPX) scale *= Math.sqrt(MAXPX / totalPx);
+      scale = Math.max(2, Math.min(12, scale));
+      let blob = null;
+      if (useModern){
+        // foreignObject = browserens egen layout: tekst, ombrydning og placering bliver identisk med
+        // forhåndsvisningen. Kun størrelser låses (cqw→px); ingen hardWrap der ville flytte teksten.
+        restoreStyles = freezeSizes(post);
+        const opts = { scale, type:'image/png', backgroundColor:null, style:{ boxShadow:'none' } };
+        if (fontCss) opts.font = { cssText: fontCss };
+        blob = await modernScreenshot.domToBlob(post, opts);
+      } else {
+        // html2canvas genimplementerer layout → lås både størrelser og linjeskift (hardWrap).
+        const textEls = ['postHeadline','postSub','postEyebrow','postBrand'].map(id => byId(id))
+          .filter(el => el && !el.classList.contains('hide') && el.textContent.trim());
+        savedHTML = textEls.map(el => [el, el.innerHTML]);
+        restoreStyles = freezeForCapture(post);
+        textEls.forEach(hardWrap);
+        const canvas = await html2canvas(post, { scale, backgroundColor:null, useCORS:true, allowTaint:false, logging:false, imageTimeout:0 });
+        blob = await new Promise(res => canvas.toBlob(res, 'image/png'));
+      }
+      if (!blob) throw new Error('Tomt billede.');
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a'); a.href=url; a.download='opslag-4k.png'; document.body.appendChild(a); a.click(); a.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 5000);
+    } catch(err){ showError('Kunne ikke lave billedet. Prøv “Skift stock-foto”, et eget billede eller et plakat-layout.', (err && err.message)||''); setView('results'); }
+    finally { savedHTML.forEach(([el, h]) => { el.innerHTML = h; }); if (restoreStyles) restoreStyles(); photoRestores.forEach(([el, bg]) => { el.style.backgroundImage = bg; }); btn.disabled=false; btn.innerHTML=old; }
+  }
+  byId('dlBtn').addEventListener('click', downloadPost);
+
+  // ---------- Generér ----------
+  async function generate(){
+    if (busy) return;
+    const emne = byId('emne').value.trim();
+    if (!emne){ byId('emne').classList.add('invalid'); byId('emne').focus(); return; }
+    const payload = { navn:byId('navn').value.trim(), type:byId('type').value.trim(), website:byId('site').value.trim(), emne:emne, platform:state.platform, laengde:state.laengde, emoji:state.emoji };
+    setBusy(true); setView('loading');
+    try {
+      const r = await fetch('/api/opslag-tekst', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(payload) });
+      let data = {}; try { data = await r.json(); } catch(e){ data = {}; }
+      if (!r.ok || data.error){ showError(data.error || ('Serveren svarede med en fejl ('+r.status+').'), data.detail); return; }
+      const posts = Array.isArray(data.posts) ? data.posts.filter(p => String(p).trim()) : [];
+      if (!data.headline || !posts.length){ showError('Jeg fik ikke noget brugbart tilbage. Prøv igen.'); return; }
+
+      const dz = data.design || {};
+      let pal = PALETTES[dz.palette] ? dz.palette : '';
+      let mot = (dz.motif && document.querySelector('#motifSel option[value="'+dz.motif+'"]')) ? dz.motif : '';
+      if (!pal || !mot){ const inf = inferDesign(payload.emne+' '+(data.headline||'')+' '+(data.subline||'')); if(!pal) pal=inf.palette; if(!mot) mot=inf.motif; }
+      const dcol = dz.colors || null;
+      palId = pal; motifId = mot;
+      custom = (dcol && hexOk(dcol.bg) && hexOk(dcol.ink) && hexOk(dcol.acc)) ? { bg:dcol.bg, ink:dcol.ink, acc:dcol.acc } : null;
+
+      photos = Array.isArray(data.photos) ? data.photos.filter(u => typeof u === 'string' && /^https?:\/\//.test(u)) : [];
+      photosHi = Array.isArray(data.photosHi) ? data.photosHi.filter(u => typeof u === 'string' && /^https?:\/\//.test(u)) : [];
+      photoIdx = 0;
+      curStyleId = (dz.style && STYLES.find(s => s.id === dz.style)) ? dz.style : (hasPhoto() ? 'editorial' : 'skandi');
+      let lay = (dz.layout && LAYOUTS.find(l => l.id === dz.layout)) ? dz.layout : (hasPhoto() ? 'hero-bl' : 'poster');
+      const Lobj = LAYOUTS.find(l => l.id === lay);
+      if (Lobj && Lobj.photo && !hasPhoto()) lay = 'poster';
+      curLayout = lay;
+
+      buildThemes(); byId('motifSel').value = motifId; syncColorInputs();
+      const bn = byId('brandNote');
+      if (data.brand && data.brand.used){ bn.classList.remove('hide'); bn.textContent = '🎨 Tilpasset efter ' + (data.brand.host || 'din hjemmeside') + (custom ? ' — i jeres farver' : ''); }
+      else { bn.classList.add('hide'); bn.textContent=''; }
+
+      fillText({ headline:data.headline, emphasis:data.emphasis, eyebrow:data.eyebrow, subline:data.subline, badge:data.badge, navn:payload.navn });
+      setView('results');
+      renderStyleStrip();
+      renderLayoutGallery();
+      if (state.platform === 'instagram') applyTemplate(pickTemplate());
+      else selectLayout(curLayout);
+      renderCaptions(posts);
+      scene = null; sceneSelI = -1;
+      setMode('auto');
+      requestAnimationFrame(() => { relayout(); window.scrollTo({ top:0, behavior:'smooth' }); });
+    } catch(err){
+      showError('Kunne ikke få forbindelse til serveren.', 'Tjek at /api/opslag-tekst er sat op på Vercel, og at siden ikke åbnes som en lokal fil.');
+    } finally { setBusy(false); }
+  }
+  byId('genBtn').addEventListener('click', generate);
+  byId('regenBtn').addEventListener('click', generate);
+  byId('backBtn').addEventListener('click', () => { setView('empty'); window.scrollTo({ top:0, behavior:'smooth' }); });
+
+  // ---------- Tilstand: Auto-design vs. Frit design (scene) ----------
+  function setMode(m){
+    const isScene = (m === 'scene');
+    byId('autoPanel').style.display = isScene ? 'none' : '';
+    byId('scenePanel').style.display = isScene ? '' : 'none';
+    byId('modeSeg').querySelectorAll('.seg-btn').forEach(b => b.classList.toggle('active', b.dataset.mode === m));
+    sceneMode = isScene;
+    const post = byId('post');
+    if (isScene){
+      if (scene){ post.classList.add('scene-on'); renderScene(scene); }
+      else { post.classList.remove('scene-on'); }
+    } else {
+      post.classList.remove('scene-on'); sceneSelI = -1; byId('selBox').classList.remove('on');
+      relayout();
+    }
+    const sf = byId('sceneFmtRow'); if (sf) sf.querySelectorAll('.seg-btn').forEach(b => b.classList.toggle('active', Math.abs(parseFloat(b.dataset.fmt) - postRatio) < 0.001));
+  }
+  byId('modeSeg').addEventListener('click', e => { const b = e.target.closest('.seg-btn'); if (!b) return; setMode(b.dataset.mode); });
+
+  async function generateScene(){
+    if (busy) return;
+    const brief = byId('sceneBrief').value.trim();
+    if (!brief && !styleRef && !scene){ byId('sceneBrief').classList.add('invalid'); byId('sceneBrief').focus(); return; }
+    const sref = styleRef ? { palette: styleRef.palette, roles: styleRef.roles, layout: styleRef.layout, theme: styleRef.theme, saturation: styleRef.saturation, contrast: styleRef.contrast, temperature: styleRef.temperature, composition: styleRef.composition, density: styleRef.density, medium: styleRef.medium, styleBrief: styleRef.styleBrief, descriptors: styleRef.descriptors } : null;
+    const payload = { mode:'scene', brief, content:(typeof CONTENT !== 'undefined' ? CONTENT : {}), emne:byId('emne').value.trim(), navn:byId('navn').value.trim(), type:byId('type').value.trim(), platform:state.platform, ratio: postRatio, styleRef: sref, styleImage: (styleRef && styleRef.image) ? styleRef.image : '' };
+    if (scene) payload.prevScene = scene;
+    const btn = byId('sceneBtn'); const old = btn.innerHTML; btn.disabled = true; busy = true; btn.innerHTML = '<span class="btn-spin"></span><span>Tegner…</span>';
+    try {
+      const r = await fetch('/api/opslag-tekst', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(payload) });
+      let data = {}; try { data = await r.json(); } catch(e){}
+      if (!r.ok || data.error){ showError(data.error || ('Serveren svarede med en fejl (' + r.status + ').'), data.detail); return; }
+      if (!data.scene || !Array.isArray(data.scene.els) || !data.scene.els.length){ showError('Jeg kunne ikke tegne det design. Prøv at beskrive det lidt anderledes.'); return; }
+      if (Array.isArray(data.photos)){ const ph = data.photos.filter(u => typeof u === 'string' && /^https?:\/\//.test(u)); if (ph.length){ photos = ph; photosHi = Array.isArray(data.photosHi) ? data.photosHi.filter(u => typeof u === 'string') : ph; photoIdx = 0; } }
+      scene = data.scene;
+      setView('results'); setMode('scene');
+      requestAnimationFrame(() => { window.scrollTo({ top:0, behavior:'smooth' }); });
+    } catch(err){ showError('Kunne ikke få forbindelse til serveren.', 'Tjek at /api/opslag-tekst er sat op på Vercel.'); }
+    finally { btn.disabled = false; busy = false; btn.innerHTML = old; }
+  }
+  byId('sceneBtn').addEventListener('click', generateScene);
+  byId('sceneBrief').addEventListener('input', () => byId('sceneBrief').classList.remove('invalid'));
+  byId('sceneFmtRow').addEventListener('click', e => {
+    const b = e.target.closest('.seg-btn'); if (!b) return;
+    byId('sceneFmtRow').querySelectorAll('.seg-btn').forEach(x => x.classList.toggle('active', x === b));
+    postRatio = parseFloat(b.dataset.fmt) || 1; if (scene) scene.ar = postRatio; applyFormat(); showSceneSel();
+  });
+
+  // ---------- Stil-reference: upload billede → match stil (palet udtrækkes i browseren) ----------
+  function rgbToHsl(r,g,b){ r/=255;g/=255;b/=255; const mx=Math.max(r,g,b),mn=Math.min(r,g,b); let h=0,s=0,l=(mx+mn)/2; if(mx!==mn){ const d=mx-mn; s=l>0.5?d/(2-mx-mn):d/(mx+mn); switch(mx){ case r: h=(g-b)/d+(g<b?6:0); break; case g: h=(b-r)/d+2; break; default: h=(r-g)/d+4; } h*=60; } return {h,s,l}; }
+  function rgbToHex(c){ return '#'+c.map(v=>Math.max(0,Math.min(255,v|0)).toString(16).padStart(2,'0')).join(''); }
+  function boxRange(b){ const mn=[255,255,255],mx=[0,0,0]; for(const p of b){ for(let c=0;c<3;c++){ if(p[c]<mn[c])mn[c]=p[c]; if(p[c]>mx[c])mx[c]=p[c]; } } const rg=[mx[0]-mn[0],mx[1]-mn[1],mx[2]-mn[2]]; const ch=rg.indexOf(Math.max(rg[0],rg[1],rg[2])); return { range:rg[ch], ch }; }
+  function medianCut(px, count){
+    if(!px.length) return [{rgb:[40,40,40],weight:1}];
+    let boxes=[px];
+    while(boxes.length<count){ let bi=-1,br=-1; boxes.forEach((b,i)=>{ const r=boxRange(b).range; if(r>br){br=r;bi=i;} }); if(bi<0||br<=0) break; const b=boxes[bi]; const ch=boxRange(b).ch; b.sort((p,q)=>p[ch]-q[ch]); const mid=b.length>>1; const b1=b.slice(0,mid),b2=b.slice(mid); if(!b1.length||!b2.length) break; boxes.splice(bi,1,b1,b2); }
+    const total=px.length;
+    return boxes.map(b=>{ let r=0,g=0,bl=0; for(const p of b){ r+=p[0];g+=p[1];bl+=p[2]; } const n=b.length||1; return { rgb:[r/n,g/n,bl/n].map(Math.round), weight:+(b.length/total).toFixed(3) }; }).sort((a,b)=>b.weight-a.weight);
+  }
+  // Find layoutets struktur: foto-område, farveblokke og tekst-zoner (i % af lærred)
+  function analyzeLayout(d, cw, ch, bgRgb){
+    const cell = Math.max(6, Math.round(cw/18));
+    const GW = Math.max(4, Math.floor(cw/cell)), GH = Math.max(4, Math.floor(ch/cell));
+    const lum=(r,g,b)=>(0.299*r+0.587*g+0.114*b)/255;
+    const cls=new Array(GW*GH), col=new Array(GW*GH);
+    for(let gy=0;gy<GH;gy++){ for(let gx=0;gx<GW;gx++){
+      const x0=gx*cell,y0=gy*cell,x1=Math.min(cw,x0+cell),y1=Math.min(ch,y0+cell);
+      let sR=0,sG=0,sB=0,nP=0,sCb=0,sCb2=0,sCr=0,sCr2=0,sL=0,sL2=0,dSum=0,dCnt=0;
+      for(let y=y0;y<y1;y++){ for(let x=x0;x<x1;x++){ const i4=(y*cw+x)*4; const r=d[i4],g=d[i4+1],b=d[i4+2];
+        sR+=r;sG+=g;sB+=b;nP++; const cb=r-g,cr=g-b; sCb+=cb;sCb2+=cb*cb;sCr+=cr;sCr2+=cr*cr;
+        const L=lum(r,g,b); sL+=L;sL2+=L*L;
+        if(x+1<cw&&y+1<ch){ const j=(y*cw+x+1)*4,k=((y+1)*cw+x)*4; dSum+=Math.abs(L-lum(d[j],d[j+1],d[j+2]))+Math.abs(L-lum(d[k],d[k+1],d[k+2])); dCnt++; } } }
+      const idx=gy*GW+gx; if(!nP){ cls[idx]=0; col[idx]=bgRgb; continue; }
+      const mR=sR/nP,mG=sG/nP,mB=sB/nP; col[idx]=[mR,mG,mB];
+      const colorVar=((sCb2/nP-(sCb/nP)**2)+(sCr2/nP-(sCr/nP)**2))/(255*255);
+      const lumVar=sL2/nP-(sL/nP)**2; const detail=dCnt?dSum/dCnt:0;
+      const dist=Math.abs(mR-bgRgb[0])+Math.abs(mG-bgRgb[1])+Math.abs(mB-bgRgb[2]);
+      let c; if(colorVar>0.006) c=2; else if(detail<0.05) c=(dist<60?0:1); else c=3;
+      cls[idx]=c;
+    } }
+    const total=GW*GH;
+    // foto: tæthed pr. kolonne/række → tæt rektangel, robust mod enkelt-celler
+    const colP=new Array(GW).fill(0); for(let gy=0;gy<GH;gy++)for(let gx=0;gx<GW;gx++) if(cls[gy*GW+gx]===2) colP[gx]++;
+    let cMin=-1,cMax=-1; for(let gx=0;gx<GW;gx++){ if(colP[gx]/GH>=0.4){ if(cMin<0)cMin=gx; cMax=gx; } }
+    let photo=null;
+    if(cMin>=0){ const colsN=cMax-cMin+1; let rMin=-1,rMax=-1; for(let gy=0;gy<GH;gy++){ let c=0; for(let gx=cMin;gx<=cMax;gx++) if(cls[gy*GW+gx]===2)c++; if(c/colsN>=0.4){ if(rMin<0)rMin=gy; rMax=gy; } } if(rMin>=0 && colsN*(rMax-rMin+1)>=total*0.05) photo={x:+(cMin/GW*100).toFixed(1),y:+(rMin/GH*100).toFixed(1),w:+((cMax-cMin+1)/GW*100).toFixed(1),h:+((rMax-rMin+1)/GH*100).toFixed(1)}; }
+    // farveblok: tæt klynge af flad ikke-bg-farve
+    const bb=(p)=>{ let mnx=GW,mny=GH,mxx=-1,mxy=-1,cnt=0; for(let gy=0;gy<GH;gy++)for(let gx=0;gx<GW;gx++){ if(p(gx,gy)){cnt++; if(gx<mnx)mnx=gx; if(gy<mny)mny=gy; if(gx>mxx)mxx=gx; if(gy>mxy)mxy=gy;} } return cnt<2?null:{mnx,mny,mxx,mxy,cnt}; };
+    let block=null, blockColor=null; const rbk=bb((x,y)=>cls[y*GW+x]===1);
+    if(rbk){ const area=(rbk.mxx-rbk.mnx+1)*(rbk.mxy-rbk.mny+1); if(rbk.cnt>=total*0.04 && rbk.cnt/area>=0.45){ block={x:+(rbk.mnx/GW*100).toFixed(1),y:+(rbk.mny/GH*100).toFixed(1),w:+((rbk.mxx-rbk.mnx+1)/GW*100).toFixed(1),h:+((rbk.mxy-rbk.mny+1)/GH*100).toFixed(1)}; let r=0,g=0,b=0,n=0; for(let i=0;i<total;i++) if(cls[i]===1){ r+=col[i][0];g+=col[i][1];b+=col[i][2];n++; } if(n) blockColor=rgbToHex([r/n,g/n,b/n]); } }
+    // tekst-zoner: sammenhængende rækkebånd med 'content'-celler
+    const rowHas=[]; for(let gy=0;gy<GH;gy++){ let c=0; for(let gx=0;gx<GW;gx++) if(cls[gy*GW+gx]===3)c++; rowHas[gy]=c>=Math.max(1,Math.floor(GW*0.06)); }
+    const zones=[]; let st=-1;
+    for(let gy=0;gy<=GH;gy++){ const on=gy<GH&&rowHas[gy]; if(on&&st<0)st=gy; if(!on&&st>=0){ const e=gy-1; let mnx=GW,mxx=-1,sumc=0,cells=0; for(let rr=st;rr<=e;rr++)for(let gx=0;gx<GW;gx++){ if(cls[rr*GW+gx]===3){ if(gx<mnx)mnx=gx; if(gx>mxx)mxx=gx; sumc+=gx;cells++; } } const wpc=(mxx-mnx+1)/GW*100; if(cells>=2 && wpc>=8){ const cxv=sumc/cells; const align=cxv<GW*0.4?'l':cxv>GW*0.6?'r':'c'; zones.push({x:+(mnx/GW*100).toFixed(1),y:+(st/GH*100).toFixed(1),w:+wpc.toFixed(1),h:+((e-st+1)/GH*100).toFixed(1),align}); } st=-1; } }
+    return { photo, block, blockColor, zones: zones.slice(0,4) };
+  }
+  function extractStyle(file){
+    return new Promise((resolve,reject)=>{
+      const url=URL.createObjectURL(file); const img=new Image();
+      img.onload=()=>{ try{
+        const W=img.naturalWidth||img.width, H=img.naturalHeight||img.height; const ar=H/W;
+        const s=Math.min(1,140/Math.max(W,H)); const cw=Math.max(8,Math.round(W*s)), ch=Math.max(8,Math.round(H*s));
+        const c=document.createElement('canvas'); c.width=cw; c.height=ch; const cx=c.getContext('2d',{willReadFrequently:true}); cx.drawImage(img,0,0,cw,ch);
+        const d=cx.getImageData(0,0,cw,ch).data;
+        const N=cw*ch; const Lum=new Float32Array(N); const rgbPx=[];
+        for(let y=0,i4=0;y<ch;y++){ for(let x=0;x<cw;x++,i4+=4){ const r=d[i4],g=d[i4+1],b=d[i4+2],a=d[i4+3]; Lum[y*cw+x]=(0.299*r+0.587*g+0.114*b)/255; if(a>=125) rgbPx.push([r,g,b]); } }
+        const pal=medianCut(rgbPx,6);
+        const palette=pal.map(p=>({hex:rgbToHex(p.rgb),weight:p.weight}));
+        const n=rgbPx.length||1; let Ls=0,Ss=0,warm=0;
+        for(const p of rgbPx){ const h=rgbToHsl(p[0],p[1],p[2]); Ls+=h.l; Ss+=h.s; if(h.h<60||h.h>300) warm++; }
+        const Lmean=Ls/n, Smean=Ss/n, warmF=warm/n;
+        let vv=0; for(const p of rgbPx){ const h=rgbToHsl(p[0],p[1],p[2]); vv+=(h.l-Lmean)*(h.l-Lmean); } const cstd=Math.sqrt(vv/n);
+        // kant/detalje + 3x3 net
+        const cellD=new Array(9).fill(0); let gradSum=0,gradCnt=0,lowGrad=0;
+        for(let y=1;y<ch-1;y++){ for(let x=1;x<cw-1;x++){ const idx=y*cw+x; const g=Math.abs(Lum[idx+1]-Lum[idx-1])+Math.abs(Lum[idx+cw]-Lum[idx-cw]); gradSum+=g; gradCnt++; if(g<0.05) lowGrad++; const ci=Math.min(2,Math.floor(x/(cw/3)))+Math.min(2,Math.floor(y/(ch/3)))*3; cellD[ci]+=g; } }
+        const detailMean=gradSum/(gradCnt||1), negSpace=lowGrad/(gradCnt||1);
+        let fi=0,fmax=-1; for(let i=0;i<9;i++){ if(cellD[i]>fmax){fmax=cellD[i];fi=i;} }
+        const focal=(fi===4)?'centreret':(['øverst','i midten','nederst'][Math.floor(fi/3)]+' '+['til venstre','i midten','til højre'][fi%3]);
+        // lys-fordeling: venstre/højre, top/bund
+        let leftL=0,rightL=0,topL=0,botL=0; for(let y=0;y<ch;y++){ for(let x=0;x<cw;x++){ const L=Lum[y*cw+x]; if(x<cw/2)leftL+=L;else rightL+=L; if(y<ch/2)topL+=L;else botL+=L; } }
+        const hp=(cw*ch)/2; leftL/=hp; rightL/=hp; topL/=hp; botL/=hp;
+        const vSplit=Math.abs(leftL-rightL), hSplit=Math.abs(topL-botL);
+        // farve-roller: baggrund fra kant-pixels, accent = mest mættede palet-farve væk fra bg
+        const edgePx=[]; for(let x=0;x<cw;x++){ for(const y of [0,ch-1]){ const i4=(y*cw+x)*4; edgePx.push([d[i4],d[i4+1],d[i4+2]]); } } for(let y=0;y<ch;y++){ for(const x of [0,cw-1]){ const i4=(y*cw+x)*4; edgePx.push([d[i4],d[i4+1],d[i4+2]]); } }
+        const bgRgb=medianCut(edgePx,3)[0].rgb; const bgHex=rgbToHex(bgRgb);
+        const layout=analyzeLayout(d,cw,ch,bgRgb);
+        let accent=null,accS=-1; for(const p of pal){ const h=rgbToHsl(p.rgb[0],p.rgb[1],p.rgb[2]); const dist=Math.abs(p.rgb[0]-bgRgb[0])+Math.abs(p.rgb[1]-bgRgb[1])+Math.abs(p.rgb[2]-bgRgb[2]); if(h.s>accS && dist>55 && h.l>0.12 && h.l<0.92){ accS=h.s; accent=p.rgb; } }
+        if(!accent) accent=(pal[1]||pal[0]).rgb; const accentHex=rgbToHex(accent);
+        const bgL=rgbToHsl(bgRgb[0],bgRgb[1],bgRgb[2]).l; const lightText= bgL<0.5?'#f6f1e9':'#1c1a17';
+        // medie-udtryk: antal tydelige farver (grov kvantisering) + detaljeniveau
+        const set=new Set(); for(const p of rgbPx){ set.add(((p[0]>>5)<<6)|((p[1]>>5)<<3)|(p[2]>>5)); } const distinct=set.size;
+        const medium=(distinct<14 && negSpace>0.45)?'fladt grafisk':((distinct>42||detailMean>0.12)?'fotografisk':'blandet grafik/foto');
+        const density=negSpace>0.6?'meget negativ plads, minimalistisk':negSpace>0.4?'luftigt med god negativ plads':detailMean>0.14?'tæt og detaljeret':'middel tæthed';
+        const theme=Lmean<0.4?'mørkt':Lmean>0.68?'lyst':'mellemtone';
+        const saturation=Smean<0.18?'afdæmpet':Smean>0.5?'mættet':'balanceret';
+        const contrast=cstd>0.26?'høj kontrast':cstd<0.13?'blød kontrast':'medium kontrast';
+        const temperature=warmF>0.6?'varm':warmF<0.35?'kølig':'neutral';
+        let composition; if(vSplit>0.16) composition='to-delt lodret (lysere '+(leftL>rightL?'venstre':'højre')+' side)'; else if(hSplit>0.16) composition='vandret lagdelt (lysere '+(topL>botL?'foroven':'forneden')+')'; else if(focal==='centreret') composition='centreret motiv'; else composition='fokus '+focal;
+        const gradDir= hSplit>0.1?(topL>botL?'lysere foroven, mørkere forneden':'mørkere foroven, lysere forneden'):(vSplit>0.1?(leftL>rightL?'lysere til venstre':'lysere til højre'):'jævn flade');
+        const descriptors=[]; descriptors.push(theme==='mørkt'?'mørk':theme==='lyst'?'lys':'mellemtonet'); if(saturation==='afdæmpet')descriptors.push('afdæmpet'); if(saturation==='mættet')descriptors.push('levende'); descriptors.push(medium.split(' ')[0]); if(negSpace>0.5)descriptors.push('minimalistisk'); if(detailMean>0.14)descriptors.push('detaljeret'); if(temperature==='varm')descriptors.push('varm'); if(temperature==='kølig')descriptors.push('kølig'); if(contrast==='høj kontrast')descriptors.push('kontrastfuld');
+        const styleBrief=composition+'; '+density+'; '+medium+' udtryk; '+contrast+'; '+temperature+' farvetone; baggrund: '+gradDir+'.';
+        const vmax=480; const vs=Math.min(1,vmax/Math.max(W,H)); const vw=Math.max(1,Math.round(W*vs)),vh=Math.max(1,Math.round(H*vs));
+        const vc=document.createElement('canvas'); vc.width=vw; vc.height=vh; vc.getContext('2d').drawImage(img,0,0,vw,vh);
+        let image=''; try{ image=vc.toDataURL('image/jpeg',0.72); if(image.length>380000) image=vc.toDataURL('image/jpeg',0.5); if(image.length>380000) image=''; }catch(e){ image=''; }
+        URL.revokeObjectURL(url);
+        resolve({ palette, roles:{bg:bgHex,accent:accentHex,lightText}, layout, theme, saturation, contrast, temperature, composition, density, medium, focal, descriptors, styleBrief, ar, image });
+      }catch(e){ URL.revokeObjectURL(url); reject(e); } };
+      img.onerror=()=>{ URL.revokeObjectURL(url); reject(new Error('billede')); };
+      img.src=url;
+    });
+  }
+  function showStyleChip(){
+    const chip=byId('styleRefChip'), pal=byId('stylePal');
+    if(!styleRef){ chip.classList.add('hide'); return; }
+    pal.innerHTML=''; (styleRef.palette||[]).slice(0,6).forEach(p=>{ const i=document.createElement('i'); i.style.background=p.hex; pal.appendChild(i); });
+    byId('styleRefName').textContent = (styleRef.descriptors && styleRef.descriptors.length) ? styleRef.descriptors.slice(0,2).join(', ') : 'Stil hentet';
+    chip.classList.remove('hide');
+  }
+  byId('styleRefBtn').addEventListener('click', () => byId('styleRefInput').click());
+  byId('styleRefInput').addEventListener('change', async e => {
+    const f = e.target.files && e.target.files[0]; if(!f) return;
+    const btn=byId('styleRefBtn'); const old=btn.innerHTML; btn.disabled=true; btn.innerHTML='<span class="btn-spin"></span><span>Læser stil…</span>';
+    try {
+      styleRef = await extractStyle(f); showStyleChip();
+      const near = styleRef.ar>1.45?1.7778:styleRef.ar>1.12?1.25:1; postRatio=near; if(scene) scene.ar=near;
+      byId('sceneFmtRow').querySelectorAll('.seg-btn').forEach(x=>x.classList.toggle('active', Math.abs(parseFloat(x.dataset.fmt)-near)<0.001));
+      if(sceneMode && scene) renderScene(scene); else applyFormat();
+      byId('sceneBrief').classList.remove('invalid');
+    } catch(err){ showError('Kunne ikke læse billedet. Prøv et andet (JPG eller PNG).'); }
+    finally { btn.disabled=false; btn.innerHTML=old; byId('styleRefInput').value=''; }
+  });
+  byId('styleRefClear').addEventListener('click', () => { styleRef=null; showStyleChip(); });
+
+  // ---------- Init ----------
+  applyStyle(curStyleId, true);
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => { if (byId('resultsWrap').style.display !== 'none') fitText(); });
+</script>
+</body>
+</html>
