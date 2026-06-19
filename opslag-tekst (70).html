@@ -2029,8 +2029,8 @@
   // ============ Login (Supabase magic-link) ============
   // INDSÆT dine to nøgler fra Supabase (Project Settings -> API). anon-nøglen er offentlig og må gerne staa her.
   // Indtil de er sat: login er slaaet fra, og download virker frit (siden gaar ikke i stykker).
-  const SUPABASE_URL = 'DIN_SUPABASE_URL_HER';            // fx https://abcd1234.supabase.co
-  const SUPABASE_ANON_KEY = 'DIN_SUPABASE_ANON_NOEGLE_HER';
+  const SUPABASE_URL = 'https://pspxujrhhnzbygqscqpw.supabase.co/rest/v1/';            // fx https://abcd1234.supabase.co
+  const SUPABASE_ANON_KEY = 'sb_publishable_HcF--QPLkIzR8BRL71IV5w_dqpseX6Q';
   let _sb = null, _authUser = null;
   function authReady(){ return !!(SUPABASE_URL && SUPABASE_ANON_KEY && !/DIN_/.test(SUPABASE_URL) && !/DIN_/.test(SUPABASE_ANON_KEY) && window.supabase && window.supabase.createClient); }
   function isLoggedIn(){ return !authReady() || !!_authUser; }   // ikke konfigureret -> behandl som fri
