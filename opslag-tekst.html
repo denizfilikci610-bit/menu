@@ -2177,9 +2177,10 @@
       _sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
       const { data } = await _sb.auth.getSession();
       _authUser = (data && data.session) ? data.session.user : null;
-      _sb.auth.onAuthStateChange((_ev, session) => { _authUser = session ? session.user : null; renderAuthStatus(); loadSubscription(); if (_authUser) loadStyles(); else _styles = []; });
+      _sb.auth.onAuthStateChange((_ev, session) => { _authUser = session ? session.user : null; renderAuthStatus(); loadSubscription(); if (_authUser) loadStyles(); else _styles = []; maybeRestoreDraft(); });
       if (_authUser) loadStyles();
       loadSubscription();
+      maybeRestoreDraft();
     } catch(e){ _sb = null; }
     renderAuthStatus();
   }
@@ -2255,7 +2256,7 @@
         body: JSON.stringify({ product: 'premium', returnPath: '/opslag-tekst.html', userId: _authUser.id, email: _authUser.email })
       });
       const data = await r.json().catch(() => ({}));
-      if (data && data.url){ window.location.href = data.url; return; }   // videre til Stripe Checkout
+      if (data && data.url){ try { await saveDraft(); } catch(e){} window.location.href = data.url; return; }   // gem design, så videre til Stripe Checkout
       brandMsg('Kunne ikke starte betaling. Prøv igen.', 'bad');
     } catch (e){ brandMsg('Kunne ikke starte betaling. Prøv igen.', 'bad'); }
     if (btn){ btn.disabled = false; btn.textContent = label; }
@@ -2283,6 +2284,113 @@
     } catch (e){}
   }
   handleCheckoutReturn();
+
+  // ===== Cloud-gem: bevar designet på tværs af Stripe-redirect og enheder (Supabase 'drafts') =====
+  function _hasDesign(){ return !!(CONTENT && (CONTENT.headline || CONTENT.subline || CONTENT.navn)); }
+  function _captureDraft(){
+    var caps = [];
+    try { document.querySelectorAll('#results textarea').forEach(function(t){ caps.push(t.value); }); } catch(e){}
+    var cp = (typeof customPhoto === 'string' && customPhoto.indexOf('data:image/') === 0 && customPhoto.length < 1500000) ? customPhoto : null;
+    return {
+      v: 1,
+      CONTENT: { headline:CONTENT.headline, emphasis:CONTENT.emphasis, eyebrow:CONTENT.eyebrow, subline:CONTENT.subline, badge:CONTENT.badge, navn:CONTENT.navn },
+      palId: palId, custom: custom, userFont: userFont,
+      curLayout: curLayout, curStyleId: curStyleId, curStyleDecor: curStyleDecor,
+      motifId: motifId, accentLevel: accentLevel,
+      photos: photos, photosHi: photosHi, photoIdx: photoIdx, customPhoto: cp,
+      removed: Array.from(removed),
+      postRatio: postRatio, curTextPos: curTextPos,
+      settings: { platform: state.platform, laengde: state.laengde, emoji: state.emoji },
+      emne: (byId('emne') ? byId('emne').value : ''),
+      posts: caps
+    };
+  }
+  async function saveDraft(){
+    try {
+      if (!_sb || !_authUser || !_hasDesign()) return false;
+      var res = await _sb.from('drafts').upsert({ user_id:_authUser.id, tool:'opslag', state:_captureDraft(), updated_at:new Date().toISOString() }, { onConflict:'user_id,tool' });
+      return !res.error;
+    } catch(e){ return false; }
+  }
+  async function loadDraft(){
+    try {
+      if (!_sb || !_authUser) return null;
+      var res = await _sb.from('drafts').select('state').eq('user_id', _authUser.id).eq('tool','opslag').maybeSingle();
+      return (!res.error && res.data) ? res.data.state : null;
+    } catch(e){ return null; }
+  }
+  function _applyDraft(d){
+    try {
+      if (!d || !d.CONTENT) return false;
+      palId = (typeof d.palId === 'string') ? d.palId : 'terra';
+      motifId = (typeof d.motifId === 'string') ? d.motifId : 'none';
+      custom = (d.custom && hexOk(d.custom.bg) && hexOk(d.custom.ink) && hexOk(d.custom.acc)) ? { bg:d.custom.bg, ink:d.custom.ink, acc:d.custom.acc } : null;
+      userFont = (typeof d.userFont === 'string') ? d.userFont : 'auto';
+      curStyleId = (typeof d.curStyleId === 'string') ? d.curStyleId : 'editorial';
+      curStyleDecor = (typeof d.curStyleDecor === 'string') ? d.curStyleDecor : '';
+      accentLevel = (typeof d.accentLevel === 'string') ? d.accentLevel : 'none';
+      photos = Array.isArray(d.photos) ? d.photos.filter(function(u){ return typeof u==='string' && /^https?:\/\//.test(u); }) : [];
+      photosHi = Array.isArray(d.photosHi) ? d.photosHi.filter(function(u){ return typeof u==='string' && /^https?:\/\//.test(u); }) : [];
+      photoIdx = (typeof d.photoIdx === 'number' && d.photoIdx >= 0) ? d.photoIdx : 0;
+      customPhoto = (typeof d.customPhoto === 'string' && d.customPhoto.indexOf('data:image/') === 0) ? d.customPhoto : null;
+      postRatio = (typeof d.postRatio === 'number' && d.postRatio > 0) ? d.postRatio : 1;
+      curTextPos = d.curTextPos || null;
+      curLayout = (typeof d.curLayout === 'string') ? d.curLayout : (hasPhoto() ? 'hero-bl' : 'poster');
+      _premLayout = _premFont = _premPalette = false;
+      if (d.settings){ if (d.settings.platform) state.platform=d.settings.platform; if (d.settings.laengde) state.laengde=d.settings.laengde; if (d.settings.emoji) state.emoji=d.settings.emoji; }
+      if (typeof d.emne === 'string' && byId('emne')) byId('emne').value = d.emne;
+      buildThemes(); var ms=byId('motifSel'); if (ms) ms.value = motifId; syncColorInputs();
+      fillText({ headline:d.CONTENT.headline||'', emphasis:d.CONTENT.emphasis||'', eyebrow:d.CONTENT.eyebrow||'', subline:d.CONTENT.subline||'', badge:d.CONTENT.badge||'', navn:(d.CONTENT.navn||'').trim() });
+      if (Array.isArray(d.removed)){ removed.clear(); d.removed.forEach(function(id){ removed.add(id); }); }
+      setView('results');
+      renderStyleStrip(); renderLayoutGallery(); renderFormatStrip(); renderFontStrip();
+      selectLayout(curLayout);
+      // selectLayout->applyStyle nulstiller motif/decor/font — gendan de gemte værdier
+      motifId = (typeof d.motifId === 'string') ? d.motifId : 'none';
+      curStyleDecor = (typeof d.curStyleDecor === 'string') ? d.curStyleDecor : '';
+      userFont = (typeof d.userFont === 'string') ? d.userFont : 'auto';
+      if (ms) ms.value = motifId;
+      if (typeof setAccentUI === 'function') setAccentUI((typeof d.accentLevel === 'string') ? d.accentLevel : 'none');
+      applyColors(); applyUserFont(); applyText();
+      if (typeof setSeg === 'function'){ setSeg('platform', state.platform); setSeg('laengde', state.laengde); setSeg('emoji', state.emoji); }
+      if (Array.isArray(d.posts) && d.posts.length && typeof renderCaptions === 'function') renderCaptions(d.posts);
+      if (typeof applyTextPos === 'function') applyTextPos();
+      requestAnimationFrame(function(){ if (typeof relayout === 'function') relayout(); window.scrollTo({ top:0, behavior:'auto' }); });
+      return true;
+    } catch(e){ return false; }
+  }
+  var _draftChecked = false;
+  async function maybeRestoreDraft(){
+    try {
+      if (_draftChecked || !_sb || !_authUser) return;
+      _draftChecked = true;
+      var d = await loadDraft();
+      if (!d || !d.CONTENT) return;
+      if (/[?&]betalt=/.test(location.search)) { _applyDraft(d); }   // auto-gendan efter betaling
+      else { _offerRestoreBanner(d); }                                // tilbyd gendan ved almindeligt besøg
+    } catch(e){}
+  }
+  function _offerRestoreBanner(d){
+    try {
+      if (byId('draftRestoreBar') || _hasDesign()) return;
+      var bar = document.createElement('div');
+      bar.id = 'draftRestoreBar';
+      bar.style.cssText = 'margin:0 0 14px;padding:11px 14px;border:1px solid var(--line);border-radius:12px;background:var(--field);display:flex;align-items:center;gap:12px;justify-content:space-between;flex-wrap:wrap;font-size:.92rem;color:var(--ink);';
+      var txt = document.createElement('span'); txt.textContent = 'Du har et gemt design fra sidst.';
+      var wrap = document.createElement('div'); wrap.style.cssText = 'display:flex;gap:8px;align-items:center;';
+      var btn = document.createElement('button'); btn.type='button'; btn.textContent='Gendan dit design';
+      btn.style.cssText = 'border:none;background:var(--accent);color:#fff;font-family:inherit;font-weight:600;font-size:.9rem;padding:9px 14px;border-radius:9px;cursor:pointer;';
+      btn.addEventListener('click', function(){ _applyDraft(d); bar.remove(); });
+      var x = document.createElement('button'); x.type='button'; x.textContent='✕'; x.setAttribute('aria-label','Luk');
+      x.style.cssText = 'border:none;background:none;color:var(--muted);font-size:1.05rem;cursor:pointer;line-height:1;';
+      x.addEventListener('click', function(){ bar.remove(); });
+      wrap.appendChild(btn); wrap.appendChild(x);
+      bar.appendChild(txt); bar.appendChild(wrap);
+      var anchor = byId('emne');
+      if (anchor && anchor.parentNode){ anchor.parentNode.insertBefore(bar, anchor); }
+    } catch(e){}
+  }
+
   async function sendCode(){
     const inp = byId('loginEmail'), msg = byId('loginMsg'), btn = byId('loginSend');
     const email = (inp.value || '').trim();
@@ -2601,6 +2709,7 @@
       renderCaptions(posts);
       scene = null; sceneSelI = -1;
       setMode('auto');
+      try { saveDraft(); } catch(e){}   // cloud-gem det friske design
       requestAnimationFrame(() => { relayout(); window.scrollTo({ top:0, behavior:'smooth' }); });
     } catch(err){
       showError('Kunne ikke få forbindelse til serveren.', 'Tjek at /api/opslag-tekst er sat op på Vercel, og at siden ikke åbnes som en lokal fil.');
