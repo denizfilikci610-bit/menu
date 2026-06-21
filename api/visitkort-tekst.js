@@ -137,6 +137,7 @@ export default async function handler(req, res) {
 
   const userPrompt = [
     'Brugerens oplysninger:', emne, '',
+    'Hvis teksten beskriver virksomheden eller branchen, så lad det styre valg af stil, farver og fonte, så designet passer til netop den branche.',
     'TRIN 1 — udtræk indhold (samme til alle 5 forslag). Placér på RIGTIG side:',
     '- FORSIDE (front): name, title, company, tagline, custom',
     '- BAGSIDE (back): phone, email, web, address, instagram, facebook, tiktok, linkedin, custom',
