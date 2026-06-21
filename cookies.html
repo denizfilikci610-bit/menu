@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cookies · Lusidio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{ --bg:#f1ece1; --panel:#fbf7ef; --ink:#2c2620; --muted:#5a5145; --line:#e2d8c6; --accent:#b5542a; --accent-d:#963f1f; --field:#fffdf8; }
+  *{ box-sizing:border-box; }
+  body{ margin:0; font-family:'Space Grotesk', system-ui, -apple-system, Segoe UI, sans-serif; color:var(--ink); background:var(--bg); line-height:1.6; -webkit-font-smoothing:antialiased; }
+  .wrap{ max-width:680px; margin:0 auto; padding:48px 22px 80px; }
+  .brand{ display:inline-flex; align-items:center; gap:7px; text-decoration:none; margin-bottom:30px; }
+  .brand h1{ font-family:'Fraunces', serif; font-weight:600; font-style:italic; font-size:1.6rem; margin:0; color:var(--ink); letter-spacing:-.01em; }
+  .brand .dot{ width:8px; height:8px; border-radius:50%; background:var(--accent); display:inline-block; margin-bottom:4px; }
+  .card{ background:var(--panel); border:1px solid var(--line); border-radius:18px; padding:34px 30px; box-shadow:0 24px 60px -24px rgba(40,28,16,.4); }
+  h2{ font-family:'Fraunces', serif; font-weight:600; font-size:2rem; margin:0 0 6px; letter-spacing:-.015em; }
+  .lead{ color:var(--muted); margin:0 0 26px; font-size:1.02rem; }
+  h3{ font-family:'Fraunces', serif; font-weight:600; font-size:1.2rem; margin:28px 0 8px; }
+  p{ margin:0 0 14px; }
+  a{ color:var(--accent-d); font-weight:600; text-decoration:underline; }
+  a:hover{ color:var(--accent); }
+  ul{ margin:0 0 14px; padding-left:20px; }
+  li{ margin-bottom:6px; }
+  .note{ background:var(--field); border:1px solid var(--line); border-radius:12px; padding:14px 16px; font-size:.95rem; color:var(--muted); margin-top:8px; }
+  .back{ display:inline-block; margin-top:30px; font-size:.95rem; }
+  .foot{ text-align:center; color:var(--muted); font-size:.85rem; margin-top:34px; }
+</style>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-766DBYBFHF"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  // Consent Mode: Analytics er som standard AFVIST indtil brugeren accepterer
+  gtag('consent', 'default', { 'analytics_storage': 'denied' });
+  gtag('js', new Date());
+  gtag('config', 'G-766DBYBFHF');
+  // Hvis brugeren tidligere har accepteret, opgrader straks
+  try {
+    if (localStorage.getItem('lsd_cookie_consent') === 'accepted') {
+      gtag('consent', 'update', { 'analytics_storage': 'granted' });
+    }
+  } catch (e) {}
+</script>
+</head>
+<body>
+  <div class="wrap">
+    <a class="brand" href="/index.html"><span>Lusidio</span><span class="dot"></span></a>
+    <div class="card">
+      <h2>Cookies</h2>
+      <p class="lead">Her kan du læse, hvordan vi bruger cookies — og hvordan du selv bestemmer.</p>
+
+      <h3>Hvad bruger vi cookies til?</h3>
+      <p>Vi bruger Google Analytics til at måle, hvor mange der besøger siden, og hvilke sider de kigger på. Det hjælper os med at gøre Lusidio bedre. Vi bruger det ikke til reklamer, og vi sælger ikke dine data.</p>
+
+      <h3>Du bestemmer selv</h3>
+      <p>Første gang du besøger siden, spørger vi, om det er i orden. Du kan frit sige nej — så kører Google Analytics slet ikke, og der bliver ikke sat måle-cookies. Du kan også sige ja, hvis du gerne vil hjælpe os.</p>
+      <ul>
+        <li><strong>Accepter</strong> — vi måler besøg anonymt for at forbedre siden.</li>
+        <li><strong>Afvis</strong> — der måles ingenting, og du kan bruge siden helt som normalt.</li>
+      </ul>
+
+      <h3>Sådan sletter eller ændrer du dit valg</h3>
+      <p>Dit svar gemmes lokalt i din browser. Vil du fortryde eller nulstille, kan du slette cookies og lagrede data for siden i din browsers indstillinger — så bliver du spurgt igen næste gang.</p>
+      <div class="note">I de fleste browsere finder du det under <em>Indstillinger → Privatliv/Cookies → Ryd data</em>. Du kan også blokere cookies helt i browserens indstillinger.</div>
+
+      <a class="back" href="/index.html">← Tilbage til Lusidio</a>
+    </div>
+    <p class="foot">Lusidio</p>
+  </div>
+<!-- Cookie-samtykke (Lusidio) -->
+<style>
+  .lsd-cookie{ position:fixed; left:0; right:0; bottom:0; z-index:9999; display:flex; justify-content:center;
+    padding:14px 14px calc(14px + env(safe-area-inset-bottom));
+    font-family:'Space Grotesk', system-ui, -apple-system, Segoe UI, sans-serif;
+    transform:translateY(125%); transition:transform .32s cubic-bezier(.22,.61,.36,1); pointer-events:none; }
+  .lsd-cookie.lsd-cookie-show{ transform:translateY(0); }
+  .lsd-cookie-inner{ pointer-events:auto; width:min(680px,100%); display:flex; align-items:center; gap:18px;
+    background:#fbf7ef; color:#2c2620; border:1px solid #e2d8c6; border-radius:16px; padding:16px 18px;
+    box-shadow:0 18px 50px -18px rgba(40,28,16,.5); }
+  .lsd-cookie-text{ flex:1; min-width:0; }
+  .lsd-cookie-title{ font-family:'Fraunces', Georgia, serif; font-weight:600; font-size:1.15rem; margin:0 0 3px;
+    letter-spacing:-.01em; color:#2c2620; }
+  .lsd-cookie-body{ margin:0; font-size:.92rem; line-height:1.45; color:#5a5145; }
+  .lsd-cookie-link{ color:#963f1f; font-weight:600; text-decoration:underline; white-space:nowrap; }
+  .lsd-cookie-link:hover{ color:#b5542a; }
+  .lsd-cookie-actions{ display:flex; gap:10px; flex:none; }
+  .lsd-ck-btn{ font-family:inherit; font-size:.92rem; font-weight:600; border-radius:11px; padding:11px 20px;
+    cursor:pointer; transition:.15s; border:1.5px solid transparent; line-height:1; }
+  .lsd-ck-accept{ background:#b5542a; color:#fff; border-color:#b5542a; box-shadow:0 6px 16px rgba(181,84,42,.26); }
+  .lsd-ck-accept:hover{ background:#963f1f; border-color:#963f1f; }
+  .lsd-ck-reject{ background:#fffdf8; color:#2c2620; border-color:#d8ccb6; }
+  .lsd-ck-reject:hover{ border-color:#b5542a; }
+  @media (max-width:560px){
+    .lsd-cookie{ padding:10px 10px calc(10px + env(safe-area-inset-bottom)); }
+    .lsd-cookie-inner{ flex-direction:column; align-items:stretch; gap:12px; padding:15px 16px; }
+    .lsd-ck-btn{ flex:1; padding:12px 14px; }
+  }
+</style>
+<div id="lsd-cookie" class="lsd-cookie" role="dialog" aria-live="polite" aria-label="Cookie-samtykke" hidden>
+  <div class="lsd-cookie-inner">
+    <div class="lsd-cookie-text">
+      <h2 class="lsd-cookie-title">Cookies</h2>
+      <p class="lsd-cookie-body">Vi bruger cookies til at måle besøg på siden, så vi kan gøre den bedre. Du bestemmer selv. <a class="lsd-cookie-link" href="/cookies.html">Læs mere</a></p>
+    </div>
+    <div class="lsd-cookie-actions">
+      <button type="button" class="lsd-ck-btn lsd-ck-reject" id="lsd-ck-reject">Afvis</button>
+      <button type="button" class="lsd-ck-btn lsd-ck-accept" id="lsd-ck-accept">Accepter</button>
+    </div>
+  </div>
+</div>
+<script>
+(function(){
+  var KEY='lsd_cookie_consent', bar=document.getElementById('lsd-cookie');
+  if(!bar) return;
+  var stored=null; try{ stored=localStorage.getItem(KEY); }catch(e){}
+  if(stored==='accepted' || stored==='rejected') return; // valg truffet -> vis aldrig igen
+  bar.hidden=false;
+  requestAnimationFrame(function(){ bar.classList.add('lsd-cookie-show'); });
+  function decide(val){
+    try{ localStorage.setItem(KEY,val); }catch(e){}
+    if(val==='accepted' && typeof gtag==='function'){
+      gtag('consent','update',{'analytics_storage':'granted'});
+    }
+    bar.classList.remove('lsd-cookie-show');
+    setTimeout(function(){ bar.hidden=true; }, 320);
+  }
+  document.getElementById('lsd-ck-accept').addEventListener('click', function(){ decide('accepted'); });
+  document.getElementById('lsd-ck-reject').addEventListener('click', function(){ decide('rejected'); });
+})();
+</script>
+</body>
+</html>

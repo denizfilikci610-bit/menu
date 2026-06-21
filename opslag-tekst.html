@@ -823,6 +823,22 @@
     .gen-spinner-ring{ box-shadow:none; }
   }
 </style>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-766DBYBFHF"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  // Consent Mode: Analytics er som standard AFVIST indtil brugeren accepterer
+  gtag('consent', 'default', { 'analytics_storage': 'denied' });
+  gtag('js', new Date());
+  gtag('config', 'G-766DBYBFHF');
+  // Hvis brugeren tidligere har accepteret, opgrader straks
+  try {
+    if (localStorage.getItem('lsd_cookie_consent') === 'accepted') {
+      gtag('consent', 'update', { 'analytics_storage': 'granted' });
+    }
+  } catch (e) {}
+</script>
 </head>
 <body>
 
@@ -2716,6 +2732,67 @@
   // ---------- Init ----------
   applyStyle(curStyleId, true);
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => { if (byId('resultsWrap').style.display !== 'none') fitText(); });
+</script>
+<!-- Cookie-samtykke (Lusidio) -->
+<style>
+  .lsd-cookie{ position:fixed; left:0; right:0; bottom:0; z-index:9999; display:flex; justify-content:center;
+    padding:14px 14px calc(14px + env(safe-area-inset-bottom));
+    font-family:'Space Grotesk', system-ui, -apple-system, Segoe UI, sans-serif;
+    transform:translateY(125%); transition:transform .32s cubic-bezier(.22,.61,.36,1); pointer-events:none; }
+  .lsd-cookie.lsd-cookie-show{ transform:translateY(0); }
+  .lsd-cookie-inner{ pointer-events:auto; width:min(680px,100%); display:flex; align-items:center; gap:18px;
+    background:#fbf7ef; color:#2c2620; border:1px solid #e2d8c6; border-radius:16px; padding:16px 18px;
+    box-shadow:0 18px 50px -18px rgba(40,28,16,.5); }
+  .lsd-cookie-text{ flex:1; min-width:0; }
+  .lsd-cookie-title{ font-family:'Fraunces', Georgia, serif; font-weight:600; font-size:1.15rem; margin:0 0 3px;
+    letter-spacing:-.01em; color:#2c2620; }
+  .lsd-cookie-body{ margin:0; font-size:.92rem; line-height:1.45; color:#5a5145; }
+  .lsd-cookie-link{ color:#963f1f; font-weight:600; text-decoration:underline; white-space:nowrap; }
+  .lsd-cookie-link:hover{ color:#b5542a; }
+  .lsd-cookie-actions{ display:flex; gap:10px; flex:none; }
+  .lsd-ck-btn{ font-family:inherit; font-size:.92rem; font-weight:600; border-radius:11px; padding:11px 20px;
+    cursor:pointer; transition:.15s; border:1.5px solid transparent; line-height:1; }
+  .lsd-ck-accept{ background:#b5542a; color:#fff; border-color:#b5542a; box-shadow:0 6px 16px rgba(181,84,42,.26); }
+  .lsd-ck-accept:hover{ background:#963f1f; border-color:#963f1f; }
+  .lsd-ck-reject{ background:#fffdf8; color:#2c2620; border-color:#d8ccb6; }
+  .lsd-ck-reject:hover{ border-color:#b5542a; }
+  @media (max-width:560px){
+    .lsd-cookie{ padding:10px 10px calc(10px + env(safe-area-inset-bottom)); }
+    .lsd-cookie-inner{ flex-direction:column; align-items:stretch; gap:12px; padding:15px 16px; }
+    .lsd-ck-btn{ flex:1; padding:12px 14px; }
+  }
+</style>
+<div id="lsd-cookie" class="lsd-cookie" role="dialog" aria-live="polite" aria-label="Cookie-samtykke" hidden>
+  <div class="lsd-cookie-inner">
+    <div class="lsd-cookie-text">
+      <h2 class="lsd-cookie-title">Cookies</h2>
+      <p class="lsd-cookie-body">Vi bruger cookies til at måle besøg på siden, så vi kan gøre den bedre. Du bestemmer selv. <a class="lsd-cookie-link" href="/cookies.html">Læs mere</a></p>
+    </div>
+    <div class="lsd-cookie-actions">
+      <button type="button" class="lsd-ck-btn lsd-ck-reject" id="lsd-ck-reject">Afvis</button>
+      <button type="button" class="lsd-ck-btn lsd-ck-accept" id="lsd-ck-accept">Accepter</button>
+    </div>
+  </div>
+</div>
+<script>
+(function(){
+  var KEY='lsd_cookie_consent', bar=document.getElementById('lsd-cookie');
+  if(!bar) return;
+  var stored=null; try{ stored=localStorage.getItem(KEY); }catch(e){}
+  if(stored==='accepted' || stored==='rejected') return; // valg truffet -> vis aldrig igen
+  bar.hidden=false;
+  requestAnimationFrame(function(){ bar.classList.add('lsd-cookie-show'); });
+  function decide(val){
+    try{ localStorage.setItem(KEY,val); }catch(e){}
+    if(val==='accepted' && typeof gtag==='function'){
+      gtag('consent','update',{'analytics_storage':'granted'});
+    }
+    bar.classList.remove('lsd-cookie-show');
+    setTimeout(function(){ bar.hidden=true; }, 320);
+  }
+  document.getElementById('lsd-ck-accept').addEventListener('click', function(){ decide('accepted'); });
+  document.getElementById('lsd-ck-reject').addEventListener('click', function(){ decide('rejected'); });
+})();
 </script>
 </body>
 </html>
