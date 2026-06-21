@@ -521,6 +521,32 @@
   .post.fmt-landscape.lay-diagonal-corner .post-content,
   .post.fmt-landscape.lay-chevron .post-content{ inset:auto; top:0; bottom:0; left:auto; right:0; width:46%; padding:5% 6%; align-items:flex-start; text-align:left; justify-content:center; }
 
+  /* ===== Nye premium-layouts (matcher de uploadede skabeloner) ===== */
+  /* MEGA — kæmpe versal-overskrift der fylder rammen (billboard-stil) */
+  .post.lay-mega{ --hl:26cqw; --hlh:.86; --hls:-.03em; }
+  .lay-mega .post-content{ justify-content:space-between; align-items:flex-start; text-align:left; padding:7cqw; }
+  .lay-mega .post-body{ align-items:flex-start; flex:1; justify-content:center; }
+  .lay-mega .post-headline{ font-weight:800; text-transform:uppercase; }
+
+  /* OUTLINE — overskrift som hul konturskrift */
+  .post.lay-outline{ --hl:22cqw; --hlh:.92; }
+  .lay-outline .post-content{ justify-content:space-between; align-items:flex-start; text-align:left; padding:7cqw; }
+  .lay-outline .post-body{ align-items:flex-start; flex:1; justify-content:center; }
+  .lay-outline .post-headline{ font-weight:800; color:transparent; -webkit-text-stroke:.5cqw var(--pink,#fdf3e7); }
+
+  /* OFFER — lille foto øverst til venstre, stor højrestillet overskrift nederst, hashtag-hjørner */
+  .post.lay-offer{ --hl:15cqw; --hlh:.92; }
+  .lay-offer .post-photo{ display:block; inset:auto; top:7%; left:7%; width:48%; height:40%; border-radius:8px; }
+  .lay-offer .post-content{ inset:0; padding:7cqw; align-items:flex-end; text-align:right; justify-content:flex-end; gap:2.4cqw; }
+  .lay-offer .post-body{ align-items:flex-end; }
+  .lay-offer .post-eyebrow{ position:absolute; top:7cqw; right:7cqw; max-width:42%; }
+  .lay-offer .post-brand{ position:absolute; left:7cqw; bottom:7cqw; }
+
+  /* VOGUE — elegant editorial: tekst i toppen, centreret indrammet foto i bunden */
+  .post.lay-vogue{ --hl:13cqw; --hlh:.96; }
+  .lay-vogue .post-photo{ display:block; inset:auto; left:18%; right:18%; bottom:6%; height:44%; border-radius:4px; }
+  .lay-vogue .post-content{ inset:auto; top:0; left:0; right:0; bottom:52%; justify-content:center; padding:8cqw 8cqw 2cqw; }
+
   /* ----- skitse-tilstand (wireframe) ----- */
   .post.skeleton{ background:#ece6da; box-shadow:none; }
   .post.skeleton .post-photo, .post.skeleton .post-photo2, .post.skeleton .post-photo3, .post.skeleton .post-photo4{ background:#d4cbb9 !important; background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23a89e8c'%3E%3Cpath d='M5 5h14a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1zm1 2v6.2l3.5-3.5 3.5 3.5 2.5-2.5L20 16V7H6zm2.2 1.3a1.4 1.4 0 1 1 0 2.8 1.4 1.4 0 0 1 0-2.8z'/%3E%3C/svg%3E") !important; background-size:30% auto !important; background-position:center !important; background-repeat:no-repeat !important; box-shadow:inset 0 0 0 1px #ece6da !important; }
@@ -1206,7 +1232,11 @@
     {id:'collage-3',   name:'Collage · 3 fotos',   photo:true,  font:'sans',    imgs:3, over:true},
     {id:'mosaic',      name:'Mosaik · 3 fotos',    photo:true,  font:'sans',    imgs:3, over:true},
     {id:'filmstrip',   name:'Filmstribe · 3 fotos',photo:true,  font:'sans',    imgs:3},
-    {id:'triptych',    name:'Triptykon · 3 fotos', photo:true,  font:'sans',    imgs:3, over:true}
+    {id:'triptych',    name:'Triptykon · 3 fotos', photo:true,  font:'sans',    imgs:3, over:true},
+    {id:'mega',        name:'Mega-typografi',      photo:false, font:'sans',    imgs:0},
+    {id:'outline',     name:'Konturskrift',        photo:false, font:'sans',    imgs:0},
+    {id:'offer',       name:'Tilbud · foto + tekst', photo:true, font:'sans',   imgs:1},
+    {id:'vogue',       name:'Editorial · foto i midten', photo:true, font:'serif', imgs:1}
   ];
 
   function motifInner(id, c){
