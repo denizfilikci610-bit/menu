@@ -710,12 +710,12 @@
   .post.tpl-kev4 .post-eyebrow{ display:none; }
   .post.tpl-kev4 .post-sub{ position:absolute; left:8cqw; right:8cqw; bottom:7cqw; max-width:88%; }
   .post.tpl-kev4 .post-brand{ position:absolute; left:8cqw; top:67cqw; bottom:auto; }
-  .post.tpl-kev4 .post-badge{ width:auto; height:auto; min-width:0; border-radius:99px; background:var(--pink); color:var(--pbg); transform:rotate(-7deg); top:21cqw; right:16cqw; left:auto; padding:1.6cqw 3.6cqw; box-shadow:0 4px 12px rgba(0,0,0,.28); }
+  .post.tpl-kev4 .post-badge{ width:auto; height:auto; min-width:0; border-radius:99px; background:#15150f; color:var(--pink); transform:rotate(-7deg); top:21cqw; right:15cqw; left:auto; padding:1.7cqw 3.8cqw; box-shadow:0 4px 12px rgba(0,0,0,.3); }
   .post.tpl-kev4 .post-badge::after{ display:none; }
   .post.tpl-kev4 .post-badge span{ font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:2.7cqw; letter-spacing:.06em; padding:0; }
 
   /* KEVARI flanke- & midt-labels */
-  .tsc-kev .kev-flank{ position:absolute; top:42cqw; font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:2.7cqw; letter-spacing:.05em; text-transform:uppercase; color:var(--pink); opacity:.72; line-height:1.3; }
+  .tsc-kev .kev-flank{ position:absolute; top:36cqw; font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:2.7cqw; letter-spacing:.05em; text-transform:uppercase; color:var(--pink); opacity:.72; line-height:1.3; }
   .tsc-kev .kev-flank.fl-l{ left:7cqw; text-align:left; } .tsc-kev .kev-flank.fl-r{ right:7cqw; text-align:right; }
   .tsc-kev .kev-mid{ position:absolute; right:6cqw; top:46cqw; font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:2.6cqw; letter-spacing:.07em; text-transform:uppercase; color:var(--pink); opacity:.7; line-height:1.3; text-align:right; }
 
@@ -724,17 +724,17 @@
   .post.tpl-kev1.st-al-c .post-body{ align-items:flex-start; }
   .post.tpl-kev1 .post-headline{ --hl:15cqw; width:100%; white-space:nowrap; }
   .post.tpl-kev1 .post-eyebrow{ position:absolute; top:7cqw; left:7cqw; right:7cqw; text-align:center; letter-spacing:.24em; opacity:.85; }
-  .post.tpl-kev1 .post-photo{ display:block; inset:auto; left:31cqw; right:31cqw; top:42cqw; height:34cqw; border-radius:1cqw; }
+  .post.tpl-kev1 .post-photo{ display:block; inset:auto; left:34cqw; right:34cqw; top:33cqw; height:41cqw; border-radius:1cqw; }
   .post.tpl-kev1 .post-sub{ position:absolute; left:7cqw; right:7cqw; bottom:7cqw; text-align:justify; text-transform:uppercase; letter-spacing:.08em; line-height:1.7; max-width:none; }
   .post.tpl-kev1 .post-brand{ display:none; }
 
   /* kev2 — EASY FASHION LOOK: foto foroven, hjørne-labels, overskrift forneden, pille */
-  .post.tpl-kev2 .post-photo{ display:block; inset:auto; left:26cqw; right:24cqw; top:10cqw; height:32cqw; border-radius:1.5cqw; }
-  .post.tpl-kev2.st-al-c .post-content{ align-items:flex-start; text-align:left; justify-content:flex-start; padding:46cqw 8cqw 17cqw; gap:2.5cqw; }
+  .post.tpl-kev2 .post-photo{ display:block; inset:auto; left:31cqw; right:31cqw; top:8cqw; height:31cqw; border-radius:1.5cqw; }
+  .post.tpl-kev2.st-al-c .post-content{ align-items:flex-start; text-align:left; justify-content:flex-start; padding:43cqw 8cqw 19cqw; gap:2cqw; }
   .post.tpl-kev2.st-al-c .post-body{ align-items:flex-start; }
-  .post.tpl-kev2 .post-headline{ --hl:16cqw; max-width:66%; }
+  .post.tpl-kev2 .post-headline{ --hl:19cqw; max-width:60%; }
   .post.tpl-kev2 .post-eyebrow{ display:none; }
-  .post.tpl-kev2 .post-sub{ max-width:60%; }
+  .post.tpl-kev2 .post-sub{ max-width:58%; }
   .post.tpl-kev2 .post-brand{ position:absolute; left:8cqw; bottom:7cqw; }
 
   /* kev6 — STYLE INSPIRATION: stor overskrift, foto i hjørnet, pille */
@@ -1649,11 +1649,10 @@
     // ===== KEVARI — dekorationer (vertikale labels, ring, hjørne-labels) afledt af teksten =====
     if (id && id.indexOf('kev')===0){
       const tag = s => '#'+(s||'').toUpperCase().replace(/[^A-Z0-9ÆØÅ]/gi,'') || '#';
-      const at  = s => '@'+(s||'').toUpperCase().replace(/[^A-Z0-9ÆØÅ]/gi,'') || '@';
+      const at  = s => '@'+((s||'').toUpperCase().replace(/^WWW\./,'').replace(/\.(COM|DK|NET|IO|CO|SHOP|STORE)$/,'').replace(/[^A-Z0-9ÆØÅ]/gi,'')) || '@';
       const hl = C.headline||'', nv = C.navn||'';
       if (id === 'kev5'){
         return '<div class="tpl-scene tsc-kev">'
-          + '<span class="kev-vl left">'+esc(tag(hl))+'</span>'
           + '<span class="kev-vl right">'+esc(tag(hl))+'</span>'
           + '</div>';
       }
@@ -1694,7 +1693,7 @@
       }
       if (id === 'kev7'){
         return '<div class="tpl-scene tsc-kev">'
-          + '<span class="kev-corner tr">'+esc(tag(hl))+'</span>'
+          + '<span class="kev-corner" style="top:45cqw;right:8cqw">'+esc(at(nv||hl))+'</span>'
           + '</div>';
       }
     }
