@@ -87,7 +87,9 @@ export default async function handler(req, res) {
     'Giv et tydeligt størrelse-hierarki: navnet er størst (ca. 2.2–3.0), titel/firma mellem (ca. 0.9–1.2), kontaktlinjer små (ca. 0.9–1.0). ' +
     'Hvert felt må kun optræde ÉN gang. Brug luft mellem zonerne. ' +
     'INGEN gradient — kun ÉN solid baggrundsfarve per side. Tekstfarve (ink) SKAL have høj kontrast til baggrunden. ' +
-    'Vælg farver og pynt der passer til branchen. Fremhæv navnet (bold) og giv firma eller titel accent-farve.';
+    'PYNT: Brug ALDRIG panel eller stribe. Kun ÉT af de 5 forslag må være to-farvet — det skal bruge en trekant (deco "corner"); de andre 4 har deco "none" (kun én farve). ' +
+    'Trekanten sidder i HØJRE side, så på trekant-forslaget skal AL tekst være venstrestillet i venstre side og må ALDRIG overlappe trekanten. Trekant-forslaget har en anden baggrundsfarve på bagsiden. ' +
+    'Vælg farver der passer til branchen. Fremhæv navnet (bold) og giv firma eller titel accent-farve.';
 
   const example = {
     label: 'Mørk, navn i midten',
@@ -104,7 +106,7 @@ export default async function handler(req, res) {
   const example2 = {
     label: 'Lys minimal, centreret',
     style: 'minimal', titleFont: 'Bebas Neue', bodyFont: 'Jost', orientation: 'landscape', radius: 0, accent: '#1f5f5b',
-    front: { bgColor: '#ffffff', ink: '#111111', deco: { shape: 'stripe', color: '#1f5f5b' }, boxes: [
+    front: { bgColor: '#ffffff', ink: '#111111', deco: { shape: 'none', color: '#1f5f5b' }, boxes: [
       { pos: 'top-center', align: 'center', lines: [{ type: 'company', accent: true, size: 0.95 }] },
       { pos: 'middle-center', align: 'center', lines: [{ type: 'name', size: 2.8, bold: true }] },
       { pos: 'bottom-center', align: 'center', lines: [{ type: 'title', size: 1.0 }] }
@@ -125,9 +127,10 @@ export default async function handler(req, res) {
     'style: ' + STYLE_KEYS.join(', '),
     'titleFont: ' + FONTS_TITLE.join(', ') + '   bodyFont: ' + FONTS_BODY.join(', '),
     'orientation: landscape | portrait    radius: 0 | 10 | 22    alle farver: #rrggbb hex',
-    'front og back har hver: bgColor (ÉN solid hex — INGEN gradient), ink (tekstfarve hex), deco{shape: none|corner|panel|stripe, color:hex}, og boxes[].',
+    'front og back har hver: bgColor (ÉN solid hex — INGEN gradient), ink (tekstfarve hex), deco{shape: none|corner, color:hex}, og boxes[].',
     'boxes er en liste af tekstbokse, hver: {pos: ' + POSITIONS.join('|') + ', align: left|center|right, lines: [ {type, size: 0.6-3.0, bold:true, italic:true, accent:true} ]}.',
     'Fordel felterne på 2-3 bokse i forskellige zoner (fx top/midt/bund) — IKKE alt i én boks. Hvert felt kun én gang.',
+    'PYNT-REGEL: kun ÉT forslag må have deco "corner" (trekant i højre side); på det forslag skal AL tekst være venstrestillet (pos i venstre kolonne). De andre 4 forslag har deco "none". Brug aldrig panel/stribe.',
     '',
     'EKSEMPLER på to forslags form (efterlign den rene komposition, men design dine egne til brugeren):',
     JSON.stringify(example),
@@ -176,6 +179,24 @@ export default async function handler(req, res) {
   const variants = rawVariants.map(valVariant).filter(Boolean);
   if (!variants.length) { res.status(502).json({ error: 'AI gav ingen brugbare forslag. Prøv igen.' }); return; }
 
+  // ---------- Håndhæv: KUN ét to-farvet forslag (trekant), resten én-farvet ----------
+  // Forhindrer at tekst overlapper to farver: panel/stribe fjernes helt, og kun det
+  // ene trekant-forslag har en deco — med teksten holdt i venstre side (væk fra trekanten).
+  let cornerIdx = variants.findIndex(v => v.front.deco.shape === 'corner');
+  if (cornerIdx < 0) cornerIdx = 0;
+  variants.forEach((v, i) => {
+    if (i === cornerIdx) {
+      v.front.deco = { shape: 'corner', color: v.accent };                 // trekant i højre side (accent-farve)
+      v.front.boxes.forEach(b => { b.pos = toLeftCol(b.pos); b.align = 'left'; }); // tekst i venstre side, fri af trekanten
+      v.back.deco = { shape: 'none', color: v.accent };
+      v.back.bgColor = v.accent; v.back.ink = '';                          // variation: accent-farvet bagside
+      fixContrast(v.back, STYLES[v.style]);                                // sikr læsbar tekst på den nye baggrund
+    } else {
+      v.front.deco = { shape: 'none', color: v.front.deco.color };         // én-farvet (ingen anden farve = intet overlap)
+      v.back.deco = { shape: 'none', color: v.back.deco.color };
+    }
+  });
+
   res.status(200).json({ content, variants });
 }
 
@@ -184,6 +205,7 @@ function hex6(v) { return (typeof v === 'string' && /^#[0-9a-fA-F]{6}$/.test(v))
 function oneOf(v, arr, def) { return arr.indexOf(v) >= 0 ? v : def; }
 function clampNum(v, min, max, def) { const n = Number(v); return isFinite(n) ? Math.min(max, Math.max(min, n)) : def; }
 function cleanText(v) { if (typeof v !== 'string') return ''; return v.replace(/\s+/g, ' ').trim().slice(0, 140); }
+function toLeftCol(pos) { if (typeof pos !== 'string') return 'middle-left'; if (pos.indexOf('top') === 0) return 'top-left'; if (pos.indexOf('bottom') === 0) return 'bottom-left'; return 'middle-left'; }
 
 function valLines(lines, typeSet) {
   if (!Array.isArray(lines)) return [];
