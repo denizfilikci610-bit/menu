@@ -3012,20 +3012,24 @@
     var typeSet=(side==='front')?FRONT_TYPES:CONTACT_TYPES;
     var used={}, boxes=[], boxId=1, itemId=1;
     (Array.isArray(sd.boxes)?sd.boxes:[]).forEach(function(bx){
-      if(!bx) return; var items=[];
+      if(!bx) return; var items=[]; var hasContent=false;
       (Array.isArray(bx.lines)?bx.lines:[]).forEach(function(ln){
         if(!ln) return; var type=ln.type;
-        if(typeSet.indexOf(type)<0 || type==='line' || used[type]) return;
+        if(typeSet.indexOf(type)<0) return;
+        if(type==='line'){ if(items.length) items.push({ id:itemId++, type:'line', value:'', size:1 }); return; } // skillestreg kun mellem indhold
+        if(used[type]) return;
         var val=(typeof content[type]==='string')?content[type].trim():'';
         if(!val) return;
-        used[type]=true;
-        var item={ id:itemId++, type:type, value:val,
+        used[type]=true; hasContent=true;
+        var item={ id:itemId++, type:type, value:(ln.uppercase && side==='front')?val.toUpperCase():val,
           size:(typeof ln.size==='number')?ln.size:defaultSize(side,type),
-          bold:!!ln.bold, italic:!!ln.italic, accent:!!ln.accent };
+          bold:!!ln.bold, italic:!!ln.italic, thin:!!ln.thin, accent:!!ln.accent, dim:!!ln.dim };
+        if(typeof ln.lspace==='number' && ln.lspace>0) item.lspace=ln.lspace;
         if(side==='back') item.showIcon=true;
         items.push(item);
       });
-      if(items.length) boxes.push({ id:boxId++, pos:bx.pos||'middle-left', align:bx.align||'left', layout:'stack', gap:6, items:items, nextItemId:itemId });
+      while(items.length && items[items.length-1].type==='line') items.pop(); // ingen efterladt streg
+      if(hasContent) boxes.push({ id:boxId++, pos:bx.pos||'middle-left', align:bx.align||'left', layout:'stack', gap:6, items:items, nextItemId:itemId });
     });
     // sikkerhedsnet: indhold AI'en ikke placerede -> læg i sidste boks (ellers en ny)
     var leftover=[];

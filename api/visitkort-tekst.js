@@ -89,29 +89,41 @@ export default async function handler(req, res) {
     'INGEN gradient — kun ÉN solid baggrundsfarve per side. Tekstfarve (ink) SKAL have høj kontrast til baggrunden. ' +
     'PYNT: Brug ALDRIG panel eller stribe. Kun ÉT af de 5 forslag må være to-farvet — det skal bruge en trekant (deco "corner"); de andre 4 har deco "none" (kun én farve). ' +
     'Trekanten sidder i HØJRE side, så på trekant-forslaget skal AL tekst være venstrestillet i venstre side og må ALDRIG overlappe trekanten. Trekant-forslaget har en anden baggrundsfarve på bagsiden. ' +
-    'Vælg farver der passer til branchen. Fremhæv navnet (bold) og giv firma eller titel accent-farve.';
+    'Vælg farver der passer til branchen. Fremhæv navnet (bold) og giv firma eller titel accent-farve. ' +
+    'POLERING (gør kortet smukt som et bureau-design): skriv labels (firma, evt. titel) i VERSALER (uppercase:true) med letter-spacing (lspace 0.15-0.3) og accent-farve; brug dim:true på sekundær tekst (titel/slogan/eyebrow) så navnet træder frem; sæt evt. en tynd skillestreg (en linje med type "line") mellem navn og firma. Stort navn (1.9-3.0), små labels (0.8-0.95). Centrér gerne (align center) for elegante kort.';
 
+  // Eksempler i showcase-kvalitet (versaler+letter-spacing, dim, skillestreg, stærkt hierarki)
   const example = {
-    label: 'Mørk, navn i midten',
+    label: 'Mørk elegant, trekant',
     style: 'moerk', titleFont: 'Fraunces', bodyFont: 'Jost', orientation: 'landscape', radius: 10, accent: '#d4a256',
     front: { bgColor: '#201d1a', ink: '#f4ead9', deco: { shape: 'corner', color: '#d4a256' }, boxes: [
-      { pos: 'top-left', align: 'left', lines: [{ type: 'tagline', italic: true, size: 0.95 }] },
-      { pos: 'middle-left', align: 'left', lines: [{ type: 'name', size: 2.6, bold: true }, { type: 'title', accent: true, size: 1.0 }] },
-      { pos: 'bottom-left', align: 'left', lines: [{ type: 'company', size: 1.0 }] }
+      { pos: 'top-left', align: 'left', lines: [{ type: 'tagline', italic: true, dim: true, size: 0.9 }] },
+      { pos: 'middle-left', align: 'left', lines: [{ type: 'name', size: 2.6, bold: true }, { type: 'title', dim: true, size: 0.95 }] },
+      { pos: 'bottom-left', align: 'left', lines: [{ type: 'company', uppercase: true, lspace: 0.18, accent: true, size: 0.82 }] }
     ] },
     back: { bgColor: '#d4a256', ink: '#201d1a', deco: { shape: 'none', color: '#201d1a' }, boxes: [
       { pos: 'middle-center', align: 'center', lines: [{ type: 'phone' }, { type: 'email' }, { type: 'web' }, { type: 'address' }] }
     ] }
   };
   const example2 = {
-    label: 'Lys minimal, centreret',
-    style: 'minimal', titleFont: 'Bebas Neue', bodyFont: 'Jost', orientation: 'landscape', radius: 0, accent: '#1f5f5b',
-    front: { bgColor: '#ffffff', ink: '#111111', deco: { shape: 'none', color: '#1f5f5b' }, boxes: [
-      { pos: 'top-center', align: 'center', lines: [{ type: 'company', accent: true, size: 0.95 }] },
-      { pos: 'middle-center', align: 'center', lines: [{ type: 'name', size: 2.8, bold: true }] },
-      { pos: 'bottom-center', align: 'center', lines: [{ type: 'title', size: 1.0 }] }
+    label: 'Minimal sort, 3 zoner',
+    style: 'minimal', titleFont: 'Bebas Neue', bodyFont: 'Jost', orientation: 'landscape', radius: 0, accent: '#e8e2d4',
+    front: { bgColor: '#0a0a0a', ink: '#ffffff', deco: { shape: 'none', color: '#e8e2d4' }, boxes: [
+      { pos: 'top-left', align: 'left', lines: [{ type: 'company', uppercase: true, lspace: 0.3, dim: true, size: 0.78 }] },
+      { pos: 'middle-left', align: 'left', lines: [{ type: 'name', uppercase: true, size: 3.0, bold: true }] },
+      { pos: 'bottom-left', align: 'left', lines: [{ type: 'title', dim: true, size: 0.85 }] }
     ] },
-    back: { bgColor: '#1f5f5b', ink: '#ffffff', deco: { shape: 'none', color: '#ffffff' }, boxes: [
+    back: { bgColor: '#0a0a0a', ink: '#ffffff', deco: { shape: 'none', color: '#e8e2d4' }, boxes: [
+      { pos: 'middle-center', align: 'center', lines: [{ type: 'web', size: 1.1 }, { type: 'email', thin: true, size: 0.9 }] }
+    ] }
+  };
+  const example3 = {
+    label: 'Klassisk med streg',
+    style: 'elegant', titleFont: 'Playfair Display', bodyFont: 'EB Garamond', orientation: 'landscape', radius: 8, accent: '#b5542a',
+    front: { bgColor: '#fbf6ec', ink: '#2c2620', deco: { shape: 'none', color: '#b5542a' }, boxes: [
+      { pos: 'middle-left', align: 'left', lines: [{ type: 'name', size: 2.2 }, { type: 'title', dim: true, italic: true, size: 0.92 }, { type: 'line' }, { type: 'company', uppercase: true, lspace: 0.2, accent: true, size: 0.85 }] }
+    ] },
+    back: { bgColor: '#b5542a', ink: '#fbf6ec', deco: { shape: 'none', color: '#fbf6ec' }, boxes: [
       { pos: 'middle-left', align: 'left', lines: [{ type: 'phone' }, { type: 'email' }, { type: 'web' }] }
     ] }
   };
@@ -128,13 +140,14 @@ export default async function handler(req, res) {
     'titleFont: ' + FONTS_TITLE.join(', ') + '   bodyFont: ' + FONTS_BODY.join(', '),
     'orientation: landscape | portrait    radius: 0 | 10 | 22    alle farver: #rrggbb hex',
     'front og back har hver: bgColor (ÉN solid hex — INGEN gradient), ink (tekstfarve hex), deco{shape: none|corner, color:hex}, og boxes[].',
-    'boxes er en liste af tekstbokse, hver: {pos: ' + POSITIONS.join('|') + ', align: left|center|right, lines: [ {type, size: 0.6-3.0, bold:true, italic:true, accent:true} ]}.',
+    'boxes er en liste af tekstbokse, hver: {pos: ' + POSITIONS.join('|') + ', align: left|center|right, lines: [ {type, size: 0.6-3.0, bold, italic, thin, accent, dim (nedtonet), uppercase (VERSALER), lspace: 0|0.12|0.18|0.25|0.3 (bogstavafstand)} ]}. En linje med type "line" er en tynd skillestreg.',
     'Fordel felterne på 2-3 bokse i forskellige zoner (fx top/midt/bund) — IKKE alt i én boks. Hvert felt kun én gang.',
     'PYNT-REGEL: kun ÉT forslag må have deco "corner" (trekant i højre side); på det forslag skal AL tekst være venstrestillet (pos i venstre kolonne). De andre 4 forslag har deco "none". Brug aldrig panel/stribe.',
     '',
-    'EKSEMPLER på to forslags form (efterlign den rene komposition, men design dine egne til brugeren):',
+    'EKSEMPLER på forslags form (efterlign den rene, polerede komposition — men design dine egne til brugeren):',
     JSON.stringify(example),
     JSON.stringify(example2),
+    JSON.stringify(example3),
     '',
     'LEVÉR KUN ÉT JSON-objekt i præcis denne form:',
     '{"content":{"front":{"name":"","title":"","company":"","tagline":"","custom":""},"back":{"phone":"","email":"","web":"","address":"","instagram":"","facebook":"","tiktok":"","linkedin":"","custom":""}},"variants":[ <5 forslag som eksemplerne ovenfor> ]}'
@@ -213,14 +226,16 @@ function valLines(lines, typeSet) {
   lines.forEach(ln => {
     if (!ln || typeof ln !== 'object') return;
     const type = ln.type;
-    if (typeSet.indexOf(type) < 0 || type === 'line') return;
+    if (typeSet.indexOf(type) < 0) return;
+    if (type === 'line') { out.push({ type: 'line' }); return; }   // tynd skillestreg (må gentages)
     if (seen[type]) return;
     seen[type] = true;
-    const o = { type, bold: !!ln.bold, italic: !!ln.italic, accent: !!ln.accent };
+    const o = { type, bold: !!ln.bold, italic: !!ln.italic, thin: !!ln.thin, accent: !!ln.accent, dim: !!ln.dim, uppercase: !!ln.uppercase };
     if (typeof ln.size === 'number' && isFinite(ln.size)) o.size = clampNum(ln.size, 0.4, 3.5, 1);
+    o.lspace = clampNum(ln.lspace, 0, 0.4, 0);
     out.push(o);
   });
-  return out.slice(0, 6);
+  return out.slice(0, 8);
 }
 function valSideDesign(sd, style, typeSet) {
   sd = sd || {};
