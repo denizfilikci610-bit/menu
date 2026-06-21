@@ -370,6 +370,34 @@
 <style>
   /* ===== Konto-menu (genbrugt fra forsiden) ===== */
   .tb-right{ display:flex; align-items:center; gap:10px; }
+  .lang-bar{ position:relative; }
+  .lang-toggle{
+    display:inline-flex; align-items:center; gap:6px;
+    border:1px solid var(--line); background:var(--field); color:var(--muted);
+    font-family:inherit; font-size:.78rem; font-weight:600; letter-spacing:.03em;
+    padding:8px 11px; border-radius:10px; cursor:pointer; transition:all .15s; min-height:40px;
+  }
+  .lang-toggle:hover{ color:var(--ink); border-color:var(--accent); }
+  .lang-toggle .lang-globe{ width:15px; height:15px; opacity:.85; }
+  .lang-toggle .lang-caret{ width:11px; height:11px; opacity:.7; transition:transform .18s; }
+  .lang-bar.open .lang-toggle{ color:var(--ink); border-color:var(--accent); }
+  .lang-bar.open .lang-toggle .lang-caret{ transform:rotate(180deg); }
+  .lang-menu{
+    position:absolute; top:calc(100% + 6px); right:0;
+    display:flex; flex-direction:column; gap:2px; min-width:150px;
+    background:var(--field); border:1px solid var(--line); border-radius:12px;
+    padding:5px; box-shadow:0 14px 34px rgba(44,38,32,.18);
+    opacity:0; transform:translateY(-4px); pointer-events:none;
+    transition:opacity .15s, transform .15s; z-index:600;
+  }
+  .lang-bar.open .lang-menu{ opacity:1; transform:translateY(0); pointer-events:auto; }
+  .lang-btn{
+    border:1px solid transparent; background:transparent; color:var(--muted);
+    font-family:inherit; font-size:.82rem; font-weight:600; letter-spacing:.03em;
+    text-align:left; padding:9px 12px; border-radius:8px; cursor:pointer; transition:all .15s;
+  }
+  .lang-btn:hover{ color:var(--ink); background:var(--bg); }
+  .lang-btn.active{ background:var(--accent); color:#fff; }
   .acct{ position:relative; flex:none; }
   .acct-btn{ display:inline-flex; align-items:center; gap:7px; padding:8px 12px; border:1px solid var(--line); border-radius:10px; background:var(--field); color:var(--ink); font-family:inherit; font-size:.9rem; font-weight:600; cursor:pointer; transition:.15s; }
   .acct-btn:hover{ border-color:var(--accent); }
@@ -449,12 +477,19 @@
       <p data-i18n="tagline">Skriv dine oplysninger, vælg en stil — og hent et printklart visitkort.</p>
     </div>
     <div class="tb-right">
-      <select id="langSel" class="lang-sel" aria-label="Language / Sprog">
-        <option value="da">Dansk</option>
-        <option value="en">English</option>
-        <option value="tr">Türkçe</option>
-        <option value="uk">Українська</option>
-      </select>
+      <div class="lang-bar">
+        <button class="lang-toggle" type="button" aria-haspopup="true" aria-expanded="false" aria-label="Vælg sprog / Choose language">
+          <svg class="lang-globe" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18"/><path d="M12 3a15 15 0 0 1 0 18 15 15 0 0 1 0-18"/></svg>
+          <span class="lang-current">DA</span>
+          <svg class="lang-caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
+        </button>
+        <div class="lang-menu" role="menu">
+          <button class="lang-btn" data-lang="da" type="button" role="menuitem">DA · Dansk</button>
+          <button class="lang-btn" data-lang="en" type="button" role="menuitem">EN · English</button>
+          <button class="lang-btn" data-lang="tr" type="button" role="menuitem">TR · Türkçe</button>
+          <button class="lang-btn" data-lang="uk" type="button" role="menuitem">UK · Українська</button>
+        </div>
+      </div>
       <div class="acct" id="acct">
         <button class="acct-btn" id="acctBtn" type="button" aria-haspopup="true" aria-expanded="false">
           <svg class="acct-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg>
@@ -502,7 +537,7 @@
       </div>
 
       <div class="block" id="aiBlock">
-        <span class="label">✨ Udfyld med AI</span>
+        <span class="label">Udfyld med AI</span>
         <textarea id="aiVkInput" class="ai-vk-input" rows="3" placeholder="Skriv dine oplysninger: navn, titel, firma, telefon, mail, hjemmeside, evt. sociale medier…"></textarea>
         <button id="aiVkBtn" class="ai-vk-btn" type="button" data-mode="login">Log ind for at bruge AI</button>
         <div id="aiVkMsg" class="ai-vk-msg"></div>
@@ -517,35 +552,6 @@
           <button class="side-tab" data-side="back" id="backTab" data-i18n="sideBack" type="button">Bagside</button>
         </div>
         <label class="check"><input type="checkbox" id="chkUseBack"><span data-i18n="useBack">Brug bagside</span></label>
-      </div>
-
-      <!-- FRONT fields -->
-      <div class="block side-fields" id="fieldsFront">
-        <span class="label" data-i18n="secContent">Indhold</span>
-        <p class="save-note" data-i18n="boxHint" style="margin:0 0 8px;">Hver boks kan placeres et bestemt sted på kortet med 3×3-vælgeren. Tilføj linjer i boksen, eller opret en ny boks for tekst, der skal stå et andet sted.</p>
-        <div id="frontBoxes"></div>
-        <button class="add-box" id="addFrontBoxBtn" type="button" data-i18n="addBox">+ Ny tekstboks</button>
-      </div>
-
-      <!-- BACK fields -->
-      <div class="block side-fields" id="fieldsBack" style="display:none;">
-        <span class="label" data-i18n="secContent">Indhold</span>
-        <p class="save-note" data-i18n="boxHint" style="margin:0 0 8px;">Hver boks kan placeres et bestemt sted på kortet med 3×3-vælgeren. Tilføj linjer i boksen, eller opret en ny boks for tekst, der skal stå et andet sted.</p>
-        <div id="backBoxes"></div>
-        <button class="add-box" id="addBackBoxBtn" type="button" data-i18n="addBox">+ Ny tekstboks</button>
-      </div>
-
-
-      <div class="block">
-        <span class="label" data-i18n="logoLabel">Logo eller billede (valgfri)</span>
-        <input type="file" id="logoIn" class="file-in" accept="image/*">
-        <button class="btn-tiny" id="logoRemove" style="display:none;margin-top:8px;" data-i18n="logoRemove" type="button">Fjern logo</button>
-        <div style="margin-top:10px;">
-          <span class="mini-label" data-i18n="logoSize">Logo/billede-størrelse</span>
-          <input type="range" id="rngLogoSize" min="8" max="100" value="28" class="range">
-        </div>
-        <label class="check" style="margin-top:8px;"><input type="checkbox" id="chkGrid"><span data-i18n="showGrid">Vis gitter</span></label>
-        <p class="pay-note" style="margin:8px 0 0;" data-i18n="dragHint">Træk logoet eller billedet direkte på kortet for at placere det præcist.</p>
       </div>
 
       <details class="adv" open>
@@ -612,6 +618,37 @@
 
         </div>
       </details>
+
+      <div style="height:16px;"></div>
+
+      <!-- FRONT fields -->
+      <div class="block side-fields" id="fieldsFront">
+        <span class="label" data-i18n="secContent">Indhold</span>
+        <p class="save-note" data-i18n="boxHint" style="margin:0 0 8px;">Hver boks kan placeres et bestemt sted på kortet med 3×3-vælgeren. Tilføj linjer i boksen, eller opret en ny boks for tekst, der skal stå et andet sted.</p>
+        <div id="frontBoxes"></div>
+        <button class="add-box" id="addFrontBoxBtn" type="button" data-i18n="addBox">+ Ny tekstboks</button>
+      </div>
+
+      <!-- BACK fields -->
+      <div class="block side-fields" id="fieldsBack" style="display:none;">
+        <span class="label" data-i18n="secContent">Indhold</span>
+        <p class="save-note" data-i18n="boxHint" style="margin:0 0 8px;">Hver boks kan placeres et bestemt sted på kortet med 3×3-vælgeren. Tilføj linjer i boksen, eller opret en ny boks for tekst, der skal stå et andet sted.</p>
+        <div id="backBoxes"></div>
+        <button class="add-box" id="addBackBoxBtn" type="button" data-i18n="addBox">+ Ny tekstboks</button>
+      </div>
+
+
+      <div class="block">
+        <span class="label" data-i18n="logoLabel">Logo eller billede (valgfri)</span>
+        <input type="file" id="logoIn" class="file-in" accept="image/*">
+        <button class="btn-tiny" id="logoRemove" style="display:none;margin-top:8px;" data-i18n="logoRemove" type="button">Fjern logo</button>
+        <div style="margin-top:10px;">
+          <span class="mini-label" data-i18n="logoSize">Logo/billede-størrelse</span>
+          <input type="range" id="rngLogoSize" min="8" max="100" value="28" class="range">
+        </div>
+        <label class="check" style="margin-top:8px;"><input type="checkbox" id="chkGrid"><span data-i18n="showGrid">Vis gitter</span></label>
+        <p class="pay-note" style="margin:8px 0 0;" data-i18n="dragHint">Træk logoet eller billedet direkte på kortet for at placere det præcist.</p>
+      </div>
 
       <div style="height:18px;"></div>
 
@@ -2733,10 +2770,27 @@
     if (storageOK) byId('autosaveTag').classList.add('on');
     initUnlock();
     (function(){
-      const sel = byId('langSel');
-      sel.value = LANG;
+      const bar = document.querySelector('.lang-bar'); if (!bar) return;
+      const toggle = bar.querySelector('.lang-toggle');
+      const current = bar.querySelector('.lang-current');
+      function syncLabel(){
+        if (current) current.textContent = (LANG || 'da').toUpperCase();
+        document.querySelectorAll('.lang-btn').forEach(b => b.classList.toggle('active', b.dataset.lang === LANG));
+      }
+      function closeMenu(){ bar.classList.remove('open'); if (toggle) toggle.setAttribute('aria-expanded','false'); }
+      if (toggle) toggle.addEventListener('click', e => {
+        e.stopPropagation();
+        const willOpen = !bar.classList.contains('open');
+        bar.classList.toggle('open', willOpen);
+        toggle.setAttribute('aria-expanded', willOpen ? 'true' : 'false');
+      });
+      document.querySelectorAll('.lang-btn').forEach(b => {
+        b.addEventListener('click', () => { applyLang(b.dataset.lang); syncLabel(); closeMenu(); });
+      });
+      document.addEventListener('click', e => { if (!bar.contains(e.target)) closeMenu(); });
+      document.addEventListener('keydown', e => { if (e.key === 'Escape') closeMenu(); });
       document.documentElement.lang = LANG;
-      sel.addEventListener('change', () => applyLang(sel.value));
+      syncLabel();
     })();
     if (_vkDemoIdx >= 0) scheduleSave();
     // Ved rotation opdaterer telefonen skærmmålene EFTER eventet — mål derfor flere gange
@@ -2904,11 +2958,11 @@
       if(hint) hint.textContent='AI-udfyldning er en Premium-funktion. Log ind for at komme i gang.';
     } else if(!_isPaid){
       if(input) input.disabled=true;
-      btn.textContent='✨ Bliv Premium for at bruge AI'; btn.dataset.mode='upgrade';
+      btn.textContent='Bliv Premium for at bruge AI'; btn.dataset.mode='upgrade';
       if(hint) hint.textContent='AI-udfyldning er kun for Premium-medlemmer.';
     } else {
       if(input) input.disabled=false;
-      btn.textContent='✨ Lav 5 design-forslag'; btn.dataset.mode='generate';
+      btn.textContent='Lav 5 design-forslag'; btn.dataset.mode='generate';
       if(hint) hint.textContent='Skriv dine oplysninger — AI laver 5 designforslag du kan vælge imellem.';
     }
   }
