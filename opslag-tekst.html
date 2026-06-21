@@ -547,6 +547,17 @@
   .lay-vogue .post-photo{ display:block; inset:auto; left:18%; right:18%; bottom:6%; height:44%; border-radius:4px; }
   .lay-vogue .post-content{ inset:auto; top:0; left:0; right:0; bottom:52%; justify-content:center; padding:8cqw 8cqw 2cqw; }
 
+  /* ===== Premium skabeloner (komplette bespoke designs) ===== */
+  .post.tpl-noir .post-headline{ font-family:'Space Grotesk',sans-serif !important; font-weight:800 !important; text-transform:uppercase; letter-spacing:-.02em; }
+  .post.tpl-noir .post-eyebrow{ font-family:'Space Grotesk',sans-serif; letter-spacing:.34em; font-weight:700; opacity:.8; }
+  .post.tpl-noir .post-sub{ font-family:'Space Grotesk',sans-serif; opacity:.78; }
+  .post.tpl-noir .post-brand{ letter-spacing:.3em; opacity:.5; }
+  .post.tpl-red .post-eyebrow{ font-family:'Playfair Display',serif !important; font-style:italic; font-weight:600; text-transform:none; letter-spacing:0; font-size:calc(7cqw * var(--fit,1) * var(--escale,1)); opacity:1; }
+  .post.tpl-red .post-headline{ font-family:'Fraunces',serif !important; font-weight:700 !important; text-transform:none; letter-spacing:-.01em; }
+  .post.tpl-red .post-sub{ font-family:'Space Grotesk',sans-serif; }
+  .post.tpl-red .post-photo{ border:1.4px solid var(--pacc); border-radius:3px; }
+  .tpl-card .tpl-thumb{ width:100%; aspect-ratio:1; display:flex; align-items:center; justify-content:center; font-family:'Fraunces',serif; font-weight:700; font-size:1.7rem; }
+
   /* ----- skitse-tilstand (wireframe) ----- */
   .post.skeleton{ background:#ece6da; box-shadow:none; }
   .post.skeleton .post-photo, .post.skeleton .post-photo2, .post.skeleton .post-photo3, .post.skeleton .post-photo4{ background:#d4cbb9 !important; background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23a89e8c'%3E%3Cpath d='M5 5h14a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1zm1 2v6.2l3.5-3.5 3.5 3.5 2.5-2.5L20 16V7H6zm2.2 1.3a1.4 1.4 0 1 1 0 2.8 1.4 1.4 0 0 1 0-2.8z'/%3E%3C/svg%3E") !important; background-size:30% auto !important; background-position:center !important; background-repeat:no-repeat !important; box-shadow:inset 0 0 0 1px #ece6da !important; }
@@ -921,6 +932,11 @@
           <div class="out-block">
             <div class="out-block-head"><div><div class="h">Vælg format</div><div class="s">Størrelsen på opslaget — træk til siden for flere</div></div></div>
             <div class="layout-strip" id="formatStrip"></div>
+          </div>
+
+          <div class="out-block">
+            <div class="out-block-head"><div><div class="h">Premium skabeloner</div><div class="s">Færdige designs — ét klik, hele looket skifter</div></div></div>
+            <div class="layout-strip" id="templateStrip"></div>
           </div>
 
           <div class="out-block">
@@ -1385,7 +1401,12 @@
 
   // ---------- Tilstand ----------
   let palId='terra', motifId='none', postRatio=1, custom=null, photos=[], photosHi=[], photoIdx=0, curLayout='hero-bl', customPhoto=null, userFont='auto', curStyleId='editorial', curStyleDecor='', accentLevel='none', curTextPos=null;
-  let _premLayout = false, _premFont = false, _premPalette = false;   // er et LAAST element manuelt valgt? (styrer download-gate for gratis)
+  let _premLayout = false, _premFont = false, _premPalette = false, _premTpl = false;   // er et LAAST element manuelt valgt? (styrer download-gate for gratis)
+  let curTemplate = '';
+  const TEMPLATES = [
+    { id:'noir', name:'Ethereal Noir', layout:'mega',  style:'editorial', font:'auto', bg:'#101010', ink:'#efe6d4', acc:'#efe6d4' },
+    { id:'red',  name:'Classic Red',   layout:'vogue', style:'editorial', font:'auto', bg:'#e0352e', ink:'#fbf2e9', acc:'#fbf2e9' }
+  ];
   let CONTENT = { headline:'', emphasis:'', eyebrow:'', subline:'', badge:'', navn:'' };
   const removed = new Set();
 
@@ -1408,6 +1429,18 @@
   }
   function applyColors(){
     const post=byId('post'); const c=colorsFor(custom, palId); setPostVars(post, c);
+    const T = curTemplate ? TEMPLATES.find(x => x.id === curTemplate) : null;
+    if (T){
+      post.style.setProperty('--pbg', T.bg);
+      post.style.setProperty('--pink', T.ink);
+      post.style.setProperty('--pacc', T.acc);
+      post.style.setProperty('--pemhero', T.acc);
+      post.style.setProperty('--pbadge', T.bg);
+      post.style.setProperty('--pcardbg', rgba(T.bg, 0.92));
+      post.style.setProperty('--pscrim', 'linear-gradient(to top,'+rgba(T.bg,.9)+' 0%,'+rgba(T.bg,.4)+' 45%,'+rgba(T.bg,0)+' 78%)');
+      byId('postDecor').innerHTML = ''; byId('postAccents').innerHTML = '';
+      return;
+    }
     const tpl = (curLayout && curLayout.indexOf('tpl-')===0) ? curLayout : '';
     let bg = bgCss(c, styleOf(curStyleId).bgfx);
     if (tpl === 'tpl-health') bg = c.ptint;
@@ -1415,6 +1448,46 @@
     post.style.setProperty('--pbg', bg);
     byId('postDecor').innerHTML = buildDecorHTML(motifId, curAcc()) + buildStyleDecor(curStyleDecor, curAcc()) + buildTemplateDecor(tpl, c);
     byId('postAccents').innerHTML = buildAccents(accentLevel, accentColor());
+  }
+  // ===== Premium skabeloner: komplette designs der overskriver palette/font/layout =====
+  function applyTemplate(t){
+    if (!t) return;
+    curTemplate = t.id;
+    custom = null;
+    curLayout = t.layout || 'mega';
+    userFont = t.font || 'auto';
+    curStyleId = t.style || 'editorial';
+    motifId = 'none'; curStyleDecor = ''; accentLevel = 'none'; curTextPos = null;
+    _premTpl = true; _premLayout = _premFont = _premPalette = false;
+    const post = byId('post');
+    TEMPLATES.forEach(x => post.classList.remove('tpl-'+x.id));
+    post.classList.add('tpl-'+t.id);
+    setView('results');
+    selectLayout(curLayout);            // anvender layout + font + stil + applyColors (respekterer curTemplate)
+    if (typeof setAccentUI === 'function') setAccentUI('none');
+    buildThemes(); syncColorInputs(); syncFontStrip(); renderTemplateStrip();
+    requestAnimationFrame(() => { relayout(); window.scrollTo({ top:0, behavior:'smooth' }); });
+  }
+  function clearTemplate(){
+    if (!curTemplate) return;
+    curTemplate = ''; _premTpl = false;
+    const post = byId('post'); if (post) TEMPLATES.forEach(x => post.classList.remove('tpl-'+x.id));
+    renderTemplateStrip();
+  }
+  function renderTemplateStrip(){
+    const strip = byId('templateStrip'); if (!strip) return; strip.innerHTML = '';
+    TEMPLATES.forEach(t => {
+      const card = document.createElement('button'); card.type='button'; card.dataset.tpl = t.id;
+      card.className = 'layout-card tpl-card' + (t.id===curTemplate ? ' active' : '');
+      const th = document.createElement('div'); th.className='tpl-thumb';
+      th.style.background = t.bg; th.style.color = t.ink;
+      th.innerHTML = '<span style="color:'+t.acc+'">Aa</span>';
+      card.appendChild(th);
+      const nm = document.createElement('div'); nm.className='name'; nm.textContent = t.name; card.appendChild(nm);
+      card.appendChild(lockBadge());
+      card.addEventListener('click', () => applyTemplate(t));
+      strip.appendChild(card);
+    });
   }
   function applyFormat(){
     const post=byId('post'); if(!post) return;
@@ -1521,7 +1594,7 @@
       const nm=document.createElement('div'); nm.className='name'; nm.textContent=f.name;
       card.appendChild(prev); card.appendChild(nm);
       if (!FREE_FONTS.has(f.id)) card.appendChild(lockBadge());
-      card.addEventListener('click', () => { _premFont = !FREE_FONTS.has(f.id); selectFont(f.id); });
+      card.addEventListener('click', () => { clearTemplate(); _premFont = !FREE_FONTS.has(f.id); selectFont(f.id); });
       strip.appendChild(card);
     });
     syncFontStrip(); centerActive(strip, '.font-card.active');
@@ -1861,7 +1934,7 @@
       const nm=document.createElement('div'); nm.className='name'; nm.textContent=PAL_NAMES[id]||id;
       btn.appendChild(sw); btn.appendChild(nm);
       if (!FREE_PALETTES.has(id)) btn.appendChild(lockBadge());
-      btn.addEventListener('click', () => { custom=null; palId=id; _premPalette = !FREE_PALETTES.has(id); row.querySelectorAll('.color-card').forEach(x=>x.classList.toggle('active', x===btn)); applyColors(); syncColorInputs(); });
+      btn.addEventListener('click', () => { clearTemplate(); custom=null; palId=id; _premPalette = !FREE_PALETTES.has(id); row.querySelectorAll('.color-card').forEach(x=>x.classList.toggle('active', x===btn)); applyColors(); syncColorInputs(); });
       row.appendChild(btn);
     });
     const cc=byId('colorCustom'); if(cc) cc.classList.toggle('active', !!custom);
@@ -2019,7 +2092,7 @@
       card.appendChild(buildSkeleton(L.id));
       const nm = document.createElement('div'); nm.className='name'; nm.textContent = L.name; card.appendChild(nm);
       if (!FREE_LAYOUTS.has(L.id)) card.appendChild(lockBadge());
-      card.addEventListener('click', () => { _premLayout = !FREE_LAYOUTS.has(L.id); selectLayout(L.id); });
+      card.addEventListener('click', () => { clearTemplate(); _premLayout = !FREE_LAYOUTS.has(L.id); selectLayout(L.id); });
       strip.appendChild(card);
     });
     centerActive(strip, '.layout-card.active');
@@ -2325,7 +2398,7 @@
       v: 1,
       CONTENT: { headline:CONTENT.headline, emphasis:CONTENT.emphasis, eyebrow:CONTENT.eyebrow, subline:CONTENT.subline, badge:CONTENT.badge, navn:CONTENT.navn },
       palId: palId, custom: custom, userFont: userFont,
-      curLayout: curLayout, curStyleId: curStyleId, curStyleDecor: curStyleDecor,
+      curLayout: curLayout, curStyleId: curStyleId, curStyleDecor: curStyleDecor, curTemplate: curTemplate,
       motifId: motifId, accentLevel: accentLevel,
       photos: photos, photosHi: photosHi, photoIdx: photoIdx, customPhoto: cp,
       removed: Array.from(removed),
@@ -2384,8 +2457,13 @@
       if (typeof setSeg === 'function'){ setSeg('platform', state.platform); setSeg('laengde', state.laengde); setSeg('emoji', state.emoji); }
       if (Array.isArray(d.posts) && d.posts.length && typeof renderCaptions === 'function') renderCaptions(d.posts);
       if (typeof applyTextPos === 'function') applyTextPos();
+      // gendan evt. premium-skabelon (klasse + farver)
+      curTemplate = (typeof d.curTemplate === 'string') ? d.curTemplate : '';
+      var _post = byId('post');
+      if (_post){ TEMPLATES.forEach(function(x){ _post.classList.remove('tpl-'+x.id); }); if (curTemplate && TEMPLATES.find(function(x){ return x.id===curTemplate; })){ _post.classList.add('tpl-'+curTemplate); applyColors(); } }
+      if (typeof renderTemplateStrip === 'function') renderTemplateStrip();
       // Bevar paywall: genberegn premium-flag ud fra det gendannede design (samme logik som applyBrandStyle), så betalte elementer IKKE låses op gratis efter en gendannelse.
-      _premLayout = !FREE_LAYOUTS.has(curLayout); _premFont = !FREE_FONTS.has(userFont); _premPalette = custom ? true : !FREE_PALETTES.has(palId);
+      _premLayout = !FREE_LAYOUTS.has(curLayout); _premFont = !FREE_FONTS.has(userFont); _premPalette = custom ? true : !FREE_PALETTES.has(palId); _premTpl = !!curTemplate;
       requestAnimationFrame(function(){ if (typeof relayout === 'function') relayout(); window.scrollTo({ top:0, behavior:'auto' }); });
       return true;
     } catch(e){ return false; }
@@ -2629,7 +2707,7 @@
     const post = byId('post');
     if (!isLoggedIn()){ _pendingAction='download'; openLoginModal(); return; }   // login-gate: kraever login naar Supabase er sat op
     post.classList.toggle('no-wm', _isPaid);   // vandmaerke: skjult for betalende, vist for gratis
-    if (!_isPaid && (_premLayout || _premFont || _premPalette)){ showUpgrade(); return; }   // premium-element i brug -> opgrader foer download
+    if (!_isPaid && (_premLayout || _premFont || _premPalette || _premTpl)){ showUpgrade(); return; }   // premium-element i brug -> opgrader foer download
     const useModern = !!(window.modernScreenshot && modernScreenshot.domToBlob);
     if (!useModern && typeof html2canvas === 'undefined'){ showError('Billed-værktøjet kunne ikke indlæses. Tjek din internetforbindelse og prøv igen.'); return; }
     const btn = byId('dlBtn'); const old = btn.innerHTML; btn.disabled=true; btn.innerHTML='<span class="btn-spin"></span><span>Henter…</span>';
@@ -2723,7 +2801,7 @@
       const Lobj = LAYOUTS.find(l => l.id === lay);
       if (Lobj && Lobj.photo && !hasPhoto()) lay = 'poster';
       curLayout = lay;
-      _premLayout = _premFont = _premPalette = false;   // friskt AI-design er altid downloadbart
+      _premLayout = _premFont = _premPalette = false; clearTemplate();   // friskt AI-design er altid downloadbart
 
       buildThemes(); byId('motifSel').value = motifId; syncColorInputs();
       const bn = byId('brandNote');
@@ -2734,6 +2812,7 @@
       setView('results');
       renderStyleStrip();
       renderLayoutGallery();
+      renderTemplateStrip();
       renderFormatStrip();
       renderFontStrip();
       selectLayout(curLayout);
