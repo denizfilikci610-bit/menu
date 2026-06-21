@@ -90,7 +90,7 @@ export default async function handler(req, res) {
     'INGEN gradient — kun ÉN solid baggrundsfarve per side. Tekstfarve (ink) SKAL have høj kontrast til baggrunden. ' +
     'PYNT: Brug ALDRIG panel eller stribe. Kun ÉT af de 5 forslag må være to-farvet — det skal bruge en trekant (deco "corner"); de andre 4 har deco "none" (kun én farve). ' +
     'Trekanten sidder i HØJRE side, så på trekant-forslaget skal AL tekst være venstrestillet i venstre side og må ALDRIG overlappe trekanten. Trekant-forslaget har en anden baggrundsfarve på bagsiden. ' +
-    'Vælg farver der passer til branchen. Fremhæv navnet (bold) og giv firma eller titel accent-farve. ' +
+    'FARVER (VIGTIGT): Giv HVERT af de 5 forslag sit EGET, tydeligt forskellige farveskema — vælg ALTID eksplicitte bgColor, ink og accent for begge sider (forlad dig ALDRIG på standardfarver). Spred dem bredt: nogle lyse, nogle mørke, nogle med en mættet brand-farve som baggrund. INGEN to forslag må dele samme baggrunds- eller accentfarve, og gentag ALDRIG eksemplernes farver. Farverne skal stadig passe til branchen. Fremhæv navnet (bold) og giv firma eller titel accent-farve. ' +
     'POLERING (gør kortet smukt som et bureau-design): skriv labels (firma, evt. titel) i VERSALER (uppercase:true) med letter-spacing (lspace 0.15-0.3) og accent-farve; brug dim:true på sekundær tekst (titel/slogan/eyebrow) så navnet træder frem; sæt evt. en tynd skillestreg (en linje med type "line") mellem navn og firma. Stort navn (1.9-3.0), små labels (0.8-0.95). Centrér gerne (align center) for elegante kort.';
 
   // Eksempler i showcase-kvalitet (versaler+letter-spacing, dim, skillestreg, stærkt hierarki)
@@ -129,6 +129,12 @@ export default async function handler(req, res) {
     ] }
   };
 
+  // Tilfældig farve-inspiration pr. kald, så farverne skifter ved hver ny generering
+  const COLOR_DIRS = ['dyb skovgrøn', 'varm terrakotta', 'marineblå', 'bordeaux', 'sennepsgul', 'støvet rosa', 'koksgrå', 'cremehvid', 'dyb sort', 'olivengrøn', 'rustrød', 'petroleumsblå', 'sandbeige', 'aubergine/plomme', 'kobber', 'salviegrøn', 'mørk chokoladebrun', 'koralrød', 'isblå', 'guld på sort'];
+  const shuffled = COLOR_DIRS.slice();
+  for (let i = shuffled.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); const tmp = shuffled[i]; shuffled[i] = shuffled[j]; shuffled[j] = tmp; }
+  const colorHint = shuffled.slice(0, 6).join(', ');
+
   const userPrompt = [
     'Brugerens oplysninger:', emne, '',
     'TRIN 1 — udtræk indhold (samme til alle 5 forslag). Placér på RIGTIG side:',
@@ -144,6 +150,7 @@ export default async function handler(req, res) {
     'boxes er en liste af tekstbokse, hver: {pos: ' + POSITIONS.join('|') + ', align: left|center|right, lines: [ {type, size: 0.6-3.0, bold, italic, thin, accent, dim (nedtonet), uppercase (VERSALER), lspace: 0|0.12|0.18|0.25|0.3 (bogstavafstand)} ]}. En linje med type "line" er en tynd skillestreg.',
     'Fordel felterne på 2-3 bokse i forskellige zoner (fx top/midt/bund) — IKKE alt i én boks. Hvert felt kun én gang.',
     'PYNT-REGEL: kun ÉT forslag må have deco "corner" (trekant i højre side); på det forslag skal AL tekst være venstrestillet (pos i venstre kolonne). De andre 4 forslag har deco "none". Brug aldrig panel/stribe.',
+    'FARVE-INSPIRATION til netop denne omgang (vælg de der passer til branchen, og brug FORSKELLIGE farver til hvert af de 5 forslag): ' + colorHint + '.',
     '',
     'EKSEMPLER på forslags form (efterlign den rene, polerede komposition — men design dine egne til brugeren):',
     JSON.stringify(example),
@@ -162,7 +169,7 @@ export default async function handler(req, res) {
       headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + KEY },
       body: JSON.stringify({
         model: 'deepseek-chat',
-        temperature: 0.6,
+        temperature: 0.85,
         max_tokens: 3600,
         response_format: { type: 'json_object' },
         messages: [{ role: 'system', content: sys }, { role: 'user', content: userPrompt }]
