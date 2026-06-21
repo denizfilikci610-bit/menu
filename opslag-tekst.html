@@ -703,14 +703,14 @@
   .post.tpl-kev3 .post-sub{ max-width:60%; }
 
   /* kev4 — COMING SOON: boxed titel, foto i midten, STAY TUNED-oval, pille, brødtekst */
-  .post.tpl-kev4 .post-photo{ display:block; inset:auto; left:23cqw; right:23cqw; top:24cqw; height:38cqw; border-radius:2cqw; }
+  .post.tpl-kev4 .post-photo{ display:block; inset:auto; left:23cqw; right:23cqw; top:24cqw; height:38cqw; border-radius:0; border:.3cqw solid var(--pink); box-sizing:border-box; }
   .post.tpl-kev4.st-al-c .post-content{ align-items:flex-start; text-align:left; justify-content:flex-start; padding:8cqw; }
-  .post.tpl-kev4 .post-headline{ --hl:13cqw; display:inline-block; align-self:flex-start; background:#15150f; color:var(--pink); padding:1.4cqw 3cqw; }
+  .post.tpl-kev4 .post-headline{ --hl:13cqw; display:inline-block; align-self:flex-start; background:#1a1a17; color:#f2ede1; padding:1.4cqw 3cqw; }
   .post.tpl-kev4 .post-body{ flex:none; }
   .post.tpl-kev4 .post-eyebrow{ display:none; }
   .post.tpl-kev4 .post-sub{ position:absolute; left:8cqw; right:8cqw; bottom:7cqw; max-width:88%; }
   .post.tpl-kev4 .post-brand{ position:absolute; left:8cqw; top:67cqw; bottom:auto; }
-  .post.tpl-kev4 .post-badge{ width:auto; height:auto; min-width:0; border-radius:99px; background:#15150f; color:var(--pink); transform:rotate(-7deg); top:21cqw; right:15cqw; left:auto; padding:1.7cqw 3.8cqw; box-shadow:0 4px 12px rgba(0,0,0,.3); }
+  .post.tpl-kev4 .post-badge{ width:auto; height:auto; min-width:0; border-radius:99px; background:#1a1a17; color:#f2ede1; transform:rotate(-7deg); top:21cqw; right:15cqw; left:auto; padding:1.7cqw 3.8cqw; box-shadow:0 4px 12px rgba(0,0,0,.3); }
   .post.tpl-kev4 .post-badge::after{ display:none; }
   .post.tpl-kev4 .post-badge span{ font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:2.7cqw; letter-spacing:.06em; padding:0; }
 
@@ -724,12 +724,12 @@
   .post.tpl-kev1.st-al-c .post-body{ align-items:flex-start; }
   .post.tpl-kev1 .post-headline{ --hl:15cqw; width:100%; white-space:nowrap; }
   .post.tpl-kev1 .post-eyebrow{ position:absolute; top:7cqw; left:7cqw; right:7cqw; text-align:center; letter-spacing:.24em; opacity:.85; }
-  .post.tpl-kev1 .post-photo{ display:block; inset:auto; left:34cqw; right:34cqw; top:33cqw; height:41cqw; border-radius:1cqw; }
+  .post.tpl-kev1 .post-photo{ display:block; inset:auto; left:34cqw; right:34cqw; top:33cqw; height:41cqw; border-radius:0; border:.3cqw solid var(--pink); box-sizing:border-box; }
   .post.tpl-kev1 .post-sub{ position:absolute; left:7cqw; right:7cqw; bottom:7cqw; text-align:justify; text-transform:uppercase; letter-spacing:.08em; line-height:1.7; max-width:none; }
   .post.tpl-kev1 .post-brand{ display:none; }
 
   /* kev2 — EASY FASHION LOOK: foto foroven, hjørne-labels, overskrift forneden, pille */
-  .post.tpl-kev2 .post-photo{ display:block; inset:auto; left:31cqw; right:31cqw; top:8cqw; height:31cqw; border-radius:1.5cqw; }
+  .post.tpl-kev2 .post-photo{ display:block; inset:auto; left:31cqw; right:31cqw; top:8cqw; height:31cqw; border-radius:0; }
   .post.tpl-kev2.st-al-c .post-content{ align-items:flex-start; text-align:left; justify-content:flex-start; padding:43cqw 8cqw 19cqw; gap:2cqw; }
   .post.tpl-kev2.st-al-c .post-body{ align-items:flex-start; }
   .post.tpl-kev2 .post-headline{ --hl:19cqw; max-width:60%; }
@@ -747,7 +747,7 @@
   .post.tpl-kev6 .post-brand{ position:absolute; left:8cqw; bottom:9cqw; }
 
   /* kev7 — OUTFIT OF THE DAY: foto foroven, label, overskrift, pille */
-  .post.tpl-kev7 .post-photo{ display:block; inset:auto; left:8cqw; right:8cqw; top:8cqw; height:33cqw; border-radius:1.5cqw; }
+  .post.tpl-kev7 .post-photo{ display:block; inset:auto; left:8cqw; right:8cqw; top:8cqw; height:33cqw; border-radius:0; }
   .post.tpl-kev7.st-al-c .post-content{ align-items:flex-start; text-align:left; justify-content:flex-start; padding:45cqw 8cqw 14cqw; gap:2.5cqw; }
   .post.tpl-kev7.st-al-c .post-body{ align-items:flex-start; }
   .post.tpl-kev7 .post-headline{ --hl:18cqw; }
@@ -1719,14 +1719,14 @@
     { id:'cream',  name:'Outline Cream',layout:'outline', style:'editorial', font:'auto', bg:'#ece6d8', ink:'#2a2a2a', acc:'#2a2a2a' },
     // ===== KEVARI — 9-post fashion-sæt (Anton-overskrifter, grøn/sort/creme) =====
     { id:'kev1', name:'Best Off',     layout:'mega', style:'editorial', font:'anton', photo:true, bg:'#f2ede1', ink:'#191713', acc:'#191713' },
-    { id:'kev2', name:'Easy Fashion', layout:'mega', style:'editorial', font:'anton', photo:true, bg:'#1d2019', ink:'#f2ede1', acc:'#f2ede1' },
-    { id:'kev3', name:'Power Look',   layout:'mega', style:'editorial', font:'anton', photo:true, bg:'#151513', ink:'#f2ede1', acc:'#f2ede1' },
-    { id:'kev4', name:'Coming Soon',  layout:'mega', style:'editorial', font:'anton', photo:true, bg:'#2c4733', ink:'#f2ede1', acc:'#f2ede1' },
-    { id:'kev5', name:'Fashion Quote',layout:'mega', style:'editorial', font:'anton', bg:'#2c4733', ink:'#f2ede1', acc:'#f2ede1' },
-    { id:'kev6', name:'Style Inspo',  layout:'mega', style:'editorial', font:'anton', photo:true, bg:'#151513', ink:'#f2ede1', acc:'#f2ede1' },
-    { id:'kev7', name:'Outfit of Day',layout:'mega', style:'editorial', font:'anton', photo:true, bg:'#1d2019', ink:'#f2ede1', acc:'#f2ede1' },
-    { id:'kev8', name:'Thank You 2M', layout:'mega', style:'editorial', font:'anton', bg:'#20271f', ink:'#f2ede1', acc:'#f2ede1' },
-    { id:'kev9', name:"We're Open",   layout:'mega', style:'editorial', font:'anton', bg:'#151513', ink:'#f2ede1', acc:'#f2ede1' }
+    { id:'kev2', name:'Easy Fashion', layout:'mega', style:'editorial', font:'anton', photo:true, bg:'#161616', ink:'#f2ede1', acc:'#f2ede1' },
+    { id:'kev3', name:'Power Look',   layout:'mega', style:'editorial', font:'anton', photo:true, bg:'#161616', ink:'#f2ede1', acc:'#f2ede1' },
+    { id:'kev4', name:'Coming Soon',  layout:'mega', style:'editorial', font:'anton', photo:true, bg:'#f2ede1', ink:'#1a1a17', acc:'#1a1a17' },
+    { id:'kev5', name:'Fashion Quote',layout:'mega', style:'editorial', font:'anton', bg:'#3c5a39', ink:'#f2ede1', acc:'#f2ede1' },
+    { id:'kev6', name:'Style Inspo',  layout:'mega', style:'editorial', font:'anton', photo:true, bg:'#161616', ink:'#f2ede1', acc:'#f2ede1' },
+    { id:'kev7', name:'Outfit of Day',layout:'mega', style:'editorial', font:'anton', photo:true, bg:'#f2ede1', ink:'#1a1a17', acc:'#1a1a17' },
+    { id:'kev8', name:'Thank You 2M', layout:'mega', style:'editorial', font:'anton', bg:'#3c5a39', ink:'#f2ede1', acc:'#f2ede1' },
+    { id:'kev9', name:"We're Open",   layout:'mega', style:'editorial', font:'anton', bg:'#161616', ink:'#f2ede1', acc:'#f2ede1' }
   ];
   let CONTENT = { headline:'', emphasis:'', eyebrow:'', subline:'', badge:'', navn:'' };
   const removed = new Set();
