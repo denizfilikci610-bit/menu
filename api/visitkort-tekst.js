@@ -1,7 +1,8 @@
 // Vercel serverless-funktion — AI-design af visitkort (Premium-låst).
-// AI'en udtrækker kortets felter ÉN gang og foreslår 5 KOMPLETTE design-varianter
-// (farver/gradient/tekstfarve per side, pynt, hjørner, typografi, komposition, fonte,
-// orientation, accent) — men KUN inden for de værdier visitkort.html understøtter.
+// AI'en udtrækker kortets felter ÉN gang og foreslår 5 KOMPLETTE, PÆNE design-varianter.
+// Hver variant komponerer kortet med FLERE tekstbokse i forskellige zoner (fx slogan
+// øverst, stort navn i midten, kontakt nederst), med klart størrelse-hierarki — kun
+// SOLIDE farver (ingen gradient). Alt holder sig inden for det visitkort.html understøtter.
 // Kræver login + aktivt Premium-abonnement (verificeres på serveren — fejler lukket).
 //
 // ENV (findes allerede på Vercel — samme som opslag-tekst):
@@ -10,7 +11,7 @@
 //   SUPABASE_SERVICE_ROLE_KEY  (HEMMELIG — slår bruger + abonnement op, omgår RLS)
 //
 // POST /api/visitkort-tekst   body: { emne: "<brugerens oplysninger>" }
-// -> { content:{front,back}, variants:[ {label,style,fonts,colors,deco,emphasis,layout}, x5 ] }
+// -> { content:{front,back}, variants:[ {label,style,fonts,front:{bgColor,ink,deco,boxes},back:{...}}, x5 ] }
 
 // ===== Whitelists — SKAL matche visitkort.html =====
 const STYLES = {
@@ -25,11 +26,9 @@ const FONTS_BODY  = ['Jost', 'EB Garamond', 'Montserrat', 'Fraunces', 'Playfair 
 const FRONT_FIELDS = ['name', 'title', 'company', 'tagline', 'custom'];
 const BACK_FIELDS  = ['phone', 'email', 'web', 'address', 'instagram', 'facebook', 'tiktok', 'linkedin', 'custom'];
 const DECO  = ['none', 'corner', 'panel', 'stripe'];
-const DIRS  = ['to right', 'to bottom', 'to bottom right'];
 const POSITIONS = ['top-left', 'top-center', 'top-right', 'middle-left', 'middle-center', 'middle-right', 'bottom-left', 'bottom-center', 'bottom-right'];
 const ALIGNS = ['left', 'center', 'right'];
 const RADII  = [0, 10, 22];
-const EMPH_TYPES = ['name', 'title', 'company', 'tagline', 'phone', 'email', 'web', 'address'];
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') { res.status(405).json({ error: 'Method not allowed' }); return; }
@@ -76,31 +75,43 @@ export default async function handler(req, res) {
   const emne = String(body.emne || '').slice(0, 1000).trim();
   if (!emne) { res.status(400).json({ error: 'Skriv dine oplysninger først.' }); return; }
 
-  // ---------- Prompt: art-director der laver 5 forskellige design ----------
+  // ---------- Prompt: art-director der komponerer 5 PÆNE, rene kort ----------
   const sys =
-    'Du er en prisvindende grafisk designer der laver danske visitkort. ' +
-    'Du udtrækker kontaktoplysninger fra brugerens tekst ÉN gang, og designer derefter 5 FORSKELLIGE, komplette og smukke visitkort-forslag. ' +
+    'Du er en prisvindende grafisk designer der laver smukke, rene danske visitkort. ' +
+    'Du udtrækker kontaktoplysninger fra brugerens tekst ÉN gang, og designer derefter 5 FORSKELLIGE, gennemførte visitkort-forslag. ' +
     'Du må KUN bruge de felter, stilarter, fonte og værdier der er angivet — opfind ALDRIG andet. ' +
-    'Du opfinder ALDRIG kontaktoplysninger (navn, telefon, e-mail, adresse, hjemmeside, sociale medier): står de ikke i teksten, er feltet tomt (""). Gengiv tal, e-mails og URL\'er præcis. ' +
-    'DESIGNREGLER: de 5 forslag skal være tydeligt forskellige (fx elegant lys, mørk/dristig, minimalistisk, farverig gradient, klassisk). ' +
-    'Tekstfarve (ink) SKAL have høj kontrast til baggrunden, så teksten altid er let at læse. Vælg farver der passer til branchen. Brug gerne gradient-baggrund og pynt til at give kortet liv. ' +
-    'Fremhæv navnet (stort/fed) og giv firma eller titel accent-farve for et professionelt hierarki.';
+    'Du opfinder ALDRIG kontaktoplysninger: står de ikke i teksten, udelader du dem. Gengiv tal, e-mails og URL\'er præcis. ' +
+    'KOMPOSITIONSREGLER (vigtigt — kortet må ALDRIG se rodet ud): ' +
+    'Brug FLERE tekstbokse i FORSKELLIGE zoner i stedet for at proppe alt sammen i én blok. ' +
+    'Et klassisk, flot layout er fx: slogan eller firma ØVERST, stort navn i MIDTEN, og kontakt/firma NEDERST. ' +
+    'Giv et tydeligt størrelse-hierarki: navnet er størst (ca. 2.2–3.0), titel/firma mellem (ca. 0.9–1.2), kontaktlinjer små (ca. 0.9–1.0). ' +
+    'Hvert felt må kun optræde ÉN gang. Brug luft mellem zonerne. ' +
+    'INGEN gradient — kun ÉN solid baggrundsfarve per side. Tekstfarve (ink) SKAL have høj kontrast til baggrunden. ' +
+    'Vælg farver og pynt der passer til branchen. Fremhæv navnet (bold) og giv firma eller titel accent-farve.';
 
   const example = {
-    label: 'Mørk & elegant',
+    label: 'Mørk, navn i midten',
     style: 'moerk', titleFont: 'Fraunces', bodyFont: 'Jost', orientation: 'landscape', radius: 10, accent: '#d4a256',
-    front: { bg: { mode: 'grad', c1: '#201d1a', c2: '#2e2a25', dir: 'to bottom right' }, ink: '#f4ead9', deco: { shape: 'corner', color: '#d4a256' } },
-    back:  { bg: { mode: 'solid', c1: '#d4a256', c2: '#d4a256', dir: 'to right' }, ink: '#201d1a', deco: { shape: 'none', color: '#201d1a' } },
-    emphasis: { name: { size: 2.4, bold: true }, title: { accent: true }, company: { italic: true } },
-    layout: { front: { pos: 'middle-left', align: 'left' }, back: { pos: 'middle-center', align: 'center' } }
+    front: { bgColor: '#201d1a', ink: '#f4ead9', deco: { shape: 'corner', color: '#d4a256' }, boxes: [
+      { pos: 'top-left', align: 'left', lines: [{ type: 'tagline', italic: true, size: 0.95 }] },
+      { pos: 'middle-left', align: 'left', lines: [{ type: 'name', size: 2.6, bold: true }, { type: 'title', accent: true, size: 1.0 }] },
+      { pos: 'bottom-left', align: 'left', lines: [{ type: 'company', size: 1.0 }] }
+    ] },
+    back: { bgColor: '#d4a256', ink: '#201d1a', deco: { shape: 'none', color: '#201d1a' }, boxes: [
+      { pos: 'middle-center', align: 'center', lines: [{ type: 'phone' }, { type: 'email' }, { type: 'web' }, { type: 'address' }] }
+    ] }
   };
   const example2 = {
-    label: 'Lys minimal',
+    label: 'Lys minimal, centreret',
     style: 'minimal', titleFont: 'Bebas Neue', bodyFont: 'Jost', orientation: 'landscape', radius: 0, accent: '#1f5f5b',
-    front: { bg: { mode: 'solid', c1: '#ffffff', c2: '#ffffff', dir: 'to right' }, ink: '#111111', deco: { shape: 'stripe', color: '#1f5f5b' } },
-    back:  { bg: { mode: 'solid', c1: '#ffffff', c2: '#ffffff', dir: 'to right' }, ink: '#111111', deco: { shape: 'none', color: '#1f5f5b' } },
-    emphasis: { name: { size: 2.8, bold: true }, company: { accent: true } },
-    layout: { front: { pos: 'bottom-left', align: 'left' }, back: { pos: 'middle-center', align: 'center' } }
+    front: { bgColor: '#ffffff', ink: '#111111', deco: { shape: 'stripe', color: '#1f5f5b' }, boxes: [
+      { pos: 'top-center', align: 'center', lines: [{ type: 'company', accent: true, size: 0.95 }] },
+      { pos: 'middle-center', align: 'center', lines: [{ type: 'name', size: 2.8, bold: true }] },
+      { pos: 'bottom-center', align: 'center', lines: [{ type: 'title', size: 1.0 }] }
+    ] },
+    back: { bgColor: '#1f5f5b', ink: '#ffffff', deco: { shape: 'none', color: '#ffffff' }, boxes: [
+      { pos: 'middle-left', align: 'left', lines: [{ type: 'phone' }, { type: 'email' }, { type: 'web' }] }
+    ] }
   };
 
   const userPrompt = [
@@ -110,17 +121,15 @@ export default async function handler(req, res) {
     '- BAGSIDE (back): phone, email, web, address, instagram, facebook, tiktok, linkedin, custom',
     '(web, telefon, adresse og sociale medier hører KUN til på bagsiden; navn/titel/firma/slogan KUN på forsiden.)',
     '',
-    'TRIN 2 — lav 5 forskellige design-forslag. Hvert forslag må KUN bruge disse værdier:',
+    'TRIN 2 — komponér 5 forskellige, pæne design. Hvert forslag må KUN bruge disse værdier:',
     'style: ' + STYLE_KEYS.join(', '),
-    'titleFont: ' + FONTS_TITLE.join(', '),
-    'bodyFont: ' + FONTS_BODY.join(', '),
-    'orientation: landscape | portrait    radius: 0 | 10 | 22',
-    'accent / alle farver: #rrggbb hex',
-    'front og back har hver: bg{mode: solid|grad, c1:hex, c2:hex, dir: "to right"|"to bottom"|"to bottom right"}, ink:hex (tekstfarve), deco{shape: none|corner|panel|stripe, color:hex}',
-    'emphasis (valgfri vægtning pr. felt name/title/company/tagline/phone/email/web/address): {size: 0.6-3.0, bold:true, italic:true, accent:true}',
-    'layout.front og layout.back: {pos: ' + POSITIONS.join('|') + ', align: left|center|right}',
+    'titleFont: ' + FONTS_TITLE.join(', ') + '   bodyFont: ' + FONTS_BODY.join(', '),
+    'orientation: landscape | portrait    radius: 0 | 10 | 22    alle farver: #rrggbb hex',
+    'front og back har hver: bgColor (ÉN solid hex — INGEN gradient), ink (tekstfarve hex), deco{shape: none|corner|panel|stripe, color:hex}, og boxes[].',
+    'boxes er en liste af tekstbokse, hver: {pos: ' + POSITIONS.join('|') + ', align: left|center|right, lines: [ {type, size: 0.6-3.0, bold:true, italic:true, accent:true} ]}.',
+    'Fordel felterne på 2-3 bokse i forskellige zoner (fx top/midt/bund) — IKKE alt i én boks. Hvert felt kun én gang.',
     '',
-    'EKSEMPLER på ét forslags form (efterlign kvaliteten, men lav dine egne til brugeren):',
+    'EKSEMPLER på to forslags form (efterlign den rene komposition, men design dine egne til brugeren):',
     JSON.stringify(example),
     JSON.stringify(example2),
     '',
@@ -137,7 +146,7 @@ export default async function handler(req, res) {
       body: JSON.stringify({
         model: 'deepseek-chat',
         temperature: 0.6,
-        max_tokens: 3200,
+        max_tokens: 3600,
         response_format: { type: 'json_object' },
         messages: [{ role: 'system', content: sys }, { role: 'user', content: userPrompt }]
       })
@@ -176,39 +185,42 @@ function oneOf(v, arr, def) { return arr.indexOf(v) >= 0 ? v : def; }
 function clampNum(v, min, max, def) { const n = Number(v); return isFinite(n) ? Math.min(max, Math.max(min, n)) : def; }
 function cleanText(v) { if (typeof v !== 'string') return ''; return v.replace(/\s+/g, ' ').trim().slice(0, 140); }
 
-function valSide(sd, style) {
-  sd = sd || {};
-  const bg = sd.bg || {};
-  return {
-    bg: { mode: oneOf(bg.mode, ['solid', 'grad'], 'solid'), c1: hex6(bg.c1) || style.paper, c2: hex6(bg.c2) || style.accent, dir: oneOf(bg.dir, DIRS, 'to bottom right') },
-    ink: hex6(sd.ink) || '',
-    deco: { shape: oneOf((sd.deco || {}).shape, DECO, 'none'), color: hex6((sd.deco || {}).color) || style.accent }
-  };
-}
-function valEmphasis(em) {
-  em = em || {}; const out = {};
-  EMPH_TYPES.forEach(t => {
-    const e = em[t]; if (!e || typeof e !== 'object') return;
-    const o = {};
-    if (e.size != null) o.size = clampNum(e.size, 0.4, 3.5, 1);
-    if (e.bold) o.bold = true;
-    if (e.italic) o.italic = true;
-    if (e.accent) o.accent = true;
-    if (Object.keys(o).length) out[t] = o;
+function valLines(lines, typeSet) {
+  if (!Array.isArray(lines)) return [];
+  const seen = {}; const out = [];
+  lines.forEach(ln => {
+    if (!ln || typeof ln !== 'object') return;
+    const type = ln.type;
+    if (typeSet.indexOf(type) < 0 || type === 'line') return;
+    if (seen[type]) return;
+    seen[type] = true;
+    const o = { type, bold: !!ln.bold, italic: !!ln.italic, accent: !!ln.accent };
+    if (typeof ln.size === 'number' && isFinite(ln.size)) o.size = clampNum(ln.size, 0.4, 3.5, 1);
+    out.push(o);
   });
-  return out;
+  return out.slice(0, 6);
 }
-function valLayout(lay) {
-  lay = lay || {};
-  const side = s => { s = s || {}; return { pos: oneOf(s.pos, POSITIONS, 'middle-left'), align: oneOf(s.align, ALIGNS, 'left') }; };
-  return { front: side(lay.front), back: side(lay.back) };
+function valSideDesign(sd, style, typeSet) {
+  sd = sd || {};
+  let boxes = Array.isArray(sd.boxes) ? sd.boxes.slice(0, 4) : [];
+  boxes = boxes.map(bx => ({
+    pos: oneOf((bx || {}).pos, POSITIONS, 'middle-left'),
+    align: oneOf((bx || {}).align, ALIGNS, 'left'),
+    lines: valLines((bx || {}).lines, typeSet)
+  })).filter(bx => bx.lines.length);
+  const out = {
+    bgColor: hex6(sd.bgColor) || style.paper,
+    ink: hex6(sd.ink) || '',
+    deco: { shape: oneOf((sd.deco || {}).shape, DECO, 'none'), color: hex6((sd.deco || {}).color) || style.accent },
+    boxes
+  };
+  fixContrast(out, style);
+  return out;
 }
 function valVariant(v) {
   if (!v || typeof v !== 'object') return null;
   const styleKey = oneOf(v.style, STYLE_KEYS, 'elegant');
   const style = STYLES[styleKey];
-  const front = valSide(v.front, style); fixContrast(front, style);
-  const back = valSide(v.back, style); fixContrast(back, style);
   return {
     label: cleanText(v.label).slice(0, 40) || 'Forslag',
     style: styleKey,
@@ -218,21 +230,18 @@ function valVariant(v) {
     radius: RADII.indexOf(Number(v.radius)) >= 0 ? Number(v.radius) : 10,
     accent: hex6(v.accent) || style.accent,
     accentLine: style.accentLine,
-    front, back,
-    emphasis: valEmphasis(v.emphasis),
-    layout: valLayout(v.layout)
+    front: valSideDesign(v.front, style, FRONT_FIELDS),
+    back: valSideDesign(v.back, style, BACK_FIELDS)
   };
 }
 
-// ===== Kontrast-vagt: sørg for at tekst altid er læsbar mod baggrunden =====
+// ===== Kontrast-vagt: tekst skal altid være læsbar mod den solide baggrund =====
 function hexToRgb(h) { h = h.replace('#', ''); return [parseInt(h.slice(0, 2), 16), parseInt(h.slice(2, 4), 16), parseInt(h.slice(4, 6), 16)]; }
 function lum(h) { const c = hexToRgb(h).map(v => { v /= 255; return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4); }); return 0.2126 * c[0] + 0.7152 * c[1] + 0.0722 * c[2]; }
 function ratio(a, b) { const la = lum(a) + 0.05, lb = lum(b) + 0.05; return la > lb ? la / lb : lb / la; }
-function blend(a, b) { const ra = hexToRgb(a), rb = hexToRgb(b); return '#' + ra.map((x, i) => ('0' + Math.round((x + rb[i]) / 2).toString(16)).slice(-2)).join(''); }
 function fixContrast(side, style) {
-  const effBg = side.bg.mode === 'grad' ? blend(side.bg.c1, side.bg.c2) : side.bg.c1;
-  let ink = side.ink || (lum(effBg) < 0.5 ? style.paper : style.ink);
-  if (ratio(ink, effBg) < 3.2) { ink = lum(effBg) < 0.5 ? '#ffffff' : '#1c1c1c'; }
+  let ink = side.ink || (lum(side.bgColor) < 0.5 ? style.paper : style.ink);
+  if (ratio(ink, side.bgColor) < 3.2) { ink = lum(side.bgColor) < 0.5 ? '#ffffff' : '#1c1c1c'; }
   side.ink = ink; // altid eksplicit, læsbar tekstfarve
 }
 

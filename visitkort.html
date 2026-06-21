@@ -2974,7 +2974,7 @@
     if(_aiVariants.length) applyVariant(0);   // vis straks forslag 1
   }
   function swatch(v){
-    var fbg=(v.front&&v.front.bg&&v.front.bg.c1)||'#ffffff';
+    var fbg=(v.front&&v.front.bgColor)||'#ffffff';
     var acc=v.accent||((v.front&&v.front.deco&&v.front.deco.color))||'#b5542a';
     var ink=(v.front&&v.front.ink)||'#2c2620';
     return '<span class="ai-vk-sw"><span style="background:'+escA(fbg)+'"></span><span style="background:'+escA(acc)+'"></span><span style="background:'+escA(ink)+'"></span></span>';
@@ -2997,72 +2997,70 @@
       });
     });
   }
-  function applyContent(){
-    var front=(_aiContent&&_aiContent.front)||{}, back=(_aiContent&&_aiContent.back)||{};
-    ['name','title','company','tagline','custom'].forEach(function(type){
-      if(FRONT_TYPES.indexOf(type)>=0 && typeof front[type]==='string' && front[type].trim()) vkSetField('front',type,front[type].trim());
-    });
-    ['phone','email','web','address','instagram','facebook','tiktok','linkedin','custom'].forEach(function(type){
-      if(CONTACT_TYPES.indexOf(type)>=0 && typeof back[type]==='string' && back[type].trim()) vkSetField('back',type,back[type].trim());
-    });
+  function defaultSize(side, type){
+    if(side==='front' && FRONT_DEFAULT_SIZE && FRONT_DEFAULT_SIZE[type]) return FRONT_DEFAULT_SIZE[type];
+    return 1;
   }
-  function applySide(side, sd){
-    if(!sd) return; var s=state[side];
-    if(sd.bg){
-      s.bg={ mode:(sd.bg.mode==='grad'?'grad':'solid'),
-             c1:hexOk(sd.bg.c1)?sd.bg.c1:s.bg.c1,
-             c2:hexOk(sd.bg.c2)?sd.bg.c2:s.bg.c2,
-             dir:sd.bg.dir||s.bg.dir||'to bottom right' };
-    }
+  // Byg én sides bokse helt forfra ud fra forslagets komposition + det delte indhold
+  function buildSide(side, sd, content){
+    var s=state[side]; sd=sd||{}; content=content||{};
+    // farver + pynt (kun ÉN solid baggrundsfarve — ingen gradient)
+    var bgc=hexOk(sd.bgColor)?sd.bgColor:((s.bg&&s.bg.c1)||'#ffffff');
+    s.bg={ mode:'solid', c1:bgc, c2:bgc, dir:'to right' };
     if(hexOk(sd.ink)) s.ink=sd.ink;
-    if(sd.deco){ s.deco={ shape:sd.deco.shape||'none', color:hexOk(sd.deco.color)?sd.deco.color:((s.deco&&s.deco.color)||'#d4a574') }; }
-  }
-  function setBox(side, lay){
-    if(!lay) return; var box=state[side].boxes&&state[side].boxes[0]; if(!box) return;
-    if(lay.pos) box.pos=lay.pos;
-    if(lay.align) box.align=lay.align;
-  }
-  function applyEmphasis(side, em){
-    var s=state[side];
-    // 1) nulstil til baseline (så skift mellem forslag ikke ophober vægtning)
-    s.boxes.forEach(function(box){ box.items.forEach(function(it){
-      it.bold=false; it.italic=false; it.accent=false;
-      if(it.type!=='line'){ it.size=(side==='front' && FRONT_DEFAULT_SIZE && FRONT_DEFAULT_SIZE[it.type]) ? FRONT_DEFAULT_SIZE[it.type] : 1; }
-    }); });
-    if(!em) return;
-    // 2) anvend forslagets vægtning
-    s.boxes.forEach(function(box){ box.items.forEach(function(it){
-      var e=em[it.type]; if(!e) return;
-      if(typeof e.size==='number') it.size=e.size;
-      if(e.bold) it.bold=true;
-      if(e.italic) it.italic=true;
-      if(e.accent) it.accent=true;
-    }); });
+    if(sd.deco){ s.deco={ shape:sd.deco.shape||'none', color:hexOk(sd.deco.color)?sd.deco.color:'#d4a574' }; }
+    var typeSet=(side==='front')?FRONT_TYPES:CONTACT_TYPES;
+    var used={}, boxes=[], boxId=1, itemId=1;
+    (Array.isArray(sd.boxes)?sd.boxes:[]).forEach(function(bx){
+      if(!bx) return; var items=[];
+      (Array.isArray(bx.lines)?bx.lines:[]).forEach(function(ln){
+        if(!ln) return; var type=ln.type;
+        if(typeSet.indexOf(type)<0 || type==='line' || used[type]) return;
+        var val=(typeof content[type]==='string')?content[type].trim():'';
+        if(!val) return;
+        used[type]=true;
+        var item={ id:itemId++, type:type, value:val,
+          size:(typeof ln.size==='number')?ln.size:defaultSize(side,type),
+          bold:!!ln.bold, italic:!!ln.italic, accent:!!ln.accent };
+        if(side==='back') item.showIcon=true;
+        items.push(item);
+      });
+      if(items.length) boxes.push({ id:boxId++, pos:bx.pos||'middle-left', align:bx.align||'left', layout:'stack', gap:6, items:items, nextItemId:itemId });
+    });
+    // sikkerhedsnet: indhold AI'en ikke placerede -> læg i sidste boks (ellers en ny)
+    var leftover=[];
+    typeSet.forEach(function(type){
+      if(type==='line'||type==='custom'||used[type]) return;
+      var val=(typeof content[type]==='string')?content[type].trim():'';
+      if(!val) return; used[type]=true;
+      var item={ id:itemId++, type:type, value:val, size:defaultSize(side,type), bold:false, italic:false, accent:false };
+      if(side==='back') item.showIcon=true;
+      leftover.push(item);
+    });
+    if(leftover.length){
+      if(boxes.length){ var last=boxes[boxes.length-1]; leftover.forEach(function(it){ last.items.push(it); }); last.nextItemId=itemId; }
+      else boxes.push({ id:boxId++, pos:'middle-left', align:'left', layout:'stack', gap:6, items:leftover, nextItemId:itemId });
+    }
+    if(!boxes.length) boxes.push({ id:1, pos:'middle-left', align:'left', layout:'stack', gap:6, items:[], nextItemId:1 });
+    s.boxes=boxes; s.nextBoxId=boxId;
   }
   function applyVariant(i){
     try{
       var v=_aiVariants&&_aiVariants[i]; if(!v) return;
-      applyContent();
       // 1) stil-base (fonte/accent/papir som ved klik på et stil-kort)
       var sk=STYLES[v.style]?v.style:'elegant'; var p=STYLES[sk];
       state.style=sk;
-      state.design.accent=p.accent; state.design.paper=p.paper; state.design.ink=p.ink;
-      state.design.titleFont=p.titleFont; state.design.bodyFont=p.bodyFont; state.design.accentLine=p.accentLine;
-      // 2) variant-overrides
-      if(v.titleFont && FONTS_TITLE.indexOf(v.titleFont)>=0) state.design.titleFont=v.titleFont;
-      if(v.bodyFont && FONTS_BODY.indexOf(v.bodyFont)>=0) state.design.bodyFont=v.bodyFont;
-      if(hexOk(v.accent)) state.design.accent=v.accent;
-      if([0,10,22].indexOf(v.radius)>=0) state.design.radius=v.radius;
+      state.design.accent=hexOk(v.accent)?v.accent:p.accent;
+      state.design.paper=p.paper; state.design.ink=p.ink;
+      state.design.titleFont=(FONTS_TITLE.indexOf(v.titleFont)>=0)?v.titleFont:p.titleFont;
+      state.design.bodyFont=(FONTS_BODY.indexOf(v.bodyFont)>=0)?v.bodyFont:p.bodyFont;
+      state.design.accentLine=p.accentLine;
+      state.design.radius=([0,10,22].indexOf(v.radius)>=0)?v.radius:10;
       if(v.orientation==='landscape'||v.orientation==='portrait'){ state.orientation=v.orientation; if(typeof setSeg==='function') setSeg('segOrient', v.orientation); }
-      // 3) farver + pynt per side
-      applySide('front', v.front);
-      applySide('back', v.back);
-      // 4) komposition (placering af blokken)
-      if(v.layout){ setBox('front', v.layout.front); setBox('back', v.layout.back); }
-      // 5) typografi pr. linje
-      applyEmphasis('front', v.emphasis);
-      applyEmphasis('back', v.emphasis);
-      // 6) gen-render editor + kort + gem
+      // 2) byg begge sider (multi-boks komposition + delt indhold)
+      buildSide('front', v.front, (_aiContent&&_aiContent.front)||{});
+      buildSide('back', v.back, (_aiContent&&_aiContent.back)||{});
+      // 3) gen-render editor + kort + gem
       if(typeof renderBoxList==='function'){ renderBoxList('front'); renderBoxList('back'); }
       if(typeof syncAll==='function') syncAll();
       if(typeof renderCards==='function') renderCards();
