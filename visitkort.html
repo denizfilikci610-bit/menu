@@ -429,6 +429,15 @@
   }
   @keyframes aiShift{ 0%{ background-position:0% 50%; } 50%{ background-position:100% 50%; } 100%{ background-position:0% 50%; } }
   @media (prefers-reduced-motion:reduce){ .ai-vk-input, .ai-vk-btn{ animation:none; } }
+  /* ===== AI: 5 design-forslag at vælge imellem ===== */
+  .ai-vk-results{ margin-top:10px; }
+  .ai-vk-results-h{ font-size:.8rem; color:var(--muted); margin-bottom:6px; }
+  .ai-vk-chip{ display:flex; align-items:center; gap:9px; width:100%; text-align:left; font-family:inherit; font-size:.86rem; font-weight:600; color:var(--ink); background:var(--field); border:1px solid var(--line); border-radius:10px; padding:8px 10px; margin-top:6px; cursor:pointer; transition:.15s; }
+  .ai-vk-chip:hover{ border-color:var(--accent); }
+  .ai-vk-chip.active{ border-color:var(--accent); box-shadow:0 0 0 2px rgba(181,84,42,.20); }
+  .ai-vk-sw{ display:inline-flex; gap:3px; flex:none; }
+  .ai-vk-sw span{ width:14px; height:14px; border-radius:50%; border:1px solid rgba(0,0,0,.12); display:block; }
+  .ai-vk-chip-label{ flex:1; min-width:0; }
 </style>
 </head>
 <body data-mside="front">
@@ -497,6 +506,7 @@
         <textarea id="aiVkInput" class="ai-vk-input" rows="3" placeholder="Skriv dine oplysninger: navn, titel, firma, telefon, mail, hjemmeside, evt. sociale medier…"></textarea>
         <button id="aiVkBtn" class="ai-vk-btn" type="button" data-mode="login">Log ind for at bruge AI</button>
         <div id="aiVkMsg" class="ai-vk-msg"></div>
+        <div id="aiVkResults" class="ai-vk-results" hidden></div>
         <p id="aiVkHint" class="ai-vk-hint">AI-udfyldning er en Premium-funktion.</p>
       </div>
 
@@ -2898,8 +2908,8 @@
       if(hint) hint.textContent='AI-udfyldning er kun for Premium-medlemmer.';
     } else {
       if(input) input.disabled=false;
-      btn.textContent='✨ Udfyld med AI'; btn.dataset.mode='generate';
-      if(hint) hint.textContent='Skriv dine oplysninger i fri tekst — AI udfylder kortet og foreslår stil.';
+      btn.textContent='✨ Lav 5 design-forslag'; btn.dataset.mode='generate';
+      if(hint) hint.textContent='Skriv dine oplysninger — AI laver 5 designforslag du kan vælge imellem.';
     }
   }
   (function(){
@@ -2926,7 +2936,7 @@
       if(r.status===401){ aiSetMsg('Log ind igen.','bad'); openLoginModal(); }
       else if(r.status===402 || (data&&data.needPremium)){ aiSetMsg('AI-udfyldning kræver Premium.','bad'); await loadSubscription(); startCheckout(); }
       else if(!r.ok || (data&&data.error)){ aiSetMsg((data&&data.error)||'Noget gik galt. Prøv igen.','bad'); }
-      else { applyAiResult(data); aiSetMsg('Kortet er udfyldt af AI ✓','ok'); }
+      else { onAiResult(data); aiSetMsg('5 forslag klar — vælg dit favorit-design nedenfor ✓','ok'); }
     }catch(e){ aiSetMsg('Kunne ikke kontakte AI. Prøv igen.','bad'); }
     btn.disabled=false; renderAiBlock();
   }
@@ -2954,29 +2964,110 @@
     state.front.bg={ mode:'solid', c1:p.paper, c2:p.accent, dir:'to right' }; state.front.ink='';
     state.back.bg={ mode:'solid', c1:p.accent, c2:p.accent, dir:'to bottom right' }; state.back.ink=p.paper;
   }
-  function applyAiResult(data){
+  // ===== AI: 5 design-forslag at vælge imellem =====
+  var _aiContent=null, _aiVariants=null;
+  function hexOk(c){ return typeof c==='string' && /^#[0-9a-fA-F]{6}$/.test(c); }
+  function onAiResult(data){
+    _aiContent=(data&&data.content)||{front:{},back:{}};
+    _aiVariants=(data&&Array.isArray(data.variants))?data.variants:[];
+    renderResults();
+    if(_aiVariants.length) applyVariant(0);   // vis straks forslag 1
+  }
+  function swatch(v){
+    var fbg=(v.front&&v.front.bg&&v.front.bg.c1)||'#ffffff';
+    var acc=v.accent||((v.front&&v.front.deco&&v.front.deco.color))||'#b5542a';
+    var ink=(v.front&&v.front.ink)||'#2c2620';
+    return '<span class="ai-vk-sw"><span style="background:'+escA(fbg)+'"></span><span style="background:'+escA(acc)+'"></span><span style="background:'+escA(ink)+'"></span></span>';
+  }
+  function renderResults(){
+    var wrap=byId('aiVkResults'); if(!wrap) return;
+    if(!_aiVariants||!_aiVariants.length){ wrap.hidden=true; wrap.innerHTML=''; return; }
+    wrap.hidden=false;
+    wrap.innerHTML='<div class="ai-vk-results-h">Vælg dit favorit-design:</div>'+
+      _aiVariants.map(function(v,i){
+        return '<button type="button" class="ai-vk-chip'+(i===0?' active':'')+'" data-i="'+i+'">'+
+          swatch(v)+'<span class="ai-vk-chip-label">'+escA(v.label||('Forslag '+(i+1)))+'</span></button>';
+      }).join('');
+    wrap.querySelectorAll('.ai-vk-chip').forEach(function(b){
+      b.addEventListener('click', function(){
+        var i=+this.dataset.i;
+        wrap.querySelectorAll('.ai-vk-chip').forEach(function(x){ x.classList.remove('active'); });
+        this.classList.add('active');
+        applyVariant(i);
+      });
+    });
+  }
+  function applyContent(){
+    var front=(_aiContent&&_aiContent.front)||{}, back=(_aiContent&&_aiContent.back)||{};
+    ['name','title','company','tagline','custom'].forEach(function(type){
+      if(FRONT_TYPES.indexOf(type)>=0 && typeof front[type]==='string' && front[type].trim()) vkSetField('front',type,front[type].trim());
+    });
+    ['phone','email','web','address','instagram','facebook','tiktok','linkedin','custom'].forEach(function(type){
+      if(CONTACT_TYPES.indexOf(type)>=0 && typeof back[type]==='string' && back[type].trim()) vkSetField('back',type,back[type].trim());
+    });
+  }
+  function applySide(side, sd){
+    if(!sd) return; var s=state[side];
+    if(sd.bg){
+      s.bg={ mode:(sd.bg.mode==='grad'?'grad':'solid'),
+             c1:hexOk(sd.bg.c1)?sd.bg.c1:s.bg.c1,
+             c2:hexOk(sd.bg.c2)?sd.bg.c2:s.bg.c2,
+             dir:sd.bg.dir||s.bg.dir||'to bottom right' };
+    }
+    if(hexOk(sd.ink)) s.ink=sd.ink;
+    if(sd.deco){ s.deco={ shape:sd.deco.shape||'none', color:hexOk(sd.deco.color)?sd.deco.color:((s.deco&&s.deco.color)||'#d4a574') }; }
+  }
+  function setBox(side, lay){
+    if(!lay) return; var box=state[side].boxes&&state[side].boxes[0]; if(!box) return;
+    if(lay.pos) box.pos=lay.pos;
+    if(lay.align) box.align=lay.align;
+  }
+  function applyEmphasis(side, em){
+    var s=state[side];
+    // 1) nulstil til baseline (så skift mellem forslag ikke ophober vægtning)
+    s.boxes.forEach(function(box){ box.items.forEach(function(it){
+      it.bold=false; it.italic=false; it.accent=false;
+      if(it.type!=='line'){ it.size=(side==='front' && FRONT_DEFAULT_SIZE && FRONT_DEFAULT_SIZE[it.type]) ? FRONT_DEFAULT_SIZE[it.type] : 1; }
+    }); });
+    if(!em) return;
+    // 2) anvend forslagets vægtning
+    s.boxes.forEach(function(box){ box.items.forEach(function(it){
+      var e=em[it.type]; if(!e) return;
+      if(typeof e.size==='number') it.size=e.size;
+      if(e.bold) it.bold=true;
+      if(e.italic) it.italic=true;
+      if(e.accent) it.accent=true;
+    }); });
+  }
+  function applyVariant(i){
     try{
-      var front=(data&&data.front)||{}, back=(data&&data.back)||{};
-      ['name','title','company','tagline','custom'].forEach(function(type){
-        if(FRONT_TYPES.indexOf(type)>=0 && typeof front[type]==='string' && front[type].trim()) vkSetField('front',type,front[type].trim());
-      });
-      ['phone','email','web','address','instagram','facebook','tiktok','linkedin','custom'].forEach(function(type){
-        if(CONTACT_TYPES.indexOf(type)>=0 && typeof back[type]==='string' && back[type].trim()) vkSetField('back',type,back[type].trim());
-      });
-      var d=(data&&data.design)||{};
-      if(STYLES[d.style]) applyVkStyle(d.style);
-      if(d.titleFont && FONTS_TITLE.indexOf(d.titleFont)>=0) state.design.titleFont=d.titleFont;
-      if(d.bodyFont && FONTS_BODY.indexOf(d.bodyFont)>=0) state.design.bodyFont=d.bodyFont;
-      if(d.orientation==='landscape' || d.orientation==='portrait'){ state.orientation=d.orientation; if(typeof setSeg==='function') setSeg('segOrient', d.orientation); }
-      if(typeof d.accent==='string' && /^#[0-9a-fA-F]{6}$/.test(d.accent)){
-        state.design.accent=d.accent;
-        state.front.bg.c2=d.accent; state.back.bg.c1=d.accent; state.back.bg.c2=d.accent;
-      }
+      var v=_aiVariants&&_aiVariants[i]; if(!v) return;
+      applyContent();
+      // 1) stil-base (fonte/accent/papir som ved klik på et stil-kort)
+      var sk=STYLES[v.style]?v.style:'elegant'; var p=STYLES[sk];
+      state.style=sk;
+      state.design.accent=p.accent; state.design.paper=p.paper; state.design.ink=p.ink;
+      state.design.titleFont=p.titleFont; state.design.bodyFont=p.bodyFont; state.design.accentLine=p.accentLine;
+      // 2) variant-overrides
+      if(v.titleFont && FONTS_TITLE.indexOf(v.titleFont)>=0) state.design.titleFont=v.titleFont;
+      if(v.bodyFont && FONTS_BODY.indexOf(v.bodyFont)>=0) state.design.bodyFont=v.bodyFont;
+      if(hexOk(v.accent)) state.design.accent=v.accent;
+      if([0,10,22].indexOf(v.radius)>=0) state.design.radius=v.radius;
+      if(v.orientation==='landscape'||v.orientation==='portrait'){ state.orientation=v.orientation; if(typeof setSeg==='function') setSeg('segOrient', v.orientation); }
+      // 3) farver + pynt per side
+      applySide('front', v.front);
+      applySide('back', v.back);
+      // 4) komposition (placering af blokken)
+      if(v.layout){ setBox('front', v.layout.front); setBox('back', v.layout.back); }
+      // 5) typografi pr. linje
+      applyEmphasis('front', v.emphasis);
+      applyEmphasis('back', v.emphasis);
+      // 6) gen-render editor + kort + gem
       if(typeof renderBoxList==='function'){ renderBoxList('front'); renderBoxList('back'); }
       if(typeof syncAll==='function') syncAll();
       if(typeof renderCards==='function') renderCards();
       if(typeof scheduleSave==='function') scheduleSave();
-    }catch(e){ aiSetMsg('Kunne ikke anvende AI-svaret.','bad'); }
+    }catch(e){ aiSetMsg('Kunne ikke anvende forslaget.','bad'); }
   }
 
   initAuth();
