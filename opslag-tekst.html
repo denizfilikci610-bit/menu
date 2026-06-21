@@ -689,7 +689,7 @@
   .post.tpl-kev5.st-al-c .post-body{ align-items:flex-start; }
   .post.tpl-kev5 .post-headline{ --hl:13cqw; line-height:.98; }
   .post.tpl-kev5 .post-eyebrow{ position:absolute; top:6cqw; right:9cqw; max-width:46%; text-align:right; opacity:.55; font-size:max(2.3cqw, calc(2.4cqw * var(--fit,1) * var(--escale,1))); letter-spacing:.1em; }
-  .post.tpl-kev5 .post-brand{ position:absolute; left:13cqw; bottom:7cqw; }
+  .post.tpl-kev5 .post-brand{ position:absolute; left:13cqw; bottom:7cqw; max-width:72cqw; }   /* hold pillen klar af de lodrette labels ved meget lange firmanavne */
   .post.tpl-kev5 .post-sub{ display:none; }
 
   /* kev8 — THANK YOU 2M: stor ring, centreret overskrift, hjørne-hashtags */
@@ -739,8 +739,8 @@
   .post[class*="tpl-kev"] .post-content .post-brand{ pointer-events:auto; }
   .post-decor .kev-ed{ pointer-events:auto; cursor:text; outline:none; }
   .post-decor .kev-ed:focus{ outline:.25cqw dashed var(--pink); outline-offset:.4cqw; opacity:1; }
-  .tsc-kev .kev-flank{ max-width:25cqw; overflow-wrap:anywhere; }
-  .tsc-kev .kev-mid{ max-width:30cqw; overflow-wrap:anywhere; }
+  .tsc-kev .kev-flank{ max-width:25cqw; overflow-wrap:anywhere; display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden; }
+  .tsc-kev .kev-mid{ max-width:30cqw; overflow-wrap:anywhere; display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden; }
   .tsc-kev .kev-corner{ max-width:30cqw; overflow-wrap:anywhere; }
   .tsc-kev .kev-row3 span{ overflow-wrap:anywhere; }
 
@@ -766,7 +766,8 @@
   .post.tpl-kev6 .post-photo{ display:block; inset:auto; right:8cqw; bottom:8cqw; width:33cqw; height:24cqw; border-radius:0; border:.3cqw solid var(--pink); box-sizing:border-box; }
   .post.tpl-kev6.st-al-c .post-content{ align-items:flex-start; text-align:left; justify-content:flex-start; padding:9cqw 8cqw 20cqw; gap:2.5cqw; }
   .post.tpl-kev6.st-al-c .post-body{ align-items:flex-start; }
-  .post.tpl-kev6 .post-headline{ --hl:16cqw; max-width:90%; }
+  .post.tpl-kev6 .post-headline{ --hl:16cqw; max-width:72%; }
+  .post.tpl-kev6 .kev-mid{ max-width:18cqw; }   /* hold mid-label i hoejre margin, klar af overskriften */
   .post.tpl-kev6 .post-eyebrow{ display:none; }
   .post.tpl-kev6 .post-sub{ max-width:52%; }
   .post.tpl-kev6 .post-brand{ position:absolute; left:8cqw; bottom:9cqw; }
@@ -1634,6 +1635,7 @@
     kev8: { copy:'©2024', tag1:'#FOLLOWME', tag2:'#2MILLION' }
   };
   let tplLabels = {};   // brugerens egne aendringer pr. skabelon: { kev1:{flankL:'...'}, ... }
+  let aiLabels = { descriptors:[], tags:[] };   // AI'ens raa pulje (bruges af de afledte hashtag-labels kev5/kev9)
   // Redigerbart label-span. Vaerdi = brugerens override ?? afledt (derived) ?? default-pladsholder.
   function kevEd(id, key, cls, style, derived){
     const ov = tplLabels[id] && tplLabels[id][key];
@@ -1643,6 +1645,27 @@
     else v = (KEV_LABEL_DEFAULTS[id] && KEV_LABEL_DEFAULTS[id][key]) || '';
     return '<span class="'+(cls?cls+' ':'')+'kev-ed" contenteditable="true" data-ktpl="'+id+'" data-klab="'+key+'"'
       + (style ? (' style="'+style+'"') : '') + '>' + esc(v).replace(/\n/g,'<br>') + '</span>';
+  }
+  // AI-genererede mini-maerkater -> fordel i hver KEVARI-skabelons label-pladser, saa de passer til kundens emne.
+  // Kaldes fra generate(); tomme pladser falder tilbage til afledt tekst (tag/at) eller default-pladsholder.
+  function aiSeedLabels(pool, brandName){
+    const up = s => String(s||'').toUpperCase().replace(/\s+/g,' ').trim();
+    const ds = (pool && Array.isArray(pool.descriptors)) ? pool.descriptors.map(up).filter(Boolean).slice(0,4) : [];
+    const tg = (pool && Array.isArray(pool.tags)) ? pool.tags.map(s => { let t = up(s).replace(/\s+/g,''); if (t && t[0] !== '#') t = '#'+t; return t; }).filter(s => s.length > 1).slice(0,2) : [];
+    const T = {};
+    if (ds.length || tg.length){
+      const yr = (new Date()).getFullYear();
+      const bn1 = up(brandName).split(/\s+/)[0] || '';   // brandets foerste ord -> kort copyright der aldrig flyder ud over overskriften
+      const copy = ('©' + yr + (bn1 ? ' ' + bn1 : '')).slice(0,16);
+      const set = (id, o) => { const c = {}; Object.keys(o).forEach(k => { if (o[k]) c[k] = o[k]; }); if (Object.keys(c).length) T[id] = c; };
+      set('kev1', { flankL:ds[0], flankR:ds[1], copy:copy });
+      set('kev2', { tl:ds[0], tr:ds[1], mid1:ds[2], mid2:ds[3] });
+      set('kev3', { r1:ds[0], r2:ds[1], r3:ds[2] });
+      set('kev6', { copy:copy, mid:ds[0] });
+      set('kev8', { copy:copy, tag1:tg[0], tag2:tg[1] });
+    }
+    tplLabels = T;   // friskt AI-design -> friske labels
+    aiLabels = { descriptors:ds.slice(), tags:tg.slice() };   // gem puljen til de afledte hashtag-labels (kev5/kev9)
   }
   function buildTemplateScene(id, t){
     const C = CONTENT || {};
@@ -1695,16 +1718,17 @@
       const tag = s => '#'+(s||'').toUpperCase().replace(/[^A-Z0-9ÆØÅ]/gi,'') || '#';
       const at  = s => '@'+((s||'').toUpperCase().replace(/^WWW\./,'').replace(/\.(COM|DK|NET|IO|CO|SHOP|STORE)$/,'').replace(/[^A-Z0-9ÆØÅ]/gi,'')) || '@';
       const hl = C.headline||'', nv = C.navn||'';
+      const atg = (aiLabels && Array.isArray(aiLabels.tags)) ? aiLabels.tags : [];   // AI'ens hashtags (emne-specifikke)
       if (id === 'kev5'){
         return '<div class="tpl-scene tsc-kev">'
-          + '<span class="kev-vl left">'+esc(tag(hl))+'</span>'
-          + '<span class="kev-vl right">'+esc(tag(hl))+'</span>'
+          + '<span class="kev-vl left">'+esc(atg[0] || tag(hl))+'</span>'
+          + '<span class="kev-vl right">'+esc(atg[1] || atg[0] || tag(hl))+'</span>'
           + '</div>';
       }
       if (id === 'kev9'){
         return '<div class="tpl-scene tsc-kev">'
           + '<span class="kev-vl right">'+esc(at(nv||hl))+'</span>'
-          + '<span class="kev-vl right2">'+esc(tag(hl))+'</span>'
+          + '<span class="kev-vl right2">'+esc(atg[0] || tag(hl))+'</span>'
           + '</div>';
       }
       if (id === 'kev3'){
@@ -2826,7 +2850,7 @@
       CONTENT: { headline:CONTENT.headline, emphasis:CONTENT.emphasis, eyebrow:CONTENT.eyebrow, subline:CONTENT.subline, badge:CONTENT.badge, navn:CONTENT.navn },
       palId: palId, custom: custom, userFont: userFont,
       curLayout: curLayout, curStyleId: curStyleId, curStyleDecor: curStyleDecor, curTemplate: curTemplate,
-      tplLabels: tplLabels,
+      tplLabels: tplLabels, aiLabels: aiLabels,
       motifId: motifId, accentLevel: accentLevel,
       photos: photos, photosHi: photosHi, photoIdx: photoIdx, customPhoto: cp,
       removed: Array.from(removed),
@@ -2861,6 +2885,11 @@
           Object.keys(o).forEach(function(k){ if (typeof o[k] === 'string') clean[k] = o[k].slice(0,60); });
           tplLabels[tid] = clean;
         });
+      }
+      aiLabels = { descriptors:[], tags:[] };
+      if (d.aiLabels && typeof d.aiLabels === 'object'){
+        if (Array.isArray(d.aiLabels.descriptors)) aiLabels.descriptors = d.aiLabels.descriptors.filter(function(s){return typeof s==='string';}).map(function(s){return s.slice(0,60);}).slice(0,4);
+        if (Array.isArray(d.aiLabels.tags)) aiLabels.tags = d.aiLabels.tags.filter(function(s){return typeof s==='string';}).map(function(s){return s.slice(0,40);}).slice(0,2);
       }
       palId = (typeof d.palId === 'string') ? d.palId : 'terra';
       motifId = (typeof d.motifId === 'string') ? d.motifId : 'none';
@@ -3246,6 +3275,7 @@
       else { bn.classList.add('hide'); bn.textContent=''; }
 
       fillText({ headline:data.headline, emphasis:data.emphasis, eyebrow:data.eyebrow, subline:data.subline, badge:data.badge, navn:(data.brandName||'').trim() });
+      aiSeedLabels(data.labels, (data.brandName||'').trim());   // AI'ens mini-maerkater -> KEVARI-skabelonernes labels
       setView('results');
       renderStyleStrip();
       renderLayoutGallery();

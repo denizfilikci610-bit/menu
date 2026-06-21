@@ -204,9 +204,10 @@ export default async function handler(req, res) {
     '"brandName": virksomhedens navn PRÆCIST som det skal stå på opslaget — find det i beskeden. Tom streng "" hvis intet navn er nævnt.',
     '"posts": ' + antal + ' forskellige danske billedtekster, hver med 3-6 hashtags til sidst. Ingen pladsholdere.',
     '"design": { "style": <én af: ' + STYLES.join(', ') + '>, "layout": <én af layouts>, "palette": <én af: ' + PALETTES.join(', ') + '>, "colors": null ELLER {bg,ink,acc} i hex, "motif": <én af: ' + MOTIFS.join(', ') + '>, "photoQuery": "2-4 engelske, konkrete, visuelle søgeord der matcher briefens emne" }',
+    '"labels": dekorative mini-mærkater der bruges som små etiketter på premium-skabelonerne — { "descriptors": [PRÆCIS 4 MEGET korte VERSAL-mærkater, 1-3 ord hver, der fremhæver konkrete kvaliteter/fordele/temaer ved DETTE emne (fx café: "FRISKBRYGGET","LOKALT BAGT","ØKOLOGISK","HVER DAG"; fysioterapeut: "SKADESFRI","EKSPERT TEAM","HURTIG TID","TRYG BEHANDLING"). Skal passe til briefens branche/emne. Ingen hashtags, ingen punktummer, ingen tal du har opfundet.], "tags": [2 korte danske hashtags der passer emnet (fx "#KAFFETID","#LOKALT")] }',
     '',
     'Returnér KUN gyldig JSON i præcis dette format:',
-    '{"headline":"...","emphasis":"...","eyebrow":"","subline":"...","badge":"","brandName":"","posts":["...","..."],"design":{"style":"editorial","layout":"hero-bl","palette":"berry","colors":null,"motif":"none","photoQuery":"..."}}'
+    '{"headline":"...","emphasis":"...","eyebrow":"","subline":"...","badge":"","brandName":"","posts":["...","..."],"design":{"style":"editorial","layout":"hero-bl","palette":"berry","colors":null,"motif":"none","photoQuery":"..."},"labels":{"descriptors":["...","...","...","..."],"tags":["#...","#..."]}}'
   );
 
   const user = lines.join('\n');
@@ -215,7 +216,7 @@ export default async function handler(req, res) {
     const dsRes = await fetch('https://api.deepseek.com/chat/completions', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + key },
-      body: JSON.stringify({ model: 'deepseek-chat', messages: [ { role:'system', content: sys }, { role:'user', content: user } ], temperature: 1.0, max_tokens: 1700, response_format: { type: 'json_object' } })
+      body: JSON.stringify({ model: 'deepseek-chat', messages: [ { role:'system', content: sys }, { role:'user', content: user } ], temperature: 1.0, max_tokens: 2000, response_format: { type: 'json_object' } })
     });
 
     if (!dsRes.ok) {
@@ -301,7 +302,7 @@ export async function fetchBrandProfile(rawUrl) {
 }
 
 function extractContent(content) {
-  const out = { headline:'', emphasis:'', eyebrow:'', subline:'', badge:'', brandName:'', posts:[], design:{ style:'', layout:'', palette:'', colors:null, motif:'', photoQuery:'' }, photos:[], photosHi:[], brand:{ used:false, host:'' } };
+  const out = { headline:'', emphasis:'', eyebrow:'', subline:'', badge:'', brandName:'', posts:[], design:{ style:'', layout:'', palette:'', colors:null, motif:'', photoQuery:'' }, labels:{ descriptors:[], tags:[] }, photos:[], photosHi:[], brand:{ used:false, host:'' } };
   if (!content) return out;
   let txt = String(content).trim().replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/i, '').trim();
   let obj = null;
@@ -324,6 +325,9 @@ function extractContent(content) {
   if (d.colors && typeof d.colors === 'object' && hex6(d.colors.bg) && hex6(d.colors.ink) && hex6(d.colors.acc)) {
     out.design.colors = { bg: d.colors.bg.trim().toLowerCase(), ink: d.colors.ink.trim().toLowerCase(), acc: d.colors.acc.trim().toLowerCase() };
   }
+  const lab = obj.labels && typeof obj.labels === 'object' ? obj.labels : {};
+  if (Array.isArray(lab.descriptors)) out.labels.descriptors = lab.descriptors.map(s => String(s || '').replace(/\s+/g, ' ').trim().slice(0, 40)).filter(Boolean).slice(0, 4);
+  if (Array.isArray(lab.tags)) out.labels.tags = lab.tags.map(s => String(s || '').replace(/\s+/g, '').trim().slice(0, 24)).filter(s => s.length > 1).slice(0, 2);
   return out;
 }
 
