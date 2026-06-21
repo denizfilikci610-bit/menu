@@ -647,13 +647,14 @@
   /* ===================== KEVARI 9-post sæt ===================== */
   .post[class*="tpl-kev"]{ --hl:22cqw; }
   .post[class*="tpl-kev"] .post-frame{ display:none !important; }
-  .post[class*="tpl-kev"] .post-headline{ font-family:'Anton',sans-serif !important; font-weight:400 !important; text-transform:uppercase; line-height:.9; letter-spacing:.01em; }
+  .post[class*="tpl-kev"] .post-headline{ font-family:'Anton',sans-serif !important; font-weight:400 !important; text-transform:uppercase; line-height:.98; letter-spacing:.01em; }
   .post[class*="tpl-kev"].st-treat-underline .post-headline{ border-bottom:none !important; padding-bottom:0 !important; }
   .post[class*="tpl-kev"] .post-eyebrow{ font-family:'Space Grotesk',sans-serif; font-weight:700; letter-spacing:.16em; opacity:.9; }
   .post[class*="tpl-kev"] .post-sub{ font-family:'Space Grotesk',sans-serif; font-weight:400; opacity:.8; line-height:1.5; }
   .post[class*="tpl-kev"] .post-brand{ font-family:'Space Grotesk',sans-serif; }
   .post[class*="tpl-kev"].st-eb-line .post-eyebrow::before{ display:none; }
   .post[class*="tpl-kev"] .post-body{ flex:none; }
+  .post[class*="tpl-kev"]:not(.tpl-kev4) .post-badge{ display:none !important; }
   /* KEVARI pille-knap: redigerbar website-tekst + fast SHOP NOW-chip */
   .post.tpl-kev2 .post-brand, .post.tpl-kev3 .post-brand, .post.tpl-kev4 .post-brand, .post.tpl-kev5 .post-brand, .post.tpl-kev6 .post-brand, .post.tpl-kev7 .post-brand, .post.tpl-kev9 .post-brand{
     display:inline-flex; align-items:center; gap:2cqw; border:.35cqw solid currentColor; border-radius:99px; padding:1.1cqw 1.1cqw 1.1cqw 4cqw; letter-spacing:.08em; text-transform:uppercase; opacity:.95; font-weight:600; font-size:max(2.5cqw, calc(2.6cqw * var(--fit,1) * var(--escale,1))); }
@@ -676,9 +677,9 @@
   .tsc-kev .kev-corner.bl{ bottom:6cqw; left:6cqw; } .tsc-kev .kev-corner.br{ bottom:6cqw; right:6cqw; }
 
   /* kev9 — WE'RE OPEN TODAY: pille foroven, kæmpe Anton-overskrift, åbningstider forneden */
-  .post.tpl-kev9.st-al-c .post-content{ align-items:flex-start; text-align:left; justify-content:flex-start; padding:17cqw 13cqw 16cqw 9cqw; }
+  .post.tpl-kev9.st-al-c .post-content{ align-items:flex-start; text-align:left; justify-content:flex-start; padding:16cqw 13cqw 19cqw 9cqw; }
   .post.tpl-kev9.st-al-c .post-body{ align-items:flex-start; }
-  .post.tpl-kev9 .post-headline{ --hl:23cqw; }
+  .post.tpl-kev9 .post-headline{ --hl:21cqw; }
   .post.tpl-kev9 .post-brand{ position:absolute; top:6cqw; left:50%; transform:translateX(-50%); }
   .post.tpl-kev9 .post-sub{ position:absolute; left:9cqw; bottom:8cqw; text-transform:uppercase; letter-spacing:.14em; font-weight:600; opacity:.85; }
   .post.tpl-kev9 .post-eyebrow{ display:none; }
@@ -748,7 +749,7 @@
 
   /* kev6 — STYLE INSPIRATION: stor overskrift, foto i hjørnet, pille */
   .post.tpl-kev6 .post-photo{ display:block; inset:auto; right:8cqw; bottom:8cqw; width:37cqw; height:30cqw; border-radius:0; border:.3cqw solid var(--pink); box-sizing:border-box; }
-  .post.tpl-kev6.st-al-c .post-content{ align-items:flex-start; text-align:left; justify-content:flex-start; padding:10cqw 8cqw; gap:3cqw; }
+  .post.tpl-kev6.st-al-c .post-content{ align-items:flex-start; text-align:left; justify-content:flex-start; padding:10cqw 8cqw 20cqw; gap:3cqw; }
   .post.tpl-kev6.st-al-c .post-body{ align-items:flex-start; }
   .post.tpl-kev6 .post-headline{ --hl:20cqw; max-width:82%; }
   .post.tpl-kev6 .post-eyebrow{ display:none; }
@@ -757,7 +758,7 @@
 
   /* kev7 — OUTFIT OF THE DAY: foto foroven, label, overskrift, pille */
   .post.tpl-kev7 .post-photo{ display:block; inset:auto; left:8cqw; right:8cqw; top:8cqw; height:33cqw; border-radius:0; border:.3cqw solid var(--pink); box-sizing:border-box; }
-  .post.tpl-kev7.st-al-c .post-content{ align-items:flex-start; text-align:left; justify-content:flex-start; padding:45cqw 8cqw 14cqw; gap:2.5cqw; }
+  .post.tpl-kev7.st-al-c .post-content{ align-items:flex-start; text-align:left; justify-content:flex-start; padding:45cqw 8cqw 18cqw; gap:2.5cqw; }
   .post.tpl-kev7.st-al-c .post-body{ align-items:flex-start; }
   .post.tpl-kev7 .post-headline{ --hl:18cqw; }
   .post.tpl-kev7 .post-eyebrow{ opacity:.6; letter-spacing:.1em; max-width:70%; }
@@ -1693,7 +1694,7 @@
         return '<div class="tpl-scene tsc-kev">'
           + '<span class="kev-flank fl-l">PIECES THAT<br>TRANSITION</span>'
           + '<span class="kev-flank fl-r">CRAFTED WITH<br>LOVE</span>'
-          + '<span class="kev-corner br">©2024</span>'
+          + '<span class="kev-corner" style="top:69cqw;right:8cqw">©2024</span>'
           + '</div>';
       }
       if (id === 'kev2'){
