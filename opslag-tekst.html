@@ -556,6 +556,21 @@
   .post.tpl-red .post-headline{ font-family:'Fraunces',serif !important; font-weight:700 !important; text-transform:none; letter-spacing:-.01em; }
   .post.tpl-red .post-sub{ font-family:'Space Grotesk',sans-serif; }
   .post.tpl-red .post-photo{ border:1.4px solid var(--pacc); border-radius:3px; }
+  /* Daily Quote — pink, centreret serif */
+  .post.tpl-pastel .post-headline{ font-family:'Fraunces',serif !important; font-weight:600 !important; }
+  .post.tpl-pastel .post-eyebrow{ letter-spacing:.34em; opacity:.85; }
+  .post.tpl-pastel .post-brand{ letter-spacing:.3em; opacity:.7; }
+  /* Season Green — grøn, stor serif */
+  .post.tpl-forest .post-headline{ font-family:'Playfair Display',serif !important; font-weight:700 !important; }
+  .post.tpl-forest .post-eyebrow{ letter-spacing:.28em; opacity:.8; }
+  .post.tpl-forest .post-brand{ letter-spacing:.26em; opacity:.6; }
+  /* Bold Headline — kæmpe fed sans versal */
+  .post.tpl-bold .post-headline{ font-family:'Space Grotesk',sans-serif !important; font-weight:800 !important; text-transform:uppercase; letter-spacing:-.02em; }
+  .post.tpl-bold .post-eyebrow{ font-family:'Space Grotesk',sans-serif; letter-spacing:.26em; opacity:.7; }
+  .post.tpl-bold .post-brand{ letter-spacing:.24em; opacity:.55; }
+  /* Outline Cream — hul konturskrift (bruger outline-layout) */
+  .post.tpl-cream .post-eyebrow{ font-family:'Space Grotesk',sans-serif; letter-spacing:.3em; opacity:.8; }
+  .post.tpl-cream .post-brand{ letter-spacing:.26em; opacity:.55; }
   .tpl-card .tpl-thumb{ width:100%; aspect-ratio:1; display:flex; align-items:center; justify-content:center; font-family:'Fraunces',serif; font-weight:700; font-size:1.7rem; }
 
   /* ----- skitse-tilstand (wireframe) ----- */
@@ -1405,7 +1420,11 @@
   let curTemplate = '';
   const TEMPLATES = [
     { id:'noir', name:'Ethereal Noir', layout:'mega',  style:'editorial', font:'auto', bg:'#101010', ink:'#efe6d4', acc:'#efe6d4' },
-    { id:'red',  name:'Classic Red',   layout:'vogue', style:'editorial', font:'auto', bg:'#e0352e', ink:'#fbf2e9', acc:'#fbf2e9' }
+    { id:'red',  name:'Classic Red',   layout:'vogue', style:'editorial', font:'auto', bg:'#e0352e', ink:'#fbf2e9', acc:'#fbf2e9' },
+    { id:'pastel', name:'Daily Quote',  layout:'poster',  style:'editorial', font:'auto', bg:'#f4c6cc', ink:'#3a3d4a', acc:'#e6a55a' },
+    { id:'forest', name:'Season Green', layout:'type',    style:'editorial', font:'auto', bg:'#2d5a40', ink:'#f1ede2', acc:'#f1ede2' },
+    { id:'bold',   name:'Bold Headline',layout:'mega',    style:'editorial', font:'auto', bg:'#f1eee7', ink:'#191919', acc:'#c4a276' },
+    { id:'cream',  name:'Outline Cream',layout:'outline', style:'editorial', font:'auto', bg:'#ece6d8', ink:'#2a2a2a', acc:'#2a2a2a' }
   ];
   let CONTENT = { headline:'', emphasis:'', eyebrow:'', subline:'', badge:'', navn:'' };
   const removed = new Set();
