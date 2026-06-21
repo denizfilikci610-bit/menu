@@ -86,6 +86,7 @@ export default async function handler(req, res) {
     'Et klassisk, flot layout er fx: slogan eller firma ØVERST, stort navn i MIDTEN, og kontakt/firma NEDERST. ' +
     'Giv et tydeligt størrelse-hierarki: navnet er størst (ca. 2.2–3.0), titel/firma mellem (ca. 0.9–1.2), kontaktlinjer små (ca. 0.9–1.0). ' +
     'Hvert felt må kun optræde ÉN gang. Brug luft mellem zonerne. ' +
+    'Tekst i TOP- og BUND-zoner skal kunne stå på ÉN linje — hold den kort der (gerne ét kort felt pr. zone); længere tekst (fx navnet) lægges i MIDTER-zonen, som gerne må fylde to linjer. ' +
     'INGEN gradient — kun ÉN solid baggrundsfarve per side. Tekstfarve (ink) SKAL have høj kontrast til baggrunden. ' +
     'PYNT: Brug ALDRIG panel eller stribe. Kun ÉT af de 5 forslag må være to-farvet — det skal bruge en trekant (deco "corner"); de andre 4 har deco "none" (kun én farve). ' +
     'Trekanten sidder i HØJRE side, så på trekant-forslaget skal AL tekst være venstrestillet i venstre side og må ALDRIG overlappe trekanten. Trekant-forslaget har en anden baggrundsfarve på bagsiden. ' +

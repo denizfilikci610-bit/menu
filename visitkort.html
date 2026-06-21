@@ -3013,6 +3013,7 @@
     var used={}, boxes=[], boxId=1, itemId=1;
     (Array.isArray(sd.boxes)?sd.boxes:[]).forEach(function(bx){
       if(!bx) return; var items=[]; var hasContent=false;
+      var zpos=bx.pos||'middle-left'; var noWrap=(zpos.indexOf('top')===0 || zpos.indexOf('bottom')===0); // top/bund = én linje
       (Array.isArray(bx.lines)?bx.lines:[]).forEach(function(ln){
         if(!ln) return; var type=ln.type;
         if(typeSet.indexOf(type)<0) return;
@@ -3023,7 +3024,8 @@
         used[type]=true; hasContent=true;
         var item={ id:itemId++, type:type, value:(ln.uppercase && side==='front')?val.toUpperCase():val,
           size:(typeof ln.size==='number')?ln.size:defaultSize(side,type),
-          bold:!!ln.bold, italic:!!ln.italic, thin:!!ln.thin, accent:!!ln.accent, dim:!!ln.dim };
+          bold:!!ln.bold, italic:!!ln.italic, thin:!!ln.thin, accent:!!ln.accent, dim:!!ln.dim,
+          wrap: noWrap?false:true };
         if(typeof ln.lspace==='number' && ln.lspace>0) item.lspace=ln.lspace;
         if(side==='back') item.showIcon=true;
         items.push(item);
