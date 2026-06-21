@@ -2336,7 +2336,6 @@
       postRatio = (typeof d.postRatio === 'number' && d.postRatio > 0) ? d.postRatio : 1;
       curTextPos = d.curTextPos || null;
       curLayout = (typeof d.curLayout === 'string') ? d.curLayout : (hasPhoto() ? 'hero-bl' : 'poster');
-      _premLayout = _premFont = _premPalette = false;
       if (d.settings){ if (d.settings.platform) state.platform=d.settings.platform; if (d.settings.laengde) state.laengde=d.settings.laengde; if (d.settings.emoji) state.emoji=d.settings.emoji; }
       if (typeof d.emne === 'string' && byId('emne')) byId('emne').value = d.emne;
       buildThemes(); var ms=byId('motifSel'); if (ms) ms.value = motifId; syncColorInputs();
@@ -2355,6 +2354,8 @@
       if (typeof setSeg === 'function'){ setSeg('platform', state.platform); setSeg('laengde', state.laengde); setSeg('emoji', state.emoji); }
       if (Array.isArray(d.posts) && d.posts.length && typeof renderCaptions === 'function') renderCaptions(d.posts);
       if (typeof applyTextPos === 'function') applyTextPos();
+      // Bevar paywall: genberegn premium-flag ud fra det gendannede design (samme logik som applyBrandStyle), så betalte elementer IKKE låses op gratis efter en gendannelse.
+      _premLayout = !FREE_LAYOUTS.has(curLayout); _premFont = !FREE_FONTS.has(userFont); _premPalette = custom ? true : !FREE_PALETTES.has(palId);
       requestAnimationFrame(function(){ if (typeof relayout === 'function') relayout(); window.scrollTo({ top:0, behavior:'auto' }); });
       return true;
     } catch(e){ return false; }
