@@ -613,7 +613,7 @@
   .post.tpl-cream .post-frame{ display:none !important; }
   .post.tpl-cream.st-al-c .post-content{ align-items:flex-start; text-align:left; justify-content:flex-end; padding:7cqw; }
   .post.tpl-cream.st-al-c .post-body{ align-items:flex-start; flex:none; }
-  .post.tpl-cream .post-headline{ width:100%; line-height:.76; letter-spacing:-.03em; text-transform:lowercase; -webkit-text-stroke:.32cqw var(--pink); font-weight:700; white-space:nowrap; }
+  .post.tpl-cream .post-headline{ width:100%; line-height:.78; letter-spacing:-.03em; text-transform:lowercase; -webkit-text-stroke:.32cqw var(--pink); font-weight:700; overflow-wrap:break-word; }
   .post.tpl-cream.st-treat-underline .post-headline{ border-bottom:none !important; padding-bottom:0 !important; }
   .post.tpl-cream .post-eyebrow{ position:absolute; top:6.5cqw; left:7cqw; letter-spacing:.26em; opacity:.72; }
   .post.tpl-cream .post-sub{ position:absolute; top:11.5cqw; left:7cqw; text-transform:none; letter-spacing:.02em; opacity:.55; font-family:'Space Grotesk',sans-serif; font-size:calc(3cqw * var(--fit,1) * var(--escale,1)); }
@@ -1487,21 +1487,27 @@
   }
 
   // ===== Bespoke premium-skabelon-scener (cirkler, spøgelses-tekst, ringe, SVG-pynt bag teksten) =====
+  // Al dekorativ tekst udledes af det brugeren skriver (CONTENT) — intet er hardcoded.
   function buildTemplateScene(id, t){
+    const C = CONTENT || {};
+    const words = (C.headline||'').split(/\s+/).filter(Boolean);
     if (id === 'pastel'){
-      // "Good Things Take Time" — fersken baggrund, stor pink cirkel, svag spøgelses-serif bag
+      // fersken baggrund, stor pink cirkel, svag spøgelses-serif = ord fra overskriften
+      const g1 = words[0] || 'Good', g2 = words[1] || words[0] || 'Things';
       return '<div class="tpl-scene tsc-pastel">'
-        + '<span class="tg tg1">Good</span>'
-        + '<span class="tg tg2">Things</span>'
-        + '<span class="tg tg3">Good</span>'
+        + '<span class="tg tg1">'+esc(g1)+'</span>'
+        + '<span class="tg tg2">'+esc(g2)+'</span>'
+        + '<span class="tg tg3">'+esc(g1)+'</span>'
         + '<span class="tcirc"></span>'
         + '</div>';
     }
     if (id === 'forest'){
-      // "Season's Best" — kæmpe creme-serif spøgelsesbogstaver der bløder ned ad venstre kant
+      // kæmpe creme-serif spøgelsesbogstaver = initialer fra overskriften
+      const L1 = (words[0]||'S').charAt(0).toUpperCase();
+      const L2 = (words[1]||words[0]||'B').charAt(0).toUpperCase();
       return '<div class="tpl-scene tsc-forest">'
-        + '<span class="tg tg1">S</span>'
-        + '<span class="tg tg2">B</span>'
+        + '<span class="tg tg1">'+esc(L1)+'</span>'
+        + '<span class="tg tg2">'+esc(L2)+'</span>'
         + '</div>';
     }
     if (id === 'bold'){
@@ -1515,17 +1521,26 @@
         + '</div>';
     }
     if (id === 'cream'){
-      // Podcast "talk" — fire-takkede glimt + cirkulær stempel-tekst, papir-creme
+      // Podcast "talk" — fire-takkede glimt + cirkulær stempel-tekst = brugerens firmanavn/label gentaget
       const ink = t.ink;
+      const seed = (C.navn || C.eyebrow || C.headline || 'Your Brand').trim() || 'Your Brand';
+      const unit = seed.toUpperCase() + '  ·  ';
+      let stamp = unit; while (stamp.length < 54) stamp += unit;
       const SP='M12 0 C13 7 17 11 24 12 C17 13 13 17 12 24 C11 17 7 13 0 12 C7 11 11 7 12 0 Z';
       return '<div class="tpl-scene tsc-cream">'
         + '<div class="spk spk1"><svg viewBox="0 0 24 24"><path d="'+SP+'" fill="'+ink+'"/></svg></div>'
         + '<div class="spk spk2"><svg viewBox="0 0 24 24"><path d="'+SP+'" fill="'+ink+'"/></svg></div>'
         + '<div class="stampw"><svg viewBox="0 0 100 100"><defs><path id="creamArc" d="M50,50 m-34,0 a34,34 0 1,1 68,0 a34,34 0 1,1 -68,0"/></defs>'
-        +   '<text fill="'+ink+'" font-family="Space Grotesk,sans-serif" font-weight="600" font-size="7.6" letter-spacing="1.3"><textPath href="#creamArc" startOffset="0">CONSECTETUR · LOREM IPSUM DOLOR SIT AMET · </textPath></text></svg></div>'
+        +   '<text fill="'+ink+'" font-family="Space Grotesk,sans-serif" font-weight="600" font-size="7.6" letter-spacing="1.1"><textPath href="#creamArc" startOffset="0">'+esc(stamp)+'</textPath></text></svg></div>'
         + '</div>';
     }
     return '';
+  }
+  // Genskab skabelon-scenen så de dynamiske dekorationer følger den aktuelle tekst
+  function refreshTemplateScene(){
+    if (!curTemplate) return;
+    const T = TEMPLATES.find(x => x.id === curTemplate); if (!T) return;
+    byId('postDecor').innerHTML = buildTemplateScene(T.id, T);
   }
 
   // ---------- Tilstand ----------
@@ -1955,6 +1970,7 @@
     else if (id==='postEyebrow') CONTENT.eyebrow = byId('postEyebrow').innerText.trim();
     else if (id==='postBrand') CONTENT.navn = byId('postBrand').innerText.trim();
     else if (id==='postBadge') CONTENT.badge = byId('postBadge').querySelector('span').innerText.trim();
+    refreshTemplateScene();
     if (!manual) fitText();
     showSel();
   }
@@ -2195,6 +2211,7 @@
     const eb = byId('postEyebrow');
     if (CONTENT.eyebrow.trim() && !removed.has('postEyebrow')) eb.classList.remove('hide'); else eb.classList.add('hide');
     eb.textContent = CONTENT.eyebrow.trim();
+    refreshTemplateScene();
     fitText();
     if (selId) showSel();
   }
