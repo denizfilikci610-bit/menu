@@ -644,6 +644,117 @@
   .post.tpl-noir .post-sub{ opacity:.7; }
   .post.tpl-noir .post-brand{ position:absolute; top:5.5cqw; left:50%; transform:translateX(-50%); background:var(--pink); color:var(--pbg); border-radius:99px; padding:1.8cqw 5.2cqw; letter-spacing:.14em; opacity:1; text-transform:uppercase; font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:max(2.7cqw, calc(2.9cqw * var(--fit,1) * var(--escale,1))); white-space:nowrap; }
 
+  /* ===================== KEVARI 9-post sæt ===================== */
+  .post[class*="tpl-kev"]{ --hl:22cqw; }
+  .post[class*="tpl-kev"] .post-frame{ display:none !important; }
+  .post[class*="tpl-kev"] .post-headline{ font-family:'Anton',sans-serif !important; font-weight:400 !important; text-transform:uppercase; line-height:.9; letter-spacing:.01em; }
+  .post[class*="tpl-kev"].st-treat-underline .post-headline{ border-bottom:none !important; padding-bottom:0 !important; }
+  .post[class*="tpl-kev"] .post-eyebrow{ font-family:'Space Grotesk',sans-serif; font-weight:700; letter-spacing:.16em; opacity:.9; }
+  .post[class*="tpl-kev"] .post-sub{ font-family:'Space Grotesk',sans-serif; font-weight:400; opacity:.8; line-height:1.5; }
+  .post[class*="tpl-kev"] .post-brand{ font-family:'Space Grotesk',sans-serif; }
+  .post[class*="tpl-kev"].st-eb-line .post-eyebrow::before{ display:none; }
+  .post[class*="tpl-kev"] .post-body{ flex:none; }
+  /* KEVARI pille-knap: redigerbar website-tekst + fast SHOP NOW-chip */
+  .post.tpl-kev2 .post-brand, .post.tpl-kev3 .post-brand, .post.tpl-kev4 .post-brand, .post.tpl-kev5 .post-brand, .post.tpl-kev6 .post-brand, .post.tpl-kev7 .post-brand, .post.tpl-kev9 .post-brand{
+    display:inline-flex; align-items:center; gap:2cqw; border:.35cqw solid currentColor; border-radius:99px; padding:1.1cqw 1.1cqw 1.1cqw 4cqw; letter-spacing:.08em; text-transform:uppercase; opacity:.95; font-weight:600; font-size:max(2.5cqw, calc(2.6cqw * var(--fit,1) * var(--escale,1))); }
+  .post.tpl-kev2 .post-brand::after, .post.tpl-kev3 .post-brand::after, .post.tpl-kev4 .post-brand::after, .post.tpl-kev5 .post-brand::after, .post.tpl-kev6 .post-brand::after, .post.tpl-kev7 .post-brand::after, .post.tpl-kev9 .post-brand::after{
+    content:'SHOP NOW'; background:var(--pink); color:var(--pbg); border-radius:99px; padding:1cqw 2.8cqw; font-weight:700; letter-spacing:.06em; white-space:nowrap; }
+  /* KEVARI vertikale side-labels */
+  .tsc-kev .kev-vl{ position:absolute; top:0; bottom:0; display:flex; align-items:center; font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:2.5cqw; letter-spacing:.22em; text-transform:uppercase; color:var(--pink); opacity:.55; writing-mode:vertical-rl; }
+  .tsc-kev .kev-vl.left{ left:4cqw; transform:rotate(180deg); }
+  .tsc-kev .kev-vl.right{ right:4cqw; }
+  /* KEVARI ring + hjørne-labels (Thank You 2M) */
+  .tsc-kev .kev-ring{ position:absolute; left:50%; top:49%; width:84cqw; height:84cqw; transform:translate(-50%,-50%); border:.35cqw solid var(--pink); border-radius:50%; opacity:.45; }
+  .tsc-kev .kev-corner{ position:absolute; font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:2.5cqw; letter-spacing:.12em; text-transform:uppercase; color:var(--pink); opacity:.6; }
+  .tsc-kev .kev-corner.tl{ top:6cqw; left:6cqw; } .tsc-kev .kev-corner.tr{ top:6cqw; right:6cqw; }
+  .tsc-kev .kev-corner.bl{ bottom:6cqw; left:6cqw; } .tsc-kev .kev-corner.br{ bottom:6cqw; right:6cqw; }
+
+  /* kev9 — WE'RE OPEN TODAY: pille foroven, kæmpe Anton-overskrift, åbningstider forneden */
+  .post.tpl-kev9.st-al-c .post-content{ align-items:flex-start; text-align:left; justify-content:center; padding:18cqw 13cqw 9cqw 9cqw; }
+  .post.tpl-kev9.st-al-c .post-body{ align-items:flex-start; }
+  .post.tpl-kev9 .post-headline{ --hl:27cqw; }
+  .post.tpl-kev9 .post-brand{ position:absolute; top:6cqw; left:50%; transform:translateX(-50%); }
+  .post.tpl-kev9 .post-sub{ position:absolute; left:9cqw; bottom:8cqw; text-transform:uppercase; letter-spacing:.14em; font-weight:600; opacity:.85; }
+  .post.tpl-kev9 .post-eyebrow{ display:none; }
+
+  /* kev5 — FASHION QUOTE: stor fed citat-overskrift, vertikale labels, pille forneden */
+  .post.tpl-kev5.st-al-c .post-content{ align-items:flex-start; text-align:left; justify-content:center; padding:10cqw 13cqw 16cqw; }
+  .post.tpl-kev5.st-al-c .post-body{ align-items:flex-start; }
+  .post.tpl-kev5 .post-headline{ --hl:13cqw; line-height:.98; }
+  .post.tpl-kev5 .post-eyebrow{ position:absolute; top:6cqw; right:7cqw; max-width:50%; text-align:right; opacity:.55; font-size:max(2.3cqw, calc(2.4cqw * var(--fit,1) * var(--escale,1))); letter-spacing:.1em; }
+  .post.tpl-kev5 .post-brand{ position:absolute; left:13cqw; bottom:7cqw; }
+  .post.tpl-kev5 .post-sub{ display:none; }
+
+  /* kev8 — THANK YOU 2M: stor ring, centreret overskrift, hjørne-hashtags */
+  .post.tpl-kev8.st-al-c .post-content{ align-items:center; text-align:center; justify-content:center; padding:16cqw 14cqw; gap:3cqw; }
+  .post.tpl-kev8.st-al-c .post-body{ align-items:center; }
+  .post.tpl-kev8 .post-headline{ --hl:20cqw; }
+  .post.tpl-kev8 .post-eyebrow{ letter-spacing:.2em; opacity:.7; }
+  .post.tpl-kev8 .post-sub{ max-width:64%; text-align:center; font-size:max(2.6cqw, calc(2.8cqw * var(--fit,1) * var(--escale,1))); }
+  .post.tpl-kev8 .post-brand{ display:none; }
+
+  /* kev3 — POWER LOOK: pille øverst, descriptor-række, kæmpe overskrift, foto forneden */
+  .post.tpl-kev3 .post-photo{ display:block; inset:auto; left:19cqw; right:19cqw; bottom:7cqw; height:30cqw; border-radius:2.5cqw; }
+  .post.tpl-kev3.st-al-c .post-content{ align-items:flex-start; text-align:left; justify-content:flex-start; padding:21cqw 8cqw 42cqw; gap:3cqw; }
+  .post.tpl-kev3.st-al-c .post-body{ align-items:flex-start; }
+  .post.tpl-kev3 .post-headline{ --hl:21cqw; }
+  .post.tpl-kev3 .post-brand{ position:absolute; top:6cqw; left:7cqw; }
+  .post.tpl-kev3 .post-eyebrow{ position:absolute; top:14cqw; left:7cqw; right:7cqw; text-align:left; opacity:.6; font-weight:600; letter-spacing:.1em; font-size:max(2.1cqw, calc(2.2cqw * var(--fit,1) * var(--escale,1))); }
+  .post.tpl-kev3 .post-sub{ max-width:60%; }
+
+  /* kev4 — COMING SOON: boxed titel, foto i midten, STAY TUNED-oval, pille, brødtekst */
+  .post.tpl-kev4 .post-photo{ display:block; inset:auto; left:14cqw; right:14cqw; top:26cqw; height:30cqw; border-radius:2cqw; }
+  .post.tpl-kev4.st-al-c .post-content{ align-items:flex-start; text-align:left; justify-content:flex-start; padding:8cqw; }
+  .post.tpl-kev4 .post-headline{ --hl:13cqw; display:inline-block; align-self:flex-start; background:#15150f; color:var(--pink); padding:1.4cqw 3cqw; }
+  .post.tpl-kev4 .post-body{ flex:none; }
+  .post.tpl-kev4 .post-eyebrow{ display:none; }
+  .post.tpl-kev4 .post-sub{ position:absolute; left:8cqw; right:8cqw; bottom:7cqw; max-width:88%; }
+  .post.tpl-kev4 .post-brand{ position:absolute; left:8cqw; top:59cqw; bottom:auto; }
+  .post.tpl-kev4 .post-badge{ width:auto; height:auto; min-width:0; border-radius:99px; background:var(--pink); color:var(--pbg); transform:rotate(-7deg); top:21cqw; right:9cqw; left:auto; padding:1.6cqw 3.6cqw; box-shadow:0 4px 12px rgba(0,0,0,.28); }
+  .post.tpl-kev4 .post-badge::after{ display:none; }
+  .post.tpl-kev4 .post-badge span{ font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:2.7cqw; letter-spacing:.06em; padding:0; }
+
+  /* KEVARI flanke- & midt-labels */
+  .tsc-kev .kev-flank{ position:absolute; top:42cqw; font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:2.7cqw; letter-spacing:.05em; text-transform:uppercase; color:var(--pink); opacity:.72; line-height:1.3; }
+  .tsc-kev .kev-flank.fl-l{ left:7cqw; text-align:left; } .tsc-kev .kev-flank.fl-r{ right:7cqw; text-align:right; }
+  .tsc-kev .kev-mid{ position:absolute; right:6cqw; top:46cqw; font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:2.6cqw; letter-spacing:.07em; text-transform:uppercase; color:var(--pink); opacity:.7; line-height:1.3; text-align:right; }
+
+  /* kev1 — BEST OFF COLLECT: creme, centreret titel, flanke-labels, foto i midten */
+  .post.tpl-kev1.st-al-c .post-content{ align-items:center; text-align:center; justify-content:flex-start; padding:8cqw 8cqw; gap:2.5cqw; }
+  .post.tpl-kev1.st-al-c .post-body{ align-items:center; }
+  .post.tpl-kev1 .post-headline{ --hl:14cqw; }
+  .post.tpl-kev1 .post-eyebrow{ letter-spacing:.22em; opacity:.85; }
+  .post.tpl-kev1 .post-photo{ display:block; inset:auto; left:31cqw; right:31cqw; top:43cqw; height:33cqw; border-radius:1cqw; }
+  .post.tpl-kev1 .post-sub{ position:absolute; left:9cqw; right:9cqw; bottom:7cqw; text-align:center; max-width:none; }
+  .post.tpl-kev1 .post-brand{ display:none; }
+
+  /* kev2 — EASY FASHION LOOK: foto foroven, hjørne-labels, overskrift forneden, pille */
+  .post.tpl-kev2 .post-photo{ display:block; inset:auto; left:28cqw; right:16cqw; top:10cqw; height:33cqw; border-radius:1.5cqw; }
+  .post.tpl-kev2.st-al-c .post-content{ align-items:flex-start; text-align:left; justify-content:flex-start; padding:46cqw 8cqw 14cqw; gap:2.5cqw; }
+  .post.tpl-kev2.st-al-c .post-body{ align-items:flex-start; }
+  .post.tpl-kev2 .post-headline{ --hl:17cqw; }
+  .post.tpl-kev2 .post-eyebrow{ display:none; }
+  .post.tpl-kev2 .post-sub{ max-width:64%; }
+  .post.tpl-kev2 .post-brand{ position:absolute; left:8cqw; bottom:7cqw; }
+
+  /* kev6 — STYLE INSPIRATION: stor overskrift, foto i hjørnet, pille */
+  .post.tpl-kev6 .post-photo{ display:block; inset:auto; right:8cqw; bottom:8cqw; width:37cqw; height:30cqw; border-radius:1.5cqw; }
+  .post.tpl-kev6.st-al-c .post-content{ align-items:flex-start; text-align:left; justify-content:flex-start; padding:10cqw 8cqw; gap:3cqw; }
+  .post.tpl-kev6.st-al-c .post-body{ align-items:flex-start; }
+  .post.tpl-kev6 .post-headline{ --hl:20cqw; max-width:82%; }
+  .post.tpl-kev6 .post-eyebrow{ display:none; }
+  .post.tpl-kev6 .post-sub{ max-width:52%; }
+  .post.tpl-kev6 .post-brand{ position:absolute; left:8cqw; bottom:9cqw; }
+
+  /* kev7 — OUTFIT OF THE DAY: foto foroven, label, overskrift, pille */
+  .post.tpl-kev7 .post-photo{ display:block; inset:auto; left:8cqw; right:8cqw; top:8cqw; height:33cqw; border-radius:1.5cqw; }
+  .post.tpl-kev7.st-al-c .post-content{ align-items:flex-start; text-align:left; justify-content:flex-start; padding:45cqw 8cqw 14cqw; gap:2.5cqw; }
+  .post.tpl-kev7.st-al-c .post-body{ align-items:flex-start; }
+  .post.tpl-kev7 .post-headline{ --hl:18cqw; }
+  .post.tpl-kev7 .post-eyebrow{ opacity:.6; letter-spacing:.1em; max-width:70%; }
+  .post.tpl-kev7 .post-sub{ max-width:66%; }
+  .post.tpl-kev7 .post-brand{ position:absolute; left:8cqw; bottom:7cqw; }
+
   .tpl-card .tpl-thumb{ width:100%; aspect-ratio:1; display:flex; align-items:center; justify-content:center; font-family:'Fraunces',serif; font-weight:700; font-size:1.7rem; }
 
   /* ----- skitse-tilstand (wireframe) ----- */
@@ -1535,6 +1646,56 @@
         +   '<text fill="'+ink+'" font-family="Space Grotesk,sans-serif" font-weight="600" font-size="7.6" letter-spacing="1.1"><textPath href="#creamArc" startOffset="0">'+esc(stamp)+'</textPath></text></svg></div>'
         + '</div>';
     }
+    // ===== KEVARI — dekorationer (vertikale labels, ring, hjørne-labels) afledt af teksten =====
+    if (id && id.indexOf('kev')===0){
+      const tag = s => '#'+(s||'').toUpperCase().replace(/[^A-Z0-9ÆØÅ]/gi,'') || '#';
+      const at  = s => '@'+(s||'').toUpperCase().replace(/[^A-Z0-9ÆØÅ]/gi,'') || '@';
+      const hl = C.headline||'', nv = C.navn||'';
+      if (id === 'kev5'){
+        return '<div class="tpl-scene tsc-kev">'
+          + '<span class="kev-vl left">'+esc(tag(hl))+'</span>'
+          + '<span class="kev-vl right">'+esc(tag(hl))+'</span>'
+          + '</div>';
+      }
+      if (id === 'kev9'){
+        return '<div class="tpl-scene tsc-kev">'
+          + '<span class="kev-vl right">'+esc(tag(hl))+'</span>'
+          + '</div>';
+      }
+      if (id === 'kev8'){
+        return '<div class="tpl-scene tsc-kev">'
+          + '<span class="kev-ring"></span>'
+          + '<span class="kev-corner tl">©2024</span>'
+          + '<span class="kev-corner tr">#FOLLOWME</span>'
+          + '<span class="kev-corner bl">'+esc(tag(nv||hl))+'</span>'
+          + '<span class="kev-corner br">#2MILLION</span>'
+          + '</div>';
+      }
+      if (id === 'kev1'){
+        return '<div class="tpl-scene tsc-kev">'
+          + '<span class="kev-flank fl-l">PIECES THAT<br>TRANSITION</span>'
+          + '<span class="kev-flank fl-r">CRAFTED WITH<br>LOVE</span>'
+          + '<span class="kev-corner br">©2024</span>'
+          + '</div>';
+      }
+      if (id === 'kev2'){
+        return '<div class="tpl-scene tsc-kev">'
+          + '<span class="kev-corner tl">START WITH<br>STAPLES</span>'
+          + '<span class="kev-corner tr" style="text-align:right">LAYER<br>SMARTLY</span>'
+          + '</div>';
+      }
+      if (id === 'kev6'){
+        return '<div class="tpl-scene tsc-kev">'
+          + '<span class="kev-corner tr">©2025</span>'
+          + '<span class="kev-mid mr">ACCESSORIZE<br>BOLDLY</span>'
+          + '</div>';
+      }
+      if (id === 'kev7'){
+        return '<div class="tpl-scene tsc-kev">'
+          + '<span class="kev-corner tr">'+esc(tag(hl))+'</span>'
+          + '</div>';
+      }
+    }
     return '';
   }
   // Genskab skabelon-scenen så de dynamiske dekorationer følger den aktuelle tekst
@@ -1554,7 +1715,17 @@
     { id:'pastel', name:'Daily Quote',  layout:'poster',  style:'editorial', font:'auto', bg:'#e8a95d', ink:'#33354a', acc:'#f3c8ce' },
     { id:'forest', name:'Season Green', layout:'type',    style:'editorial', font:'auto', bg:'#2d5a40', ink:'#f1ede2', acc:'#f1ede2' },
     { id:'bold',   name:'Bold Headline',layout:'mega',    style:'editorial', font:'auto', bg:'#f1eee7', ink:'#191919', acc:'#c4a276' },
-    { id:'cream',  name:'Outline Cream',layout:'outline', style:'editorial', font:'auto', bg:'#ece6d8', ink:'#2a2a2a', acc:'#2a2a2a' }
+    { id:'cream',  name:'Outline Cream',layout:'outline', style:'editorial', font:'auto', bg:'#ece6d8', ink:'#2a2a2a', acc:'#2a2a2a' },
+    // ===== KEVARI — 9-post fashion-sæt (Anton-overskrifter, grøn/sort/creme) =====
+    { id:'kev1', name:'Best Off',     layout:'mega', style:'editorial', font:'anton', bg:'#f2ede1', ink:'#191713', acc:'#191713' },
+    { id:'kev2', name:'Easy Fashion', layout:'mega', style:'editorial', font:'anton', bg:'#1d2019', ink:'#f2ede1', acc:'#f2ede1' },
+    { id:'kev3', name:'Power Look',   layout:'mega', style:'editorial', font:'anton', bg:'#151513', ink:'#f2ede1', acc:'#f2ede1' },
+    { id:'kev4', name:'Coming Soon',  layout:'mega', style:'editorial', font:'anton', bg:'#2c4733', ink:'#f2ede1', acc:'#f2ede1' },
+    { id:'kev5', name:'Fashion Quote',layout:'mega', style:'editorial', font:'anton', bg:'#2c4733', ink:'#f2ede1', acc:'#f2ede1' },
+    { id:'kev6', name:'Style Inspo',  layout:'mega', style:'editorial', font:'anton', bg:'#151513', ink:'#f2ede1', acc:'#f2ede1' },
+    { id:'kev7', name:'Outfit of Day',layout:'mega', style:'editorial', font:'anton', bg:'#1d2019', ink:'#f2ede1', acc:'#f2ede1' },
+    { id:'kev8', name:'Thank You 2M', layout:'mega', style:'editorial', font:'anton', bg:'#20271f', ink:'#f2ede1', acc:'#f2ede1' },
+    { id:'kev9', name:"We're Open",   layout:'mega', style:'editorial', font:'anton', bg:'#151513', ink:'#f2ede1', acc:'#f2ede1' }
   ];
   let CONTENT = { headline:'', emphasis:'', eyebrow:'', subline:'', badge:'', navn:'' };
   const removed = new Set();
