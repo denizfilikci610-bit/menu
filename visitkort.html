@@ -365,6 +365,71 @@
     }
   } catch (e) {}
 </script>
+<!-- Supabase (login + Premium) -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+  /* ===== Konto-menu (genbrugt fra forsiden) ===== */
+  .tb-right{ display:flex; align-items:center; gap:10px; }
+  .acct{ position:relative; flex:none; }
+  .acct-btn{ display:inline-flex; align-items:center; gap:7px; padding:8px 12px; border:1px solid var(--line); border-radius:10px; background:var(--field); color:var(--ink); font-family:inherit; font-size:.9rem; font-weight:600; cursor:pointer; transition:.15s; }
+  .acct-btn:hover{ border-color:var(--accent); }
+  .acct-ico{ width:17px; height:17px; flex:none; }
+  .acct-chev{ width:15px; height:15px; opacity:.6; transition:transform .15s; }
+  .acct.open .acct-chev{ transform:rotate(180deg); }
+  .acct-menu{ position:absolute; top:calc(100% + 8px); right:0; min-width:248px; background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:13px; box-shadow:0 24px 60px -20px rgba(40,28,16,.55); z-index:500; }
+  .acct-email{ font-size:.84rem; color:var(--muted); word-break:break-all; margin:0 2px 9px; }
+  .acct-badge{ display:inline-block; font-size:.76rem; font-weight:700; letter-spacing:.02em; padding:4px 10px; border-radius:999px; background:#fbeee3; color:var(--accent-d); border:1px solid var(--line); margin:0 0 11px; }
+  .acct-item{ display:block; width:100%; text-align:left; font-family:inherit; font-size:.9rem; font-weight:600; color:var(--ink); background:var(--field); border:1px solid var(--line); border-radius:10px; padding:10px 12px; margin-top:8px; cursor:pointer; transition:.15s; }
+  .acct-item:hover{ border-color:var(--accent); }
+  .acct-primary{ background:var(--accent); border-color:var(--accent); color:#fff; }
+  .acct-primary:hover{ filter:brightness(1.06); }
+  .acct-muted{ background:transparent; border-color:transparent; color:var(--muted); font-weight:500; }
+  .acct-muted:hover{ border-color:var(--line); }
+  .acct-hint{ font-size:.82rem; color:var(--muted); line-height:1.45; margin:9px 2px 0; }
+  /* ===== Login-modal (OTP) ===== */
+  .login-overlay{ position:fixed; inset:0; z-index:2000; display:flex; align-items:center; justify-content:center; padding:20px; background:rgba(30,22,14,.5); -webkit-backdrop-filter:blur(3px); backdrop-filter:blur(3px); }
+  .login-overlay[hidden]{ display:none; }
+  .login-card{ position:relative; width:100%; max-width:400px; background:var(--panel); border:1px solid var(--line); border-radius:18px; padding:30px 26px 26px; box-shadow:0 24px 60px -20px rgba(40,28,16,.55); }
+  .login-close{ position:absolute; top:11px; right:13px; width:32px; height:32px; border:none; background:none; color:var(--muted); font-size:1.5rem; line-height:1; cursor:pointer; border-radius:8px; }
+  .login-close:hover{ background:var(--field); color:var(--ink); }
+  .login-title{ margin:0 0 6px; font-size:1.3rem; color:var(--ink); }
+  .login-sub{ margin:0 0 18px; font-size:.94rem; color:var(--muted); line-height:1.45; }
+  .login-input{ width:100%; box-sizing:border-box; font-family:inherit; font-size:16px; padding:13px 14px; border:1px solid var(--line); border-radius:11px; background:var(--field); color:var(--ink); outline:none; margin-bottom:10px; }
+  .login-input:focus{ border-color:var(--accent); }
+  .login-btn{ width:100%; font-family:inherit; font-size:1rem; font-weight:600; color:#fff; background:var(--accent); border:none; border-radius:11px; padding:13px; cursor:pointer; transition:.15s; }
+  .login-btn:hover{ background:var(--accent-d); } .login-btn:disabled{ opacity:.6; cursor:default; }
+  .login-msg{ margin-top:12px; font-size:.9rem; line-height:1.45; min-height:1.1em; }
+  .login-msg.ok{ color:#2e7d32; } .login-msg.bad{ color:#c0392b; }
+  .login-back{ margin-top:13px; text-align:center; font-size:.85rem; }
+  .login-back a{ color:var(--accent); cursor:pointer; text-decoration:underline; }
+  /* ===== AI-felt med gradient-glød (samme farver som "AI-opslag" på forsiden) ===== */
+  .ai-vk-input{
+    width:100%; box-sizing:border-box; font-family:inherit; font-size:.95rem; color:var(--ink);
+    border:2px solid transparent; border-radius:12px; padding:11px 12px; outline:none; resize:vertical; min-height:64px;
+    background-image:linear-gradient(var(--field),var(--field)), linear-gradient(120deg,#ff8a3d 0%,#ff5fa2 40%,#9b6bff 75%,#ff5fa2 100%);
+    background-origin:border-box; background-clip:padding-box, border-box;
+    animation:aiGlow 2.6s ease-in-out infinite;
+  }
+  .ai-vk-input:focus{ box-shadow:0 0 0 3px rgba(255,95,162,.18); }
+  .ai-vk-input:disabled{ opacity:.6; }
+  .ai-vk-btn{
+    margin-top:9px; width:100%; font-family:inherit; font-size:.95rem; font-weight:700; color:#fff !important; border:none; border-radius:11px; padding:11px 14px; cursor:pointer;
+    background:linear-gradient(120deg,#ff8a3d 0%, #ff5fa2 40%, #9b6bff 75%, #ff5fa2 100%); background-size:220% 100%;
+    text-shadow:0 1px 2px rgba(120,40,60,.3);
+    animation:aiGlow 2.6s ease-in-out infinite, aiShift 7s ease-in-out infinite;
+  }
+  .ai-vk-btn:hover{ transform:translateY(-2px) scale(1.02); }
+  .ai-vk-btn:disabled{ opacity:.7; cursor:default; transform:none; }
+  .ai-vk-msg{ margin-top:8px; font-size:.85rem; line-height:1.4; min-height:1em; }
+  .ai-vk-msg.bad{ color:#c0392b; } .ai-vk-msg.ok{ color:#2e7d32; }
+  .ai-vk-hint{ font-size:.8rem; color:var(--muted); margin-top:7px; line-height:1.4; }
+  @keyframes aiGlow{
+    0%,100%{ box-shadow:0 0 0 0 rgba(255,95,162,.30), 0 6px 18px rgba(0,0,0,.10); }
+    50%{ box-shadow:0 0 22px 5px rgba(255,95,162,.60), 0 6px 18px rgba(0,0,0,.10); }
+  }
+  @keyframes aiShift{ 0%{ background-position:0% 50%; } 50%{ background-position:100% 50%; } 100%{ background-position:0% 50%; } }
+  @media (prefers-reduced-motion:reduce){ .ai-vk-input, .ai-vk-btn{ animation:none; } }
+</style>
 </head>
 <body data-mside="front">
 
@@ -374,12 +439,22 @@
       <h1 data-i18n="brandH1">Visitkort</h1><span class="dot"></span>
       <p data-i18n="tagline">Skriv dine oplysninger, vælg en stil — og hent et printklart visitkort.</p>
     </div>
-    <select id="langSel" class="lang-sel" aria-label="Language / Sprog">
-      <option value="da">Dansk</option>
-      <option value="en">English</option>
-      <option value="tr">Türkçe</option>
-      <option value="uk">Українська</option>
-    </select>
+    <div class="tb-right">
+      <select id="langSel" class="lang-sel" aria-label="Language / Sprog">
+        <option value="da">Dansk</option>
+        <option value="en">English</option>
+        <option value="tr">Türkçe</option>
+        <option value="uk">Українська</option>
+      </select>
+      <div class="acct" id="acct">
+        <button class="acct-btn" id="acctBtn" type="button" aria-haspopup="true" aria-expanded="false">
+          <svg class="acct-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg>
+          <span id="acctBtnLabel">Konto</span>
+          <svg class="acct-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="acct-menu" id="acctMenu" hidden></div>
+      </div>
+    </div>
   </div>
 
   <div class="app">
@@ -415,6 +490,14 @@
           <button class="seg-btn" data-val="landscape" data-i18n="orientH" type="button">Vandret</button>
           <button class="seg-btn" data-val="portrait" data-i18n="orientV" type="button">Lodret</button>
         </div>
+      </div>
+
+      <div class="block" id="aiBlock">
+        <span class="label">✨ Udfyld med AI</span>
+        <textarea id="aiVkInput" class="ai-vk-input" rows="3" placeholder="Skriv dine oplysninger: navn, titel, firma, telefon, mail, hjemmeside, evt. sociale medier…"></textarea>
+        <button id="aiVkBtn" class="ai-vk-btn" type="button" data-mode="login">Log ind for at bruge AI</button>
+        <div id="aiVkMsg" class="ai-vk-msg"></div>
+        <p id="aiVkHint" class="ai-vk-hint">AI-udfyldning er en Premium-funktion.</p>
       </div>
 
       <div class="block">
@@ -2660,6 +2743,246 @@
     if (document.fonts && document.fonts.ready) document.fonts.ready.then(applyCardScale);
   }
 </script>
+
+  <div class="login-overlay" id="loginOverlay" hidden>
+    <div class="login-card">
+      <button class="login-close" id="loginClose" type="button" aria-label="Luk">&times;</button>
+      <h3 class="login-title">Log ind</h3>
+      <div id="loginStep1">
+        <p class="login-sub">Skriv din e-mail, så sender vi dig en 6-cifret kode. Du skal ikke vælge eller huske et password.</p>
+        <input class="login-input" id="loginEmail" type="email" inputmode="email" autocomplete="email" placeholder="din@email.dk">
+        <button class="login-btn" id="loginSend" type="button">Send kode</button>
+      </div>
+      <div id="loginStep2" hidden>
+        <p class="login-sub">Vi har sendt en 6-cifret kode til <b id="loginEmailShown"></b>. Skriv den her, så er du logget ind.</p>
+        <input class="login-input" id="loginCode" type="text" inputmode="numeric" autocomplete="one-time-code" maxlength="6" placeholder="123456">
+        <button class="login-btn" id="loginVerify" type="button">Bekræft</button>
+        <div class="login-back"><a id="loginBack">Brug en anden e-mail</a></div>
+      </div>
+      <div class="login-msg" id="loginMsg"></div>
+    </div>
+  </div>
+
+<!-- Login + Premium + AI-udfyldning (Supabase-OTP som på forsiden; AI'en kun for Premium) -->
+<script>
+(function(){
+  var byId = function(id){ return document.getElementById(id); };
+  var escA = function(s){ return String(s==null?'':s).replace(/[&<>"']/g, function(c){ return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]; }); };
+  var RETURN_PATH = location.pathname || '/visitkort.html';
+  var SUPABASE_URL = 'https://pspxujrhhnzbygqscqpw.supabase.co';
+  var SUPABASE_ANON_KEY = 'sb_publishable_HcF--QPLkIzR8BRL71IV5w_dqpseX6Q';
+  var _sb=null, _authUser=null, _isPaid=false, _loginEmail='';
+  function authReady(){ return !!(SUPABASE_URL && SUPABASE_ANON_KEY && window.supabase && window.supabase.createClient); }
+  function authMsg(t){ try{ if(t) alert(t); }catch(e){} }
+
+  async function initAuth(){
+    if(!authReady()){ renderAuthStatus(); renderAiBlock(); return; }
+    try{
+      _sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+      var s = await _sb.auth.getSession();
+      _authUser = (s && s.data && s.data.session) ? s.data.session.user : null;
+      _sb.auth.onAuthStateChange(function(_ev, session){ _authUser = session ? session.user : null; renderAuthStatus(); loadSubscription(); });
+      loadSubscription();
+    }catch(e){ _sb=null; }
+    renderAuthStatus(); renderAiBlock();
+  }
+
+  // ---- Konto-menu ----
+  function renderAuthStatus(){
+    var menu=byId('acctMenu'); if(!menu) return;
+    var acct=byId('acct'), label=byId('acctBtnLabel');
+    if(!authReady()){ if(acct) acct.style.display='none'; return; }
+    if(acct) acct.style.display='';
+    var html;
+    if(!_authUser){
+      if(label) label.textContent='Log ind';
+      html='<button class="acct-item acct-primary" id="acctLogin" type="button">Log ind</button>'
+         + '<p class="acct-hint">Log ind på din Lusidio-konto. AI-udfyldning kræver Premium.</p>';
+    } else if(_isPaid){
+      if(label) label.textContent='Konto';
+      html='<div class="acct-email">'+escA(_authUser.email)+'</div>'
+         + '<div class="acct-badge">Premium aktiv</div>'
+         + '<button class="acct-item" id="acctManage" type="button">Administrer abonnement</button>'
+         + '<button class="acct-item acct-muted" id="acctLogout" type="button">Log ud</button>';
+    } else {
+      if(label) label.textContent='Konto';
+      html='<div class="acct-email">'+escA(_authUser.email)+'</div>'
+         + '<button class="acct-item acct-primary" id="acctUpgrade" type="button">Bliv Premium</button>'
+         + '<button class="acct-item acct-muted" id="acctLogout" type="button">Log ud</button>';
+    }
+    menu.innerHTML=html;
+    var bind=function(id,fn){ var e=byId(id); if(e) e.onclick=fn; };
+    bind('acctLogin', function(){ closeAcct(); openLoginModal(); });
+    bind('acctUpgrade', function(){ closeAcct(); startCheckout(); });
+    bind('acctManage', function(){ closeAcct(); openPortal(); });
+    bind('acctLogout', async function(){ closeAcct(); try{ await _sb.auth.signOut(); }catch(e){} });
+  }
+  function toggleAcct(){ var a=byId('acct'),m=byId('acctMenu'),b=byId('acctBtn'); if(!a||!m) return; var o=m.hidden; m.hidden=!o; a.classList.toggle('open',o); if(b) b.setAttribute('aria-expanded',o?'true':'false'); }
+  function closeAcct(){ var a=byId('acct'),m=byId('acctMenu'),b=byId('acctBtn'); if(m) m.hidden=true; if(a) a.classList.remove('open'); if(b) b.setAttribute('aria-expanded','false'); }
+  (function(){ var b=byId('acctBtn'); if(b) b.addEventListener('click',function(e){ e.stopPropagation(); toggleAcct(); }); document.addEventListener('click',function(e){ var a=byId('acct'); if(a&&!a.contains(e.target)) closeAcct(); }); })();
+
+  // ---- Login-modal (OTP) ----
+  function loginShowStep(n){ var s1=byId('loginStep1'),s2=byId('loginStep2'); if(s1) s1.hidden=(n!==1); if(s2) s2.hidden=(n!==2); }
+  function openLoginModal(){ var ov=byId('loginOverlay'); if(!ov) return; var m=byId('loginMsg'); if(m){ m.textContent=''; m.className='login-msg'; } loginShowStep(1); var i=byId('loginEmail'); if(i) i.value=''; var c=byId('loginCode'); if(c) c.value=''; ov.hidden=false; if(i) setTimeout(function(){ i.focus(); },50); }
+  function closeLoginModal(){ var ov=byId('loginOverlay'); if(ov) ov.hidden=true; }
+  async function sendCode(){
+    var i=byId('loginEmail'),msg=byId('loginMsg'),b=byId('loginSend');
+    var email=(i.value||'').trim();
+    if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)){ msg.className='login-msg bad'; msg.textContent='Skriv en gyldig e-mail.'; return; }
+    if(!_sb){ msg.className='login-msg bad'; msg.textContent='Login er ikke sat op endnu.'; return; }
+    b.disabled=true; var o=b.textContent; b.textContent='Sender…';
+    try{ var rr=await _sb.auth.signInWithOtp({ email:email, options:{ shouldCreateUser:true } });
+      if(rr.error){ msg.className='login-msg bad'; msg.textContent='Kunne ikke sende kode: '+rr.error.message; }
+      else{ _loginEmail=email; var sh=byId('loginEmailShown'); if(sh) sh.textContent=email; msg.className='login-msg'; msg.textContent=''; loginShowStep(2); var c=byId('loginCode'); if(c){ c.value=''; setTimeout(function(){ c.focus(); },50); } }
+    }catch(e){ msg.className='login-msg bad'; msg.textContent='Noget gik galt. Prøv igen.'; }
+    b.disabled=false; b.textContent=o;
+  }
+  async function verifyCode(){
+    var i=byId('loginCode'),msg=byId('loginMsg'),b=byId('loginVerify');
+    var token=(i.value||'').replace(/\s/g,'').trim();
+    if(!/^\d{6}$/.test(token)){ msg.className='login-msg bad'; msg.textContent='Skriv den 6-cifrede kode fra mailen.'; return; }
+    if(!_sb){ msg.className='login-msg bad'; msg.textContent='Login er ikke sat op endnu.'; return; }
+    b.disabled=true; var o=b.textContent; b.textContent='Tjekker…';
+    try{ var rr=await _sb.auth.verifyOtp({ email:_loginEmail, token:token, type:'email' });
+      if(rr.error){ msg.className='login-msg bad'; msg.textContent='Forkert eller udløbet kode. Prøv igen.'; }
+      else{ _authUser=(rr.data&&rr.data.user)?rr.data.user:_authUser; renderAuthStatus(); closeLoginModal(); await loadSubscription(); }
+    }catch(e){ msg.className='login-msg bad'; msg.textContent='Noget gik galt. Prøv igen.'; }
+    b.disabled=false; b.textContent=o;
+  }
+  (function(){
+    var s=byId('loginSend'); if(s) s.addEventListener('click',sendCode);
+    var v=byId('loginVerify'); if(v) v.addEventListener('click',verifyCode);
+    var bk=byId('loginBack'); if(bk) bk.addEventListener('click',function(){ var m=byId('loginMsg'); if(m){ m.textContent=''; m.className='login-msg'; } loginShowStep(1); var e=byId('loginEmail'); if(e) setTimeout(function(){ e.focus(); },50); });
+    var cl=byId('loginClose'); if(cl) cl.addEventListener('click',closeLoginModal);
+    var ov=byId('loginOverlay'); if(ov) ov.addEventListener('click',function(e){ if(e.target===ov) closeLoginModal(); });
+    var ie=byId('loginEmail'); if(ie) ie.addEventListener('keydown',function(e){ if(e.key==='Enter') sendCode(); });
+    var ic=byId('loginCode'); if(ic) ic.addEventListener('keydown',function(e){ if(e.key==='Enter') verifyCode(); });
+  })();
+
+  // ---- Abonnement + betaling ----
+  async function loadSubscription(){
+    _isPaid=false;
+    try{ if(_sb&&_authUser){ var rr=await _sb.from('subscriptions').select('status,current_period_end').eq('user_id',_authUser.id).maybeSingle(); var data=rr.data; if(data&&data.status==='active'){ var end=data.current_period_end?new Date(data.current_period_end).getTime():null; _isPaid=(!end||end>Date.now()); } } }catch(e){ _isPaid=false; }
+    renderAuthStatus(); renderAiBlock();
+  }
+  async function startCheckout(){
+    if(!_authUser){ openLoginModal(); return; }
+    try{
+      var r=await fetch('/api/create-checkout-session',{ method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({ product:'premium', returnPath:RETURN_PATH, userId:_authUser.id, email:_authUser.email }) });
+      var d=await r.json().catch(function(){ return {}; }); if(d&&d.url){ window.location.href=d.url; return; }
+      authMsg('Kunne ikke starte betaling. Prøv igen.');
+    }catch(e){ authMsg('Kunne ikke starte betaling. Prøv igen.'); }
+  }
+  async function openPortal(){
+    if(!_sb||!_authUser) return;
+    try{
+      var h={'Content-Type':'application/json'};
+      var s=await _sb.auth.getSession(); var tok=s&&s.data&&s.data.session&&s.data.session.access_token; if(tok) h['Authorization']='Bearer '+tok;
+      var r=await fetch('/api/billing-portal',{ method:'POST', headers:h, body:JSON.stringify({ returnPath:RETURN_PATH }) });
+      var d=await r.json().catch(function(){ return {}; }); if(d&&d.url){ window.location.href=d.url; return; }
+      authMsg('Kunne ikke åbne abonnementet. Prøv igen.');
+    }catch(e){ authMsg('Kunne ikke åbne abonnementet. Prøv igen.'); }
+  }
+
+  // ---- AI-blokken (Premium-låst) ----
+  function aiSetMsg(txt,kind){ var m=byId('aiVkMsg'); if(!m) return; m.textContent=txt||''; m.className='ai-vk-msg'+(kind?(' '+kind):''); }
+  function renderAiBlock(){
+    var input=byId('aiVkInput'), btn=byId('aiVkBtn'), hint=byId('aiVkHint'); if(!btn) return;
+    if(!_authUser){
+      if(input) input.disabled=true;
+      btn.textContent='Log ind for at bruge AI'; btn.dataset.mode='login';
+      if(hint) hint.textContent='AI-udfyldning er en Premium-funktion. Log ind for at komme i gang.';
+    } else if(!_isPaid){
+      if(input) input.disabled=true;
+      btn.textContent='✨ Bliv Premium for at bruge AI'; btn.dataset.mode='upgrade';
+      if(hint) hint.textContent='AI-udfyldning er kun for Premium-medlemmer.';
+    } else {
+      if(input) input.disabled=false;
+      btn.textContent='✨ Udfyld med AI'; btn.dataset.mode='generate';
+      if(hint) hint.textContent='Skriv dine oplysninger i fri tekst — AI udfylder kortet og foreslår stil.';
+    }
+  }
+  (function(){
+    var btn=byId('aiVkBtn'); if(btn) btn.addEventListener('click',function(){
+      var mode=this.dataset.mode;
+      if(mode==='login'){ openLoginModal(); return; }
+      if(mode==='upgrade'){ startCheckout(); return; }
+      generateAi();
+    });
+    var input=byId('aiVkInput'); if(input) input.addEventListener('keydown',function(e){ if((e.metaKey||e.ctrlKey)&&e.key==='Enter') generateAi(); });
+  })();
+  async function generateAi(){
+    var input=byId('aiVkInput'), btn=byId('aiVkBtn');
+    if(!_authUser){ openLoginModal(); return; }
+    if(!_isPaid){ startCheckout(); return; }
+    var emne=(input.value||'').trim();
+    if(emne.length<3){ aiSetMsg('Skriv lidt om dig selv eller firmaet først.','bad'); return; }
+    btn.disabled=true; var old=btn.textContent; btn.textContent='AI arbejder…'; aiSetMsg('','');
+    try{
+      var h={'Content-Type':'application/json'};
+      var s=await _sb.auth.getSession(); var tok=s&&s.data&&s.data.session&&s.data.session.access_token; if(tok) h['Authorization']='Bearer '+tok;
+      var r=await fetch('/api/visitkort-tekst',{ method:'POST', headers:h, body:JSON.stringify({ emne:emne }) });
+      var data=await r.json().catch(function(){ return {}; });
+      if(r.status===401){ aiSetMsg('Log ind igen.','bad'); openLoginModal(); }
+      else if(r.status===402 || (data&&data.needPremium)){ aiSetMsg('AI-udfyldning kræver Premium.','bad'); await loadSubscription(); startCheckout(); }
+      else if(!r.ok || (data&&data.error)){ aiSetMsg((data&&data.error)||'Noget gik galt. Prøv igen.','bad'); }
+      else { applyAiResult(data); aiSetMsg('Kortet er udfyldt af AI ✓','ok'); }
+    }catch(e){ aiSetMsg('Kunne ikke kontakte AI. Prøv igen.','bad'); }
+    btn.disabled=false; renderAiBlock();
+  }
+
+  // Skriv én feltværdi ind i visitkortets state (på den rigtige side)
+  function vkSetField(side, type, value){
+    var s=state[side];
+    for(var bi=0; bi<s.boxes.length; bi++){
+      var items=s.boxes[bi].items;
+      for(var ii=0; ii<items.length; ii++){ if(items[ii].type===type){ items[ii].value=value; return; } }
+    }
+    var box=s.boxes[0]; var maxId=0; box.items.forEach(function(x){ if((x.id||0)>maxId) maxId=x.id; });
+    var nid=box.nextItemId || (maxId+1);
+    var item={ id:nid, type:type, value:value };
+    if(side==='back'){ item.showIcon=true; item.size=1; }
+    else { item.size=(FRONT_DEFAULT_SIZE && FRONT_DEFAULT_SIZE[type]) ? FRONT_DEFAULT_SIZE[type] : 1; }
+    box.items.push(item); box.nextItemId=nid+1;
+  }
+  // Anvend en stil-preset (samme som klik på et stil-kort)
+  function applyVkStyle(styleId){
+    if(!STYLES[styleId]) return;
+    state.style=styleId; var p=STYLES[styleId];
+    state.design.accent=p.accent; state.design.paper=p.paper; state.design.ink=p.ink;
+    state.design.titleFont=p.titleFont; state.design.bodyFont=p.bodyFont; state.design.accentLine=p.accentLine;
+    state.front.bg={ mode:'solid', c1:p.paper, c2:p.accent, dir:'to right' }; state.front.ink='';
+    state.back.bg={ mode:'solid', c1:p.accent, c2:p.accent, dir:'to bottom right' }; state.back.ink=p.paper;
+  }
+  function applyAiResult(data){
+    try{
+      var front=(data&&data.front)||{}, back=(data&&data.back)||{};
+      ['name','title','company','tagline','custom'].forEach(function(type){
+        if(FRONT_TYPES.indexOf(type)>=0 && typeof front[type]==='string' && front[type].trim()) vkSetField('front',type,front[type].trim());
+      });
+      ['phone','email','web','address','instagram','facebook','tiktok','linkedin','custom'].forEach(function(type){
+        if(CONTACT_TYPES.indexOf(type)>=0 && typeof back[type]==='string' && back[type].trim()) vkSetField('back',type,back[type].trim());
+      });
+      var d=(data&&data.design)||{};
+      if(STYLES[d.style]) applyVkStyle(d.style);
+      if(d.titleFont && FONTS_TITLE.indexOf(d.titleFont)>=0) state.design.titleFont=d.titleFont;
+      if(d.bodyFont && FONTS_BODY.indexOf(d.bodyFont)>=0) state.design.bodyFont=d.bodyFont;
+      if(d.orientation==='landscape' || d.orientation==='portrait'){ state.orientation=d.orientation; if(typeof setSeg==='function') setSeg('segOrient', d.orientation); }
+      if(typeof d.accent==='string' && /^#[0-9a-fA-F]{6}$/.test(d.accent)){
+        state.design.accent=d.accent;
+        state.front.bg.c2=d.accent; state.back.bg.c1=d.accent; state.back.bg.c2=d.accent;
+      }
+      if(typeof renderBoxList==='function'){ renderBoxList('front'); renderBoxList('back'); }
+      if(typeof syncAll==='function') syncAll();
+      if(typeof renderCards==='function') renderCards();
+      if(typeof scheduleSave==='function') scheduleSave();
+    }catch(e){ aiSetMsg('Kunne ikke anvende AI-svaret.','bad'); }
+  }
+
+  initAuth();
+})();
+</script>
+
 <!-- Vercel Web Analytics -->
 <script>
   window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
