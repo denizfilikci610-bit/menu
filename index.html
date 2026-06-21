@@ -41,14 +41,34 @@
   /* Hold "hjemmelavet ud?" sammen så ud? aldrig ender alene */
   .nobr{ white-space:nowrap; }
 
-  .lang-bar{ position:absolute; top:22px; right:24px; display:flex; gap:4px; z-index:10; }
-  .lang-btn{
+  .lang-bar{ position:absolute; top:22px; right:24px; z-index:10; }
+  .lang-toggle{
+    display:inline-flex; align-items:center; gap:6px;
     border:1px solid var(--line); background:var(--field); color:var(--muted);
-    font-size:.78rem; font-weight:600; letter-spacing:.03em;
-    padding:6px 10px; border-radius:8px; cursor:pointer; transition:all .15s;
+    font-family:inherit; font-size:.78rem; font-weight:600; letter-spacing:.03em;
+    padding:8px 11px; border-radius:10px; cursor:pointer; transition:all .15s; min-height:40px;
   }
-  .lang-btn:hover{ color:var(--ink); border-color:var(--accent); }
-  .lang-btn.active{ background:var(--accent); color:#fff; border-color:var(--accent); }
+  .lang-toggle:hover{ color:var(--ink); border-color:var(--accent); }
+  .lang-toggle .lang-globe{ width:15px; height:15px; opacity:.85; }
+  .lang-toggle .lang-caret{ width:11px; height:11px; opacity:.7; transition:transform .18s; }
+  .lang-bar.open .lang-toggle{ color:var(--ink); border-color:var(--accent); }
+  .lang-bar.open .lang-toggle .lang-caret{ transform:rotate(180deg); }
+  .lang-menu{
+    position:absolute; top:calc(100% + 6px); right:0;
+    display:flex; flex-direction:column; gap:2px; min-width:150px;
+    background:var(--field); border:1px solid var(--line); border-radius:12px;
+    padding:5px; box-shadow:0 14px 34px rgba(44,38,32,.18);
+    opacity:0; transform:translateY(-4px); pointer-events:none;
+    transition:opacity .15s, transform .15s;
+  }
+  .lang-bar.open .lang-menu{ opacity:1; transform:translateY(0); pointer-events:auto; }
+  .lang-btn{
+    border:1px solid transparent; background:transparent; color:var(--muted);
+    font-family:inherit; font-size:.82rem; font-weight:600; letter-spacing:.03em;
+    text-align:left; padding:9px 12px; border-radius:8px; cursor:pointer; transition:all .15s;
+  }
+  .lang-btn:hover{ color:var(--ink); background:var(--bg); }
+  .lang-btn.active{ background:var(--accent); color:#fff; }
 
   .wrap{ max-width:1100px; margin:0 auto; padding:60px 24px 80px; text-align:center; }
 
@@ -2244,8 +2264,10 @@
   }
   @media (max-width:580px){
     .wrap{ padding:54px 16px 60px; }
-    .lang-bar{ top:14px; right:14px; gap:6px; }
-    .lang-btn{ padding:9px 13px; font-size:.82rem; min-width:44px; min-height:36px; }
+    .lang-bar{ top:14px; right:14px; }
+    .lang-toggle{ padding:10px 13px; min-height:44px; font-size:.84rem; }
+    .lang-menu{ min-width:172px; padding:6px; }
+    .lang-btn{ padding:12px 14px; font-size:.92rem; min-height:44px; }
     .hero-title{ font-size:2.1rem; }
     .hero-lead{ font-size:1.02rem; }
     .hero-title-v2{ font-size:2.05rem; line-height:1.1; }
@@ -2358,10 +2380,17 @@
   <div class="scroll-progress" aria-hidden="true"><span></span></div>
 
   <div class="lang-bar">
-    <button class="lang-btn" data-lang="da" type="button">DA</button>
-    <button class="lang-btn" data-lang="en" type="button">EN</button>
-    <button class="lang-btn" data-lang="tr" type="button">TR</button>
-    <button class="lang-btn" data-lang="uk" type="button">UK</button>
+    <button class="lang-toggle" type="button" aria-haspopup="true" aria-expanded="false" aria-label="Vælg sprog / Choose language">
+      <svg class="lang-globe" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18"/><path d="M12 3a15 15 0 0 1 0 18 15 15 0 0 1 0-18"/></svg>
+      <span class="lang-current">DA</span>
+      <svg class="lang-caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
+    </button>
+    <div class="lang-menu" role="menu">
+      <button class="lang-btn" data-lang="da" type="button" role="menuitem">DA · Dansk</button>
+      <button class="lang-btn" data-lang="en" type="button" role="menuitem">EN · English</button>
+      <button class="lang-btn" data-lang="tr" type="button" role="menuitem">TR · Türkçe</button>
+      <button class="lang-btn" data-lang="uk" type="button" role="menuitem">UK · Українська</button>
+    </div>
   </div>
 
   <div class="wrap">
@@ -4179,6 +4208,33 @@
     });
   });
   apply();
+</script>
+
+<script>
+  // Sprog-vælger: åbn/luk den sammenpakkede knap (kun visning — sprog-logikken er uændret)
+  (function(){
+    var bar = document.querySelector('.lang-bar');
+    if(!bar) return;
+    var toggle = bar.querySelector('.lang-toggle');
+    var current = bar.querySelector('.lang-current');
+    function syncLabel(){
+      var active = bar.querySelector('.lang-btn.active');
+      if(active && current) current.textContent = active.dataset.lang.toUpperCase();
+    }
+    function close(){ bar.classList.remove('open'); toggle.setAttribute('aria-expanded','false'); }
+    toggle.addEventListener('click', function(e){
+      e.stopPropagation();
+      var willOpen = !bar.classList.contains('open');
+      bar.classList.toggle('open', willOpen);
+      toggle.setAttribute('aria-expanded', willOpen ? 'true' : 'false');
+    });
+    bar.querySelectorAll('.lang-btn').forEach(function(b){
+      b.addEventListener('click', function(){ syncLabel(); close(); });
+    });
+    document.addEventListener('click', function(e){ if(!bar.contains(e.target)) close(); });
+    document.addEventListener('keydown', function(e){ if(e.key === 'Escape') close(); });
+    syncLabel();
+  })();
 </script>
 
 <!-- Vercel Web Analytics -->
