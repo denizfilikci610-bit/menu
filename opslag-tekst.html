@@ -712,7 +712,8 @@
   /* kev4 — COMING SOON: boxed titel, foto i midten, STAY TUNED-oval, pille, brødtekst */
   /* stort foto ligger OVEN PÅ den sorte "COMING SOON"-tekst; pille centreret nederst på fotoet; brødtekst klippet til 3 linjer */
   /* sort "COMING SOON"-boks med hvid tekst, flugter præcis med fotoets bredde og ligger lige over det */
-  .post.tpl-kev4 .post-headline{ position:absolute; top:5cqw; left:8cqw; right:8cqw; --hl:13cqw; line-height:1.06; background:#1a1a17; color:#f2ede1; padding:1.6cqw 2.5cqw; box-sizing:border-box; text-align:center; display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden; }
+  .post.tpl-kev4 .post-headline{ position:absolute; top:5cqw; left:8cqw; right:8cqw; line-height:1.05; white-space:nowrap; overflow:hidden; background:#1a1a17; color:#f2ede1 !important; padding:1.4cqw 3cqw; box-sizing:border-box; text-align:center; }
+  .post.tpl-kev4 .post-headline .post-em{ color:#f2ede1 !important; font-style:normal !important; -webkit-text-stroke:0 !important; background:none !important; }
   .post.tpl-kev4 .post-photo{ display:block; inset:auto; left:8cqw; right:8cqw; top:20cqw; bottom:34cqw; height:auto; border-radius:0; border:.3cqw solid var(--pink); box-sizing:border-box; }
   .post.tpl-kev4.st-al-c .post-content{ align-items:flex-start; text-align:left; justify-content:flex-start; padding:0; }
   .post.tpl-kev4 .post-body{ flex:none; }
@@ -1870,19 +1871,26 @@
     let f=1; post.style.setProperty('--fit','1'); let g=0;
     while (overflowing() && f>0.4 && g<30){ f-=0.04; post.style.setProperty('--fit', f.toFixed(3)); g++; }
     if (overflowing()) post.classList.add('hl-break');
-    kevPhotoFollow();
+    kev4Adjust();
   }
-  // kev4: lad fotoet starte præcis under den (variabelt høje) titel-bjælke
-  function kevPhotoFollow(){
-    const ph = byId('postPhoto');
-    if (!ph) return;
-    if (curTemplate !== 'kev4'){ ph.style.top=''; return; }
-    const post = byId('post'); const h = byId('postHeadline');
-    if (!post || !h) return;
+  // kev4 "Coming Soon": skaler titlen så den fylder boksen på ÉN linje, og lad fotoet ligge flush lige under boksen
+  function kev4Adjust(){
+    const h = byId('postHeadline'), ph = byId('postPhoto'), post = byId('post');
+    if (curTemplate !== 'kev4'){ if (h) h.style.fontSize=''; if (ph) ph.style.top=''; return; }
+    if (!h || !post) return;
     const pr = post.getBoundingClientRect(); if (!pr.width) return;
+    const cs = getComputedStyle(h);
+    const padL = parseFloat(cs.paddingLeft)||0, padR = parseFloat(cs.paddingRight)||0;
+    h.style.fontSize = '100px';
+    const textW = h.scrollWidth - padL - padR;          // tekstbredde ved 100px
+    const boxW  = h.getBoundingClientRect().width - padL - padR; // indvendig boksbredde
+    let size = (textW > 0) ? 100 * (boxW / textW) * 0.97 : 40;
+    const maxPx = pr.width * 0.15;                       // kort titel: cap så den ikke bliver kæmpe
+    size = Math.max(6, Math.min(size, maxPx));
+    h.style.fontSize = size + 'px';
     const cqw = pr.width/100;
     const boxBottom = (h.getBoundingClientRect().bottom - pr.top)/cqw;
-    ph.style.top = (boxBottom + 0.6).toFixed(1) + 'cqw';
+    if (ph) ph.style.top = (boxBottom + 0.6).toFixed(1) + 'cqw';
   }
   function relayout(){ applyFormat(); fitText(); if(selId) showSel(); }
 
