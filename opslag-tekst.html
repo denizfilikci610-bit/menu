@@ -118,7 +118,7 @@
   .post-content{ position:absolute; inset:0; z-index:4; display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center; gap:3cqw; padding:9cqw; }
   .post-body{ display:flex; flex-direction:column; align-items:center; gap:3.2cqw; }
   .post-content > *, .post-body > *{ min-width:0; }
-  .post-eyebrow{ font-family:var(--bf); font-size:calc(3cqw * var(--fit,1) * var(--escale,1)); letter-spacing:.34em; text-transform:uppercase; font-weight:600; color:var(--pacc,#ffd9a8); outline:none; }
+  .post-eyebrow{ font-family:var(--bf); font-size:max(3cqw, calc(3.3cqw * var(--fit,1) * var(--escale,1))); letter-spacing:.34em; text-transform:uppercase; font-weight:600; color:var(--pacc,#ffd9a8); outline:none; }
   .post-eyebrow.hide{ display:none !important; }
   .post-headline{ font-family:var(--hf); font-weight:var(--hw); font-size:calc(var(--hl) * var(--hlk,1) * var(--fit,1) * var(--escale,1)); line-height:var(--hlh,.98); letter-spacing:var(--hls,-.02em); outline:none; overflow-wrap:normal; word-break:normal; max-width:100%; }
   .post.hl-break .post-headline{ overflow-wrap:break-word; word-break:break-word; }
@@ -158,8 +158,8 @@
   .post.st-eb-pill .post-eyebrow{ display:inline-block; background:var(--pacc); color:var(--pbadge); padding:.4em .95em; border-radius:99px; letter-spacing:.16em; }
   .post.st-eb-line .post-eyebrow{ display:inline-flex; align-items:center; gap:.65em; }
   .post.st-eb-line .post-eyebrow::before{ content:''; width:2.4em; height:1px; background:currentColor; opacity:.7; }
-  .post-sub{ font-family:var(--bf); font-size:calc(4cqw * var(--fit,1) * var(--escale,1)); line-height:1.45; opacity:.93; outline:none; max-width:92%; }
-  .post-brand{ font-family:var(--bf); font-size:calc(2.8cqw * var(--fit,1) * var(--escale,1)); letter-spacing:.22em; text-transform:uppercase; font-weight:600; color:var(--pink,#fdf3e7); opacity:.62; outline:none; }
+  .post-sub{ font-family:var(--bf); font-size:max(3.4cqw, calc(4cqw * var(--fit,1) * var(--escale,1))); line-height:1.45; opacity:.93; outline:none; max-width:92%; }
+  .post-brand{ font-family:var(--bf); font-size:max(2.7cqw, calc(3cqw * var(--fit,1) * var(--escale,1))); letter-spacing:.22em; text-transform:uppercase; font-weight:600; color:var(--pink,#fdf3e7); opacity:.62; outline:none; }
   /* Vandmærke: lille diskret pille i bunden — synlig i forhåndsvisning OG download. Mørk halv-gennemsigtig
      plade + lys tekst, så den er læsbar på både lyse, mørke og foto-baggrunde. Skaleres i cqw. */
   .post-watermark{ position:absolute; left:50%; bottom:2cqw; transform:translateX(-50%); z-index:7; pointer-events:none; white-space:nowrap; padding:0.85cqw 2.1cqw; border-radius:40cqw; background:rgba(17,14,11,.46); font-family:'Space Grotesk',system-ui,sans-serif; font-size:2.25cqw; font-weight:600; letter-spacing:.015em; color:rgba(255,255,255,.94); box-shadow:0 0.8cqw 2.6cqw -1.2cqw rgba(0,0,0,.45); }
@@ -599,7 +599,7 @@
   .post.tpl-forest .post-headline{ line-height:.84; letter-spacing:-.02em; margin-left:-1.5cqw; max-width:74%; }
   .post.tpl-forest.st-treat-underline .post-headline{ border-bottom:none !important; padding-bottom:0 !important; }
   .post.tpl-forest .post-eyebrow{ letter-spacing:.3em; opacity:.78; }
-  .post.tpl-forest .post-sub{ font-family:'Space Grotesk',sans-serif; max-width:78%; opacity:.85; font-size:calc(3.5cqw * var(--fit,1) * var(--escale,1)); line-height:1.55; }
+  .post.tpl-forest .post-sub{ font-family:'Space Grotesk',sans-serif; max-width:78%; opacity:.85; font-size:max(3.3cqw, calc(3.6cqw * var(--fit,1) * var(--escale,1))); line-height:1.55; }
   .post.tpl-forest .post-brand{ position:absolute; left:7.5cqw; bottom:7.5cqw; letter-spacing:.28em; opacity:.6; font-family:'Space Grotesk',sans-serif; }
 
   /* Outline Cream — podcast "talk": kæmpe hul konturskrift forneden, hjørne-labels, glimt + stempel */
@@ -609,14 +609,14 @@
   .tsc-cream .spk2{ top:62cqw; right:9cqw; width:4.4cqw; height:4.4cqw; opacity:.62; }
   .tsc-cream .stampw{ position:absolute; top:5.5cqw; right:5cqw; width:30cqw; height:30cqw; opacity:.8; }
   .tsc-cream .stampw svg{ width:100%; height:100%; display:block; }
-  .post.tpl-cream{ --hl:30cqw; }
+  .post.tpl-cream{ --hl:27cqw; }
   .post.tpl-cream .post-frame{ display:none !important; }
   .post.tpl-cream.st-al-c .post-content{ align-items:flex-start; text-align:left; justify-content:flex-end; padding:7cqw; }
   .post.tpl-cream.st-al-c .post-body{ align-items:flex-start; flex:none; }
-  .post.tpl-cream .post-headline{ width:100%; line-height:.78; letter-spacing:-.03em; text-transform:lowercase; -webkit-text-stroke:.32cqw var(--pink); font-weight:700; overflow-wrap:break-word; }
+  .post.tpl-cream .post-headline{ width:100%; line-height:1.02; letter-spacing:-.03em; text-transform:lowercase; -webkit-text-stroke:.3cqw var(--pink); font-weight:700; overflow-wrap:break-word; }
   .post.tpl-cream.st-treat-underline .post-headline{ border-bottom:none !important; padding-bottom:0 !important; }
   .post.tpl-cream .post-eyebrow{ position:absolute; top:6.5cqw; left:7cqw; letter-spacing:.26em; opacity:.72; }
-  .post.tpl-cream .post-sub{ position:absolute; top:11.5cqw; left:7cqw; text-transform:none; letter-spacing:.02em; opacity:.55; font-family:'Space Grotesk',sans-serif; font-size:calc(3cqw * var(--fit,1) * var(--escale,1)); }
+  .post.tpl-cream .post-sub{ position:absolute; top:11.5cqw; left:7cqw; text-transform:none; letter-spacing:.02em; opacity:.55; font-family:'Space Grotesk',sans-serif; font-size:max(3cqw, calc(3.2cqw * var(--fit,1) * var(--escale,1))); }
   .post.tpl-cream .post-brand{ display:none; }
 
   /* Bold Headline — fashion: kæmpe sort fed sans venstrestillet, vertikal spine-label, glimt, pille-knap */
@@ -633,7 +633,7 @@
   .post.tpl-bold.st-treat-underline .post-headline{ border-bottom:none !important; padding-bottom:0 !important; }
   .post.tpl-bold .post-eyebrow{ position:absolute; left:4.5cqw; top:0; bottom:0; height:100%; display:flex; align-items:center; writing-mode:vertical-rl; transform:rotate(180deg); letter-spacing:.3em; opacity:.62; color:var(--pink); }
   .post.tpl-bold .post-sub{ font-family:'Space Grotesk',sans-serif; font-weight:600; opacity:.78; max-width:84%; }
-  .post.tpl-bold .post-brand{ align-self:flex-start; border:.5cqw solid currentColor; border-radius:99px; padding:1.7cqw 4.4cqw; text-transform:uppercase; letter-spacing:.1em; opacity:.85; font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:calc(2.9cqw * var(--fit,1) * var(--escale,1)); }
+  .post.tpl-bold .post-brand{ align-self:flex-start; border:.5cqw solid currentColor; border-radius:99px; padding:1.7cqw 4.4cqw; text-transform:uppercase; letter-spacing:.1em; opacity:.85; font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:max(2.8cqw, calc(3cqw * var(--fit,1) * var(--escale,1))); }
 
   /* Ethereal Noir — KEVARI: sort baggrund, lys pille-knap foroven, kæmpe creme versal-sans */
   .post.tpl-noir .post-frame{ display:none !important; }
@@ -641,7 +641,7 @@
   .post.tpl-noir.st-treat-underline .post-headline{ border-bottom:none !important; padding-bottom:0 !important; }
   .post.tpl-noir .post-eyebrow{ opacity:.6; }
   .post.tpl-noir .post-sub{ opacity:.7; }
-  .post.tpl-noir .post-brand{ position:absolute; top:5.5cqw; left:50%; transform:translateX(-50%); background:var(--pink); color:var(--pbg); border-radius:99px; padding:1.8cqw 5.2cqw; letter-spacing:.14em; opacity:1; text-transform:uppercase; font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:calc(2.7cqw * var(--fit,1) * var(--escale,1)); white-space:nowrap; }
+  .post.tpl-noir .post-brand{ position:absolute; top:5.5cqw; left:50%; transform:translateX(-50%); background:var(--pink); color:var(--pbg); border-radius:99px; padding:1.8cqw 5.2cqw; letter-spacing:.14em; opacity:1; text-transform:uppercase; font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:max(2.7cqw, calc(2.9cqw * var(--fit,1) * var(--escale,1))); white-space:nowrap; }
 
   .tpl-card .tpl-thumb{ width:100%; aspect-ratio:1; display:flex; align-items:center; justify-content:center; font-family:'Fraunces',serif; font-weight:700; font-size:1.7rem; }
 
