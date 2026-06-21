@@ -663,6 +663,12 @@
   .tsc-kev .kev-vl{ position:absolute; top:0; bottom:0; display:flex; align-items:center; font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:2.5cqw; letter-spacing:.22em; text-transform:uppercase; color:var(--pink); opacity:.55; writing-mode:vertical-rl; }
   .tsc-kev .kev-vl.left{ left:4cqw; transform:rotate(180deg); }
   .tsc-kev .kev-vl.right{ right:4cqw; }
+  .tsc-kev .kev-vl.right2{ right:8.5cqw; transform:rotate(180deg); }
+  /* kev3 — 3-kolonne descriptor-række */
+  .tsc-kev .kev-row3{ position:absolute; top:14cqw; left:8cqw; right:8cqw; display:flex; justify-content:space-between; gap:2cqw; font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:2.1cqw; letter-spacing:.05em; text-transform:uppercase; color:var(--pink); opacity:.7; line-height:1.3; }
+  .tsc-kev .kev-row3 span{ flex:1 1 0; }
+  .tsc-kev .kev-row3 span:nth-child(2){ text-align:center; }
+  .tsc-kev .kev-row3 span:nth-child(3){ text-align:right; }
   /* KEVARI ring + hjørne-labels (Thank You 2M) */
   .tsc-kev .kev-ring{ position:absolute; left:50%; top:49%; width:84cqw; height:84cqw; transform:translate(-50%,-50%); border:.35cqw solid var(--pink); border-radius:50%; opacity:.45; }
   .tsc-kev .kev-corner{ position:absolute; font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:2.5cqw; letter-spacing:.12em; text-transform:uppercase; color:var(--pink); opacity:.6; }
@@ -670,9 +676,9 @@
   .tsc-kev .kev-corner.bl{ bottom:6cqw; left:6cqw; } .tsc-kev .kev-corner.br{ bottom:6cqw; right:6cqw; }
 
   /* kev9 — WE'RE OPEN TODAY: pille foroven, kæmpe Anton-overskrift, åbningstider forneden */
-  .post.tpl-kev9.st-al-c .post-content{ align-items:flex-start; text-align:left; justify-content:center; padding:18cqw 13cqw 9cqw 9cqw; }
+  .post.tpl-kev9.st-al-c .post-content{ align-items:flex-start; text-align:left; justify-content:flex-start; padding:17cqw 13cqw 16cqw 9cqw; }
   .post.tpl-kev9.st-al-c .post-body{ align-items:flex-start; }
-  .post.tpl-kev9 .post-headline{ --hl:27cqw; }
+  .post.tpl-kev9 .post-headline{ --hl:23cqw; }
   .post.tpl-kev9 .post-brand{ position:absolute; top:6cqw; left:50%; transform:translateX(-50%); }
   .post.tpl-kev9 .post-sub{ position:absolute; left:9cqw; bottom:8cqw; text-transform:uppercase; letter-spacing:.14em; font-weight:600; opacity:.85; }
   .post.tpl-kev9 .post-eyebrow{ display:none; }
@@ -699,18 +705,19 @@
   .post.tpl-kev3.st-al-c .post-body{ align-items:flex-start; }
   .post.tpl-kev3 .post-headline{ --hl:21cqw; }
   .post.tpl-kev3 .post-brand{ position:absolute; top:6cqw; left:7cqw; }
-  .post.tpl-kev3 .post-eyebrow{ position:absolute; top:14cqw; left:7cqw; right:7cqw; text-align:left; opacity:.6; font-weight:600; letter-spacing:.1em; font-size:max(2.1cqw, calc(2.2cqw * var(--fit,1) * var(--escale,1))); }
+  .post.tpl-kev3 .post-eyebrow{ display:none; }
   .post.tpl-kev3 .post-sub{ max-width:60%; }
 
   /* kev4 — COMING SOON: boxed titel, foto i midten, STAY TUNED-oval, pille, brødtekst */
-  .post.tpl-kev4 .post-photo{ display:block; inset:auto; left:23cqw; right:23cqw; top:24cqw; height:38cqw; border-radius:0; border:.3cqw solid var(--pink); box-sizing:border-box; }
-  .post.tpl-kev4.st-al-c .post-content{ align-items:flex-start; text-align:left; justify-content:flex-start; padding:8cqw; }
-  .post.tpl-kev4 .post-headline{ --hl:13cqw; display:inline-block; align-self:flex-start; background:#1a1a17; color:#f2ede1; padding:1.4cqw 3cqw; }
+  /* foto ligger OVEN PÅ overskriften (teksten bag billedet) og er stort */
+  .post.tpl-kev4 .post-photo{ display:block; inset:auto; left:18cqw; right:18cqw; top:15cqw; height:47cqw; border-radius:0; border:.3cqw solid var(--pink); box-sizing:border-box; z-index:5; }
+  .post.tpl-kev4.st-al-c .post-content{ align-items:flex-start; text-align:left; justify-content:flex-start; padding:6cqw 8cqw 8cqw; }
+  .post.tpl-kev4 .post-headline{ --hl:14cqw; display:inline-block; align-self:flex-start; background:#1a1a17; color:#f2ede1; padding:1.4cqw 3cqw; }
   .post.tpl-kev4 .post-body{ flex:none; }
   .post.tpl-kev4 .post-eyebrow{ display:none; }
   .post.tpl-kev4 .post-sub{ position:absolute; left:8cqw; right:8cqw; bottom:7cqw; max-width:88%; }
-  .post.tpl-kev4 .post-brand{ position:absolute; left:8cqw; top:67cqw; bottom:auto; }
-  .post.tpl-kev4 .post-badge{ width:auto; height:auto; min-width:0; border-radius:99px; background:#1a1a17; color:#f2ede1; transform:rotate(-7deg); top:21cqw; right:15cqw; left:auto; padding:1.7cqw 3.8cqw; box-shadow:0 4px 12px rgba(0,0,0,.3); }
+  .post.tpl-kev4 .post-brand{ position:absolute; left:8cqw; top:66cqw; bottom:auto; }
+  .post.tpl-kev4 .post-badge{ z-index:6; width:auto; height:auto; min-width:0; border-radius:99px; background:#1a1a17; color:#f2ede1; transform:rotate(-7deg); top:20cqw; right:13cqw; left:auto; padding:1.7cqw 3.8cqw; box-shadow:0 4px 12px rgba(0,0,0,.3); }
   .post.tpl-kev4 .post-badge::after{ display:none; }
   .post.tpl-kev4 .post-badge span{ font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:2.7cqw; letter-spacing:.06em; padding:0; }
 
@@ -1653,13 +1660,23 @@
       const hl = C.headline||'', nv = C.navn||'';
       if (id === 'kev5'){
         return '<div class="tpl-scene tsc-kev">'
+          + '<span class="kev-vl left">'+esc(tag(hl))+'</span>'
           + '<span class="kev-vl right">'+esc(tag(hl))+'</span>'
           + '</div>';
       }
       if (id === 'kev9'){
         return '<div class="tpl-scene tsc-kev">'
-          + '<span class="kev-vl right">'+esc(tag(hl))+'</span>'
+          + '<span class="kev-vl right">'+esc(at(nv||hl))+'</span>'
+          + '<span class="kev-vl right2">'+esc(tag(hl))+'</span>'
           + '</div>';
+      }
+      if (id === 'kev3'){
+        const dfl = ['TAILORED PERFECTION','STATEMENT ACCESSORIES','POLISHED DETAILS'];
+        const parts = (C.eyebrow||'').split(/[·•|]/).map(s=>s.trim()).filter(Boolean);
+        let row = '<div class="kev-row3">';
+        for (let i=0;i<3;i++) row += '<span>'+esc(parts[i]||dfl[i])+'</span>';
+        row += '</div>';
+        return '<div class="tpl-scene tsc-kev">'+row+'</div>';
       }
       if (id === 'kev8'){
         return '<div class="tpl-scene tsc-kev">'
