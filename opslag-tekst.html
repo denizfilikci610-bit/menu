@@ -710,14 +710,15 @@
 
   /* kev4 — COMING SOON: boxed titel, foto i midten, STAY TUNED-oval, pille, brødtekst */
   /* stort foto ligger OVEN PÅ den sorte "COMING SOON"-tekst; pille centreret nederst på fotoet; brødtekst klippet til 3 linjer */
-  .post.tpl-kev4 .post-photo{ display:block; inset:auto; left:8cqw; right:8cqw; top:12cqw; height:50cqw; border-radius:0; border:.3cqw solid var(--pink); box-sizing:border-box; z-index:5; }
-  .post.tpl-kev4.st-al-c .post-content{ align-items:flex-start; text-align:left; justify-content:flex-start; padding:4cqw 6cqw; }
-  .post.tpl-kev4 .post-headline{ --hl:17cqw; width:100%; white-space:nowrap; background:none; color:var(--pink); padding:0; }
+  /* sort "COMING SOON"-boks med hvid tekst, flugter præcis med fotoets bredde og ligger lige over det */
+  .post.tpl-kev4 .post-headline{ position:absolute; top:5cqw; left:8cqw; right:8cqw; height:13cqw; display:flex; align-items:center; justify-content:center; --hl:18cqw; white-space:nowrap; background:#1a1a17; color:#f2ede1; padding:0 2cqw; box-sizing:border-box; overflow:hidden; }
+  .post.tpl-kev4 .post-photo{ display:block; inset:auto; left:8cqw; right:8cqw; top:18cqw; height:47cqw; border-radius:0; border:.3cqw solid var(--pink); box-sizing:border-box; }
+  .post.tpl-kev4.st-al-c .post-content{ align-items:flex-start; text-align:left; justify-content:flex-start; padding:0; }
   .post.tpl-kev4 .post-body{ flex:none; }
   .post.tpl-kev4 .post-eyebrow{ display:none; }
   .post.tpl-kev4 .post-sub{ position:absolute; left:6cqw; right:6cqw; bottom:5cqw; text-align:center; text-transform:uppercase; letter-spacing:.04em; line-height:1.55; max-width:none; display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden; }
   .post.tpl-kev4 .post-brand{ position:absolute; left:50%; transform:translateX(-50%); top:68cqw; bottom:auto; z-index:6; }
-  .post.tpl-kev4 .post-badge{ z-index:6; width:22cqw; height:16cqw; min-width:0; border-radius:50%; background:#1a1a17; color:#f2ede1; display:flex; align-items:center; justify-content:center; transform:rotate(-9deg); top:14cqw; right:4cqw; left:auto; padding:0; box-shadow:0 4px 12px rgba(0,0,0,.3); }
+  .post.tpl-kev4 .post-badge{ z-index:6; width:22cqw; height:16cqw; min-width:0; border-radius:50%; background:#1a1a17; color:#f2ede1; display:flex; align-items:center; justify-content:center; transform:rotate(-9deg); top:22cqw; right:5cqw; left:auto; padding:0; box-shadow:0 4px 12px rgba(0,0,0,.3); }
   .post.tpl-kev4 .post-badge::after{ display:none; }
   .post.tpl-kev4 .post-badge::after{ display:none; }
   .post.tpl-kev4 .post-badge span{ font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:2.8cqw; letter-spacing:.04em; padding:0; max-width:11cqw; line-height:1.08; text-align:center; word-break:keep-all; }
