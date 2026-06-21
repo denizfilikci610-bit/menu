@@ -712,8 +712,8 @@
   /* kev4 — COMING SOON: boxed titel, foto i midten, STAY TUNED-oval, pille, brødtekst */
   /* stort foto ligger OVEN PÅ den sorte "COMING SOON"-tekst; pille centreret nederst på fotoet; brødtekst klippet til 3 linjer */
   /* sort "COMING SOON"-boks med hvid tekst, flugter præcis med fotoets bredde og ligger lige over det */
-  .post.tpl-kev4 .post-headline{ position:absolute; top:5cqw; left:8cqw; right:8cqw; height:13cqw; display:flex; align-items:center; justify-content:center; --hl:18cqw; white-space:nowrap; background:#1a1a17; color:#f2ede1; padding:0 2cqw; box-sizing:border-box; overflow:hidden; }
-  .post.tpl-kev4 .post-photo{ display:block; inset:auto; left:8cqw; right:8cqw; top:18cqw; height:46cqw; border-radius:0; border:.3cqw solid var(--pink); box-sizing:border-box; }
+  .post.tpl-kev4 .post-headline{ position:absolute; top:5cqw; left:8cqw; right:8cqw; --hl:13cqw; line-height:1.06; background:#1a1a17; color:#f2ede1; padding:1.6cqw 2.5cqw; box-sizing:border-box; text-align:center; display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden; }
+  .post.tpl-kev4 .post-photo{ display:block; inset:auto; left:8cqw; right:8cqw; top:20cqw; bottom:34cqw; height:auto; border-radius:0; border:.3cqw solid var(--pink); box-sizing:border-box; }
   .post.tpl-kev4.st-al-c .post-content{ align-items:flex-start; text-align:left; justify-content:flex-start; padding:0; }
   .post.tpl-kev4 .post-body{ flex:none; }
   .post.tpl-kev4 .post-eyebrow{ display:none; }
@@ -1870,6 +1870,19 @@
     let f=1; post.style.setProperty('--fit','1'); let g=0;
     while (overflowing() && f>0.4 && g<30){ f-=0.04; post.style.setProperty('--fit', f.toFixed(3)); g++; }
     if (overflowing()) post.classList.add('hl-break');
+    kevPhotoFollow();
+  }
+  // kev4: lad fotoet starte præcis under den (variabelt høje) titel-bjælke
+  function kevPhotoFollow(){
+    const ph = byId('postPhoto');
+    if (!ph) return;
+    if (curTemplate !== 'kev4'){ ph.style.top=''; return; }
+    const post = byId('post'); const h = byId('postHeadline');
+    if (!post || !h) return;
+    const pr = post.getBoundingClientRect(); if (!pr.width) return;
+    const cqw = pr.width/100;
+    const boxBottom = (h.getBoundingClientRect().bottom - pr.top)/cqw;
+    ph.style.top = (boxBottom + 0.6).toFixed(1) + 'cqw';
   }
   function relayout(){ applyFormat(); fitText(); if(selId) showSel(); }
 
