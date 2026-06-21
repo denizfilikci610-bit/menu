@@ -571,6 +571,78 @@
   /* Outline Cream — hul konturskrift (bruger outline-layout) */
   .post.tpl-cream .post-eyebrow{ font-family:'Space Grotesk',sans-serif; letter-spacing:.3em; opacity:.8; }
   .post.tpl-cream .post-brand{ letter-spacing:.26em; opacity:.55; }
+
+  /* ===== Bespoke skabelon-scener (egne dekorationer bag teksten) ===== */
+  .post[class*="tpl-"] .post-decor{ display:block; }
+  .tpl-scene{ position:absolute; inset:0; overflow:hidden; }
+  /* Daily Quote — pink cirkel + spøgelses-serif */
+  .tsc-pastel .tcirc{ position:absolute; left:50%; top:47%; width:78cqw; height:78cqw; transform:translate(-50%,-50%); border-radius:50%; background:var(--pacc); }
+  .tsc-pastel .tg{ position:absolute; font-family:'Fraunces',serif; font-weight:700; font-size:40cqw; line-height:.8; color:#000; opacity:.045; white-space:nowrap; letter-spacing:-.03em; }
+  .tsc-pastel .tg1{ top:-8cqw; left:-12cqw; }
+  .tsc-pastel .tg2{ top:46cqw; left:42cqw; }
+  .tsc-pastel .tg3{ top:18cqw; left:70cqw; }
+  .post.tpl-pastel .post-frame{ display:none !important; }
+  .post.tpl-pastel .post-eyebrow{ color:var(--pink); opacity:.72; font-family:'Space Grotesk',sans-serif; letter-spacing:.36em; }
+  .post.tpl-pastel .post-brand{ color:var(--pink); opacity:.6; letter-spacing:.34em; font-family:'Space Grotesk',sans-serif; }
+  .post.tpl-pastel .post-headline{ color:var(--pink); }
+  .post.tpl-pastel.st-treat-underline .post-headline{ border-bottom:none !important; padding-bottom:0 !important; }
+  .post.tpl-pastel .post-headline .post-em{ color:transparent !important; -webkit-text-stroke:.42cqw var(--pink); font-style:normal !important; background:none !important; }
+
+  /* Season Green — kæmpe creme-serif, venstrestillet, spøgelsesbogstaver bag */
+  .tsc-forest .tg{ position:absolute; font-family:'Playfair Display',serif; font-weight:700; color:#fff; opacity:.05; line-height:.7; white-space:nowrap; font-size:95cqw; }
+  .tsc-forest .tg1{ top:-14cqw; left:-10cqw; }
+  .tsc-forest .tg2{ top:34cqw; left:46cqw; }
+  .post.tpl-forest{ --hl:40cqw; }
+  .post.tpl-forest .post-frame{ display:none !important; }
+  .post.tpl-forest.st-al-c .post-content{ align-items:flex-start; text-align:left; justify-content:flex-start; gap:4.5cqw; padding:8cqw 7.5cqw 18cqw; }
+  .post.tpl-forest.st-al-c .post-body{ align-items:flex-start; gap:4cqw; }
+  .post.tpl-forest .post-headline{ line-height:.84; letter-spacing:-.02em; margin-left:-1.5cqw; max-width:74%; }
+  .post.tpl-forest.st-treat-underline .post-headline{ border-bottom:none !important; padding-bottom:0 !important; }
+  .post.tpl-forest .post-eyebrow{ letter-spacing:.3em; opacity:.78; }
+  .post.tpl-forest .post-sub{ font-family:'Space Grotesk',sans-serif; max-width:78%; opacity:.85; font-size:calc(3.5cqw * var(--fit,1) * var(--escale,1)); line-height:1.55; }
+  .post.tpl-forest .post-brand{ position:absolute; left:7.5cqw; bottom:7.5cqw; letter-spacing:.28em; opacity:.6; font-family:'Space Grotesk',sans-serif; }
+
+  /* Outline Cream — podcast "talk": kæmpe hul konturskrift forneden, hjørne-labels, glimt + stempel */
+  .tsc-cream .spk{ position:absolute; }
+  .tsc-cream .spk svg{ width:100%; height:100%; display:block; }
+  .tsc-cream .spk1{ top:33cqw; left:6.5cqw; width:7cqw; height:7cqw; opacity:.92; }
+  .tsc-cream .spk2{ top:62cqw; right:9cqw; width:4.4cqw; height:4.4cqw; opacity:.62; }
+  .tsc-cream .stampw{ position:absolute; top:5.5cqw; right:5cqw; width:30cqw; height:30cqw; opacity:.8; }
+  .tsc-cream .stampw svg{ width:100%; height:100%; display:block; }
+  .post.tpl-cream{ --hl:30cqw; }
+  .post.tpl-cream .post-frame{ display:none !important; }
+  .post.tpl-cream.st-al-c .post-content{ align-items:flex-start; text-align:left; justify-content:flex-end; padding:7cqw; }
+  .post.tpl-cream.st-al-c .post-body{ align-items:flex-start; flex:none; }
+  .post.tpl-cream .post-headline{ width:100%; line-height:.76; letter-spacing:-.03em; text-transform:lowercase; -webkit-text-stroke:.32cqw var(--pink); font-weight:700; white-space:nowrap; }
+  .post.tpl-cream.st-treat-underline .post-headline{ border-bottom:none !important; padding-bottom:0 !important; }
+  .post.tpl-cream .post-eyebrow{ position:absolute; top:6.5cqw; left:7cqw; letter-spacing:.26em; opacity:.72; }
+  .post.tpl-cream .post-sub{ position:absolute; top:11.5cqw; left:7cqw; text-transform:none; letter-spacing:.02em; opacity:.55; font-family:'Space Grotesk',sans-serif; font-size:calc(3cqw * var(--fit,1) * var(--escale,1)); }
+  .post.tpl-cream .post-brand{ display:none; }
+
+  /* Bold Headline — fashion: kæmpe sort fed sans venstrestillet, vertikal spine-label, glimt, pille-knap */
+  .tsc-bold .tri{ position:absolute; top:0; right:0; width:17cqw; height:17cqw; background:var(--pacc); clip-path:polygon(100% 0, 0 0, 100% 100%); border-bottom-left-radius:5cqw; opacity:.92; }
+  .tsc-bold .spk{ position:absolute; }
+  .tsc-bold .spk svg{ width:100%; height:100%; display:block; }
+  .tsc-bold .spk1{ top:11cqw; left:33cqw; width:5cqw; height:5cqw; }
+  .tsc-bold .spk2{ top:60cqw; left:5.5cqw; width:4cqw; height:4cqw; opacity:.8; }
+  .post.tpl-bold{ --hl:20cqw; }
+  .post.tpl-bold .post-frame{ display:none !important; }
+  .post.tpl-bold.st-al-c .post-content{ align-items:flex-start; text-align:left; justify-content:center; padding:9cqw 7cqw 8cqw 11cqw; gap:4.5cqw; }
+  .post.tpl-bold.st-al-c .post-body{ align-items:flex-start; gap:3cqw; }
+  .post.tpl-bold .post-headline{ font-weight:800; line-height:.9; letter-spacing:-.035em; }
+  .post.tpl-bold.st-treat-underline .post-headline{ border-bottom:none !important; padding-bottom:0 !important; }
+  .post.tpl-bold .post-eyebrow{ position:absolute; left:4.5cqw; top:0; bottom:0; height:100%; display:flex; align-items:center; writing-mode:vertical-rl; transform:rotate(180deg); letter-spacing:.3em; opacity:.62; color:var(--pink); }
+  .post.tpl-bold .post-sub{ font-family:'Space Grotesk',sans-serif; font-weight:600; opacity:.78; max-width:84%; }
+  .post.tpl-bold .post-brand{ align-self:flex-start; border:.5cqw solid currentColor; border-radius:99px; padding:1.7cqw 4.4cqw; text-transform:uppercase; letter-spacing:.1em; opacity:.85; font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:calc(2.9cqw * var(--fit,1) * var(--escale,1)); }
+
+  /* Ethereal Noir — KEVARI: sort baggrund, lys pille-knap foroven, kæmpe creme versal-sans */
+  .post.tpl-noir .post-frame{ display:none !important; }
+  .post.tpl-noir.st-al-c .post-content{ padding-top:17cqw; }
+  .post.tpl-noir.st-treat-underline .post-headline{ border-bottom:none !important; padding-bottom:0 !important; }
+  .post.tpl-noir .post-eyebrow{ opacity:.6; }
+  .post.tpl-noir .post-sub{ opacity:.7; }
+  .post.tpl-noir .post-brand{ position:absolute; top:5.5cqw; left:50%; transform:translateX(-50%); background:var(--pink); color:var(--pbg); border-radius:99px; padding:1.8cqw 5.2cqw; letter-spacing:.14em; opacity:1; text-transform:uppercase; font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:calc(2.7cqw * var(--fit,1) * var(--escale,1)); white-space:nowrap; }
+
   .tpl-card .tpl-thumb{ width:100%; aspect-ratio:1; display:flex; align-items:center; justify-content:center; font-family:'Fraunces',serif; font-weight:700; font-size:1.7rem; }
 
   /* ----- skitse-tilstand (wireframe) ----- */
@@ -1414,6 +1486,48 @@
     return '';
   }
 
+  // ===== Bespoke premium-skabelon-scener (cirkler, spøgelses-tekst, ringe, SVG-pynt bag teksten) =====
+  function buildTemplateScene(id, t){
+    if (id === 'pastel'){
+      // "Good Things Take Time" — fersken baggrund, stor pink cirkel, svag spøgelses-serif bag
+      return '<div class="tpl-scene tsc-pastel">'
+        + '<span class="tg tg1">Good</span>'
+        + '<span class="tg tg2">Things</span>'
+        + '<span class="tg tg3">Good</span>'
+        + '<span class="tcirc"></span>'
+        + '</div>';
+    }
+    if (id === 'forest'){
+      // "Season's Best" — kæmpe creme-serif spøgelsesbogstaver der bløder ned ad venstre kant
+      return '<div class="tpl-scene tsc-forest">'
+        + '<span class="tg tg1">S</span>'
+        + '<span class="tg tg2">B</span>'
+        + '</div>';
+    }
+    if (id === 'bold'){
+      // Fashion "YOUR HEADLINE" — tan glimt + hjørne-kile, hvid baggrund
+      const a = t.acc;
+      const SP='M12 0 C13 7 17 11 24 12 C17 13 13 17 12 24 C11 17 7 13 0 12 C7 11 11 7 12 0 Z';
+      return '<div class="tpl-scene tsc-bold">'
+        + '<div class="tri"></div>'
+        + '<div class="spk spk1"><svg viewBox="0 0 24 24"><path d="'+SP+'" fill="'+a+'"/></svg></div>'
+        + '<div class="spk spk2"><svg viewBox="0 0 24 24"><path d="'+SP+'" fill="'+a+'"/></svg></div>'
+        + '</div>';
+    }
+    if (id === 'cream'){
+      // Podcast "talk" — fire-takkede glimt + cirkulær stempel-tekst, papir-creme
+      const ink = t.ink;
+      const SP='M12 0 C13 7 17 11 24 12 C17 13 13 17 12 24 C11 17 7 13 0 12 C7 11 11 7 12 0 Z';
+      return '<div class="tpl-scene tsc-cream">'
+        + '<div class="spk spk1"><svg viewBox="0 0 24 24"><path d="'+SP+'" fill="'+ink+'"/></svg></div>'
+        + '<div class="spk spk2"><svg viewBox="0 0 24 24"><path d="'+SP+'" fill="'+ink+'"/></svg></div>'
+        + '<div class="stampw"><svg viewBox="0 0 100 100"><defs><path id="creamArc" d="M50,50 m-34,0 a34,34 0 1,1 68,0 a34,34 0 1,1 -68,0"/></defs>'
+        +   '<text fill="'+ink+'" font-family="Space Grotesk,sans-serif" font-weight="600" font-size="7.6" letter-spacing="1.3"><textPath href="#creamArc" startOffset="0">CONSECTETUR · LOREM IPSUM DOLOR SIT AMET · </textPath></text></svg></div>'
+        + '</div>';
+    }
+    return '';
+  }
+
   // ---------- Tilstand ----------
   let palId='terra', motifId='none', postRatio=1, custom=null, photos=[], photosHi=[], photoIdx=0, curLayout='hero-bl', customPhoto=null, userFont='auto', curStyleId='editorial', curStyleDecor='', accentLevel='none', curTextPos=null;
   let _premLayout = false, _premFont = false, _premPalette = false, _premTpl = false;   // er et LAAST element manuelt valgt? (styrer download-gate for gratis)
@@ -1421,7 +1535,7 @@
   const TEMPLATES = [
     { id:'noir', name:'Ethereal Noir', layout:'mega',  style:'editorial', font:'auto', bg:'#101010', ink:'#efe6d4', acc:'#efe6d4' },
     { id:'red',  name:'Classic Red',   layout:'vogue', style:'editorial', font:'auto', bg:'#e0352e', ink:'#fbf2e9', acc:'#fbf2e9' },
-    { id:'pastel', name:'Daily Quote',  layout:'poster',  style:'editorial', font:'auto', bg:'#f4c6cc', ink:'#3a3d4a', acc:'#e6a55a' },
+    { id:'pastel', name:'Daily Quote',  layout:'poster',  style:'editorial', font:'auto', bg:'#e8a95d', ink:'#33354a', acc:'#f3c8ce' },
     { id:'forest', name:'Season Green', layout:'type',    style:'editorial', font:'auto', bg:'#2d5a40', ink:'#f1ede2', acc:'#f1ede2' },
     { id:'bold',   name:'Bold Headline',layout:'mega',    style:'editorial', font:'auto', bg:'#f1eee7', ink:'#191919', acc:'#c4a276' },
     { id:'cream',  name:'Outline Cream',layout:'outline', style:'editorial', font:'auto', bg:'#ece6d8', ink:'#2a2a2a', acc:'#2a2a2a' }
@@ -1457,7 +1571,8 @@
       post.style.setProperty('--pbadge', T.bg);
       post.style.setProperty('--pcardbg', rgba(T.bg, 0.92));
       post.style.setProperty('--pscrim', 'linear-gradient(to top,'+rgba(T.bg,.9)+' 0%,'+rgba(T.bg,.4)+' 45%,'+rgba(T.bg,0)+' 78%)');
-      byId('postDecor').innerHTML = ''; byId('postAccents').innerHTML = '';
+      byId('postDecor').innerHTML = buildTemplateScene(T.id, T);
+      byId('postAccents').innerHTML = '';
       return;
     }
     const tpl = (curLayout && curLayout.indexOf('tpl-')===0) ? curLayout : '';
@@ -1528,7 +1643,7 @@
     const postR = byId('post').getBoundingClientRect();
     const c = byId('postContent'); const cs = getComputedStyle(c);
     const padT=parseFloat(cs.paddingTop)||0, padB=parseFloat(cs.paddingBottom)||0, gap=parseFloat(cs.rowGap)||0;
-    const kids=[...c.children].filter(k=>getComputedStyle(k).display!=='none');
+    const kids=[...c.children].filter(k=>{ const ks=getComputedStyle(k); return ks.display!=='none' && ks.position!=='absolute'; });
     let need=0; kids.forEach(k=>need+=k.offsetHeight); need += gap*Math.max(0,kids.length-1);
     if (need > (c.clientHeight - padT - padB) + 1) return true;
     const cr=c.getBoundingClientRect();
