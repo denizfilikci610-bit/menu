@@ -681,14 +681,14 @@
   .post.tpl-kev9.st-al-c .post-body{ align-items:flex-start; }
   .post.tpl-kev9 .post-headline{ --hl:21cqw; }
   .post.tpl-kev9 .post-brand{ position:absolute; top:6cqw; left:50%; transform:translateX(-50%); }
-  .post.tpl-kev9 .post-sub{ position:absolute; left:9cqw; bottom:8cqw; text-transform:uppercase; letter-spacing:.14em; font-weight:600; opacity:.85; }
+  .post.tpl-kev9 .post-sub{ position:absolute; left:9cqw; right:15cqw; bottom:8cqw; max-width:none; text-transform:uppercase; letter-spacing:.14em; font-weight:600; opacity:.85; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
   .post.tpl-kev9 .post-eyebrow{ display:none; }
 
   /* kev5 — FASHION QUOTE: stor fed citat-overskrift, vertikale labels, pille forneden */
   .post.tpl-kev5.st-al-c .post-content{ align-items:flex-start; text-align:left; justify-content:center; padding:15cqw 13cqw 16cqw; }
   .post.tpl-kev5.st-al-c .post-body{ align-items:flex-start; }
   .post.tpl-kev5 .post-headline{ --hl:13cqw; line-height:.98; }
-  .post.tpl-kev5 .post-eyebrow{ position:absolute; top:6cqw; right:7cqw; max-width:50%; text-align:right; opacity:.55; font-size:max(2.3cqw, calc(2.4cqw * var(--fit,1) * var(--escale,1))); letter-spacing:.1em; }
+  .post.tpl-kev5 .post-eyebrow{ position:absolute; top:6cqw; right:9cqw; max-width:46%; text-align:right; opacity:.55; font-size:max(2.3cqw, calc(2.4cqw * var(--fit,1) * var(--escale,1))); letter-spacing:.1em; }
   .post.tpl-kev5 .post-brand{ position:absolute; left:13cqw; bottom:7cqw; }
   .post.tpl-kev5 .post-sub{ display:none; }
 
@@ -730,6 +730,19 @@
   .tsc-kev .kev-flank{ position:absolute; top:36cqw; font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:2.7cqw; letter-spacing:.05em; text-transform:uppercase; color:var(--pink); opacity:.72; line-height:1.3; }
   .tsc-kev .kev-flank.fl-l{ left:7cqw; text-align:left; } .tsc-kev .kev-flank.fl-r{ right:7cqw; text-align:right; }
   .tsc-kev .kev-mid{ position:absolute; right:6cqw; top:46cqw; font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:2.6cqw; letter-spacing:.07em; text-transform:uppercase; color:var(--pink); opacity:.7; line-height:1.3; text-align:right; }
+  /* KEVARI redigerbare smaa labels (dekorations-tekster) — max-width + ombryd hindrer overlap/overflow */
+  /* Lad post-content slippe klik igennem paa tomme felter, saa dekorations-labels (i laget under) kan klikkes/redigeres. De redigerbare felter beholder selv klik. */
+  .post[class*="tpl-kev"] .post-content{ pointer-events:none; }
+  .post[class*="tpl-kev"] .post-content .post-eyebrow,
+  .post[class*="tpl-kev"] .post-content .post-headline,
+  .post[class*="tpl-kev"] .post-content .post-sub,
+  .post[class*="tpl-kev"] .post-content .post-brand{ pointer-events:auto; }
+  .post-decor .kev-ed{ pointer-events:auto; cursor:text; outline:none; }
+  .post-decor .kev-ed:focus{ outline:.25cqw dashed var(--pink); outline-offset:.4cqw; opacity:1; }
+  .tsc-kev .kev-flank{ max-width:25cqw; overflow-wrap:anywhere; }
+  .tsc-kev .kev-mid{ max-width:30cqw; overflow-wrap:anywhere; }
+  .tsc-kev .kev-corner{ max-width:30cqw; overflow-wrap:anywhere; }
+  .tsc-kev .kev-row3 span{ overflow-wrap:anywhere; }
 
   /* kev1 — BEST OFF COLLECT: creme, centreret titel, flanke-labels, foto i midten */
   .post.tpl-kev1.st-al-c .post-content{ align-items:flex-start; text-align:left; justify-content:flex-start; padding:13cqw 7cqw; gap:2cqw; }
@@ -737,7 +750,7 @@
   .post.tpl-kev1 .post-headline{ --hl:15cqw; width:100%; white-space:nowrap; }
   .post.tpl-kev1 .post-eyebrow{ position:absolute; top:7cqw; left:7cqw; right:7cqw; text-align:center; letter-spacing:.24em; opacity:.85; }
   .post.tpl-kev1 .post-photo{ display:block; inset:auto; left:34cqw; right:34cqw; top:33cqw; height:41cqw; border-radius:0; border:.3cqw solid var(--pink); box-sizing:border-box; }
-  .post.tpl-kev1 .post-sub{ position:absolute; left:7cqw; right:7cqw; bottom:7cqw; text-align:justify; text-transform:uppercase; letter-spacing:.08em; line-height:1.7; max-width:none; }
+  .post.tpl-kev1 .post-sub{ position:absolute; left:7cqw; right:7cqw; bottom:7cqw; text-align:justify; text-transform:uppercase; letter-spacing:.08em; line-height:1.7; max-width:none; display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden; }
   .post.tpl-kev1 .post-brand{ display:none; }
 
   /* kev2 — EASY FASHION LOOK: foto foroven, hjørne-labels, overskrift forneden, pille */
@@ -1612,6 +1625,25 @@
 
   // ===== Bespoke premium-skabelon-scener (cirkler, spøgelses-tekst, ringe, SVG-pynt bag teksten) =====
   // Al dekorativ tekst udledes af det brugeren skriver (CONTENT) — intet er hardcoded.
+  // ===== KEVARI smaa labels: redigerbare dekorations-tekster (defaults = pladsholdere) =====
+  const KEV_LABEL_DEFAULTS = {
+    kev1: { flankL:'PIECES THAT\nTRANSITION', flankR:'CRAFTED WITH\nLOVE', copy:'©2024' },
+    kev2: { tl:'START WITH\nSTAPLES', tr:'LAYER\nSMARTLY', mid1:'THE MATCHING\nSET', mid2:'MADE SIMPLE' },
+    kev3: { r1:'TAILORED PERFECTION', r2:'STATEMENT ACCESSORIES', r3:'POLISHED DETAILS' },
+    kev6: { copy:'©2025', mid:'ACCESSORIZE\nBOLDLY' },
+    kev8: { copy:'©2024', tag1:'#FOLLOWME', tag2:'#2MILLION' }
+  };
+  let tplLabels = {};   // brugerens egne aendringer pr. skabelon: { kev1:{flankL:'...'}, ... }
+  // Redigerbart label-span. Vaerdi = brugerens override ?? afledt (derived) ?? default-pladsholder.
+  function kevEd(id, key, cls, style, derived){
+    const ov = tplLabels[id] && tplLabels[id][key];
+    let v;
+    if (typeof ov === 'string') v = ov;
+    else if (typeof derived === 'string' && derived) v = derived;
+    else v = (KEV_LABEL_DEFAULTS[id] && KEV_LABEL_DEFAULTS[id][key]) || '';
+    return '<span class="'+(cls?cls+' ':'')+'kev-ed" contenteditable="true" data-ktpl="'+id+'" data-klab="'+key+'"'
+      + (style ? (' style="'+style+'"') : '') + '>' + esc(v).replace(/\n/g,'<br>') + '</span>';
+  }
   function buildTemplateScene(id, t){
     const C = CONTENT || {};
     const words = (C.headline||'').split(/\s+/).filter(Boolean);
@@ -1676,41 +1708,41 @@
           + '</div>';
       }
       if (id === 'kev3'){
-        const dfl = ['TAILORED PERFECTION','STATEMENT ACCESSORIES','POLISHED DETAILS'];
         const parts = (C.eyebrow||'').split(/[·•|]/).map(s=>s.trim()).filter(Boolean);
+        const keys = ['r1','r2','r3'];
         let row = '<div class="kev-row3">';
-        for (let i=0;i<3;i++) row += '<span>'+esc(parts[i]||dfl[i])+'</span>';
+        for (let i=0;i<3;i++) row += kevEd('kev3', keys[i], '', '', parts[i]||'');
         row += '</div>';
         return '<div class="tpl-scene tsc-kev">'+row+'</div>';
       }
       if (id === 'kev8'){
         return '<div class="tpl-scene tsc-kev">'
           + '<span class="kev-ring"></span>'
-          + '<span class="kev-corner tl">©2024</span>'
-          + '<span class="kev-corner tr">#FOLLOWME</span>'
+          + kevEd(id,'copy','kev-corner tl')
+          + kevEd(id,'tag1','kev-corner tr')
           + '<span class="kev-corner bl">'+esc(tag(nv||hl))+'</span>'
-          + '<span class="kev-corner br">#2MILLION</span>'
+          + kevEd(id,'tag2','kev-corner br')
           + '</div>';
       }
       if (id === 'kev1'){
         return '<div class="tpl-scene tsc-kev">'
-          + '<span class="kev-flank fl-l">PIECES THAT<br>TRANSITION</span>'
-          + '<span class="kev-flank fl-r">CRAFTED WITH<br>LOVE</span>'
-          + '<span class="kev-corner" style="top:69cqw;right:8cqw">©2024</span>'
+          + kevEd(id,'flankL','kev-flank fl-l')
+          + kevEd(id,'flankR','kev-flank fl-r')
+          + kevEd(id,'copy','kev-corner','top:69cqw;right:8cqw')
           + '</div>';
       }
       if (id === 'kev2'){
         return '<div class="tpl-scene tsc-kev">'
-          + '<span class="kev-corner tl">START WITH<br>STAPLES</span>'
-          + '<span class="kev-corner tr" style="text-align:right">LAYER<br>SMARTLY</span>'
-          + '<span class="kev-mid mr" style="top:30cqw">THE MATCHING<br>SET</span>'
-          + '<span class="kev-mid mr" style="top:62cqw">MADE SIMPLE</span>'
+          + kevEd(id,'tl','kev-corner tl')
+          + kevEd(id,'tr','kev-corner tr','text-align:right')
+          + kevEd(id,'mid1','kev-mid mr','top:30cqw')
+          + kevEd(id,'mid2','kev-mid mr','top:62cqw')
           + '</div>';
       }
       if (id === 'kev6'){
         return '<div class="tpl-scene tsc-kev">'
-          + '<span class="kev-corner tr">©2025</span>'
-          + '<span class="kev-mid mr">ACCESSORIZE<br>BOLDLY</span>'
+          + kevEd(id,'copy','kev-corner tr')
+          + kevEd(id,'mid','kev-mid mr')
           + '</div>';
       }
       if (id === 'kev7'){
@@ -2197,6 +2229,31 @@
   byId('postBadge').addEventListener('pointerdown', () => selectEl('postBadge'));
   byId('postBadge').querySelector('span').addEventListener('input', () => onInlineEdit('postBadge'));
   byId('postHeadline').addEventListener('blur', () => { byId('postHeadline').innerHTML = headlineHTML(CONTENT.headline, CONTENT.emphasis); if(selId==='postHeadline') showSel(); });
+  // KEVARI smaa labels: gem brugerens redigeringer (contenteditable i dekorations-laget).
+  // Delegering paa #postDecor (som ikke erstattes) overlever refreshTemplateScene's innerHTML-rebuild.
+  byId('postDecor').addEventListener('keydown', e => {
+    const el = e.target.closest && e.target.closest('.kev-ed'); if (!el) return;
+    if (e.key === 'Enter') e.preventDefault();   // ingen nye linjer -> undgaa overflow/overlap
+  });
+  byId('postDecor').addEventListener('input', e => {
+    const el = e.target.closest && e.target.closest('.kev-ed'); if (!el) return;
+    const tpl = el.dataset.ktpl, key = el.dataset.klab; if (!tpl || !key) return;
+    if (!tplLabels[tpl]) tplLabels[tpl] = {};
+    tplLabels[tpl][key] = el.innerText.replace(/ /g,' ').replace(/\r/g,'').slice(0,60);
+  });
+
+  // Sikr fokus paa klik: i dekorations-laget (pointer-events:none) giver UA ikke altid contenteditable fokus selv.
+  byId('postDecor').addEventListener('pointerdown', e => {
+    const el = e.target.closest && e.target.closest('.kev-ed'); if (!el) return;
+    if (document.activeElement === el) return;
+    el.focus();
+    try {
+      let rng = null;
+      if (document.caretRangeFromPoint) rng = document.caretRangeFromPoint(e.clientX, e.clientY);
+      else if (document.caretPositionFromPoint){ const p = document.caretPositionFromPoint(e.clientX, e.clientY); if (p){ rng = document.createRange(); rng.setStart(p.offsetNode, p.offset); rng.collapse(true); } }
+      if (rng){ const s = window.getSelection(); s.removeAllRanges(); s.addRange(rng); }
+    } catch(_){}
+  });
 
   byId('selMove').addEventListener('pointerdown', e => {
     if (sceneMode){
@@ -2769,6 +2826,7 @@
       CONTENT: { headline:CONTENT.headline, emphasis:CONTENT.emphasis, eyebrow:CONTENT.eyebrow, subline:CONTENT.subline, badge:CONTENT.badge, navn:CONTENT.navn },
       palId: palId, custom: custom, userFont: userFont,
       curLayout: curLayout, curStyleId: curStyleId, curStyleDecor: curStyleDecor, curTemplate: curTemplate,
+      tplLabels: tplLabels,
       motifId: motifId, accentLevel: accentLevel,
       photos: photos, photosHi: photosHi, photoIdx: photoIdx, customPhoto: cp,
       removed: Array.from(removed),
@@ -2795,6 +2853,15 @@
   function _applyDraft(d){
     try {
       if (!d || !d.CONTENT) return false;
+      tplLabels = {};
+      if (d.tplLabels && typeof d.tplLabels === 'object'){
+        Object.keys(d.tplLabels).forEach(function(tid){
+          var o = d.tplLabels[tid]; if (!o || typeof o !== 'object') return;
+          var clean = {};
+          Object.keys(o).forEach(function(k){ if (typeof o[k] === 'string') clean[k] = o[k].slice(0,60); });
+          tplLabels[tid] = clean;
+        });
+      }
       palId = (typeof d.palId === 'string') ? d.palId : 'terra';
       motifId = (typeof d.motifId === 'string') ? d.motifId : 'none';
       custom = (d.custom && hexOk(d.custom.bg) && hexOk(d.custom.ink) && hexOk(d.custom.acc)) ? { bg:d.custom.bg, ink:d.custom.ink, acc:d.custom.acc } : null;
