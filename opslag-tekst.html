@@ -834,7 +834,7 @@
   /* gul 10-takket stjerne-badge over fotoets top-hoejre hjoerne, let roteret */
   .tsc-recruit .rc-star{ position:absolute; top:43cqw; right:8cqw; width:29cqw; height:29cqw; transform:rotate(11deg); }
   .tsc-recruit .rc-star-svg{ position:absolute; inset:0; width:100%; height:100%; display:block; }
-  .tsc-recruit .rc-star-txt{ position:absolute; inset:0; display:grid; place-items:center; text-align:center; font-family:'Space Grotesk',sans-serif; font-weight:800; font-size:3.8cqw; line-height:1.02; color:#141414; text-transform:uppercase; letter-spacing:.005em; }
+  .tsc-recruit .rc-star-txt{ position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); max-width:23cqw; text-align:center; font-family:'Space Grotesk',sans-serif; font-weight:800; font-size:3.6cqw; line-height:1.04; color:#141414; text-transform:uppercase; letter-spacing:.005em; white-space:normal; overflow-wrap:normal; word-break:normal; }
 
   /* ===================== KEVARI 9-post sæt ===================== */
   .post[class*="tpl-kev"]{ --hl:22cqw; }
@@ -1891,6 +1891,7 @@
       set('kev8', { copy:copy, tag1:tg[0], tag2:tg[1] });
       set('convo', { pill:ds[0] });   // Conversations-pillen faar den foerste AI-descriptor (emne-relevant tekst)
       set('flaw', { hl0:ds[0], hl1:ds[1], hl2:ds[2], hl3:ds[3], tag:tg[0] });   // Flawless: 4 overskrifter fra descriptors + hashtag
+      set('recruit', { star:ds[0] });   // Recruit-stjernen faar AI'ens foerste (korte) descriptor som blikfang (ellers default 'JOIN THE CREW!')
     }
     tplLabels = T;   // friskt AI-design -> friske labels
     aiLabels = { descriptors:ds.slice(), tags:tg.slice() };   // gem puljen til de afledte hashtag-labels (kev5/kev9)
@@ -2328,6 +2329,21 @@
     while (overflowing() && f>0.4 && g<30){ f-=0.04; post.style.setProperty('--fit', f.toFixed(3)); g++; }
     if (overflowing()) post.classList.add('hl-break');
     kev4Adjust();
+    recruitStarFit();
+  }
+  // Recruit: skaler stjerne-teksten (AI-ordet eller default "JOIN THE CREW!") saa den passer inde i stjernen UDEN at braekke ord midt-i.
+  function recruitStarFit(){
+    const el = document.querySelector('.tsc-recruit .rc-star-txt'), post = byId('post');
+    if (curTemplate !== 'recruit' || !el || !post) return;
+    const pr = post.getBoundingClientRect(); if (!pr.width) return;
+    const cqw = pr.width/100;
+    const maxW = 21*cqw, maxH = 18*cqw;          // sikker zone inde i stjernen
+    el.style.wordBreak = 'normal'; el.style.overflowWrap = 'normal';   // hele ord (ingen grim midt-i-ord-knaek); ombryd kun ved mellemrum
+    el.style.fontSize = '';                      // tilbage til CSS-default (3.6cqw)
+    let size = parseFloat(getComputedStyle(el).fontSize) || 3.6*cqw;
+    el.style.fontSize = size + 'px';
+    let g = 0;
+    while ((el.scrollWidth > maxW + 0.5 || el.scrollHeight > maxH + 0.5) && size > 1.6*cqw && g < 40){ size -= 0.1*cqw; el.style.fontSize = size + 'px'; g++; }
   }
   // Big Sale: skaler den ROTEREDE overskrift saa ALLE kolonner holder sig inde i det sorte panel
   // (ingen overlap, robust for variabel tekstlaengde). Maaler den faktiske ombrydning ved hver stoerrelse.
