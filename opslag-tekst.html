@@ -717,6 +717,24 @@
   .post.tpl-couture .post-brand{ display:none; }
   .post.tpl-couture .post-badge{ display:none !important; }
 
+  /* ===================== Big Sale (split: sort roteret-tekst-panel + foto) ===================== */
+  .post.tpl-bigsale{ --hl:27cqw; }
+  .post.tpl-bigsale .post-frame{ display:none !important; }
+  .post.tpl-bigsale .post-photo{ display:block !important; inset:0 !important; left:48cqw; right:0; top:0; bottom:0; width:auto; height:auto; border:0; border-radius:0; }
+  .post.tpl-bigsale.st-al-c .post-content{ align-items:flex-start; text-align:left; justify-content:flex-start; padding:0; }
+  .post.tpl-bigsale .post-body{ flex:none; }
+  /* ROTERET kaempe overskrift i venstre panel (laeses nedefra-og-op) */
+  .post.tpl-bigsale .post-headline{ position:absolute; left:44cqw; bottom:5cqw; transform-origin:left bottom; transform:rotate(-90deg); width:90cqw; max-width:90cqw; font-family:'Anton',sans-serif !important; font-weight:400 !important; text-transform:uppercase; color:#f5edd6 !important; line-height:.84; letter-spacing:.005em; text-align:left; }
+  .post.tpl-bigsale.st-treat-underline .post-headline{ border-bottom:none !important; padding-bottom:0 !important; }
+  /* ROTERET "UP TO 50% OFF" naer split */
+  .post.tpl-bigsale .post-eyebrow{ position:absolute; left:48cqw; bottom:5cqw; transform-origin:left bottom; transform:rotate(-90deg); width:90cqw; max-width:90cqw; min-height:0; font-family:'Space Grotesk',sans-serif; font-weight:600; text-transform:uppercase; letter-spacing:.18em; color:#f5edd6; opacity:.95; text-align:left; font-size:max(2.6cqw, calc(3cqw * var(--fit,1) * var(--escale,1))); }
+  .post.tpl-bigsale.st-eb-line .post-eyebrow::before{ display:none; }
+  /* "SALE ALL ITEM" vandret paa fotoet */
+  .post.tpl-bigsale .post-sub{ position:absolute; left:48cqw; right:2cqw; bottom:5cqw; max-width:none; text-align:center; font-family:'Space Grotesk',sans-serif; font-weight:600; text-transform:uppercase; letter-spacing:.22em; color:#f5edd6; opacity:.96; font-size:max(2.5cqw, calc(2.9cqw * var(--fit,1) * var(--escale,1))); text-shadow:0 .2cqw 1.4cqw rgba(0,0,0,.55); }
+  .post.tpl-bigsale .post-brand{ display:none; }
+  .post.tpl-bigsale .post-badge{ display:none !important; }
+  .tsc-bigsale .bs-star{ position:absolute; left:38cqw; top:5cqw; font-family:'Space Grotesk',sans-serif; font-weight:700; color:#f5edd6; font-size:10cqw; line-height:1; }
+
   /* ===================== KEVARI 9-post sæt ===================== */
   .post[class*="tpl-kev"]{ --hl:22cqw; }
   .post[class*="tpl-kev"] .post-frame{ display:none !important; }
@@ -862,7 +880,11 @@
   .post.fmt-tall.tpl-interior .post-content,
   .post.fmt-tall.tpl-interior .post-decor,
   .post.fmt-tall.tpl-living .post-content,
-  .post.fmt-tall.tpl-living .post-decor{ top:50%; bottom:auto; height:100cqw; transform:translateY(-50%); }
+  .post.fmt-tall.tpl-living .post-decor,
+  .post.fmt-tall.tpl-bigsale .post-content,
+  .post.fmt-tall.tpl-bigsale .post-decor{ top:50%; bottom:auto; height:100cqw; transform:translateY(-50%); }
+  /* bigsale-foto (hoejre halvdel) -> centreret firkant i hoeje formater */
+  .post.fmt-tall.tpl-bigsale .post-photo{ top:50% !important; bottom:auto !important; left:48cqw !important; right:0 !important; height:100cqw !important; transform:translateY(-50%); }
   /* fotos + badge ligger relativt til #post -> forskyd dem ned i samme centrerede baand */
   .post.fmt-tall[class*="tpl-kev"] .post-photo,
   .post.fmt-tall[class*="tpl-kev"] .post-photo2,
@@ -1862,6 +1884,10 @@
         + kevEd('living','bubble','liv-bubble')
         + '</div>';
     }
+    if (id === 'bigsale'){
+      // asterisk i toppen af det sorte panel (naer split)
+      return '<div class="tpl-scene tsc-bigsale"><span class="bs-star">✳</span></div>';
+    }
     // ===== KEVARI — dekorationer (vertikale labels, ring, hjørne-labels) afledt af teksten =====
     if (id && id.indexOf('kev')===0){
       const tag = s => '#'+(s||'').toUpperCase().replace(/[^A-Z0-9ÆØÅ]/gi,'') || '#';
@@ -1961,7 +1987,9 @@
     // ===== Winter Cozy — fuldt foto-baggrund (brugerens eget billede) + elegant centreret serif: stor/lille/stor + sans-underlinje =====
     { id:'winter', name:'Winter Cozy', layout:'mega', style:'editorial', font:'playfair', photo:true, bg:'#8f9185', ink:'#ffffff', acc:'#ffffff' },
     // ===== Couture — fuldt foto-baggrund + HOEJRESTILLET elegant serif (italic overlinje, stor 2-linjers serif, sans-underlinje) =====
-    { id:'couture', name:'Couture', layout:'mega', style:'editorial', font:'playfair', photo:true, bg:'#5a5d57', ink:'#ffffff', acc:'#ffffff' }
+    { id:'couture', name:'Couture', layout:'mega', style:'editorial', font:'playfair', photo:true, bg:'#5a5d57', ink:'#ffffff', acc:'#ffffff' },
+    // ===== Big Sale — split: sort venstre-panel med ROTERET kaempe overskrift + foto til hoejre =====
+    { id:'bigsale', name:'Big Sale', layout:'mega', style:'editorial', font:'anton', photo:true, bg:'#141414', ink:'#f5edd6', acc:'#f5edd6' }
   ];
   let CONTENT = { headline:'', emphasis:'', eyebrow:'', subline:'', badge:'', navn:'' };
   const removed = new Set();
@@ -2016,7 +2044,7 @@
     curStyleId = t.style || 'editorial';
     motifId = 'none'; curStyleDecor = ''; accentLevel = 'none'; curTextPos = null;
     _premTpl = true; _premLayout = _premFont = _premPalette = false;
-    if ((t.id.indexOf('kev')===0 || t.id==='interior' || t.id==='living') && postRatio < 0.9) postRatio = 1;   // lodrette premium-designs kan ikke vises i landskab -> tilbage til firkant
+    if ((t.id.indexOf('kev')===0 || t.id==='interior' || t.id==='living' || t.id==='bigsale') && postRatio < 0.9) postRatio = 1;   // firkant-specifikke premium-designs kan ikke vises i landskab -> tilbage til firkant
     const post = byId('post');
     TEMPLATES.forEach(x => post.classList.remove('tpl-'+x.id));
     post.classList.add('tpl-'+t.id);
@@ -2210,7 +2238,7 @@
   }
   function syncFormatStrip(){ const strip=byId('formatStrip'); if(!strip) return; let best=FORMATS[0], bd=1e9; FORMATS.forEach(f=>{ const d=Math.abs(f.ratio-postRatio); if(d<bd){bd=d; best=f;} }); strip.querySelectorAll('.format-card').forEach(c=>c.classList.toggle('active', c.dataset.fmt===best.id)); }
   // KEVARI-skabeloner er lodrette designs — de to landskabsformater laases (deaktiveres) naar en KEVARI-skabelon er aktiv.
-  function isKevTemplate(){ return !!(curTemplate && (curTemplate.indexOf('kev')===0 || curTemplate==='interior' || curTemplate==='living')); }
+  function isKevTemplate(){ return !!(curTemplate && (curTemplate.indexOf('kev')===0 || curTemplate==='interior' || curTemplate==='living' || curTemplate==='bigsale')); }
   function formatLocked(id){ const f=FORMATS.find(x=>x.id===id); return !!(f && f.ratio < 0.9 && isKevTemplate()); }
   function syncFormatLocks(){ const strip=byId('formatStrip'); if(!strip) return; strip.querySelectorAll('.format-card').forEach(c=>c.classList.toggle('fmt-locked', formatLocked(c.dataset.fmt))); }
   function selectFormat(id){ if(formatLocked(id)) return; const f=FORMATS.find(x=>x.id===id)||FORMATS[0]; postRatio=f.ratio; applyFormat(); fitText(); if(selId) showSel(); byId('formatStrip').querySelectorAll('.format-card').forEach(c=>c.classList.toggle('active', c.dataset.fmt===id)); }
