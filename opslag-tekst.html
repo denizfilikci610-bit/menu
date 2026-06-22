@@ -836,6 +836,25 @@
   .tsc-recruit .rc-star-svg{ position:absolute; inset:0; width:100%; height:100%; display:block; }
   .tsc-recruit .rc-star-txt{ position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); max-width:23cqw; text-align:center; font-family:'Space Grotesk',sans-serif; font-weight:800; font-size:3.6cqw; line-height:1.04; color:#141414; text-transform:uppercase; letter-spacing:.005em; white-space:normal; overflow-wrap:normal; word-break:normal; }
 
+  /* ===================== Snapshot (blaa ramme + sort-kantet foto + groent caption-baand, KUN portraet 4:5) ===================== */
+  .post.tpl-snapshot{ --hl:9cqw; }
+  .post.tpl-snapshot .post-frame{ display:none !important; }
+  /* FOTO fylder kortets oeverste del; sort kant hele vejen rundt (bund-kanten fungerer som divider mod baandet) */
+  .post.tpl-snapshot .post-photo{ display:block !important; inset:auto !important; left:4.5cqw !important; right:4.5cqw !important; top:4.5cqw !important; bottom:25cqw !important; width:auto !important; height:auto !important; background-size:cover; background-position:center; border:0.5cqw solid #141414; border-radius:0; z-index:2; }
+  .post.tpl-snapshot .post-photo2, .post.tpl-snapshot .post-photo3, .post.tpl-snapshot .post-photo4{ display:none !important; }
+  /* GROENT caption-baand (post-scrim genbrugt); deler fotoets bund-kant som divider -> ingen top-kant */
+  .post.tpl-snapshot .post-scrim{ display:block; inset:auto; left:4.5cqw; right:4.5cqw; top:100cqw; bottom:4.5cqw; background:var(--pacc,#b2e09a); border:0.5cqw solid #141414; border-top:0; z-index:1; }
+  /* overskrift i det groenne baand (venstrestillet, lodret centreret); fyldes af snapshotFit */
+  .post.tpl-snapshot.st-al-c .post-content{ inset:auto; left:4.5cqw; right:4.5cqw; top:100cqw; bottom:4.5cqw; align-items:flex-start; text-align:left; justify-content:center; padding:1cqw 4cqw; pointer-events:none; }
+  .post.tpl-snapshot .post-body{ flex:none; align-items:flex-start; width:100%; }
+  .post.tpl-snapshot .post-headline{ pointer-events:auto; font-family:'Roboto Slab',serif !important; font-weight:800 !important; text-transform:none; color:#141414 !important; line-height:.98; letter-spacing:-.015em; width:100%; max-width:100%; }
+  .post.tpl-snapshot .post-headline .post-em{ font-style:normal !important; color:inherit !important; background:none !important; -webkit-text-stroke:0 !important; }
+  .post.tpl-snapshot.st-treat-underline .post-headline{ border-bottom:none !important; padding-bottom:0 !important; }
+  .post.tpl-snapshot .post-eyebrow{ display:none !important; }
+  .post.tpl-snapshot .post-sub{ display:none !important; }
+  .post.tpl-snapshot .post-brand{ display:none !important; }
+  .post.tpl-snapshot .post-badge{ display:none !important; }
+
   /* ===================== KEVARI 9-post sæt ===================== */
   .post[class*="tpl-kev"]{ --hl:22cqw; }
   .post[class*="tpl-kev"] .post-frame{ display:none !important; }
@@ -2181,7 +2200,9 @@
     { id:'circ2', name:'Circle · Lilla', layout:'mega', style:'editorial', font:'poppins', photo:true, bg:'#b18cf0', ink:'#0a0a0a', acc:'#0a0a0a' },
     { id:'circ3', name:'Circle · Rød',   layout:'mega', style:'editorial', font:'poppins', photo:true, bg:'#fa2d18', ink:'#0a0a0a', acc:'#0a0a0a' },
     // ===== Recruit — KUN portraet 4:5: gul ramme + creme kort + stor serif jobtitel + foto + gul stjerne-badge "JOIN THE CREW!" =====
-    { id:'recruit', name:'Recruit', layout:'mega', style:'editorial', font:'fraunces', photo:true, bg:'#f5c01a', ink:'#141414', acc:'#f5d23a' }
+    { id:'recruit', name:'Recruit', layout:'mega', style:'editorial', font:'fraunces', photo:true, bg:'#f5c01a', ink:'#141414', acc:'#f5d23a' },
+    // ===== Snapshot — KUN portraet 4:5: blaa ramme + sort-kantet foto (oeverst) + groent caption-baand m. stor fed slab-serif overskrift =====
+    { id:'snapshot', name:'Snapshot', layout:'mega', style:'editorial', font:'fraunces', photo:true, bg:'#3f6fd1', ink:'#141414', acc:'#b2e09a' }
   ];
   let CONTENT = { headline:'', emphasis:'', eyebrow:'', subline:'', badge:'', navn:'' };
   const removed = new Set();
@@ -2240,6 +2261,7 @@
     if (t.id==='flaw') postRatio = 1.7778;   // Flawless er KUN til story 9:16
     if (t.id.indexOf('circ')===0) postRatio = 1.25;   // Circle-plakaterne er KUN portraet 4:5
     if (t.id==='recruit') postRatio = 1.25;   // Recruit er KUN portraet 4:5
+    if (t.id==='snapshot') postRatio = 1.25;   // Snapshot er KUN portraet 4:5
     const post = byId('post');
     TEMPLATES.forEach(x => post.classList.remove('tpl-'+x.id));
     post.classList.add('tpl-'+t.id);
@@ -2323,8 +2345,10 @@
   function fitText(){
     const post=byId('post'); if(!post) return;
     post.classList.remove('hl-break');
-    if (curTemplate === 'bigsale'){ post.style.setProperty('--fit','1'); bigsaleFit(); return; }
+    if (curTemplate === 'bigsale'){ post.style.setProperty('--fit','1'); bigsaleFit(); snapshotFit(); return; }
+    if (curTemplate === 'snapshot'){ post.style.setProperty('--fit','1'); bigsaleFit(); snapshotFit(); return; }
     bigsaleFit();   // ryd bigsale-inline-styles paa overskriften naar en anden skabelon er aktiv
+    snapshotFit();  // ryd snapshot-inline-styles naar en anden skabelon er aktiv
     let f=1; post.style.setProperty('--fit','1'); let g=0;
     while (overflowing() && f>0.4 && g<30){ f-=0.04; post.style.setProperty('--fit', f.toFixed(3)); g++; }
     if (overflowing()) post.classList.add('hl-break');
@@ -2386,6 +2410,30 @@
     const cqw = pr.width/100;
     const boxBottom = (h.getBoundingClientRect().bottom - pr.top)/cqw;
     if (ph) ph.style.top = (boxBottom - 0.4).toFixed(1) + 'cqw';
+  }
+  // Snapshot: skaler overskriften saa den fylder caption-baandets bredde paa ÉN linje (cappet), ellers ombryd og fyld baandet
+  function snapshotFit(){
+    const h=byId('postHeadline'), post=byId('post');
+    if (curTemplate !== 'snapshot'){ if (h){ h.style.fontSize=''; h.style.whiteSpace=''; } return; }
+    if (!h || !post) return;
+    const pr=post.getBoundingClientRect(); if(!pr.width) return;
+    const cqw=pr.width/100;
+    const c=byId('postContent'), ccs=getComputedStyle(c);
+    const availW=h.clientWidth;   // baandets indre bredde (overskrift er width:100%)
+    const availH=c.clientHeight - (parseFloat(ccs.paddingTop)||0) - (parseFloat(ccs.paddingBottom)||0);
+    // 1) prøv én linje der fylder bredden (begraenset af baand-hoejden + et cap)
+    h.style.whiteSpace='nowrap';
+    h.style.fontSize='100px';
+    const w1=h.scrollWidth, h1=h.scrollHeight;
+    let size=Math.min(100*(availW/Math.max(1,w1)), 100*(availH/Math.max(1,h1)));
+    const maxPx=11*cqw;
+    if (size>maxPx) size=maxPx;
+    if (size>=5*cqw){ h.style.fontSize=size+'px'; return; }
+    // 2) for lang til én linje -> ombryd og binaer-søg største størrelse der passer i baandet (bredde+hoejde)
+    h.style.whiteSpace='normal';
+    let lo=2.6*cqw, hi=7.5*cqw;
+    for (let i=0;i<18;i++){ const mid=(lo+hi)/2; h.style.fontSize=mid+'px'; if (h.scrollWidth<=availW+1 && h.scrollHeight<=availH+1) lo=mid; else hi=mid; }
+    h.style.fontSize=lo+'px';
   }
   function relayout(){ applyFormat(); fitText(); if(selId) showSel(); }
 
@@ -2483,7 +2531,7 @@
   function syncFormatStrip(){ const strip=byId('formatStrip'); if(!strip) return; let best=FORMATS[0], bd=1e9; FORMATS.forEach(f=>{ const d=Math.abs(f.ratio-postRatio); if(d<bd){bd=d; best=f;} }); strip.querySelectorAll('.format-card').forEach(c=>c.classList.toggle('active', c.dataset.fmt===best.id)); }
   // KEVARI-skabeloner er lodrette designs — de to landskabsformater laases (deaktiveres) naar en KEVARI-skabelon er aktiv.
   function isKevTemplate(){ return !!(curTemplate && (curTemplate.indexOf('kev')===0 || curTemplate==='interior' || curTemplate==='living' || curTemplate==='bigsale' || curTemplate==='convo')); }
-  function formatLocked(id){ const f=FORMATS.find(x=>x.id===id); if(!f) return false; if(curTemplate==='flaw') return id!=='story'; if(curTemplate.indexOf('circ')===0) return id!=='portrait'; if(curTemplate==='recruit') return id!=='portrait'; return !!(f.ratio < 0.9 && isKevTemplate()); }
+  function formatLocked(id){ const f=FORMATS.find(x=>x.id===id); if(!f) return false; if(curTemplate==='flaw') return id!=='story'; if(curTemplate.indexOf('circ')===0) return id!=='portrait'; if(curTemplate==='recruit') return id!=='portrait'; if(curTemplate==='snapshot') return id!=='portrait'; return !!(f.ratio < 0.9 && isKevTemplate()); }
   function syncFormatLocks(){ const strip=byId('formatStrip'); if(!strip) return; strip.querySelectorAll('.format-card').forEach(c=>c.classList.toggle('fmt-locked', formatLocked(c.dataset.fmt))); }
   function selectFormat(id){ if(formatLocked(id)) return; const f=FORMATS.find(x=>x.id===id)||FORMATS[0]; postRatio=f.ratio; applyFormat(); fitText(); if(selId) showSel(); byId('formatStrip').querySelectorAll('.format-card').forEach(c=>c.classList.toggle('active', c.dataset.fmt===id)); }
 
