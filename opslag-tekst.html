@@ -700,6 +700,23 @@
   .post.tpl-winter .post-brand{ display:none; }
   .post.tpl-winter .post-badge{ display:none !important; }
 
+  /* ===================== Couture (foto + hoejrestillet elegant serif) ===================== */
+  .post.tpl-couture{ --hl:15cqw; }
+  .post.tpl-couture .post-frame{ display:none !important; }
+  .post.tpl-couture .post-photo{ display:block !important; inset:0 !important; left:0; right:0; top:0; bottom:0; width:auto; height:auto; border:0; border-radius:0; }
+  .post.tpl-couture .post-scrim{ display:block; background:linear-gradient(90deg, rgba(18,20,17,.08) 0%, rgba(18,20,17,.28) 45%, rgba(18,20,17,.52) 100%); }
+  .post.tpl-couture.st-al-c .post-content{ align-items:flex-end; text-align:right; justify-content:center; padding:8cqw 6cqw 8cqw 10cqw; }
+  .post.tpl-couture.st-al-c .post-body{ align-items:flex-end; flex:none; }
+  .post.tpl-couture .post-headline{ font-family:'Playfair Display',serif !important; font-weight:700 !important; text-transform:uppercase; color:#fff !important; line-height:.94; letter-spacing:.01em; width:74cqw; max-width:74cqw; text-align:right; text-shadow:0 .2cqw 1.8cqw rgba(0,0,0,.42); }
+  .post.tpl-couture.st-treat-underline .post-headline{ border-bottom:none !important; padding-bottom:0 !important; }
+  .post.tpl-couture .post-eyebrow{ display:block; position:static; width:auto; min-height:0; font-family:'Playfair Display',serif; font-style:italic; font-weight:600; text-transform:none; letter-spacing:.01em; color:#fff; text-align:right; opacity:.98; margin-bottom:1.4cqw; font-size:max(4cqw, calc(6cqw * var(--fit,1) * var(--escale,1))); text-shadow:0 .2cqw 1.6cqw rgba(0,0,0,.42); }
+  .post.tpl-couture .post-eyebrow.hide{ display:block !important; }
+  .post.tpl-couture .post-eyebrow::before{ content:none !important; }
+  .post.tpl-couture .post-eyebrow:empty::before{ content:'Spring 2025'; }
+  .post.tpl-couture .post-sub{ font-family:'Space Grotesk',sans-serif; font-weight:600; text-transform:uppercase; letter-spacing:.07em; color:#fff; text-align:right; margin-top:2.4cqw; max-width:78cqw; opacity:.97; text-shadow:0 .2cqw 1.4cqw rgba(0,0,0,.42); font-size:max(2.7cqw, calc(3.2cqw * var(--fit,1) * var(--escale,1))); }
+  .post.tpl-couture .post-brand{ display:none; }
+  .post.tpl-couture .post-badge{ display:none !important; }
+
   /* ===================== KEVARI 9-post sæt ===================== */
   .post[class*="tpl-kev"]{ --hl:22cqw; }
   .post[class*="tpl-kev"] .post-frame{ display:none !important; }
@@ -1942,7 +1959,9 @@
     // ===== Living Room — centreret overskrift+undertekst, moerk navy taleboble, orange sofa-illustration =====
     { id:'living', name:'Living Room', layout:'mega', style:'editorial', font:'archivo', bg:'#f6edd7', ink:'#141414', acc:'#21456e' },
     // ===== Winter Cozy — fuldt foto-baggrund (brugerens eget billede) + elegant centreret serif: stor/lille/stor + sans-underlinje =====
-    { id:'winter', name:'Winter Cozy', layout:'mega', style:'editorial', font:'playfair', photo:true, bg:'#8f9185', ink:'#ffffff', acc:'#ffffff' }
+    { id:'winter', name:'Winter Cozy', layout:'mega', style:'editorial', font:'playfair', photo:true, bg:'#8f9185', ink:'#ffffff', acc:'#ffffff' },
+    // ===== Couture — fuldt foto-baggrund + HOEJRESTILLET elegant serif (italic overlinje, stor 2-linjers serif, sans-underlinje) =====
+    { id:'couture', name:'Couture', layout:'mega', style:'editorial', font:'playfair', photo:true, bg:'#5a5d57', ink:'#ffffff', acc:'#ffffff' }
   ];
   let CONTENT = { headline:'', emphasis:'', eyebrow:'', subline:'', badge:'', navn:'' };
   const removed = new Set();
