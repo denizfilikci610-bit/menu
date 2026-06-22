@@ -645,14 +645,14 @@
   .post.tpl-noir .post-brand{ position:absolute; top:5.5cqw; left:50%; transform:translateX(-50%); background:var(--pink); color:var(--pbg); border-radius:99px; padding:1.8cqw 5.2cqw; letter-spacing:.14em; opacity:1; text-transform:uppercase; font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:max(2.7cqw, calc(2.9cqw * var(--fit,1) * var(--escale,1))); white-space:nowrap; }
 
   /* ===================== Interior Design ===================== */
-  .post.tpl-interior{ --hl:9cqw; }
+  .post.tpl-interior{ --hl:9.6cqw; }
   .post.tpl-interior .post-frame{ display:none !important; }
-  .post.tpl-interior.st-al-c .post-content{ align-items:flex-start; text-align:left; justify-content:flex-start; padding:30cqw 8cqw 8cqw 9cqw; gap:0; }
+  .post.tpl-interior.st-al-c .post-content{ align-items:flex-start; text-align:left; justify-content:flex-start; padding:31cqw 5cqw 8cqw 9cqw; gap:0; }
   .post.tpl-interior.st-al-c .post-body{ align-items:flex-start; flex:none; }
-  .post.tpl-interior .post-headline{ font-family:'Archivo Black',sans-serif !important; font-weight:400 !important; text-transform:none; line-height:1.0; letter-spacing:-.02em; width:82cqw; max-width:82cqw; color:var(--pink); }
+  .post.tpl-interior .post-headline{ font-family:'Archivo Black',sans-serif !important; font-weight:400 !important; text-transform:none; line-height:1.02; letter-spacing:-.02em; width:86cqw; max-width:86cqw; color:var(--pink); }
   .post.tpl-interior.st-treat-underline .post-headline{ border-bottom:none !important; padding-bottom:0 !important; }
   .post.tpl-interior .post-headline .post-em{ color:var(--pacc); font-style:normal; -webkit-text-stroke:0; background:none; }
-  .post.tpl-interior .post-rule{ display:block; margin-top:3.6cqw; width:57cqw; max-width:82%; height:1.4cqw; min-height:3px; background:#27a94b; border-radius:0; opacity:1; }
+  .post.tpl-interior .post-rule{ display:block; margin-top:3.4cqw; width:58cqw; max-width:82%; height:1.8cqw; min-height:3px; background:#1faa46; border-radius:0; opacity:1; }
   .post.tpl-interior .post-eyebrow{ position:absolute; top:15.5cqw; left:18.5cqw; right:auto; max-width:34%; font-family:'Archivo Black',sans-serif; font-weight:400; text-transform:uppercase; letter-spacing:.02em; line-height:1.06; opacity:1; color:var(--pink); font-size:max(2.6cqw, calc(3.1cqw * var(--fit,1) * var(--escale,1))); }
   .post.tpl-interior.st-eb-line .post-eyebrow::before{ display:none; }
   .post.tpl-interior .post-sub{ position:absolute; left:14cqw; right:auto; bottom:7cqw; max-width:36%; font-family:'Space Grotesk',sans-serif; font-weight:500; line-height:1.4; opacity:.95; color:var(--pink); text-transform:none; letter-spacing:0; font-size:max(2.7cqw, calc(3cqw * var(--fit,1) * var(--escale,1))); display:-webkit-box; -webkit-line-clamp:4; -webkit-box-orient:vertical; overflow:hidden; }
@@ -662,7 +662,7 @@
   .tsc-intd .intd-logo{ position:absolute; top:15.5cqw; left:9cqw; width:7cqw; height:7cqw; }
   .tsc-intd .intd-logo svg{ width:100%; height:100%; display:block; }
   .tsc-intd .intd-obar{ position:absolute; left:9cqw; bottom:6.5cqw; width:1.4cqw; height:13.5cqw; background:#ef6c1a; }
-  .tsc-intd .intd-furn-wrap{ position:absolute; right:3cqw; bottom:2cqw; width:34cqw; }
+  .tsc-intd .intd-furn-wrap{ position:absolute; right:7cqw; bottom:5cqw; width:28cqw; }
   .tsc-intd .intd-furn{ width:100%; height:auto; display:block; }
 
   /* ===================== KEVARI 9-post sæt ===================== */
@@ -1761,22 +1761,22 @@
       // Interior Design: blaat firkant-logo, orange body-bar, og flad moebel-illustration (natbord + plante)
       const SP='M12 0 C13 7 17 11 24 12 C17 13 13 17 12 24 C11 17 7 13 0 12 C7 11 11 7 12 0 Z';
       const YEL='#f6c01f', BK='#141414', ORG='#ef6c1a', CR=t.bg;
-      const furn = '<svg class="intd-furn" viewBox="0 0 140 162" fill="none" xmlns="http://www.w3.org/2000/svg">'
-        + '<path d="M50 120 L41 159" stroke="'+BK+'" stroke-width="5" stroke-linecap="round"/>'
-        + '<path d="M116 120 L125 159" stroke="'+BK+'" stroke-width="5" stroke-linecap="round"/>'
-        + '<path d="M66 122 L62 152" stroke="'+BK+'" stroke-width="5" stroke-linecap="round"/>'
-        + '<path d="M100 122 L104 152" stroke="'+BK+'" stroke-width="5" stroke-linecap="round"/>'
-        + '<rect x="14" y="54" width="110" height="70" fill="'+YEL+'" stroke="'+BK+'" stroke-width="4"/>'
-        + '<rect x="14" y="54" width="33" height="70" fill="'+BK+'"/>'
-        + '<rect x="56" y="62" width="60" height="25" fill="'+YEL+'" stroke="'+BK+'" stroke-width="4"/>'
-        + '<circle cx="86" cy="74.5" r="3.2" fill="'+BK+'"/>'
-        + '<rect x="56" y="91" width="60" height="25" fill="'+YEL+'" stroke="'+BK+'" stroke-width="4"/>'
-        + '<circle cx="86" cy="103.5" r="3.2" fill="'+BK+'"/>'
-        + '<path d="M90 34 C82 24 82 11 90 3 C98 11 98 24 90 34 Z" fill="'+CR+'" stroke="'+BK+'" stroke-width="3.4" stroke-linejoin="round"/>'
-        + '<path d="M88 35 C75 31 69 18 71 7 C83 12 91 24 91 35 Z" fill="'+CR+'" stroke="'+BK+'" stroke-width="3.4" stroke-linejoin="round"/>'
-        + '<path d="M92 35 C105 31 111 18 109 7 C97 12 89 24 89 35 Z" fill="'+CR+'" stroke="'+BK+'" stroke-width="3.4" stroke-linejoin="round"/>'
-        + '<path d="M72 38 L108 38 L103 54 L77 54 Z" fill="'+ORG+'" stroke="'+BK+'" stroke-width="4" stroke-linejoin="round"/>'
-        + '<rect x="69" y="31" width="42" height="9" rx="1" fill="'+ORG+'" stroke="'+BK+'" stroke-width="4"/>'
+      const furn = '<svg class="intd-furn" viewBox="0 0 150 188" fill="none" xmlns="http://www.w3.org/2000/svg">'
+        + '<path d="M56 134 L47 186" stroke="'+BK+'" stroke-width="5.5" stroke-linecap="round"/>'
+        + '<path d="M122 134 L131 186" stroke="'+BK+'" stroke-width="5.5" stroke-linecap="round"/>'
+        + '<path d="M73 136 L69 181" stroke="'+BK+'" stroke-width="5.5" stroke-linecap="round"/>'
+        + '<path d="M105 136 L109 181" stroke="'+BK+'" stroke-width="5.5" stroke-linecap="round"/>'
+        + '<rect x="18" y="58" width="114" height="80" fill="'+YEL+'" stroke="'+BK+'" stroke-width="4.5"/>'
+        + '<rect x="18" y="58" width="38" height="80" fill="'+BK+'"/>'
+        + '<rect x="64" y="67" width="60" height="28" rx="2" fill="'+YEL+'" stroke="'+BK+'" stroke-width="4"/>'
+        + '<circle cx="94" cy="81" r="3.6" fill="'+BK+'"/>'
+        + '<rect x="64" y="101" width="60" height="28" rx="2" fill="'+YEL+'" stroke="'+BK+'" stroke-width="4"/>'
+        + '<circle cx="94" cy="115" r="3.6" fill="'+BK+'"/>'
+        + '<path d="M96 47 C86 34 86 12 96 1 C106 12 106 34 96 47 Z" fill="'+CR+'" stroke="'+BK+'" stroke-width="3.6" stroke-linejoin="round"/>'
+        + '<path d="M93 48 C76 41 68 20 71 5 C88 12 98 31 98 47 Z" fill="'+CR+'" stroke="'+BK+'" stroke-width="3.6" stroke-linejoin="round"/>'
+        + '<path d="M99 48 C116 41 124 20 121 5 C104 12 94 31 94 47 Z" fill="'+CR+'" stroke="'+BK+'" stroke-width="3.6" stroke-linejoin="round"/>'
+        + '<path d="M84 47 L108 47 L104 58 L88 58 Z" fill="'+ORG+'" stroke="'+BK+'" stroke-width="4" stroke-linejoin="round"/>'
+        + '<rect x="79" y="38" width="34" height="10" rx="1.5" fill="'+ORG+'" stroke="'+BK+'" stroke-width="4"/>'
         + '</svg>';
       return '<div class="tpl-scene tsc-intd">'
         + '<span class="intd-logo"><svg viewBox="0 0 24 24"><path d="'+SP+'" fill="'+t.acc+'"/></svg></span>'
