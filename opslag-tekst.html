@@ -782,6 +782,17 @@
   .post.tpl-kev7 .post-sub{ margin-top:3cqw; max-width:88%; font-size:max(2.5cqw, calc(3.6cqw * var(--fit,1) * var(--escale,1))); display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
   .post.tpl-kev7 .post-brand{ position:absolute; left:8cqw; bottom:7cqw; }
 
+  /* ===== KEVARI i hoeje formater (portraet/pin/story): centrér det perfekte 1:1-design lodret; brandfarven fylder top/bund ===== */
+  /* post-content + post-decor goeres til en lodret-centreret 100cqw-firkant, saa alle deres cqw-positioner matcher firkant-formatet praecist */
+  .post.fmt-tall[class*="tpl-kev"] .post-content,
+  .post.fmt-tall[class*="tpl-kev"] .post-decor{ top:50%; bottom:auto; height:100cqw; transform:translateY(-50%); }
+  /* fotos + badge ligger relativt til #post -> forskyd dem ned i samme centrerede baand */
+  .post.fmt-tall[class*="tpl-kev"] .post-photo,
+  .post.fmt-tall[class*="tpl-kev"] .post-photo2,
+  .post.fmt-tall[class*="tpl-kev"] .post-photo3,
+  .post.fmt-tall[class*="tpl-kev"] .post-photo4{ transform:translateY(calc(var(--kband,0) * 1cqw)); }
+  .post.fmt-tall.tpl-kev4 .post-badge{ transform:translateY(calc(var(--kband,0) * 1cqw)) rotate(-9deg); }
+
   .tpl-card .tpl-thumb{ width:100%; aspect-ratio:1; display:flex; align-items:center; justify-content:center; font-family:'Fraunces',serif; font-weight:700; font-size:1.7rem; }
 
   /* ----- skitse-tilstand (wireframe) ----- */
@@ -836,8 +847,12 @@
   .style-card.active .name{ color:var(--accent-d); }
 
   /* Format-kort (samme størrelse som layout) */
-  .format-card{ flex:0 0 auto; width:104px; padding:0; border:2px solid var(--line); border-radius:12px; background:none; cursor:pointer; overflow:hidden; transition:.15s; display:flex; flex-direction:column; }
+  .format-card{ position:relative; flex:0 0 auto; width:104px; padding:0; border:2px solid var(--line); border-radius:12px; background:none; cursor:pointer; overflow:hidden; transition:.15s; display:flex; flex-direction:column; }
   .format-card:hover{ border-color:#d8b59f; transform:translateY(-2px); }
+  .format-card .fmt-lock{ position:absolute; top:6px; right:6px; z-index:3; width:18px; height:18px; border-radius:50%; background:rgba(20,16,12,.74); color:#fff; display:none; align-items:center; justify-content:center; box-shadow:0 1px 3px rgba(0,0,0,.3); }
+  .format-card.fmt-locked{ opacity:.4; cursor:not-allowed; }
+  .format-card.fmt-locked:hover{ border-color:var(--line); transform:none; }
+  .format-card.fmt-locked .fmt-lock{ display:flex; }
   .format-card.active{ border-color:var(--accent); box-shadow:0 0 0 3px rgba(181,84,42,.13); }
   .format-card .fmt-prev{ height:90px; display:flex; align-items:center; justify-content:center; background:var(--field); }
   .format-card .fmt-box{ background:linear-gradient(150deg,#cf9266,#a8623c); border-radius:4px; box-shadow:0 1px 5px rgba(60,40,22,.28); }
@@ -1860,20 +1875,21 @@
     curStyleId = t.style || 'editorial';
     motifId = 'none'; curStyleDecor = ''; accentLevel = 'none'; curTextPos = null;
     _premTpl = true; _premLayout = _premFont = _premPalette = false;
+    if (t.id.indexOf('kev')===0 && postRatio < 0.9) postRatio = 1;   // KEVARI kan ikke vises i landskab -> tilbage til firkant
     const post = byId('post');
     TEMPLATES.forEach(x => post.classList.remove('tpl-'+x.id));
     post.classList.add('tpl-'+t.id);
     setView('results');
     selectLayout(curLayout);            // anvender layout + font + stil + applyColors (respekterer curTemplate)
     if (typeof setAccentUI === 'function') setAccentUI('none');
-    buildThemes(); syncColorInputs(); syncFontStrip(); renderTemplateStrip();
+    buildThemes(); syncColorInputs(); syncFontStrip(); renderTemplateStrip(); renderFormatStrip();
     requestAnimationFrame(() => { relayout(); window.scrollTo({ top:0, behavior:'smooth' }); });
   }
   function clearTemplate(){
     if (!curTemplate) return;
     curTemplate = ''; _premTpl = false;
     const post = byId('post'); if (post) TEMPLATES.forEach(x => post.classList.remove('tpl-'+x.id));
-    renderTemplateStrip();
+    renderTemplateStrip(); syncFormatLocks();
   }
   function renderTemplateStrip(){
     const strip = byId('templateStrip'); if (!strip) return; strip.innerHTML = '';
@@ -1893,6 +1909,14 @@
   function applyFormat(){
     const post=byId('post'); if(!post) return;
     post.classList.toggle('fmt-landscape', postRatio < 0.9);
+    // hoejde-tier-klasser (bruges af KEVARI til at fylde hoeje formater paent). fmt-tall daekker alle hoejere-end-firkant.
+    post.classList.remove('fmt-portrait','fmt-pin','fmt-story','fmt-tall');
+    if (postRatio > 1.05) post.classList.add('fmt-tall');
+    if (postRatio > 1.6) post.classList.add('fmt-story');
+    else if (postRatio > 1.35) post.classList.add('fmt-pin');
+    else if (postRatio > 1.05) post.classList.add('fmt-portrait');
+    // KEVARI: centrér det kvadratiske design lodret i hoeje formater -> --kband = halvdelen af ekstra-hoejden (cqw)
+    post.style.setProperty('--kband', (postRatio > 1.05 ? (50*(postRatio-1)).toFixed(2) : '0'));
     if (window.matchMedia('(max-width:900px)').matches){
       const stage=post.parentElement;
       const availW=(stage&&stage.clientWidth)||post.clientWidth||320;
@@ -2035,14 +2059,20 @@
       else { box.style.width='72px'; box.style.height=Math.round(72*f.ratio)+'px'; }
       prev.appendChild(box);
       const nm=document.createElement('div'); nm.className='name'; nm.textContent=f.name;
-      card.appendChild(prev); card.appendChild(nm);
+      const lock=document.createElement('span'); lock.className='fmt-lock'; lock.setAttribute('aria-label','Ikke tilgængelig for denne skabelon');
+      lock.innerHTML='<svg viewBox="0 0 24 24" width="11" height="11" fill="currentColor"><path d="M12 2a5 5 0 0 0-5 5v3H6a2 2 0 0 0-2 2v7a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-7a2 2 0 0 0-2-2h-1V7a5 5 0 0 0-5-5zm-3 8V7a3 3 0 0 1 6 0v3H9z"/></svg>';
+      card.appendChild(prev); card.appendChild(nm); card.appendChild(lock);
       card.addEventListener('click', () => selectFormat(f.id));
       strip.appendChild(card);
     });
-    syncFormatStrip(); centerActive(strip, '.format-card.active');
+    syncFormatStrip(); syncFormatLocks(); centerActive(strip, '.format-card.active');
   }
   function syncFormatStrip(){ const strip=byId('formatStrip'); if(!strip) return; let best=FORMATS[0], bd=1e9; FORMATS.forEach(f=>{ const d=Math.abs(f.ratio-postRatio); if(d<bd){bd=d; best=f;} }); strip.querySelectorAll('.format-card').forEach(c=>c.classList.toggle('active', c.dataset.fmt===best.id)); }
-  function selectFormat(id){ const f=FORMATS.find(x=>x.id===id)||FORMATS[0]; postRatio=f.ratio; applyFormat(); fitText(); if(selId) showSel(); byId('formatStrip').querySelectorAll('.format-card').forEach(c=>c.classList.toggle('active', c.dataset.fmt===id)); }
+  // KEVARI-skabeloner er lodrette designs — de to landskabsformater laases (deaktiveres) naar en KEVARI-skabelon er aktiv.
+  function isKevTemplate(){ return !!(curTemplate && curTemplate.indexOf('kev')===0); }
+  function formatLocked(id){ const f=FORMATS.find(x=>x.id===id); return !!(f && f.ratio < 0.9 && isKevTemplate()); }
+  function syncFormatLocks(){ const strip=byId('formatStrip'); if(!strip) return; strip.querySelectorAll('.format-card').forEach(c=>c.classList.toggle('fmt-locked', formatLocked(c.dataset.fmt))); }
+  function selectFormat(id){ if(formatLocked(id)) return; const f=FORMATS.find(x=>x.id===id)||FORMATS[0]; postRatio=f.ratio; applyFormat(); fitText(); if(selId) showSel(); byId('formatStrip').querySelectorAll('.format-card').forEach(c=>c.classList.toggle('active', c.dataset.fmt===id)); }
 
   // ---------- Overrask mig: ét klik = helt nyt udtryk (stil + layout + palette + skrift) ----------
   // ---------- Platform-profiler: format + vibe (stil/palette/layout) + tekstlængde + energi-pynt ----------
