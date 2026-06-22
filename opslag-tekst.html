@@ -788,6 +788,25 @@
   /* hashtag i panelets bund (venstrestillet under overskriften) */
   .tsc-flaw .fl-tag{ position:absolute; font-family:'Poppins',sans-serif; font-weight:600; font-size:2.6cqw; letter-spacing:.01em; opacity:.8; white-space:nowrap; }
 
+  /* ===================== Circle (3 plakater: lime/lilla/roed — halv-cirkel foto + buet tekst, KUN portraet 4:5) ===================== */
+  .post[class*="tpl-circ"] .post-frame{ display:none !important; }
+  .post[class*="tpl-circ"] .post-content{ display:none !important; }            /* alt tegnes i decor */
+  .post[class*="tpl-circ"] .post-photo{ display:block !important; inset:auto !important; background-size:cover; background-position:center; border:0; border-radius:0; z-index:0; }
+  .post[class*="tpl-circ"] .post-photo2, .post[class*="tpl-circ"] .post-photo3, .post[class*="tpl-circ"] .post-photo4{ display:none !important; }
+  .post[class*="tpl-circ"] .post-decor{ z-index:2; pointer-events:none; }
+  /* halv-cirkel foto pr. variant (cx50 cy60 R30) */
+  .post.tpl-circ1 .post-photo{ left:50cqw !important; top:30cqw !important; width:30cqw !important; height:60cqw !important; -webkit-clip-path:circle(30cqw at 0 50%); clip-path:circle(30cqw at 0 50%); }       /* hoejre halvdel */
+  .post.tpl-circ2 .post-photo{ left:20cqw !important; top:60cqw !important; width:60cqw !important; height:30cqw !important; -webkit-clip-path:circle(30cqw at 50% 0); clip-path:circle(30cqw at 50% 0); }          /* bund-halvdel */
+  .post.tpl-circ3 .post-photo{ left:20cqw !important; top:30cqw !important; width:30cqw !important; height:60cqw !important; -webkit-clip-path:circle(30cqw at 100% 50%); clip-path:circle(30cqw at 100% 50%); }     /* venstre halvdel */
+  /* buet tekst (SVG fylder posten 100x125) */
+  .tsc-circ .cir-arc{ position:absolute; inset:0; width:100%; height:100%; overflow:visible; }
+  /* logo top-venstre: prik + brand */
+  .tsc-circ .cir-logo{ position:absolute; top:6.5cqw; left:7cqw; display:flex; align-items:center; gap:2.4cqw; font-family:'Poppins',sans-serif; font-weight:700; font-size:6.2cqw; letter-spacing:-.02em; color:var(--pink); }
+  .tsc-circ .cir-dot{ width:4.4cqw; height:4.4cqw; border-radius:50%; background:var(--pink); flex:none; }
+  /* hjoerne-tekster (redigerbare) */
+  .tsc-circ .cir-bl{ position:absolute; left:7cqw; bottom:6.5cqw; font-family:'Poppins',sans-serif; font-weight:500; font-size:3.5cqw; line-height:1.32; color:var(--pink); white-space:pre-line; }
+  .tsc-circ .cir-br{ position:absolute; right:7cqw; bottom:7cqw; font-family:'Poppins',sans-serif; font-weight:500; font-size:3.3cqw; color:var(--pink); }
+
   /* ===================== KEVARI 9-post sæt ===================== */
   .post[class*="tpl-kev"]{ --hl:22cqw; }
   .post[class*="tpl-kev"] .post-frame{ display:none !important; }
@@ -1971,6 +1990,26 @@
       });
       return h + '</div>';
     }
+    if (id && id.indexOf('circ')===0){
+      // 3 Circle-plakater: halv-cirkel foto + buet tekst paa modsatte arc + logo + hjoerne-tekster
+      const thetaC = (id==='circ1') ? 180 : (id==='circ2') ? 270 : 0;   // tekst-arc center (venstre/top/hoejre)
+      const cx=50, cy=60, Rt=32, span=156, fs=5.0;
+      const t1=(thetaC-span/2)*Math.PI/180, t2=(thetaC+span/2)*Math.PI/180;
+      const x1=(cx+Rt*Math.cos(t1)).toFixed(2), y1=(cy+Rt*Math.sin(t1)).toFixed(2);
+      const x2=(cx+Rt*Math.cos(t2)).toFixed(2), y2=(cy+Rt*Math.sin(t2)).toFixed(2);
+      const pid='cirarc_'+id;
+      const _hl=(C.headline||'').trim(); const arcText = (_hl && _hl.length<=30 ? _hl : 'Meet. Create. Connect.').toUpperCase();   // kort overskrift paa buen; ellers default-tagline (saa buen ikke braekker)
+      const ink = (t && t.ink) || '#0a0a0a';
+      const svg = '<svg class="cir-arc" viewBox="0 0 100 125" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg">'
+        + '<defs><path id="'+pid+'" d="M'+x1+','+y1+' A'+Rt+','+Rt+' 0 0 1 '+x2+','+y2+'" fill="none"/></defs>'
+        + '<text fill="'+ink+'" font-family="Poppins,sans-serif" font-weight="700" font-size="'+fs+'" letter-spacing="0.25">'
+        + '<textPath href="#'+pid+'" startOffset="50%" text-anchor="middle">'+esc(arcText)+'</textPath></text></svg>';
+      return '<div class="tpl-scene tsc-circ">'+svg
+        + '<div class="cir-logo"><span class="cir-dot"></span>'+kevEd(id,'brand','',undefined,'Circle.')+'</div>'
+        + kevEd(id,'bl','cir-bl',undefined,'Meet\nConnect\nCreate')
+        + kevEd(id,'br','cir-br',undefined,'circle.com')
+        + '</div>';
+    }
     // ===== KEVARI — dekorationer (vertikale labels, ring, hjørne-labels) afledt af teksten =====
     if (id && id.indexOf('kev')===0){
       const tag = s => '#'+(s||'').toUpperCase().replace(/[^A-Z0-9ÆØÅ]/gi,'') || '#';
@@ -2076,7 +2115,11 @@
     // ===== Conversations — hvidt kort, fed top-overskrift (Poppins), lime pille-kicker, foto i bunden =====
     { id:'convo', name:'Conversations', layout:'mega', style:'editorial', font:'poppins', photo:true, bg:'#ffffff', ink:'#1b1b1f', acc:'#c3f24a' },
     // ===== Flawless — KUN story 9:16: foto i top + bla farve-panel m. tale-boble-hak + gul fed overskrift + logo + hashtag =====
-    { id:'flaw', name:'Flawless', layout:'mega', style:'editorial', font:'poppins', photo:true, bg:'#3a7cc9', ink:'#f5db4f', acc:'#f5db4f' }
+    { id:'flaw', name:'Flawless', layout:'mega', style:'editorial', font:'poppins', photo:true, bg:'#3a7cc9', ink:'#f5db4f', acc:'#f5db4f' },
+    // ===== Circle — 3 plakater (KUN portraet 4:5): halv-cirkel foto + buet "MEET. CREATE. CONNECT." + logo + hjoerne-tekster =====
+    { id:'circ1', name:'Circle · Lime',  layout:'mega', style:'editorial', font:'poppins', photo:true, bg:'#c3f53d', ink:'#0a0a0a', acc:'#0a0a0a' },
+    { id:'circ2', name:'Circle · Lilla', layout:'mega', style:'editorial', font:'poppins', photo:true, bg:'#b18cf0', ink:'#0a0a0a', acc:'#0a0a0a' },
+    { id:'circ3', name:'Circle · Rød',   layout:'mega', style:'editorial', font:'poppins', photo:true, bg:'#fa2d18', ink:'#0a0a0a', acc:'#0a0a0a' }
   ];
   let CONTENT = { headline:'', emphasis:'', eyebrow:'', subline:'', badge:'', navn:'' };
   const removed = new Set();
@@ -2133,6 +2176,7 @@
     _premTpl = true; _premLayout = _premFont = _premPalette = false;
     if ((t.id.indexOf('kev')===0 || t.id==='interior' || t.id==='living' || t.id==='bigsale' || t.id==='convo') && postRatio < 0.9) postRatio = 1;   // firkant-specifikke premium-designs kan ikke vises i landskab -> tilbage til firkant
     if (t.id==='flaw') postRatio = 1.7778;   // Flawless er KUN til story 9:16
+    if (t.id.indexOf('circ')===0) postRatio = 1.25;   // Circle-plakaterne er KUN portraet 4:5
     const post = byId('post');
     TEMPLATES.forEach(x => post.classList.remove('tpl-'+x.id));
     post.classList.add('tpl-'+t.id);
@@ -2361,7 +2405,7 @@
   function syncFormatStrip(){ const strip=byId('formatStrip'); if(!strip) return; let best=FORMATS[0], bd=1e9; FORMATS.forEach(f=>{ const d=Math.abs(f.ratio-postRatio); if(d<bd){bd=d; best=f;} }); strip.querySelectorAll('.format-card').forEach(c=>c.classList.toggle('active', c.dataset.fmt===best.id)); }
   // KEVARI-skabeloner er lodrette designs — de to landskabsformater laases (deaktiveres) naar en KEVARI-skabelon er aktiv.
   function isKevTemplate(){ return !!(curTemplate && (curTemplate.indexOf('kev')===0 || curTemplate==='interior' || curTemplate==='living' || curTemplate==='bigsale' || curTemplate==='convo')); }
-  function formatLocked(id){ const f=FORMATS.find(x=>x.id===id); if(!f) return false; if(curTemplate==='flaw') return id!=='story'; return !!(f.ratio < 0.9 && isKevTemplate()); }
+  function formatLocked(id){ const f=FORMATS.find(x=>x.id===id); if(!f) return false; if(curTemplate==='flaw') return id!=='story'; if(curTemplate.indexOf('circ')===0) return id!=='portrait'; return !!(f.ratio < 0.9 && isKevTemplate()); }
   function syncFormatLocks(){ const strip=byId('formatStrip'); if(!strip) return; strip.querySelectorAll('.format-card').forEach(c=>c.classList.toggle('fmt-locked', formatLocked(c.dataset.fmt))); }
   function selectFormat(id){ if(formatLocked(id)) return; const f=FORMATS.find(x=>x.id===id)||FORMATS[0]; postRatio=f.ratio; applyFormat(); fitText(); if(selId) showSel(); byId('formatStrip').querySelectorAll('.format-card').forEach(c=>c.classList.toggle('active', c.dataset.fmt===id)); }
 
