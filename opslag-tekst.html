@@ -750,15 +750,19 @@
   .post.tpl-convo .post-headline .post-em{ font-style:normal !important; color:inherit !important; background:none !important; -webkit-text-stroke:0 !important; }
   .post.tpl-convo.st-treat-underline .post-headline{ border-bottom:none !important; padding-bottom:0 !important; }
   .post.tpl-convo .post-sub{ margin-top:3cqw; font-family:'Poppins',sans-serif; font-weight:500; text-transform:none; letter-spacing:0; color:#8b8b92; line-height:1.42; max-width:50cqw; opacity:1; font-size:max(2.7cqw, calc(3.4cqw * var(--fit,1) * var(--escale,1))); display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden; }
-  /* lime pille (eyebrow), let roteret, ved foto-toppen til hoejre */
-  .post.tpl-convo .post-eyebrow{ position:absolute; top:46cqw; right:5cqw; left:auto; bottom:auto; display:inline-block; width:auto; min-height:0; max-width:48cqw; transform:rotate(-7deg); transform-origin:center; background:var(--pacc,#c3f24a); color:#16161a; border-radius:99px; padding:1.7cqw 3.4cqw; font-family:'Poppins',sans-serif; font-weight:700; text-transform:uppercase; letter-spacing:.05em; line-height:1.1; text-align:center; opacity:1; font-size:max(2.5cqw, calc(2.8cqw * var(--fit,1) * var(--escale,1))); box-shadow:0 1.2cqw 3cqw -1cqw rgba(0,0,0,.2); }
-  .post.tpl-convo .post-eyebrow.hide{ display:inline-block !important; }
-  .post.tpl-convo.st-eb-line .post-eyebrow::before, .post.tpl-convo .post-eyebrow::before{ content:none !important; }
-  .post.tpl-convo .post-eyebrow:empty::before{ content:'A SPACE TO THINK'; }
+  /* eyebrow-feltet bruges IKKE som pille (AI lader det ofte vaere tomt) -> skjult; pillen er en redigerbar decor-label */
+  .post.tpl-convo .post-eyebrow{ display:none !important; }
   .post.tpl-convo .post-brand{ display:none; }
   .post.tpl-convo .post-badge{ display:none !important; }
+  /* lad klik gaa igennem post-content til decor-pillen; tekst-felterne beholder selv klik */
+  .post.tpl-convo.st-al-c .post-content{ pointer-events:none; }
+  .post.tpl-convo .post-headline, .post.tpl-convo .post-sub{ pointer-events:auto; }
+  /* hvidt top-felt (sikrer ALTID hvid bag teksten, uanset foto) */
+  .tsc-convo .cv-top{ position:absolute; left:0; right:0; top:0; height:50cqw; background:var(--pbg,#fff); }
   /* subtil indre ramme */
   .tsc-convo .cv-frame{ position:absolute; inset:3cqw; border:.28cqw solid rgba(20,20,28,.10); border-radius:6cqw; pointer-events:none; }
+  /* lime pille = redigerbar decor-label (default-tekst fra AI-descriptor); ved foto-toppen til hoejre, let roteret */
+  .tsc-convo .cv-pill{ position:absolute; top:46cqw; right:5cqw; left:auto; bottom:auto; display:inline-block; max-width:48cqw; transform:rotate(-7deg); transform-origin:center; background:var(--pacc,#c3f24a); color:#16161a; border-radius:99px; padding:1.7cqw 3.4cqw; font-family:'Poppins',sans-serif; font-weight:700; text-transform:uppercase; letter-spacing:.05em; line-height:1.1; text-align:center; font-size:2.9cqw; white-space:nowrap; box-shadow:0 1.2cqw 3cqw -1cqw rgba(0,0,0,.2); }
 
   /* ===================== KEVARI 9-post sæt ===================== */
   .post[class*="tpl-kev"]{ --hl:22cqw; }
@@ -1782,7 +1786,8 @@
     kev3: { r1:'TAILORED PERFECTION', r2:'STATEMENT ACCESSORIES', r3:'POLISHED DETAILS' },
     kev6: { copy:'©2025', mid:'ACCESSORIZE\nBOLDLY' },
     kev8: { copy:'©2024', tag1:'#FOLLOWME', tag2:'#2MILLION' },
-    living: { bubble:'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod temporet' }
+    living: { bubble:'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod temporet' },
+    convo: { pill:'A SPACE TO THINK' }
   };
   let tplLabels = {};   // brugerens egne aendringer pr. skabelon: { kev1:{flankL:'...'}, ... }
   let aiLabels = { descriptors:[], tags:[] };   // AI'ens raa pulje (bruges af de afledte hashtag-labels kev5/kev9)
@@ -1813,6 +1818,7 @@
       set('kev3', { r1:ds[0], r2:ds[1], r3:ds[2] });
       set('kev6', { copy:copy, mid:ds[0] });
       set('kev8', { copy:copy, tag1:tg[0], tag2:tg[1] });
+      set('convo', { pill:ds[0] });   // Conversations-pillen faar den foerste AI-descriptor (emne-relevant tekst)
     }
     tplLabels = T;   // friskt AI-design -> friske labels
     aiLabels = { descriptors:ds.slice(), tags:tg.slice() };   // gem puljen til de afledte hashtag-labels (kev5/kev9)
@@ -1919,8 +1925,8 @@
       return '<div class="tpl-scene tsc-bigsale"><span class="bs-panel"></span><span class="bs-star">'+star+'</span></div>';
     }
     if (id === 'convo'){
-      // subtil indre ramme (hvidt kort-look)
-      return '<div class="tpl-scene tsc-convo"><span class="cv-frame"></span></div>';
+      // hvidt top-felt (altid hvid bag teksten) + subtil ramme + redigerbar lime pille (default = AI-descriptor / "A SPACE TO THINK")
+      return '<div class="tpl-scene tsc-convo"><span class="cv-top"></span><span class="cv-frame"></span>'+kevEd('convo','pill','cv-pill')+'</div>';
     }
     // ===== KEVARI — dekorationer (vertikale labels, ring, hjørne-labels) afledt af teksten =====
     if (id && id.indexOf('kev')===0){
