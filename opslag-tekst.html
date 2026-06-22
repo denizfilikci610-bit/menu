@@ -652,11 +652,12 @@
   .post.tpl-interior .post-headline{ font-family:'Archivo Black',sans-serif !important; font-weight:400 !important; text-transform:none; line-height:1.02; letter-spacing:-.02em; width:86cqw; max-width:86cqw; color:var(--pink); }
   .post.tpl-interior.st-treat-underline .post-headline{ border-bottom:none !important; padding-bottom:0 !important; }
   .post.tpl-interior .post-headline .post-em{ color:var(--pacc); font-style:normal; -webkit-text-stroke:0; background:none; }
-  .post.tpl-interior .post-rule{ display:block; margin-top:3.4cqw; width:58cqw; max-width:82%; height:1.8cqw; min-height:3px; background:#1faa46; border-radius:0; opacity:1; }
-  .post.tpl-interior .post-eyebrow{ position:absolute; top:15.5cqw; left:18.5cqw; right:auto; max-width:34%; font-family:'Archivo Black',sans-serif; font-weight:400; text-transform:uppercase; letter-spacing:.02em; line-height:1.06; opacity:1; color:var(--pink); font-size:max(2.6cqw, calc(3.1cqw * var(--fit,1) * var(--escale,1))); }
+  .post.tpl-interior .post-rule{ display:block; margin-top:2cqw; width:58cqw; max-width:82%; height:1.8cqw; min-height:3px; background:#1faa46; border-radius:0; opacity:1; }
+  .post.tpl-interior .post-eyebrow{ display:none; }
   .post.tpl-interior.st-eb-line .post-eyebrow::before{ display:none; }
   .post.tpl-interior .post-sub{ position:absolute; left:14cqw; right:auto; bottom:7cqw; max-width:36%; font-family:'Space Grotesk',sans-serif; font-weight:500; line-height:1.4; opacity:.95; color:var(--pink); text-transform:none; letter-spacing:0; font-size:max(2.7cqw, calc(3cqw * var(--fit,1) * var(--escale,1))); display:-webkit-box; -webkit-line-clamp:4; -webkit-box-orient:vertical; overflow:hidden; }
-  .post.tpl-interior .post-brand{ display:none; }
+  /* topteksten (logo-lockup) = firmanavn-feltet: altid synlig (pladsholder), udfyldes af AI, 2 linjer, lodret centreret med stjernen */
+  .post.tpl-interior .post-brand{ position:absolute; top:19cqw; left:18.5cqw; right:auto; bottom:auto; transform:translateY(-50%); display:block; max-width:23cqw; overflow-wrap:normal; word-break:keep-all; font-family:'Archivo Black',sans-serif; font-weight:400; text-transform:uppercase; letter-spacing:.03em; line-height:1.12; opacity:1; color:var(--pink); font-size:max(2.6cqw, calc(3.1cqw * var(--fit,1) * var(--escale,1))); }
   .post.tpl-interior .post-badge{ display:none !important; }
   /* Interior scene: logo, orange body-bar, moebel-illustration */
   .tsc-intd .intd-logo{ position:absolute; top:15.5cqw; left:9cqw; width:7cqw; height:7cqw; }
