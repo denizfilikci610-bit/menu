@@ -791,6 +791,11 @@
   .post.fmt-tall[class*="tpl-kev"] .post-photo2,
   .post.fmt-tall[class*="tpl-kev"] .post-photo3,
   .post.fmt-tall[class*="tpl-kev"] .post-photo4{ transform:translateY(calc(var(--kband,0) * 1cqw)); }
+  /* bund-/dobbelt-forankrede fotos: re-ankre til top med samme firkant-geometri, saa +kband-forskydningen rammer rigtigt (ellers cuttes de i bunden) */
+  .post.fmt-tall.tpl-kev3 .post-photo{ top:62cqw; bottom:auto; height:31cqw; }
+  .post.fmt-tall.tpl-kev6 .post-photo{ top:68cqw; bottom:auto; height:24cqw; }
+  /* kev4: kev4Adjust saetter top (rendret, inkl. baand) -> ingen ekstra translate; fast hoejde + bottom:auto */
+  .post.fmt-tall.tpl-kev4 .post-photo{ bottom:auto; height:52cqw; transform:none; }
   .post.fmt-tall.tpl-kev4 .post-badge{ transform:translateY(calc(var(--kband,0) * 1cqw)) rotate(-9deg); }
 
   .tpl-card .tpl-thumb{ width:100%; aspect-ratio:1; display:flex; align-items:center; justify-content:center; font-family:'Fraunces',serif; font-weight:700; font-size:1.7rem; }
