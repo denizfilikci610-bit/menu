@@ -1991,23 +1991,33 @@
       return h + '</div>';
     }
     if (id && id.indexOf('circ')===0){
-      // 3 Circle-plakater: halv-cirkel foto + buet tekst paa modsatte arc + logo + hjoerne-tekster
+      // 3 Circle-plakater: halv-cirkel foto + buet tekst der RAMMER foto-kanten (180°) + logo + hjoerne-tekster
       const thetaC = (id==='circ1') ? 180 : (id==='circ2') ? 270 : 0;   // tekst-arc center (venstre/top/hoejre)
-      const cx=50, cy=60, Rt=32, span=156, fs=5.0;
+      const R=30, cx=50, cy=60, Rt=24.5, span=180;                      // Rt < R: glyfferne staar UDAD fra baseline (~5.5), saa Rt=24.5 -> glyf-ydersiden rammer foto-kanten (R=30) UDEN at gaa udenfor
       const t1=(thetaC-span/2)*Math.PI/180, t2=(thetaC+span/2)*Math.PI/180;
       const x1=(cx+Rt*Math.cos(t1)).toFixed(2), y1=(cy+Rt*Math.sin(t1)).toFixed(2);
       const x2=(cx+Rt*Math.cos(t2)).toFixed(2), y2=(cy+Rt*Math.sin(t2)).toFixed(2);
       const pid='cirarc_'+id;
-      const _hl=(C.headline||'').trim(); const arcText = (_hl && _hl.length<=30 ? _hl : 'Meet. Create. Connect.').toUpperCase();   // kort overskrift paa buen; ellers default-tagline (saa buen ikke braekker)
+      const _hl=(C.headline||'').trim(); const arcText = (_hl && _hl.length<=30 ? _hl : 'Meet. Create. Connect.').toUpperCase();
       const ink = (t && t.ink) || '#0a0a0a';
+      const arcLen = (span/180)*Math.PI*Rt;                             // halvcirkel-laengde
+      const tLen = (arcLen*0.99).toFixed(1);                            // tekst fra ende til ende -> rammer foto-kantens top/bund
+      const fs = Math.max(3.8, Math.min(5.4, 113/arcText.length)).toFixed(2);   // moderat-smaa bogstaver (som referencen)
       const svg = '<svg class="cir-arc" viewBox="0 0 100 125" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg">'
         + '<defs><path id="'+pid+'" d="M'+x1+','+y1+' A'+Rt+','+Rt+' 0 0 1 '+x2+','+y2+'" fill="none"/></defs>'
-        + '<text fill="'+ink+'" font-family="Poppins,sans-serif" font-weight="700" font-size="'+fs+'" letter-spacing="0.25">'
+        + '<text fill="'+ink+'" font-family="Poppins,sans-serif" font-weight="700" font-size="'+fs+'" textLength="'+tLen+'" lengthAdjust="spacing">'
         + '<textPath href="#'+pid+'" startOffset="50%" text-anchor="middle">'+esc(arcText)+'</textPath></text></svg>';
+      // SMAA tekster tilpasses AI: brand (navn), 3 pille-ord (descriptors), website (afledt af brand)
+      const tc = s => s ? s.charAt(0).toUpperCase()+s.slice(1).toLowerCase() : s;
+      const brand = ((C.navn||'').trim().replace(/\.+$/,'') || 'Circle') + '.';
+      const ds = (aiLabels && Array.isArray(aiLabels.descriptors)) ? aiLabels.descriptors.filter(Boolean) : [];
+      const blDef = (ds.length>=3 ? ds.slice(0,3).map(tc).join('\n') : 'Meet\nConnect\nCreate');
+      const slug = (C.navn||'').toLowerCase().replace(/[^a-z0-9]/g,'').slice(0,20);
+      const brDef = (slug || 'circle') + '.com';
       return '<div class="tpl-scene tsc-circ">'+svg
-        + '<div class="cir-logo"><span class="cir-dot"></span>'+kevEd(id,'brand','',undefined,'Circle.')+'</div>'
-        + kevEd(id,'bl','cir-bl',undefined,'Meet\nConnect\nCreate')
-        + kevEd(id,'br','cir-br',undefined,'circle.com')
+        + '<div class="cir-logo"><span class="cir-dot"></span>'+kevEd(id,'brand','',undefined,brand)+'</div>'
+        + kevEd(id,'bl','cir-bl',undefined,blDef)
+        + kevEd(id,'br','cir-br',undefined,brDef)
         + '</div>';
     }
     // ===== KEVARI — dekorationer (vertikale labels, ring, hjørne-labels) afledt af teksten =====
