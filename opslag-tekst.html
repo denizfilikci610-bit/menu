@@ -815,8 +815,8 @@
   /* FOTO i nederste del af kortet, tynd sort kant */
   .post.tpl-recruit .post-photo{ display:block !important; inset:auto !important; left:11cqw !important; right:11cqw !important; top:45cqw !important; bottom:12cqw !important; width:auto !important; height:auto !important; background-size:cover; background-position:center; border:0.55cqw solid #141414; border-radius:0; z-index:2; }
   .post.tpl-recruit .post-photo2, .post.tpl-recruit .post-photo3, .post.tpl-recruit .post-photo4{ display:none !important; }
-  /* decor (logo + stjerne) OVER fotoet */
-  .post.tpl-recruit .post-decor{ z-index:5; }
+  /* decor (logo + stjerne) OVER fotoet (z:2), men UNDER teksten (content z:4) — tekst vinder altid evt. kollision, som hos convo/flaw/circ */
+  .post.tpl-recruit .post-decor{ z-index:3; }
   /* overskrift + undertekst i kortets top; stor padding-bottom reserverer foto-omraadet -> fitText holder teksten over fotoet */
   .post.tpl-recruit.st-al-c .post-content{ align-items:flex-start; text-align:left; justify-content:flex-start; padding:11cqw 11cqw 84cqw 11cqw; pointer-events:none; }
   .post.tpl-recruit .post-headline, .post.tpl-recruit .post-sub{ pointer-events:auto; }
