@@ -666,6 +666,40 @@
   .tsc-intd .intd-furn-wrap{ position:absolute; right:7cqw; bottom:5cqw; width:28cqw; }
   .tsc-intd .intd-furn{ width:100%; height:auto; display:block; }
 
+  /* ===================== Living Room ===================== */
+  .post.tpl-living{ --hl:11cqw; }
+  .post.tpl-living .post-frame{ display:none !important; }
+  .post.tpl-living.st-al-c .post-content{ align-items:center; text-align:center; justify-content:flex-start; padding:9cqw 7cqw 8cqw; gap:0; pointer-events:none; }
+  .post.tpl-living.st-al-c .post-body{ align-items:center; flex:none; }
+  .post.tpl-living .post-headline, .post.tpl-living .post-sub{ pointer-events:auto; }
+  .post.tpl-living .post-headline{ font-family:'Archivo Black',sans-serif !important; font-weight:400 !important; text-transform:none; line-height:1.0; letter-spacing:-.02em; max-width:94%; color:var(--pink); text-align:center; }
+  .post.tpl-living.st-treat-underline .post-headline{ border-bottom:none !important; padding-bottom:0 !important; }
+  .post.tpl-living .post-sub{ margin-top:3cqw; max-width:90%; font-family:'Space Grotesk',sans-serif; font-weight:500; line-height:1.5; color:var(--pink); text-align:center; text-transform:none; letter-spacing:0; opacity:.95; font-size:max(2.3cqw, calc(2.7cqw * var(--fit,1) * var(--escale,1))); display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden; }
+  .post.tpl-living .post-eyebrow{ display:none; }
+  .post.tpl-living .post-brand{ display:none; }
+  .post.tpl-living .post-badge{ display:none !important; }
+  /* navy taleboble (redigerbar kev-ed) + nedad-venstre hale */
+  .tsc-liv .liv-bubble{ position:absolute; right:7cqw; top:36cqw; left:auto; bottom:auto; max-width:44cqw; background:var(--pacc); color:var(--pbg); padding:3cqw 3.4cqw; border-radius:3cqw; font-family:'Space Grotesk',sans-serif; font-weight:500; font-size:max(2.6cqw, calc(2.9cqw * var(--fit,1) * var(--escale,1))); line-height:1.42; letter-spacing:0; text-transform:none; opacity:1; }
+  .tsc-liv .liv-bubble::after{ content:''; position:absolute; bottom:-3.6cqw; left:8cqw; width:0; height:0; border-left:2cqw solid transparent; border-right:4.5cqw solid transparent; border-top:4.4cqw solid var(--pacc); }
+  /* orange sofa nederst */
+  .tsc-liv .liv-sofa-wrap{ position:absolute; left:50%; transform:translateX(-50%); bottom:6cqw; width:76cqw; }
+  .tsc-liv .liv-sofa{ width:100%; height:auto; display:block; }
+
+  /* ===================== Winter Cozy (foto + elegant serif) ===================== */
+  .post.tpl-winter{ --hl:20cqw; }
+  .post.tpl-winter .post-frame{ display:none !important; }
+  .post.tpl-winter .post-photo{ display:block !important; inset:0 !important; left:0; right:0; top:0; bottom:0; width:auto; height:auto; border:0; border-radius:0; }
+  .post.tpl-winter .post-scrim{ display:block; background:linear-gradient(180deg, rgba(38,40,36,.14) 0%, rgba(38,40,36,.03) 35%, rgba(38,40,36,.05) 65%, rgba(38,40,36,.16) 100%); }
+  .post.tpl-winter.st-al-c .post-content{ align-items:center; text-align:center; justify-content:center; padding:7cqw; }
+  .post.tpl-winter.st-al-c .post-body{ align-items:center; flex:none; }
+  .post.tpl-winter .post-headline{ font-family:'Playfair Display',serif !important; font-weight:700 !important; text-transform:uppercase; color:#fff !important; line-height:.9; letter-spacing:.015em; width:100%; max-width:100%; text-shadow:0 .2cqw 1.8cqw rgba(0,0,0,.32); }
+  .post.tpl-winter.st-treat-underline .post-headline{ border-bottom:none !important; padding-bottom:0 !important; }
+  .post.tpl-winter .post-headline .post-em{ display:block; font-size:.46em; font-weight:700; font-style:normal; color:#fff !important; -webkit-text-stroke:0 !important; background:none !important; letter-spacing:.05em; line-height:1.5; margin:.06em 0; }
+  .post.tpl-winter .post-eyebrow{ display:none; }
+  .post.tpl-winter .post-sub{ font-family:'Space Grotesk',sans-serif; font-weight:600; text-transform:uppercase; letter-spacing:.09em; color:#fff; text-align:center; margin-top:2.6cqw; max-width:92%; opacity:.98; text-shadow:0 .2cqw 1.4cqw rgba(0,0,0,.34); font-size:max(3cqw, calc(3.5cqw * var(--fit,1) * var(--escale,1))); }
+  .post.tpl-winter .post-brand{ display:none; }
+  .post.tpl-winter .post-badge{ display:none !important; }
+
   /* ===================== KEVARI 9-post sæt ===================== */
   .post[class*="tpl-kev"]{ --hl:22cqw; }
   .post[class*="tpl-kev"] .post-frame{ display:none !important; }
@@ -809,7 +843,9 @@
   .post.fmt-tall[class*="tpl-kev"] .post-content,
   .post.fmt-tall[class*="tpl-kev"] .post-decor,
   .post.fmt-tall.tpl-interior .post-content,
-  .post.fmt-tall.tpl-interior .post-decor{ top:50%; bottom:auto; height:100cqw; transform:translateY(-50%); }
+  .post.fmt-tall.tpl-interior .post-decor,
+  .post.fmt-tall.tpl-living .post-content,
+  .post.fmt-tall.tpl-living .post-decor{ top:50%; bottom:auto; height:100cqw; transform:translateY(-50%); }
   /* fotos + badge ligger relativt til #post -> forskyd dem ned i samme centrerede baand */
   .post.fmt-tall[class*="tpl-kev"] .post-photo,
   .post.fmt-tall[class*="tpl-kev"] .post-photo2,
@@ -1677,7 +1713,8 @@
     kev2: { tl:'START WITH\nSTAPLES', tr:'LAYER\nSMARTLY', mid1:'THE MATCHING\nSET', mid2:'MADE SIMPLE' },
     kev3: { r1:'TAILORED PERFECTION', r2:'STATEMENT ACCESSORIES', r3:'POLISHED DETAILS' },
     kev6: { copy:'©2025', mid:'ACCESSORIZE\nBOLDLY' },
-    kev8: { copy:'©2024', tag1:'#FOLLOWME', tag2:'#2MILLION' }
+    kev8: { copy:'©2024', tag1:'#FOLLOWME', tag2:'#2MILLION' },
+    living: { bubble:'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod temporet' }
   };
   let tplLabels = {};   // brugerens egne aendringer pr. skabelon: { kev1:{flankL:'...'}, ... }
   let aiLabels = { descriptors:[], tags:[] };   // AI'ens raa pulje (bruges af de afledte hashtag-labels kev5/kev9)
@@ -1785,6 +1822,29 @@
         + '<span class="intd-furn-wrap">'+furn+'</span>'
         + '</div>';
     }
+    if (id === 'living'){
+      // Living Room: orange to-tone sofa + redigerbar navy taleboble
+      const ORG='#ef6c1a', BK='#141414';
+      const sofa = '<svg class="liv-sofa" viewBox="0 0 250 144" fill="none" xmlns="http://www.w3.org/2000/svg">'
+        + '<rect x="6" y="135" width="238" height="3.5" rx="1.5" fill="'+BK+'"/>'
+        + '<path d="M54 120 L48 137" stroke="'+BK+'" stroke-width="6" stroke-linecap="round"/>'
+        + '<path d="M196 120 L202 137" stroke="'+BK+'" stroke-width="6" stroke-linecap="round"/>'
+        + '<path d="M92 122 L89 137" stroke="'+BK+'" stroke-width="6" stroke-linecap="round"/>'
+        + '<path d="M158 122 L161 137" stroke="'+BK+'" stroke-width="6" stroke-linecap="round"/>'
+        + '<rect x="32" y="38" width="186" height="54" rx="15" fill="'+BK+'"/>'
+        + '<rect x="46" y="104" width="158" height="20" rx="7" fill="'+BK+'"/>'
+        + '<rect x="56" y="44" width="68" height="50" rx="9" fill="'+ORG+'" stroke="'+BK+'" stroke-width="4"/>'
+        + '<rect x="126" y="44" width="68" height="50" rx="9" fill="'+ORG+'" stroke="'+BK+'" stroke-width="4"/>'
+        + '<rect x="54" y="88" width="70" height="32" rx="8" fill="'+ORG+'" stroke="'+BK+'" stroke-width="4"/>'
+        + '<rect x="126" y="88" width="70" height="32" rx="8" fill="'+ORG+'" stroke="'+BK+'" stroke-width="4"/>'
+        + '<rect x="18" y="48" width="42" height="78" rx="17" fill="'+BK+'"/>'
+        + '<rect x="190" y="48" width="42" height="78" rx="17" fill="'+ORG+'" stroke="'+BK+'" stroke-width="4"/>'
+        + '</svg>';
+      return '<div class="tpl-scene tsc-liv">'
+        + '<span class="liv-sofa-wrap">'+sofa+'</span>'
+        + kevEd('living','bubble','liv-bubble')
+        + '</div>';
+    }
     // ===== KEVARI — dekorationer (vertikale labels, ring, hjørne-labels) afledt af teksten =====
     if (id && id.indexOf('kev')===0){
       const tag = s => '#'+(s||'').toUpperCase().replace(/[^A-Z0-9ÆØÅ]/gi,'') || '#';
@@ -1878,7 +1938,11 @@
     { id:'kev8', name:'Thank You 2M', layout:'mega', style:'editorial', font:'anton', bg:'#3c5a39', ink:'#f2ede1', acc:'#f2ede1' },
     { id:'kev9', name:"We're Open",   layout:'mega', style:'editorial', font:'anton', bg:'#161616', ink:'#f2ede1', acc:'#f2ede1' },
     // ===== Interior Design — creme plakat, tungt lowercase-headline (Archivo Black), blaat logo, groen streg, orange body-bar, moebel-illustration =====
-    { id:'interior', name:'Interior Design', layout:'mega', style:'editorial', font:'archivo', bg:'#f6edd7', ink:'#141414', acc:'#1d3fb0' }
+    { id:'interior', name:'Interior Design', layout:'mega', style:'editorial', font:'archivo', bg:'#f6edd7', ink:'#141414', acc:'#1d3fb0' },
+    // ===== Living Room — centreret overskrift+undertekst, moerk navy taleboble, orange sofa-illustration =====
+    { id:'living', name:'Living Room', layout:'mega', style:'editorial', font:'archivo', bg:'#f6edd7', ink:'#141414', acc:'#21456e' },
+    // ===== Winter Cozy — fuldt foto-baggrund (brugerens eget billede) + elegant centreret serif: stor/lille/stor + sans-underlinje =====
+    { id:'winter', name:'Winter Cozy', layout:'mega', style:'editorial', font:'playfair', photo:true, bg:'#8f9185', ink:'#ffffff', acc:'#ffffff' }
   ];
   let CONTENT = { headline:'', emphasis:'', eyebrow:'', subline:'', badge:'', navn:'' };
   const removed = new Set();
@@ -1933,7 +1997,7 @@
     curStyleId = t.style || 'editorial';
     motifId = 'none'; curStyleDecor = ''; accentLevel = 'none'; curTextPos = null;
     _premTpl = true; _premLayout = _premFont = _premPalette = false;
-    if ((t.id.indexOf('kev')===0 || t.id==='interior') && postRatio < 0.9) postRatio = 1;   // lodrette premium-designs kan ikke vises i landskab -> tilbage til firkant
+    if ((t.id.indexOf('kev')===0 || t.id==='interior' || t.id==='living') && postRatio < 0.9) postRatio = 1;   // lodrette premium-designs kan ikke vises i landskab -> tilbage til firkant
     const post = byId('post');
     TEMPLATES.forEach(x => post.classList.remove('tpl-'+x.id));
     post.classList.add('tpl-'+t.id);
@@ -2127,7 +2191,7 @@
   }
   function syncFormatStrip(){ const strip=byId('formatStrip'); if(!strip) return; let best=FORMATS[0], bd=1e9; FORMATS.forEach(f=>{ const d=Math.abs(f.ratio-postRatio); if(d<bd){bd=d; best=f;} }); strip.querySelectorAll('.format-card').forEach(c=>c.classList.toggle('active', c.dataset.fmt===best.id)); }
   // KEVARI-skabeloner er lodrette designs — de to landskabsformater laases (deaktiveres) naar en KEVARI-skabelon er aktiv.
-  function isKevTemplate(){ return !!(curTemplate && (curTemplate.indexOf('kev')===0 || curTemplate==='interior')); }
+  function isKevTemplate(){ return !!(curTemplate && (curTemplate.indexOf('kev')===0 || curTemplate==='interior' || curTemplate==='living')); }
   function formatLocked(id){ const f=FORMATS.find(x=>x.id===id); return !!(f && f.ratio < 0.9 && isKevTemplate()); }
   function syncFormatLocks(){ const strip=byId('formatStrip'); if(!strip) return; strip.querySelectorAll('.format-card').forEach(c=>c.classList.toggle('fmt-locked', formatLocked(c.dataset.fmt))); }
   function selectFormat(id){ if(formatLocked(id)) return; const f=FORMATS.find(x=>x.id===id)||FORMATS[0]; postRatio=f.ratio; applyFormat(); fitText(); if(selId) showSel(); byId('formatStrip').querySelectorAll('.format-card').forEach(c=>c.classList.toggle('active', c.dataset.fmt===id)); }
