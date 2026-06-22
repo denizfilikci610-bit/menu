@@ -807,6 +807,35 @@
   .tsc-circ .cir-bl{ position:absolute; left:7cqw; bottom:6.5cqw; font-family:'Poppins',sans-serif; font-weight:500; font-size:3.5cqw; line-height:1.32; color:var(--pink); white-space:pre-line; }
   .tsc-circ .cir-br{ position:absolute; right:7cqw; bottom:7cqw; font-family:'Poppins',sans-serif; font-weight:500; font-size:3.3cqw; color:var(--pink); }
 
+  /* ===================== Recruit (gul ramme + creme kort + foto + 10-takket stjerne-badge, KUN portraet 4:5) ===================== */
+  .post.tpl-recruit{ --hl:14cqw; }
+  .post.tpl-recruit .post-frame{ display:none !important; }
+  /* CREME kort (post-scrim genbrugt) inset fra den gule ramme (--pbg), tynd sort kant */
+  .post.tpl-recruit .post-scrim{ display:block; inset:5cqw; background:#faf4e2; border:0.5cqw solid #141414; border-radius:1.6cqw; box-shadow:none; z-index:1; }
+  /* FOTO i nederste del af kortet, tynd sort kant */
+  .post.tpl-recruit .post-photo{ display:block !important; inset:auto !important; left:11cqw !important; right:11cqw !important; top:45cqw !important; bottom:12cqw !important; width:auto !important; height:auto !important; background-size:cover; background-position:center; border:0.55cqw solid #141414; border-radius:0; z-index:2; }
+  .post.tpl-recruit .post-photo2, .post.tpl-recruit .post-photo3, .post.tpl-recruit .post-photo4{ display:none !important; }
+  /* decor (logo + stjerne) OVER fotoet */
+  .post.tpl-recruit .post-decor{ z-index:5; }
+  /* overskrift + undertekst i kortets top; stor padding-bottom reserverer foto-omraadet -> fitText holder teksten over fotoet */
+  .post.tpl-recruit.st-al-c .post-content{ align-items:flex-start; text-align:left; justify-content:flex-start; padding:11cqw 11cqw 84cqw 11cqw; pointer-events:none; }
+  .post.tpl-recruit .post-headline, .post.tpl-recruit .post-sub{ pointer-events:auto; }
+  .post.tpl-recruit .post-body{ flex:none; align-items:flex-start; }
+  .post.tpl-recruit .post-headline{ font-family:'Fraunces',serif !important; font-weight:900 !important; font-variation-settings:'opsz' 144; text-transform:none; color:#141414 !important; line-height:.8; letter-spacing:-.014em; width:66cqw; max-width:66cqw; }
+  .post.tpl-recruit .post-headline .post-em{ font-style:normal !important; color:inherit !important; background:none !important; -webkit-text-stroke:0 !important; }
+  .post.tpl-recruit.st-treat-underline .post-headline{ border-bottom:none !important; padding-bottom:0 !important; }
+  .post.tpl-recruit .post-sub{ margin-top:2cqw; font-family:'Space Grotesk',sans-serif; font-weight:600; text-transform:none; letter-spacing:0; color:#141414; line-height:1.26; max-width:78cqw; opacity:1; font-size:max(2.6cqw, calc(3.4cqw * var(--fit,1) * var(--escale,1))); display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
+  .post.tpl-recruit .post-eyebrow{ display:none !important; }
+  .post.tpl-recruit .post-brand{ display:none !important; }
+  .post.tpl-recruit .post-badge{ display:none !important; }
+  /* brand-logo top-hoejre (minimal kikkert-smiley, inline-SVG) */
+  .tsc-recruit .rc-logo{ position:absolute; top:11cqw; right:8cqw; width:13cqw; height:10cqw; }
+  .tsc-recruit .rc-logo svg{ display:block; width:100%; height:100%; }
+  /* gul 10-takket stjerne-badge over fotoets top-hoejre hjoerne, let roteret */
+  .tsc-recruit .rc-star{ position:absolute; top:43cqw; right:8cqw; width:29cqw; height:29cqw; transform:rotate(11deg); }
+  .tsc-recruit .rc-star-svg{ position:absolute; inset:0; width:100%; height:100%; display:block; }
+  .tsc-recruit .rc-star-txt{ position:absolute; inset:0; display:grid; place-items:center; text-align:center; font-family:'Space Grotesk',sans-serif; font-weight:800; font-size:3.8cqw; line-height:1.02; color:#141414; text-transform:uppercase; letter-spacing:.005em; }
+
   /* ===================== KEVARI 9-post sæt ===================== */
   .post[class*="tpl-kev"]{ --hl:22cqw; }
   .post[class*="tpl-kev"] .post-frame{ display:none !important; }
@@ -1828,7 +1857,8 @@
     kev8: { copy:'©2024', tag1:'#FOLLOWME', tag2:'#2MILLION' },
     living: { bubble:'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod temporet' },
     convo: { pill:'A SPACE TO THINK' },
-    flaw: { tag:'#getflawlessfit' }
+    flaw: { tag:'#getflawlessfit' },
+    recruit: { star:'JOIN\nTHE\nCREW!' }
   };
   let tplLabels = {};   // brugerens egne aendringer pr. skabelon: { kev1:{flankL:'...'}, ... }
   let aiLabels = { descriptors:[], tags:[] };   // AI'ens raa pulje (bruges af de afledte hashtag-labels kev5/kev9)
@@ -1969,6 +1999,25 @@
     if (id === 'convo'){
       // redigerbar lime pille (default = AI-descriptor / "A SPACE TO THINK") ved foto-vinduets top
       return '<div class="tpl-scene tsc-convo">'+kevEd('convo','pill','cv-pill')+'</div>';
+    }
+    if (id === 'recruit'){
+      // gul ramme + creme kort: minimal kikkert-smiley-logo top-hoejre + gul 10-takket stjerne-badge over fotoets top-hoejre hjoerne
+      let pts=''; const N=10, scx=50, scy=50, Ro=49, Ri=29.5;
+      for (let i=0;i<N*2;i++){ const a=(-90 + i*180/N)*Math.PI/180, r=(i%2===0)?Ro:Ri; pts += (scx+r*Math.cos(a)).toFixed(2)+','+(scy+r*Math.sin(a)).toFixed(2)+' '; }
+      const acc = (t && t.acc) || '#f5d23a';
+      const logo = '<svg viewBox="0 0 64 48" fill="none" xmlns="http://www.w3.org/2000/svg">'
+        + '<rect x="8" y="6" width="18" height="13" rx="6.5" fill="#141414"/>'
+        + '<rect x="38" y="6" width="18" height="13" rx="6.5" fill="#141414"/>'
+        + '<rect x="26" y="10.5" width="12" height="4" rx="2" fill="#141414"/>'
+        + '<g stroke="#faf4e2" stroke-width="1.5" stroke-linecap="round"><line x1="13" y1="8" x2="13" y2="17"/><line x1="20" y1="8" x2="20" y2="17"/><line x1="44" y1="8" x2="44" y2="17"/><line x1="51" y1="8" x2="51" y2="17"/></g>'
+        + '<path d="M15 27 Q32 45 49 27" stroke="#141414" stroke-width="3.4" fill="none" stroke-linecap="round"/>'
+        + '</svg>';
+      return '<div class="tpl-scene tsc-recruit">'
+        + '<span class="rc-logo">'+logo+'</span>'
+        + '<div class="rc-star"><svg class="rc-star-svg" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><polygon points="'+pts.trim()+'" fill="'+acc+'"/></svg>'
+        + kevEd('recruit','star','rc-star-txt')
+        + '</div>'
+        + '</div>';
     }
     if (id === 'flaw'){
       // 2x4 gitter: hver raekke = foto + farve-panel (skiftevis side) m. tale-boble-hak, redigerbar overskrift, logo, hashtag
@@ -2129,7 +2178,9 @@
     // ===== Circle — 3 plakater (KUN portraet 4:5): halv-cirkel foto + buet "MEET. CREATE. CONNECT." + logo + hjoerne-tekster =====
     { id:'circ1', name:'Circle · Lime',  layout:'mega', style:'editorial', font:'poppins', photo:true, bg:'#c3f53d', ink:'#0a0a0a', acc:'#0a0a0a' },
     { id:'circ2', name:'Circle · Lilla', layout:'mega', style:'editorial', font:'poppins', photo:true, bg:'#b18cf0', ink:'#0a0a0a', acc:'#0a0a0a' },
-    { id:'circ3', name:'Circle · Rød',   layout:'mega', style:'editorial', font:'poppins', photo:true, bg:'#fa2d18', ink:'#0a0a0a', acc:'#0a0a0a' }
+    { id:'circ3', name:'Circle · Rød',   layout:'mega', style:'editorial', font:'poppins', photo:true, bg:'#fa2d18', ink:'#0a0a0a', acc:'#0a0a0a' },
+    // ===== Recruit — KUN portraet 4:5: gul ramme + creme kort + stor serif jobtitel + foto + gul stjerne-badge "JOIN THE CREW!" =====
+    { id:'recruit', name:'Recruit', layout:'mega', style:'editorial', font:'fraunces', photo:true, bg:'#f5c01a', ink:'#141414', acc:'#f5d23a' }
   ];
   let CONTENT = { headline:'', emphasis:'', eyebrow:'', subline:'', badge:'', navn:'' };
   const removed = new Set();
@@ -2187,6 +2238,7 @@
     if ((t.id.indexOf('kev')===0 || t.id==='interior' || t.id==='living' || t.id==='bigsale' || t.id==='convo') && postRatio < 0.9) postRatio = 1;   // firkant-specifikke premium-designs kan ikke vises i landskab -> tilbage til firkant
     if (t.id==='flaw') postRatio = 1.7778;   // Flawless er KUN til story 9:16
     if (t.id.indexOf('circ')===0) postRatio = 1.25;   // Circle-plakaterne er KUN portraet 4:5
+    if (t.id==='recruit') postRatio = 1.25;   // Recruit er KUN portraet 4:5
     const post = byId('post');
     TEMPLATES.forEach(x => post.classList.remove('tpl-'+x.id));
     post.classList.add('tpl-'+t.id);
@@ -2415,7 +2467,7 @@
   function syncFormatStrip(){ const strip=byId('formatStrip'); if(!strip) return; let best=FORMATS[0], bd=1e9; FORMATS.forEach(f=>{ const d=Math.abs(f.ratio-postRatio); if(d<bd){bd=d; best=f;} }); strip.querySelectorAll('.format-card').forEach(c=>c.classList.toggle('active', c.dataset.fmt===best.id)); }
   // KEVARI-skabeloner er lodrette designs — de to landskabsformater laases (deaktiveres) naar en KEVARI-skabelon er aktiv.
   function isKevTemplate(){ return !!(curTemplate && (curTemplate.indexOf('kev')===0 || curTemplate==='interior' || curTemplate==='living' || curTemplate==='bigsale' || curTemplate==='convo')); }
-  function formatLocked(id){ const f=FORMATS.find(x=>x.id===id); if(!f) return false; if(curTemplate==='flaw') return id!=='story'; if(curTemplate.indexOf('circ')===0) return id!=='portrait'; return !!(f.ratio < 0.9 && isKevTemplate()); }
+  function formatLocked(id){ const f=FORMATS.find(x=>x.id===id); if(!f) return false; if(curTemplate==='flaw') return id!=='story'; if(curTemplate.indexOf('circ')===0) return id!=='portrait'; if(curTemplate==='recruit') return id!=='portrait'; return !!(f.ratio < 0.9 && isKevTemplate()); }
   function syncFormatLocks(){ const strip=byId('formatStrip'); if(!strip) return; strip.querySelectorAll('.format-card').forEach(c=>c.classList.toggle('fmt-locked', formatLocked(c.dataset.fmt))); }
   function selectFormat(id){ if(formatLocked(id)) return; const f=FORMATS.find(x=>x.id===id)||FORMATS[0]; postRatio=f.ratio; applyFormat(); fitText(); if(selId) showSel(); byId('formatStrip').querySelectorAll('.format-card').forEach(c=>c.classList.toggle('active', c.dataset.fmt===id)); }
 
