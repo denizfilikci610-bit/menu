@@ -1020,6 +1020,23 @@
   .post.fmt-tall.tpl-kev4 .post-badge{ transform:translateY(calc(var(--kband,0) * 1cqw)) rotate(-9deg); }
 
   .tpl-card .tpl-thumb{ width:100%; aspect-ratio:1; display:flex; align-items:center; justify-content:center; font-family:'Fraunces',serif; font-weight:700; font-size:1.7rem; }
+  /* ===== Skabelon-strip: farve-familie -> ÉT kort der "popper" varianterne ud ===== */
+  .fam-thumb{ position:relative; padding:0; overflow:hidden; }
+  .fam-thumb .fam-stripes{ position:absolute; inset:0; display:flex; }
+  .fam-thumb .fam-stripes i{ flex:1 1 0; }
+  .fam-thumb .fam-chev{ position:absolute; right:5px; bottom:5px; width:18px; height:18px; border-radius:50%; background:rgba(255,255,255,.92); color:#1a1a17; display:flex; align-items:center; justify-content:center; box-shadow:0 1px 3px rgba(0,0,0,.28); transition:transform .25s ease; }
+  .tpl-card.tpl-family.expanded .fam-chev{ transform:rotate(180deg); }
+  .tpl-variants{ display:none; flex:0 0 auto; align-items:stretch; gap:8px; }
+  .tpl-variants.show{ display:flex; }
+  .tpl-chip{ flex:0 0 auto; box-sizing:border-box; width:72px; border:2px solid var(--line); border-radius:11px; background:none; cursor:pointer; display:flex; flex-direction:column; overflow:hidden; padding:0; opacity:0; transform:scale(.35); transform-origin:left center; transition:opacity .26s ease, transform .44s cubic-bezier(.34,1.56,.5,1), border-color .15s, box-shadow .15s; }
+  .tpl-variants.pop .tpl-chip{ opacity:1; transform:none; }
+  .tpl-chip:hover{ border-color:#d8b59f; }
+  .tpl-chip.active{ border-color:var(--accent); box-shadow:0 0 0 3px rgba(181,84,42,.13); }
+  .tpl-chip .chip-mini{ width:100%; aspect-ratio:1; position:relative; overflow:hidden; }
+  .tpl-chip .cm-photo{ position:absolute; left:12%; right:12%; top:12%; height:58%; background:#cdc6b8; border:1.5px solid #141414; }
+  .tpl-chip .cm-band{ position:absolute; left:12%; right:12%; bottom:12%; height:18%; border:1.5px solid #141414; }
+  .tpl-chip .name{ font-size:.58rem; font-weight:600; color:var(--muted); text-align:center; padding:4px 2px 5px; line-height:1.15; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .tpl-chip.active .name{ color:var(--accent-d); }
 
   /* ----- skitse-tilstand (wireframe) ----- */
   .post.skeleton{ background:#ece6da; box-shadow:none; }
@@ -2285,9 +2302,25 @@
     const post = byId('post'); if (post) TEMPLATES.forEach(x => post.classList.remove('tpl-'+x.id));
     renderTemplateStrip(); syncFormatLocks();
   }
+  // Farve-familie: skabeloner navngivet "Familie · Variant" grupperes til ÉT kort der folder de andre ud.
+  let expandedFam = null;   // navnet paa den aktuelt udfoldede familie (eller null)
+  function tplFamily(t){ const i = (t.name||'').indexOf(' · '); return i > 0 ? t.name.slice(0, i) : null; }
+  function tplVariantName(t){ const i = (t.name||'').indexOf(' · '); return i > 0 ? t.name.slice(i+3) : t.name; }
   function renderTemplateStrip(){
     const strip = byId('templateStrip'); if (!strip) return; strip.innerHTML = '';
+    const esc = s => (window.CSS && CSS.escape) ? CSS.escape(s) : String(s).replace(/"/g,'\\"');
+    // gruppér efter familie (bevarer raekkefoelge)
+    const groups = [], byFam = {};
     TEMPLATES.forEach(t => {
+      const fam = tplFamily(t);
+      if (fam){ if (!byFam[fam]){ byFam[fam] = { fam:fam, members:[] }; groups.push(byFam[fam]); } byFam[fam].members.push(t); }
+      else groups.push({ fam:null, members:[t] });
+    });
+    // den aktive families vises udfoldet
+    const at = curTemplate ? TEMPLATES.find(x => x.id === curTemplate) : null;
+    expandedFam = at ? tplFamily(at) : (expandedFam && groups.some(g => g.fam === expandedFam) ? expandedFam : null);
+
+    function singleCard(t){
       const card = document.createElement('button'); card.type='button'; card.dataset.tpl = t.id;
       card.className = 'layout-card tpl-card' + (t.id===curTemplate ? ' active' : '');
       const th = document.createElement('div'); th.className='tpl-thumb';
@@ -2297,7 +2330,53 @@
       const nm = document.createElement('div'); nm.className='name'; nm.textContent = t.name; card.appendChild(nm);
       card.appendChild(lockBadge());
       card.addEventListener('click', () => applyTemplate(t));
-      strip.appendChild(card);
+      return card;
+    }
+    function variantChip(t, i, fam){
+      const chip = document.createElement('button'); chip.type='button'; chip.dataset.tpl = t.id;
+      chip.className = 'tpl-chip' + (t.id===curTemplate ? ' active' : '');
+      chip.style.transitionDelay = (i*45) + 'ms';   // forskudt "pop"
+      const mini = document.createElement('div'); mini.className='chip-mini'; mini.style.background = t.bg;
+      mini.innerHTML = '<span class="cm-photo"></span><span class="cm-band" style="background:'+t.acc+'"></span>';
+      chip.appendChild(mini);
+      const nm = document.createElement('div'); nm.className='name'; nm.textContent = tplVariantName(t); chip.appendChild(nm);
+      chip.addEventListener('click', () => applyTemplate(t));
+      return chip;
+    }
+    function familyCard(g, open){
+      const card = document.createElement('button'); card.type='button'; card.dataset.fam = g.fam;
+      const isActive = g.members.some(m => m.id===curTemplate);
+      card.className = 'layout-card tpl-card tpl-family' + (isActive ? ' active' : '') + (open ? ' expanded' : '');
+      const th = document.createElement('div'); th.className='tpl-thumb fam-thumb';
+      let stripes = ''; g.members.forEach(m => { stripes += '<i style="background:'+m.bg+'"></i>'; });
+      th.innerHTML = '<div class="fam-stripes">'+stripes+'</div><span class="fam-chev"><svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></span>';
+      card.appendChild(th);
+      const nm = document.createElement('div'); nm.className='name'; nm.textContent = g.fam; card.appendChild(nm);
+      card.appendChild(lockBadge());
+      card.addEventListener('click', () => toggleFamily(g.fam));
+      return card;
+    }
+    function toggleFamily(fam){
+      const willOpen = expandedFam !== fam;
+      strip.querySelectorAll('.tpl-variants').forEach(w => w.classList.remove('show','pop'));
+      strip.querySelectorAll('.tpl-family').forEach(c => c.classList.remove('expanded'));
+      if (!willOpen){ expandedFam = null; return; }
+      expandedFam = fam;
+      const card = strip.querySelector('.tpl-family[data-fam="'+esc(fam)+'"]'); if (card) card.classList.add('expanded');
+      const wrap = strip.querySelector('.tpl-variants[data-fam="'+esc(fam)+'"]');
+      if (wrap){ wrap.classList.add('show'); requestAnimationFrame(() => requestAnimationFrame(() => wrap.classList.add('pop'))); }
+    }
+
+    groups.forEach(g => {
+      if (g.fam && g.members.length > 1){
+        const open = (g.fam === expandedFam);
+        strip.appendChild(familyCard(g, open));
+        const wrap = document.createElement('div'); wrap.className = 'tpl-variants' + (open ? ' show pop' : ''); wrap.dataset.fam = g.fam;
+        g.members.forEach((m, i) => wrap.appendChild(variantChip(m, i, g.fam)));
+        strip.appendChild(wrap);
+      } else {
+        strip.appendChild(singleCard(g.members[0]));
+      }
     });
   }
   function applyFormat(){
