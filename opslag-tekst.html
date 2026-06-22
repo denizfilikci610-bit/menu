@@ -98,6 +98,7 @@
 
   /* ===== Opslags-grafik ===== */
   .post-stage{ position:relative; display:flex; justify-content:center; padding:6px 0 4px; }
+  /* border-radius + box-shadow saettes proportionalt med post-bredden i JS (applyPostChrome) -> mobil-forhaandsvisning PRAECIS som desktop. Disse px er kun fallback foer JS koerer. (cqw kan IKKE bruges her: cqw paa selve container-elementet refererer til en ANCESTOR, ikke postens egen bredde.) Thumbnails (.post.mini) nulstiller begge. */
   .post{ --hl:11cqw; --hf:'Fraunces',serif; --hw:700; --bf:'Space Grotesk',sans-serif; container-type:inline-size; position:relative; width:min(400px,100%); background:var(--pbg,#c2632f); color:var(--pink,#fdf3e7); border-radius:16px; overflow:hidden; box-shadow:0 20px 48px -18px rgba(40,28,16,.55); }
 
   .post-photo{ position:absolute; inset:0; background-size:cover; background-position:center; background-repeat:no-repeat; background-color:#8a8276; z-index:0; display:none; }
@@ -2096,10 +2097,19 @@
       const maxH=Math.max(200, window.innerHeight*0.40);
       let w=Math.min(availW,400);
       if (w*postRatio>maxH) w=Math.floor(maxH/postRatio);
-      if (w>60){ post.style.width=w+'px'; post.style.height=Math.round(w*postRatio)+'px'; return; }
+      if (w>60){ post.style.width=w+'px'; post.style.height=Math.round(w*postRatio)+'px'; applyPostChrome(post, w); return; }
     }
     post.style.width='';
     post.style.height=(post.clientWidth*postRatio)+'px';
+    applyPostChrome(post, post.clientWidth);
+  }
+  // Saet postens hjoerne-radius + skygge proportionalt med dens FAKTISKE bredde, saa de er ens i ALLE stoerrelser
+  // (mobil-forhaandsvisning PRAECIS som desktop). Faste px paa selve container-elementet skalerer ikke med cqw.
+  // Ved ref-bredde 400px giver det 16px radius + skygge 0 20px 48px -18px = uaendret desktop-look.
+  function applyPostChrome(post, w){
+    w = w || post.getBoundingClientRect().width || 400;
+    post.style.borderRadius = (w*0.04).toFixed(2)+'px';
+    post.style.boxShadow = '0 '+(w*0.05).toFixed(2)+'px '+(w*0.12).toFixed(2)+'px '+(-w*0.045).toFixed(2)+'px rgba(40,28,16,.55)';
   }
 
   // ---------- Auto-tilpas tekststørrelse til formatet ----------
@@ -3646,7 +3656,9 @@
   }
   // ---------- Init ----------
   applyStyle(curStyleId, true);
-  if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => { if (byId('resultsWrap').style.display !== 'none') fitText(); });
+  // Naar web-fonts (Anton m.fl.) er loadet: kør relayout igen, saa tekst-tilpasningen (fitText/bigsaleFit/kev4Adjust)
+  // maaler med den RIGTIGE font og ikke fallback -> ens stoerrelse paa mobil/desktop uanset font-load-timing.
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => { if (byId('resultsWrap').style.display !== 'none' && typeof relayout === 'function') relayout(); });
 </script>
 <!-- Cookie-samtykke (Lusidio) -->
 <style>
