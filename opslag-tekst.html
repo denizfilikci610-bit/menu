@@ -765,6 +765,31 @@
   /* lime pille = redigerbar decor-label (default = AI-descriptor); ved vinduets top-hoejre, let roteret */
   .tsc-convo .cv-pill{ position:absolute; top:39%; right:7cqw; left:auto; bottom:auto; display:inline-block; max-width:48cqw; transform:rotate(-7deg); transform-origin:center; background:var(--pacc,#c3f24a); color:#16161a; border-radius:99px; padding:1.7cqw 3.4cqw; font-family:'Poppins',sans-serif; font-weight:700; text-transform:uppercase; letter-spacing:.05em; line-height:1.1; text-align:center; font-size:2.9cqw; white-space:nowrap; box-shadow:0 1.2cqw 3cqw -1cqw rgba(0,0,0,.2); }
 
+  /* ===================== Flawless (KUN story 9:16: 2x4 gitter af foto/farve-panel m. tale-boble-hak) ===================== */
+  .post.tpl-flaw{ background:#fff; }
+  .post.tpl-flaw .post-frame{ display:none !important; }
+  .post.tpl-flaw .post-content{ pointer-events:none; }   /* overskrifter er per-celle decor-labels */
+  .post.tpl-flaw .post-eyebrow, .post.tpl-flaw .post-headline, .post.tpl-flaw .post-sub, .post.tpl-flaw .post-brand, .post.tpl-flaw .post-badge{ display:none !important; }
+  /* 4 foto-celler (skiftevis venstre/hoejre) */
+  .post.tpl-flaw .post-photo{ display:block !important; inset:auto !important; top:0 !important; left:0 !important; right:auto !important; bottom:auto !important; width:50% !important; height:25% !important; background-size:cover; background-position:center; border:0; border-radius:0; z-index:0; }
+  .post.tpl-flaw .post-photo2{ display:block; inset:auto; top:25%; left:50%; width:50%; height:25%; background-size:cover; background-position:center; z-index:0; }
+  .post.tpl-flaw .post-photo3{ display:block; inset:auto; top:50%; left:0; width:50%; height:25%; background-size:cover; background-position:center; z-index:0; }
+  .post.tpl-flaw .post-photo4{ display:block; inset:auto; top:75%; left:50%; width:50%; height:25%; background-size:cover; background-position:center; z-index:0; }
+  /* decor (panels, hak, labels) OVER fotos */
+  .post.tpl-flaw .post-decor{ z-index:2; }
+  /* farve-panel (fylder sin celle) */
+  .tsc-flaw .fl-panel{ position:absolute; width:50%; height:25%; }
+  /* tale-boble-hak ved split-linjen (50% bredde), peger mod fotoet */
+  .tsc-flaw .fl-notch{ position:absolute; width:0; height:0; }
+  .tsc-flaw .fl-notch.nl{ left:50%; transform:translate(-100%,-50%); border-top:8cqw solid transparent; border-bottom:8cqw solid transparent; border-right:8cqw solid var(--nc); }   /* peger venstre */
+  .tsc-flaw .fl-notch.nr{ left:50%; transform:translateY(-50%); border-top:8cqw solid transparent; border-bottom:8cqw solid transparent; border-left:8cqw solid var(--nc); }   /* peger hoejre */
+  /* redigerbar overskrift i panelets top */
+  .tsc-flaw .fl-hl{ position:absolute; width:44cqw; font-family:'Poppins',sans-serif; font-weight:800; font-size:6.4cqw; line-height:1.04; letter-spacing:-.015em; overflow-wrap:normal; word-break:normal; display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden; }
+  /* logo + hashtag i panelets bund */
+  .tsc-flaw .fl-logo{ position:absolute; width:7.5cqw; height:7.5cqw; }
+  .tsc-flaw .fl-logo svg{ display:block; width:100%; height:100%; }
+  .tsc-flaw .fl-tag{ position:absolute; font-family:'Poppins',sans-serif; font-weight:600; font-size:2.6cqw; letter-spacing:.01em; opacity:.8; white-space:nowrap; }
+
   /* ===================== KEVARI 9-post sæt ===================== */
   .post[class*="tpl-kev"]{ --hl:22cqw; }
   .post[class*="tpl-kev"] .post-frame{ display:none !important; }
@@ -1785,7 +1810,8 @@
     kev6: { copy:'©2025', mid:'ACCESSORIZE\nBOLDLY' },
     kev8: { copy:'©2024', tag1:'#FOLLOWME', tag2:'#2MILLION' },
     living: { bubble:'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod temporet' },
-    convo: { pill:'A SPACE TO THINK' }
+    convo: { pill:'A SPACE TO THINK' },
+    flaw: { tag:'#getflawlessfit' }
   };
   let tplLabels = {};   // brugerens egne aendringer pr. skabelon: { kev1:{flankL:'...'}, ... }
   let aiLabels = { descriptors:[], tags:[] };   // AI'ens raa pulje (bruges af de afledte hashtag-labels kev5/kev9)
@@ -1817,6 +1843,7 @@
       set('kev6', { copy:copy, mid:ds[0] });
       set('kev8', { copy:copy, tag1:tg[0], tag2:tg[1] });
       set('convo', { pill:ds[0] });   // Conversations-pillen faar den foerste AI-descriptor (emne-relevant tekst)
+      set('flaw', { hl0:ds[0], hl1:ds[1], hl2:ds[2], hl3:ds[3], tag:tg[0] });   // Flawless: 4 overskrifter fra descriptors + hashtag
     }
     tplLabels = T;   // friskt AI-design -> friske labels
     aiLabels = { descriptors:ds.slice(), tags:tg.slice() };   // gem puljen til de afledte hashtag-labels (kev5/kev9)
@@ -1926,6 +1953,28 @@
       // redigerbar lime pille (default = AI-descriptor / "A SPACE TO THINK") ved foto-vinduets top
       return '<div class="tpl-scene tsc-convo">'+kevEd('convo','pill','cv-pill')+'</div>';
     }
+    if (id === 'flaw'){
+      // 2x4 gitter: hver raekke = foto + farve-panel (skiftevis side) m. tale-boble-hak, redigerbar overskrift, logo, hashtag
+      const CELLS = [
+        { side:'r', bg:'#efc9d3', acc:'#a8294a' },   // raekke 0: foto venstre, pink panel hoejre
+        { side:'l', bg:'#5e3b1f', acc:'#3cbf4d' },   // raekke 1: brun panel venstre, foto hoejre
+        { side:'r', bg:'#3a7cc9', acc:'#f5db4f' },   // raekke 2: foto venstre, bla panel hoejre
+        { side:'l', bg:'#e22b2b', acc:'#ffffff' }    // raekke 3: roed panel venstre, foto hoejre
+      ];
+      const DEF_HL = ['The backstabber','The awful wedgies','Topple over again','Bumps and bulges'];
+      const ds = (aiLabels && Array.isArray(aiLabels.descriptors)) ? aiLabels.descriptors : [];
+      const rose = acc => '<svg viewBox="0 0 40 40" fill="none" stroke="'+acc+'" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="20" cy="20" r="17.5"/><path d="M20 22 C17.5 22 17 18.7 19.6 18 C16.8 16.6 18.4 13.2 21 14.6 C20.5 11.6 24.4 11.2 24.4 14.2 C26.8 12.3 29.3 15.7 26.8 17.6 C29.7 18.2 28.9 22 26 21.4 C27.2 24.2 23.4 25.9 21.9 23.3 C21.4 25.8 18 25.2 18.2 22.6" stroke-width="1.7"/></svg>';
+      let h = '<div class="tpl-scene tsc-flaw">';
+      CELLS.forEach((c,i) => {
+        const rt = i*25, rb = (i+1)*25, cy = rt + 12.5, pL = (c.side==='r') ? 50 : 0;
+        h += '<span class="fl-panel" style="top:'+rt+'%;left:'+pL+'%;background:'+c.bg+'"></span>';
+        h += '<span class="fl-notch '+(c.side==='r'?'nl':'nr')+'" style="top:'+cy+'%;--nc:'+c.bg+'"></span>';
+        h += kevEd('flaw','hl'+i,'fl-hl', 'top:calc('+rt+'% + 5cqw);left:calc('+pL+'% + 5cqw);color:'+c.acc, ds[i] || DEF_HL[i]);
+        h += '<span class="fl-logo" style="top:calc('+rb+'% - 11cqw);left:calc('+pL+'% + 4cqw)">'+rose(c.acc)+'</span>';
+        h += kevEd('flaw','tag','fl-tag', 'top:calc('+rb+'% - 8.5cqw);left:calc('+pL+'% + 14cqw);color:'+c.acc, '#getflawlessfit');
+      });
+      return h + '</div>';
+    }
     // ===== KEVARI — dekorationer (vertikale labels, ring, hjørne-labels) afledt af teksten =====
     if (id && id.indexOf('kev')===0){
       const tag = s => '#'+(s||'').toUpperCase().replace(/[^A-Z0-9ÆØÅ]/gi,'') || '#';
@@ -2029,7 +2078,9 @@
     // ===== Big Sale — split: sort venstre-panel med ROTERET kaempe overskrift + foto til hoejre =====
     { id:'bigsale', name:'Big Sale', layout:'mega', style:'editorial', font:'anton', photo:true, bg:'#141414', ink:'#f5edd6', acc:'#f5edd6' },
     // ===== Conversations — hvidt kort, fed top-overskrift (Poppins), lime pille-kicker, foto i bunden =====
-    { id:'convo', name:'Conversations', layout:'mega', style:'editorial', font:'poppins', photo:true, bg:'#ffffff', ink:'#1b1b1f', acc:'#c3f24a' }
+    { id:'convo', name:'Conversations', layout:'mega', style:'editorial', font:'poppins', photo:true, bg:'#ffffff', ink:'#1b1b1f', acc:'#c3f24a' },
+    // ===== Flawless — KUN story 9:16: foto i top + bla farve-panel m. tale-boble-hak + gul fed overskrift + logo + hashtag =====
+    { id:'flaw', name:'Flawless', layout:'mega', style:'editorial', font:'poppins', photo:true, bg:'#3a7cc9', ink:'#f5db4f', acc:'#f5db4f' }
   ];
   let CONTENT = { headline:'', emphasis:'', eyebrow:'', subline:'', badge:'', navn:'' };
   const removed = new Set();
@@ -2085,6 +2136,7 @@
     motifId = 'none'; curStyleDecor = ''; accentLevel = 'none'; curTextPos = null;
     _premTpl = true; _premLayout = _premFont = _premPalette = false;
     if ((t.id.indexOf('kev')===0 || t.id==='interior' || t.id==='living' || t.id==='bigsale' || t.id==='convo') && postRatio < 0.9) postRatio = 1;   // firkant-specifikke premium-designs kan ikke vises i landskab -> tilbage til firkant
+    if (t.id==='flaw') postRatio = 1.7778;   // Flawless er KUN til story 9:16
     const post = byId('post');
     TEMPLATES.forEach(x => post.classList.remove('tpl-'+x.id));
     post.classList.add('tpl-'+t.id);
@@ -2313,7 +2365,7 @@
   function syncFormatStrip(){ const strip=byId('formatStrip'); if(!strip) return; let best=FORMATS[0], bd=1e9; FORMATS.forEach(f=>{ const d=Math.abs(f.ratio-postRatio); if(d<bd){bd=d; best=f;} }); strip.querySelectorAll('.format-card').forEach(c=>c.classList.toggle('active', c.dataset.fmt===best.id)); }
   // KEVARI-skabeloner er lodrette designs — de to landskabsformater laases (deaktiveres) naar en KEVARI-skabelon er aktiv.
   function isKevTemplate(){ return !!(curTemplate && (curTemplate.indexOf('kev')===0 || curTemplate==='interior' || curTemplate==='living' || curTemplate==='bigsale' || curTemplate==='convo')); }
-  function formatLocked(id){ const f=FORMATS.find(x=>x.id===id); return !!(f && f.ratio < 0.9 && isKevTemplate()); }
+  function formatLocked(id){ const f=FORMATS.find(x=>x.id===id); if(!f) return false; if(curTemplate==='flaw') return id!=='story'; return !!(f.ratio < 0.9 && isKevTemplate()); }
   function syncFormatLocks(){ const strip=byId('formatStrip'); if(!strip) return; strip.querySelectorAll('.format-card').forEach(c=>c.classList.toggle('fmt-locked', formatLocked(c.dataset.fmt))); }
   function selectFormat(id){ if(formatLocked(id)) return; const f=FORMATS.find(x=>x.id===id)||FORMATS[0]; postRatio=f.ratio; applyFormat(); fitText(); if(selId) showSel(); byId('formatStrip').querySelectorAll('.format-card').forEach(c=>c.classList.toggle('active', c.dataset.fmt===id)); }
 
@@ -2608,7 +2660,8 @@
   function clearPhotoSlots(){ PHOTO_SLOTS.forEach(id => { const el=byId(id); if(el) el.style.backgroundImage=''; }); }
   function setPhoto(){
     const L = LAYOUTS.find(x => x.id === curLayout) || LAYOUTS[0];
-    const n = Math.max(1, L.imgs || 1);
+    let n = Math.max(1, L.imgs || 1);
+    if (curTemplate === 'flaw') n = 4;        // Flawless: 4 foto-celler (stock = 4 forskellige; eget upload = samme x4)
     const convo = curTemplate === 'convo';   // Conversations: SAMME billede i baggrund (postPhoto) + foto-vindue (postPhoto2)
     for (let k = n; k < 4; k++){ if (convo && k === 1) continue; const el = byId(PHOTO_SLOTS[k]); if (el) el.style.backgroundImage = ''; }
     if (customPhoto){ for (let k = 0; k < n; k++){ const el = byId(PHOTO_SLOTS[k]); if (el) el.style.backgroundImage = 'url("' + customPhoto + '")'; } if (convo) byId('postPhoto2').style.backgroundImage = 'url("' + customPhoto + '")'; return; }
