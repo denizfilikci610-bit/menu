@@ -720,11 +720,11 @@
   /* ===================== Big Sale (split: sort roteret-tekst-panel + foto) ===================== */
   .post.tpl-bigsale{ --hl:27cqw; }
   .post.tpl-bigsale .post-frame{ display:none !important; }
-  .post.tpl-bigsale .post-photo{ display:block !important; inset:0 !important; left:48cqw; right:0; top:0; bottom:0; width:auto; height:auto; border:0; border-radius:0; }
+  .post.tpl-bigsale .post-photo{ display:block !important; inset:auto !important; left:48cqw !important; right:0 !important; top:0 !important; bottom:0 !important; width:auto !important; height:auto !important; border:0; border-radius:0; }
   .post.tpl-bigsale.st-al-c .post-content{ align-items:flex-start; text-align:left; justify-content:flex-start; padding:0; }
   .post.tpl-bigsale .post-body{ flex:none; }
   /* ROTERET kaempe overskrift i venstre panel (laeses nedefra-og-op) */
-  .post.tpl-bigsale .post-headline{ position:absolute; left:44cqw; bottom:5cqw; transform-origin:left bottom; transform:rotate(-90deg); width:90cqw; max-width:90cqw; font-family:'Anton',sans-serif !important; font-weight:400 !important; text-transform:uppercase; color:#f5edd6 !important; line-height:.84; letter-spacing:.005em; text-align:left; }
+  .post.tpl-bigsale .post-headline{ position:absolute; left:42cqw; bottom:5cqw; transform-origin:left bottom; transform:rotate(-90deg); width:80cqw; max-width:80cqw; font-family:'Anton',sans-serif !important; font-weight:400 !important; text-transform:uppercase; color:#f5edd6 !important; line-height:.88; letter-spacing:.005em; text-align:left; white-space:normal; overflow-wrap:break-word; }
   .post.tpl-bigsale.st-treat-underline .post-headline{ border-bottom:none !important; padding-bottom:0 !important; }
   /* ROTERET "UP TO 50% OFF" naer split */
   .post.tpl-bigsale .post-eyebrow{ position:absolute; left:48cqw; bottom:5cqw; transform-origin:left bottom; transform:rotate(-90deg); width:90cqw; max-width:90cqw; min-height:0; font-family:'Space Grotesk',sans-serif; font-weight:600; text-transform:uppercase; letter-spacing:.18em; color:#f5edd6; opacity:.95; text-align:left; font-size:max(2.6cqw, calc(3cqw * var(--fit,1) * var(--escale,1))); }
@@ -733,7 +733,9 @@
   .post.tpl-bigsale .post-sub{ position:absolute; left:48cqw; right:2cqw; bottom:5cqw; max-width:none; text-align:center; font-family:'Space Grotesk',sans-serif; font-weight:600; text-transform:uppercase; letter-spacing:.22em; color:#f5edd6; opacity:.96; font-size:max(2.5cqw, calc(2.9cqw * var(--fit,1) * var(--escale,1))); text-shadow:0 .2cqw 1.4cqw rgba(0,0,0,.55); }
   .post.tpl-bigsale .post-brand{ display:none; }
   .post.tpl-bigsale .post-badge{ display:none !important; }
-  .tsc-bigsale .bs-star{ position:absolute; left:38cqw; top:5cqw; font-family:'Space Grotesk',sans-serif; font-weight:700; color:#f5edd6; font-size:10cqw; line-height:1; }
+  /* solidt sort venstre-panel — altid sort bag den roterede tekst (uanset foto). I post-decor (z:0) => over fotoet, under teksten (z:4) */
+  .tsc-bigsale .bs-panel{ position:absolute; left:0; top:0; bottom:0; width:48cqw; background:var(--pbg,#141414); }
+  .tsc-bigsale .bs-star{ position:absolute; left:38cqw; top:4cqw; font-family:'Space Grotesk',sans-serif; font-weight:700; color:#f5edd6; font-size:9cqw; line-height:1; }
 
   /* ===================== KEVARI 9-post sæt ===================== */
   .post[class*="tpl-kev"]{ --hl:22cqw; }
@@ -1885,8 +1887,8 @@
         + '</div>';
     }
     if (id === 'bigsale'){
-      // asterisk i toppen af det sorte panel (naer split)
-      return '<div class="tpl-scene tsc-bigsale"><span class="bs-star">✳</span></div>';
+      // solidt sort venstre-panel (altid sort bag teksten) + asterisk i toppen (naer split)
+      return '<div class="tpl-scene tsc-bigsale"><span class="bs-panel"></span><span class="bs-star">✳</span></div>';
     }
     // ===== KEVARI — dekorationer (vertikale labels, ring, hjørne-labels) afledt af teksten =====
     if (id && id.indexOf('kev')===0){
@@ -2119,10 +2121,35 @@
   function fitText(){
     const post=byId('post'); if(!post) return;
     post.classList.remove('hl-break');
+    if (curTemplate === 'bigsale'){ post.style.setProperty('--fit','1'); bigsaleFit(); return; }
+    bigsaleFit();   // ryd bigsale-inline-styles paa overskriften naar en anden skabelon er aktiv
     let f=1; post.style.setProperty('--fit','1'); let g=0;
     while (overflowing() && f>0.4 && g<30){ f-=0.04; post.style.setProperty('--fit', f.toFixed(3)); g++; }
     if (overflowing()) post.classList.add('hl-break');
     kev4Adjust();
+  }
+  // Big Sale: skaler den ROTEREDE overskrift saa ALLE kolonner holder sig inde i det sorte panel
+  // (ingen overlap, robust for variabel tekstlaengde). Maaler den faktiske ombrydning ved hver stoerrelse.
+  // Roteret -90deg: ombrudt blok-HOEJDE -> vandret kolonne-extent (skal <= panel-bredde);
+  //                 ombrydnings-BREDDE -> lodret extent (kolonne-laengde).
+  function bigsaleFit(){
+    const h = byId('postHeadline'), post = byId('post');
+    if (curTemplate !== 'bigsale'){ if (h){ h.style.fontSize=''; h.style.width=''; } return; }
+    if (!h || !post) return;
+    const pr = post.getBoundingClientRect(); if (!pr.width) return;
+    const cqw = pr.width/100;
+    const vAvail = 80 * cqw;   // lodret tekst-extent (kolonnernes laengde) i px
+    const hAvail = 41 * cqw;   // vandret plads til kolonner (det sorte panel, fra origin 42cqw -> venstre kant ~1cqw)
+    h.style.width = vAvail + 'px';                 // ombrydnings-bredde = lodret extent
+    const fits = (size) => {
+      h.style.fontSize = size + 'px';
+      return h.scrollHeight <= hAvail + 1 && h.scrollWidth <= h.clientWidth + 1;
+    };
+    const lo0 = 6.5 * cqw, hi0 = 27 * cqw;
+    if (fits(hi0)){ h.style.fontSize = hi0 + 'px'; return; }
+    let lo = lo0, hi = hi0;
+    for (let i=0; i<18; i++){ const mid=(lo+hi)/2; if (fits(mid)) lo = mid; else hi = mid; }
+    h.style.fontSize = lo + 'px';
   }
   // kev4 "Coming Soon": skaler titlen så den fylder boksen på ÉN linje, og lad fotoet ligge flush lige under boksen
   function kev4Adjust(){
