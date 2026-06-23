@@ -888,7 +888,7 @@
   .post.tpl-gem .post-photo{ display:block !important; inset:auto !important; left:8cqw !important; right:8cqw !important; top:62cqw !important; bottom:auto !important; height:64cqw !important; width:auto !important; background-size:cover; background-position:center; -webkit-clip-path:polygon(24% 0,76% 0,100% 36%,50% 100%,0 36%); clip-path:polygon(24% 0,76% 0,100% 36%,50% 100%,0 36%); border:0; border-radius:0; z-index:2; }
   .post.tpl-gem .post-photo2, .post.tpl-gem .post-photo3, .post.tpl-gem .post-photo4{ display:none !important; }
   /* kaempe overskrift (Anton) delt om diamanten */
-  .tsc-gem .gem-hl{ position:absolute; left:3cqw; right:3cqw; text-align:center; font-family:'Anton',sans-serif; font-weight:400; text-transform:uppercase; color:var(--pink,#f3a8bf); line-height:.82; letter-spacing:.01em; font-size:20cqw; }
+  .tsc-gem .gem-hl{ position:absolute; left:3cqw; right:3cqw; text-align:center; font-family:'Anton',sans-serif; font-weight:400; text-transform:uppercase; color:var(--pink,#f3a8bf); line-height:.82; letter-spacing:.01em; font-size:20cqw; white-space:nowrap; }
   .tsc-gem .gem-top{ bottom:114cqw; }   /* bund-forankret OVER diamanten -> vokser opad, intet skjules */
   .tsc-gem .gem-bot{ top:123cqw; }       /* top-forankret UNDER diamanten -> vokser nedad */
   /* eyebrow top-venstre, logo/brand top-hoejre, sub nederst */
@@ -2117,12 +2117,8 @@
       const hl = (C.headline||'').trim().toUpperCase();
       const words = hl.split(/\s+/).filter(Boolean);
       let topT='', botT='';
-      if (words.length >= 2){
-        // BALANCERET split: vaelg delepunkt der minimerer forskel i tegn-laengde mellem top og bund
-        let best=1, bd=Infinity;
-        for (let i=1;i<words.length;i++){ const tp=words.slice(0,i).join(' '), bt=words.slice(i).join(' '); const d=Math.abs(tp.length-bt.length); if(d<bd){bd=d;best=i;} }
-        topT=words.slice(0,best).join(' '); botT=words.slice(best).join(' ');
-      } else { topT = hl || 'TITEL'; }   // 1 ord -> stor paa toppen
+      if (words.length >= 2){ topT = words[0]; botT = words.slice(1).join(' '); }   // ÉT ord oeverst (altid 1 linje, stort), resten nedenunder (lille)
+      else { topT = hl || 'TITEL'; }   // 1 ord -> stor paa toppen
       const eb = (C.eyebrow||'').trim(), brand = (C.navn||'').trim(), sub = (C.subline||'').trim();
       return '<div class="tpl-scene tsc-gem">'
         + (topT ? '<div class="gem-hl gem-top">'+esc(topT)+'</div>' : '')
@@ -2625,20 +2621,24 @@
     const top = document.querySelector('.tsc-gem .gem-top'), bot = document.querySelector('.tsc-gem .gem-bot');
     if (!bot) return;
     const pr = post.getBoundingClientRect(); if (!pr.width) return;
-    const cqw = pr.width/100, maxW = 94*cqw;
-    const fitBlock = (el, zoneHpx, maxFsPx) => {   // stoerste Anton-font hvor blokken passer bredde + lodret zone (capped)
+    const cqw = pr.width/100, maxW = 92*cqw;
+    const fitLine = (el, capPx) => {   // ÉN linje (nowrap): skaler font saa teksten passer bredden, cappet -> lange tekster bliver MINDRE, ombrydes ALDRIG
       if (!el) return 0;
-      let lo = 6*cqw, hi = maxFsPx;
-      for (let i=0; i<20; i++){ const mid=(lo+hi)/2; el.style.fontSize = mid+'px';
-        if (el.scrollWidth <= maxW+1 && el.scrollHeight <= zoneHpx+1) lo = mid; else hi = mid; }
-      el.style.fontSize = lo+'px'; return lo;
+      el.style.whiteSpace = 'nowrap';
+      el.style.fontSize = '100px';
+      const w = el.scrollWidth;
+      let fs = w > 0 ? 100*(maxW/w) : capPx;
+      if (fs > capPx) fs = capPx;
+      if (fs < 5*cqw) fs = 5*cqw;
+      el.style.fontSize = fs+'px';
+      return fs;
     };
-    // KLAR hierarki (bruger-oenske): TOP stor/dominant, BUND klart mindre (~halvt af top)
+    // KLAR hierarki: TOP stor (1 ord), BUND klart mindre (~halvt). Begge ÉN linje.
     if (top){
-      const topFs = fitBlock(top, 46*cqw, 42*cqw);   // top fylder zonen over diamanten
-      fitBlock(bot, 30*cqw, topFs*0.5);              // bund cappet til ~50% af top
+      const topFs = fitLine(top, 42*cqw);
+      fitLine(bot, topFs*0.5);
     } else {
-      fitBlock(bot, 46*cqw, 42*cqw);                 // ingen top (1 ord laa paa toppen) -> bund stor
+      fitLine(bot, 42*cqw);
     }
   }
   function relayout(){ applyFormat(); fitText(); if(selId) showSel(); }
