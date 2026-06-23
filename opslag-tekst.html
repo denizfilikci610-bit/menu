@@ -880,6 +880,22 @@
   .tsc-podcast .pc-scrim{ position:absolute; left:0; top:0; width:62cqw; height:30cqw; background:radial-gradient(120% 130% at 16% 22%, rgba(8,6,22,.52), rgba(8,6,22,0) 68%); pointer-events:none; }
   .tsc-podcast .pc-show{ position:absolute; top:7cqw; left:7cqw; max-width:52cqw; font-family:'Inter',sans-serif; font-weight:800; font-size:7.4cqw; line-height:.96; letter-spacing:-.02em; color:#fff; text-shadow:0 .25cqw 1.6cqw rgba(0,0,0,.5), 0 0 .9cqw rgba(0,0,0,.28); }
 
+  /* ===================== Gem (story 9:16: kaempe pink Anton-typografi + diamant-foto i midten paa moerkegroen) ===================== */
+  .post.tpl-gem .post-frame{ display:none !important; }
+  .post.tpl-gem .post-content{ display:none !important; }   /* alt tegnes i scenen */
+  .post.tpl-gem .post-decor{ z-index:1; }
+  /* DIAMANT-foto centreret, OVER teksten (z:2) */
+  .post.tpl-gem .post-photo{ display:block !important; inset:auto !important; left:13cqw !important; right:13cqw !important; top:52cqw !important; bottom:auto !important; height:77cqw !important; width:auto !important; background-size:cover; background-position:center; -webkit-clip-path:polygon(22% 0,78% 0,100% 44%,50% 100%,0 44%); clip-path:polygon(22% 0,78% 0,100% 44%,50% 100%,0 44%); border:0; border-radius:0; z-index:2; }
+  .post.tpl-gem .post-photo2, .post.tpl-gem .post-photo3, .post.tpl-gem .post-photo4{ display:none !important; }
+  /* kaempe overskrift (Anton) delt om diamanten */
+  .tsc-gem .gem-hl{ position:absolute; left:3cqw; right:3cqw; text-align:center; font-family:'Anton',sans-serif; font-weight:400; text-transform:uppercase; color:var(--pink,#f3a8bf); line-height:.82; letter-spacing:.01em; }
+  .tsc-gem .gem-top{ top:22cqw; }
+  .tsc-gem .gem-bot{ top:120cqw; }
+  /* eyebrow top-venstre, logo/brand top-hoejre, sub nederst */
+  .tsc-gem .gem-eb{ position:absolute; top:7cqw; left:6cqw; text-align:left; color:var(--pink,#f3a8bf); font-family:'Space Grotesk',sans-serif; font-weight:700; text-transform:uppercase; letter-spacing:.02em; font-size:3.3cqw; line-height:1.12; max-width:52cqw; }
+  .tsc-gem .gem-brand{ position:absolute; top:6cqw; right:6cqw; text-align:right; color:var(--pink,#f3a8bf); font-family:'Space Grotesk',sans-serif; font-weight:700; text-transform:uppercase; letter-spacing:.03em; font-size:4.6cqw; line-height:1; max-width:42cqw; }
+  .tsc-gem .gem-sub{ position:absolute; left:5cqw; right:5cqw; bottom:7cqw; text-align:center; color:var(--pink,#f3a8bf); font-family:'Space Grotesk',sans-serif; font-weight:700; text-transform:uppercase; letter-spacing:.14em; font-size:4.6cqw; line-height:1.1; }
+
   /* ===================== KEVARI 9-post sæt ===================== */
   .post[class*="tpl-kev"]{ --hl:22cqw; }
   .post[class*="tpl-kev"] .post-frame{ display:none !important; }
@@ -2096,6 +2112,24 @@
         + kevEd('podcast','show','pc-show', undefined, showDer)
         + '</div>';
     }
+    if (id === 'gem'){
+      // story-plakat: kaempe pink Anton-typografi delt om en diamant-foto i midten (tekst over + sidste ord under)
+      const hl = (C.headline||'').trim().toUpperCase();
+      const words = hl.split(/\s+/).filter(Boolean);
+      let topT='', botT='';
+      if (words.length >= 2){ botT = words[words.length-1]; topT = words.slice(0,-1).join(' '); }
+      else { botT = hl || 'TITEL'; }
+      const longest = words.length ? Math.max.apply(null, words.map(w=>w.length)) : 5;
+      const fs = Math.max(11, Math.min(34, 97/(longest*0.48))).toFixed(1);
+      const eb = (C.eyebrow||'').trim(), brand = (C.navn||'').trim(), sub = (C.subline||'').trim();
+      return '<div class="tpl-scene tsc-gem">'
+        + (topT ? '<div class="gem-hl gem-top" style="font-size:'+fs+'cqw">'+esc(topT)+'</div>' : '')
+        + '<div class="gem-hl gem-bot" style="font-size:'+fs+'cqw">'+esc(botT)+'</div>'
+        + (eb ? '<div class="gem-eb">'+esc(eb).replace(/\n/g,'<br>')+'</div>' : '')
+        + (brand ? '<div class="gem-brand">'+esc(brand)+'</div>' : '')
+        + (sub ? '<div class="gem-sub">'+esc(sub)+'</div>' : '')
+        + '</div>';
+    }
     if (id === 'flaw'){
       // 2x4 gitter: hver raekke = foto + farve-panel (skiftevis side) m. tale-boble-hak, redigerbar overskrift, logo, hashtag
       const CELLS = [
@@ -2274,6 +2308,8 @@
     { id:'podcast5', name:'Podcast · Koral', layout:'mega', style:'editorial', font:'grotesk', photo:true, bg:'#e2552f', ink:'#fff6ef', acc:'#e2552f' },
     { id:'podcast6', name:'Podcast · Blå',   layout:'mega', style:'editorial', font:'grotesk', photo:true, bg:'#2f5fd0', ink:'#ffffff', acc:'#2f5fd0' },
     { id:'podcast7', name:'Podcast · Pink',  layout:'mega', style:'editorial', font:'grotesk', photo:true, bg:'#f0c4d8', ink:'#2a1a22', acc:'#f0c4d8' },
+    // ===== Gem — KUN story 9:16: moerkegroen bg + kaempe pink Anton-typografi delt om en diamant-foto i midten + eyebrow/logo/footer =====
+    { id:'gem', name:'Gem', layout:'mega', style:'editorial', font:'anton', photo:true, bg:'#1d5b46', ink:'#f3a8bf', acc:'#f3a8bf' },
     // ===== Snapshot — KUN portraet 4:5: farvet ramme + sort-kantet foto (oeverst) + farvet caption-baand m. stor fed slab-serif overskrift.
     //        7 farve-varianter (kun bg-ramme + acc-baand skifter; delt CSS via [class*="tpl-snap"]) =====
     { id:'snapshot', name:'Snapshot · Blå',    layout:'mega', style:'editorial', font:'fraunces', photo:true, bg:'#3f6fd1', ink:'#141414', acc:'#b2e09a' },
@@ -2339,6 +2375,7 @@
     _premTpl = true; _premLayout = _premFont = _premPalette = false;
     if ((t.id.indexOf('kev')===0 || t.id==='interior' || t.id==='living' || t.id==='bigsale' || t.id==='convo') && postRatio < 0.9) postRatio = 1;   // firkant-specifikke premium-designs kan ikke vises i landskab -> tilbage til firkant
     if (t.id==='flaw') postRatio = 1.7778;   // Flawless er KUN til story 9:16
+    if (t.id==='gem') postRatio = 1.7778;   // Gem er KUN til story 9:16
     if (t.id.indexOf('circ')===0) postRatio = 1.25;   // Circle-plakaterne er KUN portraet 4:5
     if (t.id.indexOf('recruit')===0) postRatio = 1.25;   // Recruit-varianterne er KUN portraet 4:5
     if (t.id.indexOf('podcast')===0 && postRatio !== 1 && postRatio !== 1.25) postRatio = 1.25;   // Podcast: firkant ELLER portraet (default portraet hvis et andet format var aktivt)
@@ -2674,7 +2711,7 @@
   function syncFormatStrip(){ const strip=byId('formatStrip'); if(!strip) return; let best=FORMATS[0], bd=1e9; FORMATS.forEach(f=>{ const d=Math.abs(f.ratio-postRatio); if(d<bd){bd=d; best=f;} }); strip.querySelectorAll('.format-card').forEach(c=>c.classList.toggle('active', c.dataset.fmt===best.id)); }
   // KEVARI-skabeloner er lodrette designs — de to landskabsformater laases (deaktiveres) naar en KEVARI-skabelon er aktiv.
   function isKevTemplate(){ return !!(curTemplate && (curTemplate.indexOf('kev')===0 || curTemplate==='interior' || curTemplate==='living' || curTemplate==='bigsale' || curTemplate==='convo')); }
-  function formatLocked(id){ const f=FORMATS.find(x=>x.id===id); if(!f) return false; if(curTemplate==='flaw') return id!=='story'; if(curTemplate.indexOf('circ')===0) return id!=='portrait'; if(curTemplate.indexOf('recruit')===0) return id!=='portrait'; if(curTemplate.indexOf('snap')===0) return id!=='portrait'; if(curTemplate.indexOf('podcast')===0) return id!=='square' && id!=='portrait'; return !!(f.ratio < 0.9 && isKevTemplate()); }
+  function formatLocked(id){ const f=FORMATS.find(x=>x.id===id); if(!f) return false; if(curTemplate==='flaw') return id!=='story'; if(curTemplate==='gem') return id!=='story'; if(curTemplate.indexOf('circ')===0) return id!=='portrait'; if(curTemplate.indexOf('recruit')===0) return id!=='portrait'; if(curTemplate.indexOf('snap')===0) return id!=='portrait'; if(curTemplate.indexOf('podcast')===0) return id!=='square' && id!=='portrait'; return !!(f.ratio < 0.9 && isKevTemplate()); }
   function syncFormatLocks(){ const strip=byId('formatStrip'); if(!strip) return; strip.querySelectorAll('.format-card').forEach(c=>c.classList.toggle('fmt-locked', formatLocked(c.dataset.fmt))); }
   function selectFormat(id){ if(formatLocked(id)) return; const f=FORMATS.find(x=>x.id===id)||FORMATS[0]; postRatio=f.ratio; if(curTemplate.indexOf('podcast')===0) refreshTemplateScene(); applyFormat(); fitText(); if(selId) showSel(); byId('formatStrip').querySelectorAll('.format-card').forEach(c=>c.classList.toggle('active', c.dataset.fmt===id)); }
 
