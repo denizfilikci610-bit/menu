@@ -885,12 +885,12 @@
   .post.tpl-gem .post-content{ display:none !important; }   /* alt tegnes i scenen */
   .post.tpl-gem .post-decor{ z-index:1; }
   /* DIAMANT-foto centreret, OVER teksten (z:2) */
-  .post.tpl-gem .post-photo{ display:block !important; inset:auto !important; left:13cqw !important; right:13cqw !important; top:52cqw !important; bottom:auto !important; height:77cqw !important; width:auto !important; background-size:cover; background-position:center; -webkit-clip-path:polygon(22% 0,78% 0,100% 44%,50% 100%,0 44%); clip-path:polygon(22% 0,78% 0,100% 44%,50% 100%,0 44%); border:0; border-radius:0; z-index:2; }
+  .post.tpl-gem .post-photo{ display:block !important; inset:auto !important; left:8cqw !important; right:8cqw !important; top:62cqw !important; bottom:auto !important; height:64cqw !important; width:auto !important; background-size:cover; background-position:center; -webkit-clip-path:polygon(24% 0,76% 0,100% 36%,50% 100%,0 36%); clip-path:polygon(24% 0,76% 0,100% 36%,50% 100%,0 36%); border:0; border-radius:0; z-index:2; }
   .post.tpl-gem .post-photo2, .post.tpl-gem .post-photo3, .post.tpl-gem .post-photo4{ display:none !important; }
   /* kaempe overskrift (Anton) delt om diamanten */
-  .tsc-gem .gem-hl{ position:absolute; left:3cqw; right:3cqw; text-align:center; font-family:'Anton',sans-serif; font-weight:400; text-transform:uppercase; color:var(--pink,#f3a8bf); line-height:.82; letter-spacing:.01em; }
-  .tsc-gem .gem-top{ top:22cqw; }
-  .tsc-gem .gem-bot{ top:120cqw; }
+  .tsc-gem .gem-hl{ position:absolute; left:3cqw; right:3cqw; text-align:center; font-family:'Anton',sans-serif; font-weight:400; text-transform:uppercase; color:var(--pink,#f3a8bf); line-height:.82; letter-spacing:.01em; font-size:20cqw; }
+  .tsc-gem .gem-top{ bottom:114cqw; }   /* bund-forankret OVER diamanten -> vokser opad, intet skjules */
+  .tsc-gem .gem-bot{ top:123cqw; }       /* top-forankret UNDER diamanten -> vokser nedad */
   /* eyebrow top-venstre, logo/brand top-hoejre, sub nederst */
   .tsc-gem .gem-eb{ position:absolute; top:7cqw; left:6cqw; text-align:left; color:var(--pink,#f3a8bf); font-family:'Space Grotesk',sans-serif; font-weight:700; text-transform:uppercase; letter-spacing:.02em; font-size:3.3cqw; line-height:1.12; max-width:52cqw; }
   .tsc-gem .gem-brand{ position:absolute; top:6cqw; right:6cqw; text-align:right; color:var(--pink,#f3a8bf); font-family:'Space Grotesk',sans-serif; font-weight:700; text-transform:uppercase; letter-spacing:.03em; font-size:4.6cqw; line-height:1; max-width:42cqw; }
@@ -2117,14 +2117,16 @@
       const hl = (C.headline||'').trim().toUpperCase();
       const words = hl.split(/\s+/).filter(Boolean);
       let topT='', botT='';
-      if (words.length >= 2){ botT = words[words.length-1]; topT = words.slice(0,-1).join(' '); }
-      else { botT = hl || 'TITEL'; }
-      const longest = words.length ? Math.max.apply(null, words.map(w=>w.length)) : 5;
-      const fs = Math.max(11, Math.min(34, 97/(longest*0.48))).toFixed(1);
+      if (words.length >= 2){
+        // BALANCERET split: vaelg delepunkt der minimerer forskel i tegn-laengde mellem top og bund
+        let best=1, bd=Infinity;
+        for (let i=1;i<words.length;i++){ const tp=words.slice(0,i).join(' '), bt=words.slice(i).join(' '); const d=Math.abs(tp.length-bt.length); if(d<bd){bd=d;best=i;} }
+        topT=words.slice(0,best).join(' '); botT=words.slice(best).join(' ');
+      } else { topT = hl || 'TITEL'; }   // 1 ord -> stor paa toppen
       const eb = (C.eyebrow||'').trim(), brand = (C.navn||'').trim(), sub = (C.subline||'').trim();
       return '<div class="tpl-scene tsc-gem">'
-        + (topT ? '<div class="gem-hl gem-top" style="font-size:'+fs+'cqw">'+esc(topT)+'</div>' : '')
-        + '<div class="gem-hl gem-bot" style="font-size:'+fs+'cqw">'+esc(botT)+'</div>'
+        + (topT ? '<div class="gem-hl gem-top">'+esc(topT)+'</div>' : '')
+        + (botT ? '<div class="gem-hl gem-bot">'+esc(botT)+'</div>' : '')
         + (eb ? '<div class="gem-eb">'+esc(eb).replace(/\n/g,'<br>')+'</div>' : '')
         + (brand ? '<div class="gem-brand">'+esc(brand)+'</div>' : '')
         + (sub ? '<div class="gem-sub">'+esc(sub)+'</div>' : '')
@@ -2527,6 +2529,7 @@
     post.classList.remove('hl-break');
     if (curTemplate === 'bigsale'){ post.style.setProperty('--fit','1'); bigsaleFit(); snapshotFit(); return; }
     if (curTemplate.indexOf('snap')===0){ post.style.setProperty('--fit','1'); bigsaleFit(); snapshotFit(); return; }
+    if (curTemplate === 'gem'){ post.style.setProperty('--fit','1'); bigsaleFit(); snapshotFit(); gemFit(); return; }
     bigsaleFit();   // ryd bigsale-inline-styles paa overskriften naar en anden skabelon er aktiv
     snapshotFit();  // ryd snapshot-inline-styles naar en anden skabelon er aktiv
     let f=1; post.style.setProperty('--fit','1'); let g=0;
@@ -2614,6 +2617,29 @@
     let lo=2.6*cqw, hi=7.5*cqw;
     for (let i=0;i<18;i++){ const mid=(lo+hi)/2; h.style.fontSize=mid+'px'; if (h.scrollWidth<=availW+1 && h.scrollHeight<=availH+1) lo=mid; else hi=mid; }
     h.style.fontSize=lo+'px';
+  }
+  // Gem: skaler de to overskrift-blokke (over+under diamanten) saa de passer i hver sin zone UDEN at gaa bag diamanten/ud over kanten
+  function gemFit(){
+    if (curTemplate !== 'gem') return;
+    const post = byId('post'); if (!post) return;
+    const top = document.querySelector('.tsc-gem .gem-top'), bot = document.querySelector('.tsc-gem .gem-bot');
+    if (!bot) return;
+    const pr = post.getBoundingClientRect(); if (!pr.width) return;
+    const cqw = pr.width/100, maxW = 94*cqw;
+    const fitBlock = (el, zoneHpx, maxFsPx) => {   // stoerste Anton-font hvor blokken passer bredde + lodret zone (capped)
+      if (!el) return 0;
+      let lo = 6*cqw, hi = maxFsPx;
+      for (let i=0; i<20; i++){ const mid=(lo+hi)/2; el.style.fontSize = mid+'px';
+        if (el.scrollWidth <= maxW+1 && el.scrollHeight <= zoneHpx+1) lo = mid; else hi = mid; }
+      el.style.fontSize = lo+'px'; return lo;
+    };
+    // KLAR hierarki (bruger-oenske): TOP stor/dominant, BUND klart mindre (~halvt af top)
+    if (top){
+      const topFs = fitBlock(top, 46*cqw, 42*cqw);   // top fylder zonen over diamanten
+      fitBlock(bot, 30*cqw, topFs*0.5);              // bund cappet til ~50% af top
+    } else {
+      fitBlock(bot, 46*cqw, 42*cqw);                 // ingen top (1 ord laa paa toppen) -> bund stor
+    }
   }
   function relayout(){ applyFormat(); fitText(); if(selId) showSel(); }
 
