@@ -1206,6 +1206,25 @@
   .app.results-mode{ display:block; min-height:0; }
   .app.results-mode > .panel{ display:none; }
   .app.results-mode .placeholder{ display:none; }
+  .app.results-mode .design-gallery{ display:none; }
+
+  /* ===== Design-galleri (landing) ===== */
+  .design-gallery{ width:100%; max-width:1240px; margin:30px auto 0; }
+  .dg-head{ text-align:center; margin:0 0 18px; }
+  .dg-head .t{ font-family:'Fraunces',serif; font-weight:600; font-size:1.35rem; color:var(--ink); }
+  .dg-head .s{ font-size:.9rem; color:var(--muted); margin-top:3px; }
+  .dg-grid{ columns: 4 232px; column-gap:14px; }
+  @media (max-width:900px){ .dg-grid{ columns:3 168px; } }
+  @media (max-width:560px){ .dg-grid{ columns:2 150px; column-gap:10px; } }
+  .dg-tile{ display:block; width:100%; break-inside:avoid; margin:0 0 14px; padding:0; border:none; background:#e6e0d3; border-radius:14px; overflow:hidden; cursor:pointer; position:relative; aspect-ratio:var(--ar,1); box-shadow:0 2px 10px rgba(40,28,16,.10); transition:transform .15s, box-shadow .15s; -webkit-appearance:none; appearance:none; }
+  @media (max-width:560px){ .dg-grid{ margin:0; } .dg-tile{ margin-bottom:10px; } }
+  .dg-tile:hover{ transform:translateY(-3px); box-shadow:0 16px 32px -8px rgba(40,28,16,.34); }
+  .dg-tile:focus-visible{ outline:2px solid var(--accent); outline-offset:2px; }
+  .dg-tile .post{ width:100% !important; height:100% !important; min-height:0 !important; border-radius:0 !important; box-shadow:none !important; pointer-events:none; }
+  /* tile-only fallback for skabeloner hvis JS-fit ikke koerer i preview (snapshot udfylder baandet paa 1 linje) */
+  .dg-tile .post[class*="tpl-snap"] .post-headline{ white-space:nowrap; font-size:7.4cqw !important; }
+  .dg-name{ position:absolute; left:0; right:0; bottom:0; padding:18px 10px 8px; font-family:'Space Grotesk',sans-serif; font-size:.72rem; font-weight:600; color:#fff; text-align:left; background:linear-gradient(to top, rgba(0,0,0,.55), rgba(0,0,0,0)); opacity:0; transition:opacity .15s; pointer-events:none; }
+  .dg-tile:hover .dg-name{ opacity:1; }
   #resultsWrap{ display:grid; grid-template-columns:minmax(0,1fr) minmax(360px,430px); gap:38px; align-items:start; }
   .res-main{ min-width:0; }
   .res-bar{ display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap; margin:0 2px 24px; padding-bottom:18px; border-bottom:1px solid var(--line); }
@@ -1434,6 +1453,15 @@
         </div>
       </div>
       <p class="hero-note">Nævner du jeres webadresse, matcher vi farverne til jeres brand.</p>
+    </div>
+
+    <!-- ===== Design-galleri (landing) ===== -->
+    <div class="design-gallery" id="designGallery">
+      <div class="dg-head">
+        <div class="t">… eller vælg et færdigt design</div>
+        <div class="s">Tryk på et design — så åbner det, klar til at rette tekst, farver og format.</div>
+      </div>
+      <div class="dg-grid" id="dgGrid"></div>
     </div>
 
     <!-- ===== Output ===== -->
@@ -4115,8 +4143,117 @@
     byId('styleRefName').textContent = (styleRef.descriptors && styleRef.descriptors.length) ? styleRef.descriptors.slice(0,2).join(', ') : 'Stil hentet';
     chip.classList.remove('hide');
   }
+  // ===================== Design-galleri (landing) =====================
+  // Hver skabelon + farve-variant rendres som et klikbart, naesten-faerdigt preview.
+  // Tile = STATISK .post-markup -> cqw skalerer automatisk til kolonne-bredden (responsivt, ingen live-maaling).
+  const GAL_DEMO = {
+    recruit:{headline:'Head of Finance', subline:'Shape the financial backbone of Tin Can!', navn:'Tin Can'},
+    snapshot:{headline:'The upside down dial'},
+    podcast:{headline:'Miranda Miller', subline:'with Tomorrow Health', eyebrow:'Healthcare Luminaries', navn:'Tomorrow Health'},
+    circ:{headline:'Meet. Create. Connect.', navn:'Circle'},
+    gem:{headline:'JUP DO BAIRRO', subline:'EM BREVE', eyebrow:'SHOW DA JUP DO BAIRRO', navn:'Cine Joia'},
+    flaw:{headline:'Flawless'},
+    convo:{headline:'Marketing Conversations', subline:'A calm space to think out loud.', navn:'Studio'},
+    bigsale:{headline:'BIG SALE', eyebrow:'UP TO 50% OFF', subline:'SALE ALL ITEM'},
+    winter:{headline:'Winter gets cozy', emphasis:'gets', subline:'NEW SEASON DROP'},
+    couture:{headline:'COUTURE SEASON', eyebrow:'Spring 2025', subline:'THE NEW COLLECTION'},
+    interior:{headline:'Enjoy the interior of your dreams.', subline:'Studio Nord · København', navn:'Studio Nord'},
+    living:{headline:'Living room', subline:'Cosy interiors for modern homes — se kollektionen.'},
+    noir:{headline:'Ethereal Noir', subline:'A study in shadow and light.'},
+    red:{headline:'Make it bold', subline:'Say it in red.'},
+    pastel:{headline:'Good things take time', subline:'Daily reminder'},
+    forest:{headline:"Season's best", subline:'Fresh picks for spring.'},
+    bold:{headline:'Your headline here', subline:'Make a statement.'},
+    cream:{headline:'Talk', subline:'The podcast for curious minds.'},
+    kev1:{headline:'Best off', subline:'New-season essentials.', navn:'shop.kevari.com'},
+    kev2:{headline:'Easy fashion', subline:'Build the perfect set.', navn:'kevari.com'},
+    kev3:{headline:'Power look', eyebrow:'Tailored · Statement · Polished', navn:'kevari.com'},
+    kev4:{headline:'Coming soon', subline:'The drop you have been waiting for.'},
+    kev5:{headline:'Style is a way to say who you are without speaking.'},
+    kev6:{headline:'Style inspo', subline:'Accessorize boldly.', navn:'kevari.com'},
+    kev7:{headline:'Outfit of the day', subline:'Effortless, every day.', navn:'Kevari'},
+    kev8:{headline:'Thank you', subline:'2 million strong.'},
+    kev9:{headline:"We're open", subline:'Come say hi.', navn:'kevari.com'}
+  };
+  function _galFam(id){
+    if (id.indexOf('snap')===0) return 'snapshot';
+    if (id.indexOf('recruit')===0) return 'recruit';
+    if (id.indexOf('podcast')===0) return 'podcast';
+    if (id.indexOf('circ')===0) return 'circ';
+    return id;
+  }
+  function galDemo(t){ const d = GAL_DEMO[_galFam(t.id)] || { headline:'Din overskrift', subline:'En kort støttetekst.' }; return { headline:d.headline||'', emphasis:d.emphasis||'', eyebrow:d.eyebrow||'', subline:d.subline||'', badge:d.badge||'', navn:d.navn||'' }; }
+  function galRatio(t){
+    if (t.id==='flaw' || t.id==='gem') return 1.7778;
+    if (t.id.indexOf('circ')===0 || t.id.indexOf('recruit')===0 || t.id.indexOf('snap')===0 || t.id.indexOf('podcast')===0) return 1.25;
+    return 1;
+  }
+  function galPhoto(t){ return t.photo ? ('https://picsum.photos/seed/lsd-'+_galFam(t.id)+'/640/800') : ''; }
+  function galTileHTML(t){
+    const dc = galDemo(t), r = galRatio(t);
+    const sC = CONTENT, sR = postRatio, sTL = tplLabels, sAL = aiLabels;
+    CONTENT = dc; postRatio = r; tplLabels = {}; aiLabels = { descriptors:[], tags:[] };
+    let scene=''; try { scene = buildTemplateScene(t.id, t) || ''; } catch(e){ scene=''; }
+    CONTENT = sC; postRatio = sR; tplLabels = sTL; aiLabels = sAL;
+    const fmt = r>1.6 ? 'fmt-tall fmt-story' : r>1.35 ? 'fmt-tall fmt-pin' : r>1.05 ? 'fmt-tall fmt-portrait' : '';
+    const uf = (t.font && t.font!=='auto') ? ('uf-'+t.font) : '';
+    const cls = ['post','tpl-'+t.id,'lay-mega','font-sans','st-al-c','st-treat-underline','st-eb-line','hc-none','em-italic','rule-none', uf, fmt].filter(Boolean).join(' ');
+    const stl = styleOf('editorial');
+    let vars = '--pbg:'+t.bg+';--pink:'+t.ink+';--pacc:'+t.acc+';--pemhero:'+t.acc+';--pbadge:'+t.bg+';--pcardbg:'+rgba(t.bg,0.92)+';--pscrim:linear-gradient(to top,'+rgba(t.bg,.9)+' 0%,'+rgba(t.bg,.4)+' 45%,'+rgba(t.bg,0)+' 78%);--bf:'+stl.body+';--hlk:'+(stl.scale||1);
+    if (!t.font || t.font==='auto') vars += ';--hf:'+stl.head+';--hw:'+stl.hw+';--hls:'+stl.ls;
+    if (r>1.05) vars += ';--kband:'+(50*(r-1)).toFixed(2);
+    const ph = galPhoto(t);
+    const pStyle = ph ? (' style="background-image:url(\''+ph+'\')"') : '';
+    const hl = headlineHTML(dc.headline, dc.emphasis);
+    return '<div class="'+cls+'" style="'+vars+'">'
+      + '<div class="post-photo"'+pStyle+'></div><div class="post-photo2"'+pStyle+'></div><div class="post-photo3"'+pStyle+'></div><div class="post-photo4"'+pStyle+'></div>'
+      + '<div class="post-scrim"></div>'
+      + '<div class="post-decor">'+scene+'</div>'
+      + '<div class="post-accents"></div><div class="post-frame"></div>'
+      + '<div class="post-badge'+(dc.badge?'':' hide')+'"><span>'+esc(dc.badge||'')+'</span></div>'
+      + '<div class="post-content">'
+      +   '<div class="post-eyebrow'+(dc.eyebrow?'':' hide')+'">'+esc(dc.eyebrow||'')+'</div>'
+      +   '<div class="post-body"><div class="post-headline">'+hl+'</div><div class="post-rule"></div><div class="post-sub"'+(dc.subline?'':' style="display:none"')+'>'+esc(dc.subline||'')+'</div></div>'
+      +   '<div class="post-brand">'+esc(dc.navn||'')+'</div>'
+      + '</div></div>';
+  }
+  function openDesign(t){
+    custom = null; customPhoto = galPhoto(t) || null; photos = []; photoIdx = 0;
+    postRatio = galRatio(t);
+    applyTemplate(t);
+    fillText(galDemo(t));
+    relayout();
+    window.scrollTo({ top:0, behavior:'smooth' });
+  }
+  const GAL_ORDER = ['recruit','snapshot','podcast','gem','circ','convo','flaw','winter','couture','bigsale','interior','living'];
+  function _galSorted(){
+    const fams = {};   // én repraesentant pr. familie-id beholdes i raekkefoelge, varianter lige efter
+    return TEMPLATES.slice().sort((a,b)=>{
+      const pa = GAL_ORDER.indexOf(_galFam(a.id)), pb = GAL_ORDER.indexOf(_galFam(b.id));
+      const ra = pa<0?999:pa, rb = pb<0?999:pb;
+      if (ra!==rb) return ra-rb;
+      return TEMPLATES.indexOf(a) - TEMPLATES.indexOf(b);
+    });
+  }
+  function renderGallery(){
+    const grid = byId('dgGrid'); if (!grid) return;
+    grid.innerHTML = '';
+    const io = ('IntersectionObserver' in window) ? new IntersectionObserver((ents)=>{
+      ents.forEach(e=>{ if (e.isIntersecting){ const tile=e.target; if(!tile.dataset.done){ tile.dataset.done='1'; const t=TEMPLATES.find(x=>x.id===tile.dataset.tpl); if(t) tile.innerHTML = galTileHTML(t) + '<span class="dg-name">'+esc(t.name)+'</span>'; } io.unobserve(tile); } });
+    }, { rootMargin:'800px 0px' }) : null;
+    _galSorted().forEach(t=>{
+      const tile = document.createElement('button'); tile.type='button'; tile.className='dg-tile'; tile.dataset.tpl=t.id;
+      tile.style.setProperty('--ar', '1/'+galRatio(t).toFixed(4));
+      tile.style.background = (t.bg && t.bg[0]==='#') ? t.bg : '#e6e0d3';
+      tile.addEventListener('click', ()=>openDesign(t));
+      grid.appendChild(tile);
+      if (io) io.observe(tile); else tile.innerHTML = galTileHTML(t) + '<span class="dg-name">'+esc(t.name)+'</span>';
+    });
+  }
+
   // ---------- Init ----------
   applyStyle(curStyleId, true);
+  renderGallery();
   // Naar web-fonts (Anton m.fl.) er loadet: kør relayout igen, saa tekst-tilpasningen (fitText/bigsaleFit/kev4Adjust)
   // maaler med den RIGTIGE font og ikke fallback -> ens stoerrelse paa mobil/desktop uanset font-load-timing.
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => { if (byId('resultsWrap').style.display !== 'none' && typeof relayout === 'function') relayout(); });
